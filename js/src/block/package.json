@@ -1,0 +1,19 @@
+{
+    "name": "wp-open-events-form",
+    "version": "0.0.1",
+    "description": "WP Open Event Form",
+    "author": "Sonia Zorba",
+    "license": "GPL-2.0-or-later",
+    "scripts": {
+        "build": "wp-scripts build --output-path=../../build/block",
+        "format": "wp-scripts format",
+        "lint:css": "wp-scripts lint-style",
+        "lint:js": "wp-scripts lint-js",
+        "packages-update": "wp-scripts packages-update",
+        "plugin-zip": "wp-scripts plugin-zip",
+        "start": "wp-scripts start"
+    },
+    "devDependencies": {
+        "@wordpress/scripts": "^26.1.0"
+    }
+}

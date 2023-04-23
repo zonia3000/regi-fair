@@ -1,0 +1,15 @@
+{
+    "$schema": "https://schemas.wp.org/trunk/block.json",
+    "apiVersion": 2,
+    "name": "wp-open-events/form",
+    "version": "0.0.1",
+    "title": "WP Open Event Form",
+    "category": "widgets",
+    "icon": "smiley",
+    "description": "WP Open Event Form",
+    "supports": {
+        "html": false,
+        "inserter": true
+    },
+    "editorScript": "file:./index.js"
+}
