@@ -13,6 +13,8 @@ if (!defined('ABSPATH')) {
     die();
 }
 
+define('WPOE_PLUGIN_DIR', plugin_dir_path(__FILE__));
+
 add_action('admin_menu', 'create_admin_menu');
 
 add_action('plugins_loaded', function () {
@@ -53,15 +55,16 @@ add_action('admin_enqueue_scripts', function ($hook) {
         return;
     }
 
-    $script = $page . 'script';
+    $script = 'wpoe-' . $page;
 
     wp_enqueue_script(
         $script,
         plugins_url('js/build/components/' . $page . '.js', __FILE__),
-        ['wp-i18n'],
+        ['react', 'react-dom', 'wp-components', 'wp-i18n', 'wp-api-fetch'],
         '0.0.1',
         true
     );
+    wp_enqueue_style('wp-components');
 
     wp_set_script_translations($script, 'wp-open-events', plugin_dir_path(__FILE__) . 'languages');
 
@@ -88,3 +91,10 @@ add_action('init', function () {
         )
     );
 });
+
+require_once(WPOE_PLUGIN_DIR . 'classes/admin/admin-api.php');
+add_action('rest_api_init', ['WPOE_Admin_API', 'init']);
+
+require_once(WPOE_PLUGIN_DIR . 'classes/admin/db-setup.php');
+register_activation_hook(__FILE__, ['WPOE_DB_Setup', 'create_tables']);
+register_uninstall_hook(__FILE__, ['WPOE_DB_Setup', 'drop_tables']);

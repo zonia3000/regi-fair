@@ -1,10 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button, TextControl, CheckboxControl, BaseControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import apiFetch from '@wordpress/api-fetch';
 import AddFieldModal from './AddFieldModal';
+import Loading from '../../Loading';
 
 const EditEvent = (props: any) => {
 
+    const [eventData, setEventData] = useState(null);
     const [eventName, setEventName] = useState('');
     const [date, setDate] = useState((new Date()).toString());
     const [autoremove, setAutoremove] = useState(true);
@@ -15,9 +18,45 @@ const EditEvent = (props: any) => {
 
     const openAddFieldModal = () => setShowAddFieldModal(true);
 
-    const save = () => {
+    useEffect(() => {
+        if (props.currentEventId === null) {
+            props.setLoading(false);
+        } else if (eventData === null || props.currentEventId !== eventData.id) {
+            props.setLoading(true);
+            apiFetch({ path: '/wpoe/v1/events/' + props.currentEventId }).then((result) => {
+                const event = result as EventConfiguration;
+                setEventData(event);
+                setEventName(event.name);
+                setDate(event.date);
+                setAutoremove(event.autoremove);
+                setFormFields(event.formFields);
+                setCurrentFieldIndex(event.formFields.length);
+                props.setLoading(false);
+            });
+        }
+    }, []);
 
+    const save = () => {
+        const event: EventConfiguration = {
+            name: eventName,
+            date: parseDate(),
+            formFields,
+            autoremove: autoremove,
+            autoremovePeriod: 30
+        };
+        apiFetch({
+            path: '/wpoe/v1/events',
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(event),
+        });
     };
+
+    function parseDate() {
+        return new Date(date).toISOString().slice(0, 10);
+    }
 
     const saveCurrentField = (field: Field) => {
         const newFields = formFields.map((f, i) => i === currentFieldIndex ? field : f);
@@ -26,6 +65,10 @@ const EditEvent = (props: any) => {
         }
         setFormFields(newFields);
         setCurrentFieldIndex(currentFieldIndex + 1);
+    }
+
+    if (props.loading) {
+        return <Loading />;
     }
 
     return (
