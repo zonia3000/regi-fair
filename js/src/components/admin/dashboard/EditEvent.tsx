@@ -4,8 +4,9 @@ import { __ } from '@wordpress/i18n';
 import apiFetch from '@wordpress/api-fetch';
 import AddFieldModal from './AddFieldModal';
 import Loading from '../../Loading';
+import { EditEventProps } from '../../classes/components-props';
 
-const EditEvent = (props: any) => {
+const EditEvent = (props: EditEventProps) => {
 
     const [eventData, setEventData] = useState(null);
     const [eventName, setEventName] = useState('');
@@ -38,6 +39,7 @@ const EditEvent = (props: any) => {
 
     const save = () => {
         const event: EventConfiguration = {
+            id: null,
             name: eventName,
             date: parseDate(),
             formFields,

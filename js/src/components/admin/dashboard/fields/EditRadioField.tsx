@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { Button, TextControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import EditTextField from './EditTextField';
+import { EditRadioFieldProps } from '../../../classes/components-props';
 
-const EditRadioField = (props: any) => {
+const EditRadioField = (props: EditRadioFieldProps) => {
 
     const [options, setOptions] = useState(['', '']);
 

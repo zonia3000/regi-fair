@@ -2,14 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { __ } from '@wordpress/i18n';
 import apiFetch from '@wordpress/api-fetch';
 import Loading from '../../Loading';
+import { ListEventsProps } from '../../classes/components-props';
 
-const ListEvents = (props: any) => {
-    const [events, setEvents] = useState([]);
+const ListEvents = (props: ListEventsProps) => {
+    const [events, setEvents] = useState([] as EventConfiguration[]);
 
     useEffect(() => {
         props.setLoading(true);
         apiFetch({ path: '/wpoe/v1/events' }).then((result) => {
-            setEvents(result as any[]);
+            setEvents(result as EventConfiguration[]);
             props.setLoading(false);
         });
     }, []);
@@ -31,7 +32,7 @@ const ListEvents = (props: any) => {
                         </tr>
                     </thead>
                     <tbody>
-                        {events.map((e: any) => {
+                        {events.map((e: EventConfiguration) => {
                             return (<tr>
                                 <td><a href='#' onClick={() => props.selectEvent(e.id)}>{e.name}</a></td>
                                 <td>{e.date}</td>

@@ -3,11 +3,12 @@ import { Button, Modal } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import EditTextField from './fields/EditTextField';
 import EditRadioField from './fields/EditRadioField';
+import { AddFieldModalProps } from '../../classes/components-props';
 
-const AddFieldModal = (props: any) => {
+const AddFieldModal = (props: AddFieldModalProps) => {
 
-    const [fieldType, setFieldType] = useState(null);
-    const [field, setField] = useState(null);
+    const [fieldType, setFieldType] = useState(null as FieldType);
+    const [field, setField] = useState(null as Field);
 
     const close = () => {
         props.setShowAddFieldModal(false);
@@ -47,7 +48,7 @@ const AddFieldModal = (props: any) => {
                         <EditTextField field={field} setField={setField} fieldType='email' />
                     )}
                     {fieldType === 'radio' && (
-                        <EditRadioField field={field} setField={setField} />
+                        <EditRadioField field={field as RadioField} setField={setField} />
                     )}
                     {fieldType !== null && (
                         <>

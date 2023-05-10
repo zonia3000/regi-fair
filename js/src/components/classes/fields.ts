@@ -9,5 +9,5 @@ type Field = {
 
 type RadioField = Field & {
     fieldType: 'radio',
-    values: string[]
+    options: string[]
 }
