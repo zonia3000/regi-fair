@@ -14,6 +14,7 @@ if (!defined('ABSPATH')) {
 }
 
 define('WPOE_PLUGIN_DIR', plugin_dir_path(__FILE__));
+define('WPOE_ROOT_PATH', __FILE__);
 
 add_action('admin_menu', 'create_admin_menu');
 
@@ -66,7 +67,7 @@ add_action('admin_enqueue_scripts', function ($hook) {
     );
     wp_enqueue_style('wp-components');
 
-    wp_set_script_translations($script, 'wp-open-events', plugin_dir_path(__FILE__) . 'languages');
+    wp_set_script_translations($script, 'wp-open-events', WPOE_PLUGIN_DIR . 'languages');
 
     wp_localize_script(
         $script,
@@ -78,19 +79,8 @@ add_action('admin_enqueue_scripts', function ($hook) {
     );
 });
 
-function render_block_wp_open_events_form()
-{
-    return 'TODO';
-}
-
-add_action('init', function () {
-    register_block_type(
-        __DIR__ . '/js/build/block',
-        array(
-            'render_callback' => 'render_block_wp_open_events_form'
-        )
-    );
-});
+require_once(WPOE_PLUGIN_DIR . 'classes/event-form.php');
+add_action('init', ['WPOE_Form', 'init']);
 
 require_once(WPOE_PLUGIN_DIR . 'classes/admin/admin-api.php');
 add_action('rest_api_init', ['WPOE_Admin_API', 'init']);

@@ -3,7 +3,8 @@ const path = require('path')
 module.exports = {
     entry: {
         dashboard: './admin/dashboard/index.js',
-        settings: './admin/settings/index.js'
+        settings: './admin/settings/index.js',
+        users: './users/index.tsx'
     },
     output: {
         publicPath: '/',

@@ -6,30 +6,39 @@ import { SelectControl } from '@wordpress/components';
 import Form from 'wp-open-events/Form';
 import Loading from 'wp-open-events/Loading';
 
-export default function Edit() {
-    const [loading, setLoading] = useState(true);
+export default function Edit({ attributes, setAttributes }) {
+    const [loading, setLoading] = useState(!attributes.eventId);
     const [formLoading, setFormLoading] = useState(true);
     const [eventsOptions, setEventsOptions] = useState([]);
-    const [eventId, setEventId] = useState('');
+    const [eventId, setEventId] = useState(attributes.eventId || '');
 
     useEffect(() => {
-        apiFetch({ path: '/wpoe/v1/events' }).then((result) => {
-            setEventsOptions(
-                [{
-                    label: __('Select...', 'wp-open-events'),
-                    value: ''
-                }].concat(
-                    result.map(event => {
-                        return {
-                            value: event.id,
-                            label: event.name
-                        };
-                    })
-                )
-            );
-            setLoading(false);
-        });
+        if (!attributes.eventId) {
+            apiFetch({ path: '/wpoe/v1/events' }).then((result) => {
+                setEventsOptions(
+                    [{
+                        label: __('Select...', 'wp-open-events'),
+                        value: ''
+                    }].concat(
+                        result.map(event => {
+                            return {
+                                value: event.id,
+                                label: event.name
+                            };
+                        })
+                    )
+                );
+                setLoading(false);
+            });
+        }
     }, []);
+
+    const saveEventId = (id) => {
+        setEventId(id);
+        setAttributes({
+            eventId: id
+        });
+    };
 
     return (
         <div {...useBlockProps()}>
@@ -39,7 +48,7 @@ export default function Edit() {
                 <SelectControl
                     label={__('Select event', 'wp-open-events')}
                     options={eventsOptions}
-                    onChange={setEventId} />
+                    onChange={saveEventId} />
             }
 
             {!loading && eventId &&
