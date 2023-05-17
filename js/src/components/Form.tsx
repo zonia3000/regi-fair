@@ -3,6 +3,8 @@ import { FormProps } from './classes/components-props';
 import apiFetch from '@wordpress/api-fetch';
 import Loading from './Loading';
 import TextField from './fields/TextField';
+import { Button } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
 
 const Form = (props: FormProps) => {
     const [event, setEvent] = useState(null as EventConfiguration);
@@ -23,6 +25,16 @@ const Form = (props: FormProps) => {
         setFields(fields.map((oldValue: string, i: number) => (index === i) ? newValue : oldValue));
     };
 
+    const submitForm = async () => {
+        apiFetch({
+            path: '/wpoe/v1/events/' + props.eventId + '/register',
+            method: 'POST',
+            data: fields
+        }).then((result) => {
+            console.log(result);
+        });
+    };
+
     if (props.loading) {
         return <Loading />;
     }
@@ -38,6 +50,8 @@ const Form = (props: FormProps) => {
                             value={fields[index]} setValue={(v: string) => setFieldValue(v, index)} />
                 }
             })}
+
+            <Button variant='primary' onClick={submitForm}>{__('Register to the event', 'wp-open-events')}</Button>
         </>
     )
 };

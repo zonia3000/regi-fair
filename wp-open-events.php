@@ -30,6 +30,9 @@ add_action('init', ['WPOE_Form', 'init']);
 require_once(WPOE_PLUGIN_DIR . 'classes/admin/admin-api.php');
 add_action('rest_api_init', ['WPOE_Admin_API', 'init']);
 
+require_once(WPOE_PLUGIN_DIR . 'classes/public-api.php');
+add_action('rest_api_init', ['WPOE_Public_API', 'init']);
+
 require_once(WPOE_PLUGIN_DIR . 'classes/admin/db-setup.php');
 register_activation_hook(__FILE__, ['WPOE_DB_Setup', 'create_tables']);
 register_uninstall_hook(__FILE__, ['WPOE_DB_Setup', 'drop_tables']);

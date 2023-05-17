@@ -13,7 +13,7 @@ class WPOE_DB_Setup
         global $wpdb;
 
         $event_table = WPOE_DB_Setup::create_table('event', "
-          id mediumint(9) NOT NULL AUTO_INCREMENT,
+          id mediumint NOT NULL AUTO_INCREMENT,
           name varchar(255) NOT NULL,
           date date NOT NULL,
           autoremove_submissions bit DEFAULT 1,
@@ -22,8 +22,8 @@ class WPOE_DB_Setup
         ");
 
         WPOE_DB_Setup::create_table('event_form_field', "
-          id mediumint(9) NOT NULL AUTO_INCREMENT,
-          event_id mediumint(9) NOT NULL,
+          id mediumint NOT NULL AUTO_INCREMENT,
+          event_id mediumint NOT NULL,
           label varchar(255) NOT NULL,
           type varchar(255) NOT NULL,
           description text NULL,
@@ -32,6 +32,23 @@ class WPOE_DB_Setup
           field_index int NOT NULL,
           PRIMARY KEY  (id),
           FOREIGN KEY (event_id) REFERENCES $event_table (id)
+        ");
+
+        $event_registration_table = WPOE_DB_Setup::create_table('event_registration', "
+          id mediumint NOT NULL AUTO_INCREMENT,
+          event_id mediumint NOT NULL,
+          registration_token varchar(255) NULL,
+          inserted_at timestamp DEFAULT CURRENT_TIMESTAMP,
+          PRIMARY KEY  (id),
+          FOREIGN KEY (event_id) REFERENCES $event_table (id)
+        ");
+
+        WPOE_DB_Setup::create_table('event_registration_value', "
+          registration_id mediumint NOT NULL,
+          field_key varchar(255) NOT NULL,
+          field_value text NULL,
+          PRIMARY KEY  (registration_id, field_key),
+          FOREIGN KEY (registration_id) REFERENCES $event_registration_table (id)
         ");
 
         add_option(WPOE_DB_VERSION_KEY, WPOE_DB_VERSION);
