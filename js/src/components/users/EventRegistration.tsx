@@ -5,7 +5,7 @@ const EventRegistration = (props: { eventId: number }) => {
     const [loading, setLoading] = useState(true);
     return (
         <>
-            <Form loading={loading} setLoading={setLoading} eventId={props.eventId} disabled={false} />
+            <Form loading={loading} setLoading={setLoading} eventId={props.eventId} disabled={false} admin={false} />
         </>
     )
 };

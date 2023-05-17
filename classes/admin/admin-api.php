@@ -10,7 +10,7 @@ class WPOE_Admin_API
     {
         register_rest_route(
             'wpoe/v1',
-            '/events',
+            '/admin/events',
             [
                 'methods' => WP_REST_Server::READABLE,
                 'permission_callback' => ['WPOE_Admin_API', 'can_manage_options'],
@@ -20,7 +20,7 @@ class WPOE_Admin_API
 
         register_rest_route(
             'wpoe/v1',
-            '/events/(?P<id>\d+)',
+            '/admin/events/(?P<id>\d+)',
             [
                 'methods' => WP_REST_Server::READABLE,
                 'args' => [
@@ -36,7 +36,7 @@ class WPOE_Admin_API
 
         register_rest_route(
             'wpoe/v1',
-            '/events',
+            '/admin/events',
             [
                 'methods' => 'POST',
                 'permission_callback' => ['WPOE_Admin_API', 'can_manage_options'],

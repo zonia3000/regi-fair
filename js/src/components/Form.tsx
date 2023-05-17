@@ -10,8 +10,11 @@ const Form = (props: FormProps) => {
 
     useEffect(() => {
         props.setLoading(true);
-        apiFetch({ path: '/wpoe/v1/events/' + props.eventId }).then((result) => {
-            setEvent(result as EventConfiguration);
+        const path = props.admin ? '/wpoe/v1/events/' : '/wpoe/v1/admin/events/';
+        apiFetch({ path: path + props.eventId }).then((result) => {
+            const eventConfig = result as EventConfiguration;
+            setEvent(eventConfig);
+            setFields(eventConfig.formFields.map(_ => ''));
             props.setLoading(false);
         });
     }, []);

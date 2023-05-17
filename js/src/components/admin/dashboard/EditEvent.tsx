@@ -24,7 +24,7 @@ const EditEvent = (props: EditEventProps) => {
             props.setLoading(false);
         } else if (eventData === null || props.currentEventId !== eventData.id) {
             props.setLoading(true);
-            apiFetch({ path: '/wpoe/v1/events/' + props.currentEventId }).then((result) => {
+            apiFetch({ path: '/wpoe/v1/admin/events/' + props.currentEventId }).then((result) => {
                 const event = result as EventConfiguration;
                 setEventData(event);
                 setEventName(event.name);
@@ -47,7 +47,7 @@ const EditEvent = (props: EditEventProps) => {
             autoremovePeriod: 30
         };
         apiFetch({
-            path: '/wpoe/v1/events',
+            path: '/wpoe/v1/admin/events',
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

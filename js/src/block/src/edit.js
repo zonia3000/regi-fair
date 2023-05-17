@@ -14,7 +14,7 @@ export default function Edit({ attributes, setAttributes }) {
 
     useEffect(() => {
         if (!attributes.eventId) {
-            apiFetch({ path: '/wpoe/v1/events' }).then((result) => {
+            apiFetch({ path: '/wpoe/v1/admin/events' }).then((result) => {
                 setEventsOptions(
                     [{
                         label: __('Select...', 'wp-open-events'),
@@ -52,7 +52,7 @@ export default function Edit({ attributes, setAttributes }) {
             }
 
             {!loading && eventId &&
-                <Form loading={formLoading} setLoading={setFormLoading} eventId={eventId} disabled={true} />
+                <Form loading={formLoading} setLoading={setFormLoading} eventId={eventId} disabled={true} admin={true} />
             }
         </div>
     );

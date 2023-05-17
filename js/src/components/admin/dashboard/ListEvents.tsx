@@ -9,7 +9,7 @@ const ListEvents = (props: ListEventsProps) => {
 
     useEffect(() => {
         props.setLoading(true);
-        apiFetch({ path: '/wpoe/v1/events' }).then((result) => {
+        apiFetch({ path: '/wpoe/v1/admin/events' }).then((result) => {
             setEvents(result as EventConfiguration[]);
             props.setLoading(false);
         });

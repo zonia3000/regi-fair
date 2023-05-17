@@ -11,6 +11,7 @@ export type EditEventProps = LoadingComponent & {
 export type FormProps = LoadingComponent & {
     eventId: number
     disabled: boolean
+    admin: boolean
 }
 
 export type TextFieldProps = {
