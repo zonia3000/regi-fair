@@ -10,6 +10,7 @@ class WPOE_Public_API
             [
                 'methods' => 'GET',
                 'callback' => ['WPOE_Public_API', 'get_event'],
+                'permission_callback' => '__return_true'
             ]
         );
 
@@ -19,6 +20,7 @@ class WPOE_Public_API
             [
                 'methods' => 'POST',
                 'callback' => ['WPOE_Public_API', 'register_to_event'],
+                'permission_callback' => '__return_true'
             ]
         );
     }

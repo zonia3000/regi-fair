@@ -1,12 +1,12 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 import EventRegistration from './EventRegistration';
+import { createRoot } from 'react-dom/client';
 
 document.addEventListener('DOMContentLoaded', function () {
-    const element = document.getElementById('wpoe-form');
-    console.log('c');
-    if (typeof element !== 'undefined' && element !== null) {
-        const eventId = parseInt(element.getAttribute('data-event-id'));
-        ReactDOM.render(<EventRegistration eventId={eventId} />, document.getElementById('wpoe-form'));
+    const container = document.getElementById('wpoe-form');
+    if (typeof container !== 'undefined' && container !== null) {
+        const eventId = parseInt(container.getAttribute('data-event-id'));
+        const root = createRoot(container);
+        root.render(<EventRegistration eventId={eventId} />);
     }
 });

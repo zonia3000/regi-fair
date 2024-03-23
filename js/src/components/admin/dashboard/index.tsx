@@ -1,10 +1,11 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 import Dashboard from './Dashboard';
+import { createRoot } from 'react-dom/client';
 
 document.addEventListener('DOMContentLoaded', function () {
-    const element = document.getElementById('wpoe-dashboard');
-    if (typeof element !== 'undefined' && element !== null) {
-        ReactDOM.render(<Dashboard />, document.getElementById('wpoe-dashboard'));
+    const container = document.getElementById('wpoe-dashboard');
+    if (typeof container !== 'undefined' && container !== null) {
+        const root = createRoot(container);
+        root.render(<Dashboard />);
     }
 });

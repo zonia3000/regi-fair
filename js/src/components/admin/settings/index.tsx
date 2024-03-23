@@ -1,10 +1,11 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 import Settings from './Settings';
+import { createRoot } from 'react-dom/client';
 
 document.addEventListener('DOMContentLoaded', function () {
-    const element = document.getElementById('wpoe-settings');
-    if (typeof element !== 'undefined' && element !== null) {
-        ReactDOM.render(<Settings />, document.getElementById('wpoe-settings'));
+    const container = document.getElementById('wpoe-settings');
+    if (typeof container !== 'undefined' && container !== null) {
+        const root = createRoot(container);
+        root.render(<Settings />);
     }
 });
