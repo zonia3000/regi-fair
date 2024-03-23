@@ -14,7 +14,7 @@
         "start": "wp-scripts start"
     },
     "devDependencies": {
-        "@wordpress/scripts": "^26.1.0"
+        "@wordpress/scripts": "^27.5.0"
     },
     "dependencies": {
         "wp-open-events": "file:../components"
