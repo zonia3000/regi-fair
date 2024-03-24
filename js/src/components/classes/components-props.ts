@@ -3,11 +3,6 @@ type LoadingComponent = {
     setLoading: (value: boolean) => void
 }
 
-export type EditEventProps = LoadingComponent & {
-    currentEventId: number | null
-    toggleEditing: () => void
-}
-
 export type FormProps = LoadingComponent & {
     eventId: number
     disabled: boolean
@@ -39,8 +34,4 @@ export type AddFieldModalProps = {
     showAddFieldModal: boolean
     setShowAddFieldModal: (value: boolean) => void
     saveCurrentField: <T extends Field>(field: T) => void
-}
-
-export type ListEventsProps = LoadingComponent & {
-    selectEvent: (id: number) => void
 }

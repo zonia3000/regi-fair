@@ -2,26 +2,40 @@ import React, { useState, useEffect } from 'react';
 import { __ } from '@wordpress/i18n';
 import apiFetch from '@wordpress/api-fetch';
 import Loading from '../../Loading';
-import { ListEventsProps } from '../../classes/components-props';
+import { Link, useNavigate } from 'react-router-dom';
+import { Button } from '@wordpress/components';
 
-const ListEvents = (props: ListEventsProps) => {
+const ListEvents = () => {
+    const navigate = useNavigate();
+    const [loading, setLoading] = useState(true);
     const [events, setEvents] = useState([] as EventConfiguration[]);
 
     useEffect(() => {
-        props.setLoading(true);
+        setLoading(true);
         apiFetch({ path: '/wpoe/v1/admin/events' }).then((result) => {
             setEvents(result as EventConfiguration[]);
-            props.setLoading(false);
+            setLoading(false);
         });
     }, []);
 
-    if (props.loading) {
+    function newEvent() {
+        navigate('/event/new');
+    }
+
+    if (loading) {
         return <Loading />;
     }
-    
+
     return (
-        <>
-            {events.length === 0 && __('No events found', 'wp-open-events')}
+        <div>
+            <h1 className='wp-heading-inline'>
+                {__('Your events', 'wp-open-events')} &nbsp;
+            </h1>
+            <Button onClick={newEvent} variant='primary'>
+                {__('Add event', 'wp-open-events')}
+            </Button>
+
+            {events.length === 0 && <p>{__('No events found', 'wp-open-events')}</p>}
             {events.length !== 0 &&
                 <table className='widefat'>
                     <thead>
@@ -34,7 +48,9 @@ const ListEvents = (props: ListEventsProps) => {
                     <tbody>
                         {events.map((e: EventConfiguration) => {
                             return (<tr>
-                                <td><a href='#' onClick={() => props.selectEvent(e.id)}>{e.name}</a></td>
+                                <td>
+                                    <Link to={`/event/${e.id}`}>{e.name}</Link>
+                                </td>
                                 <td>{e.date}</td>
                                 <td></td>
                             </tr>)
@@ -42,7 +58,7 @@ const ListEvents = (props: ListEventsProps) => {
                     </tbody>
                 </table>}
             <br />
-        </>
+        </div>
     );
 }
 

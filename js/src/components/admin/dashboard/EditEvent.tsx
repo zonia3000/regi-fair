@@ -4,10 +4,14 @@ import { __ } from '@wordpress/i18n';
 import apiFetch from '@wordpress/api-fetch';
 import AddFieldModal from './AddFieldModal';
 import Loading from '../../Loading';
-import { EditEventProps } from '../../classes/components-props';
+import { useNavigate, useParams } from 'react-router-dom';
 
-const EditEvent = (props: EditEventProps) => {
+const EditEvent = () => {
 
+    const { eventId } = useParams();
+    const navigate = useNavigate();
+
+    const [loading, setLoading] = useState(true);
     const [eventData, setEventData] = useState(null);
     const [eventName, setEventName] = useState('');
     const [date, setDate] = useState((new Date()).toString());
@@ -20,11 +24,11 @@ const EditEvent = (props: EditEventProps) => {
     const openAddFieldModal = () => setShowAddFieldModal(true);
 
     useEffect(() => {
-        if (props.currentEventId === null) {
-            props.setLoading(false);
-        } else if (eventData === null || props.currentEventId !== eventData.id) {
-            props.setLoading(true);
-            apiFetch({ path: '/wpoe/v1/admin/events/' + props.currentEventId }).then((result) => {
+        if (eventId === 'new') {
+            setLoading(false);
+        } else {
+            setLoading(true);
+            apiFetch({ path: '/wpoe/v1/admin/events/' + eventId }).then((result) => {
                 const event = result as EventConfiguration;
                 setEventData(event);
                 setEventName(event.name);
@@ -32,7 +36,7 @@ const EditEvent = (props: EditEventProps) => {
                 setAutoremove(event.autoremove);
                 setFormFields(event.formFields);
                 setCurrentFieldIndex(event.formFields.length);
-                props.setLoading(false);
+                setLoading(false);
             });
         }
     }, []);
@@ -69,13 +73,17 @@ const EditEvent = (props: EditEventProps) => {
         setCurrentFieldIndex(currentFieldIndex + 1);
     }
 
-    if (props.loading) {
+    function back() {
+        navigate('/');
+    }
+
+    if (loading) {
         return <Loading />;
     }
 
     return (
         <div>
-            <h1>{__('Edit event', 'wp-open-events')}</h1>
+            <h1>{eventId === 'new' ? __('Create event', 'wp-open-events') : __('Edit event', 'wp-open-events')}</h1>
             <TextControl
                 label={__('Name', 'wp-open-events')}
                 onChange={setEventName}
@@ -129,7 +137,7 @@ const EditEvent = (props: EditEventProps) => {
                 {__('Save', 'wp-open-events')}
             </Button>
             &nbsp;
-            <Button onClick={props.toggleEditing} variant='secondary'>
+            <Button onClick={back} variant='secondary'>
                 {__('Back', 'wp-open-events')}
             </Button>
 
