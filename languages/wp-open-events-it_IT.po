@@ -1,0 +1,182 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: WP Open Events 0.0.1\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/wp-open-events\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2024-03-23T22:56:10+00:00\n"
+"PO-Revision-Date: 2024-03-24 01:48+0100\n"
+"Language: it_IT\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 3.2.2\n"
+"X-Domain: wp-open-events\n"
+
+#. Plugin Name of the plugin
+#: wp-open-events.php
+msgid "WP Open Events"
+msgstr "WP Open Events"
+
+#. Description of the plugin
+#: wp-open-events.php
+msgid "Open source plugin to manage event registration forms"
+msgstr "Plugin open-source per gestire moduli di registrazione ad eventi"
+
+#. Author of the plugin
+#: wp-open-events.php
+msgid "Sonia Zorba"
+msgstr ""
+
+#. Author URI of the plugin
+#: wp-open-events.php
+msgid "https://github.com/zonia3000"
+msgstr ""
+
+#: classes/create-admin-menu.php:9
+msgid "Events"
+msgstr "Eventi"
+
+#: classes/create-admin-menu.php:20
+#: js/build/components/settings.js:1
+#: js/build/components/settings.js:78
+msgid "Settings"
+msgstr "Opzioni"
+
+#: js/build/block/index.js:1
+#: js/build/components/dashboard.js:1
+#: js/build/components/users.js:1
+msgid "Loading..."
+msgstr "Caricamento..."
+
+#: js/build/block/index.js:1
+#: js/build/components/users.js:1
+msgid "Register to the event"
+msgstr "Registrati all'evento"
+
+#: js/build/block/index.js:1
+#: js/src/block/src/edit.js:20
+msgid "Select..."
+msgstr "Seleziona..."
+
+#: js/build/block/index.js:1
+#: js/src/block/src/edit.js:49
+msgid "Select event"
+msgstr "Seleziona evento"
+
+#: js/build/components/dashboard.js:1
+msgid "Label"
+msgstr "Etichetta"
+
+#: js/build/components/dashboard.js:1
+msgid "Description"
+msgstr "Descrizione"
+
+#: js/build/components/dashboard.js:1
+msgid "Required"
+msgstr "Richiesto"
+
+#: js/build/components/dashboard.js:1
+msgid "Option"
+msgstr "Opzione"
+
+#: js/build/components/dashboard.js:1
+msgid "Add option"
+msgstr "Aggiungi opzione"
+
+#: js/build/components/dashboard.js:1
+msgid "Add field"
+msgstr "Aggiungi campo"
+
+#: js/build/components/dashboard.js:1
+msgid "Select field type"
+msgstr "Seleziona tipologia del campo"
+
+#: js/build/components/dashboard.js:1
+msgid "Text"
+msgstr "Testo"
+
+#: js/build/components/dashboard.js:1
+msgid "E-mail"
+msgstr "E-mail"
+
+#: js/build/components/dashboard.js:1
+msgid "Radio"
+msgstr "Radio"
+
+#: js/build/components/dashboard.js:1
+msgid "Save"
+msgstr "Salva"
+
+#: js/build/components/dashboard.js:1
+msgid "Cancel"
+msgstr "Annulla"
+
+#: js/build/components/dashboard.js:1
+msgid "Edit event"
+msgstr "Modifica evento"
+
+#: js/build/components/dashboard.js:1
+msgid "Name"
+msgstr "Nome"
+
+#: js/build/components/dashboard.js:1
+msgid "Date"
+msgstr "Data"
+
+#: js/build/components/dashboard.js:1
+msgid "Event form"
+msgstr "Modulo dell'evento"
+
+#: js/build/components/dashboard.js:1
+msgid "Your form is empty. Add some fields."
+msgstr "Il tuo modulo è vuoto. Aggiungi alcuni campi."
+
+#: js/build/components/dashboard.js:1
+msgid "Type"
+msgstr "Tipo"
+
+#: js/build/components/dashboard.js:1
+msgid "Yes"
+msgstr "Sì"
+
+#: js/build/components/dashboard.js:1
+msgid "No"
+msgstr "No"
+
+#: js/build/components/dashboard.js:1
+msgid "Add form field"
+msgstr "Aggiungi campo al modulo"
+
+#: js/build/components/dashboard.js:1
+msgid "Autoremove user data after the event"
+msgstr "Rimuovi automaticamente i dati degli utenti al termine dell'evento"
+
+#: js/build/components/dashboard.js:1
+msgid "Back"
+msgstr "Indietro"
+
+#: js/build/components/dashboard.js:1
+msgid "No events found"
+msgstr "Nessun evento trovato"
+
+#: js/build/components/dashboard.js:1
+msgid "Your events"
+msgstr "I tuoi eventi"
+
+#: js/build/block/block.json
+#: js/src/block/src/block.json
+msgctxt "block title"
+msgid "WP Open Event Form"
+msgstr "Modulo WP Open Event"
+
+#: js/build/block/block.json
+#: js/src/block/src/block.json
+msgctxt "block description"
+msgid "WP Open Event Form"
+msgstr "Modulo WP Open Event"
+
+#: js/build/components/dashboard.js:1
+msgid "Add event"
+msgstr "Aggiungi evento"

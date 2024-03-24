@@ -14,11 +14,12 @@ class WPOE_Form
 
     public static function render_block(array $properties)
     {
-        if (!isset($properties['eventId'])) {
-            return 'NULL ' . $properties['eventId'];
+        if (isset($properties['eventId'])) {
+            $event_id = $properties['eventId'];
+        } else {
+            $event_id = '';
         }
-        WPOE_Form::enqueue_scripts();
-        $event_id = $properties['eventId'];
+        WPOE_Form::enqueue_scripts();        
         return '<div id="wpoe-form" data-event-id="' . $event_id . '"></div>';
     }
 
@@ -36,7 +37,7 @@ class WPOE_Form
 
         wp_enqueue_style('wp-components');
 
-        wp_set_script_translations($script, 'wp-open-events', WPOE_PLUGIN_DIR . '/languages');
+        wp_set_script_translations($script, 'wp-open-events', WPOE_PLUGIN_DIR . 'languages');
 
         wp_localize_script(
             $script,
