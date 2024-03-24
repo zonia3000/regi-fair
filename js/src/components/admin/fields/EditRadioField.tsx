@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Button, TextControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import EditTextField from './EditTextField';
-import { EditRadioFieldProps } from '../../../classes/components-props';
+import { EditRadioFieldProps } from '../../classes/components-props';
 
 const EditRadioField = (props: EditRadioFieldProps) => {
 
@@ -23,6 +23,7 @@ const EditRadioField = (props: EditRadioFieldProps) => {
 
     const optionsList = options.map((option, index) => {
         return (<TextControl
+            key={index}
             label={__('Option', 'wp-open-events') + ' ' + (index + 1)}
             onChange={value => saveFieldOptions(value, index)}
             value={option}
@@ -37,7 +38,7 @@ const EditRadioField = (props: EditRadioFieldProps) => {
             <Button onClick={addOption} variant='primary'>
                 {__('Add option', 'wp-open-events')}
             </Button>
-            <br/>
+            <br />
         </>
     );
 }

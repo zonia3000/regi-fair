@@ -9,6 +9,11 @@ export type FormProps = LoadingComponent & {
     admin: boolean
 }
 
+export type EditFormFieldsProps = {
+    formFields: Field[]
+    setFormFields: (value: Field[]) => void
+}
+
 export type TextFieldProps = {
     label: string
     value: string,

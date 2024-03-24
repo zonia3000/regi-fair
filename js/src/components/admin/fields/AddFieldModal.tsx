@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Button, Modal } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import EditTextField from './fields/EditTextField';
-import EditRadioField from './fields/EditRadioField';
+import EditTextField from './EditTextField';
+import EditRadioField from './EditRadioField';
 import { AddFieldModalProps } from '../../classes/components-props';
 
 const AddFieldModal = (props: AddFieldModalProps) => {

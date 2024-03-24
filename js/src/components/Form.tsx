@@ -46,6 +46,7 @@ const Form = (props: FormProps) => {
                     case 'text':
                     case 'email':
                         return <TextField
+                            key={index}
                             label={field.label} disabled={props.disabled} type={field.fieldType}
                             value={fields[index]} setValue={(v: string) => setFieldValue(v, index)} />
                 }

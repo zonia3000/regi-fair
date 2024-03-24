@@ -47,7 +47,7 @@ const ListEvents = () => {
                     </thead>
                     <tbody>
                         {events.map((e: EventConfiguration) => {
-                            return (<tr>
+                            return (<tr key={e.id}>
                                 <td>
                                     <Link to={`/event/${e.id}`}>{e.name}</Link>
                                 </td>

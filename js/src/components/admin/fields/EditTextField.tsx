@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { TextControl, CheckboxControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { EditTextFieldProps } from '../../../classes/components-props';
+import { EditTextFieldProps } from '../../classes/components-props';
 
 const EditTextField = (props: EditTextFieldProps) => {
 
