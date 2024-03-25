@@ -58,7 +58,7 @@ class WPOE_DAO
         $query = $wpdb->prepare("SELECT e.id, e.name,
             f.id AS field_id, f.label, f.type, f.description, f.required, f.extra, f.field_index
             FROM " . WPOE_DB::get_table_name('event') . " e
-            JOIN " . WPOE_DB::get_table_name('event_form_field') . " f ON f.event_id = e.id
+            LEFT JOIN " . WPOE_DB::get_table_name('event_form_field') . " f ON f.event_id = e.id
             WHERE e.id = %d ORDER BY f.field_index", $event_id);
 
         $results = $wpdb->get_results($query, ARRAY_A);
@@ -80,15 +80,17 @@ class WPOE_DAO
     {
         $formFields = [];
         foreach ($results as $result) {
-            $field = new FormField();
-            $field->id = $result['field_id'];
-            $field->label = $result['label'];
-            $field->fieldType = $result['type'];
-            $field->description = $result['description'];
-            $field->required = (bool) $result['required'];
-            $field->extra = $result['extra'];
-            $field->order = (int) $result['field_index'];
-            $formFields[] = $field;
+            if ($result['field_id'] !== null) {
+                $field = new FormField();
+                $field->id = $result['field_id'];
+                $field->label = $result['label'];
+                $field->fieldType = $result['type'];
+                $field->description = $result['description'];
+                $field->required = (bool) $result['required'];
+                $field->extra = $result['extra'];
+                $field->order = (int) $result['field_index'];
+                $formFields[] = $field;
+            }
         }
         return $formFields;
     }
@@ -103,15 +105,15 @@ class WPOE_DAO
             // Insert the event
             $wpdb->insert(
                 WPOE_DB::get_table_name('event'),
-                array(
+                [
                     'name' => $event->name,
                     'date' => $event->date,
                     'autoremove_submissions' => $event->autoremove,
                     'autoremove_submissions_period' => $event->autoremovePeriod,
                     'max_participants' => $event->maxParticipants,
                     'waiting_list' => $event->waitingList,
-                ),
-                array('%s', '%s', '%d', '%d')
+                ],
+                ['%s', '%s', '%d', '%d']
             );
 
             // Get the ID of the inserted event
@@ -122,7 +124,7 @@ class WPOE_DAO
             foreach ($event->formFields as $form_field) {
                 $wpdb->insert(
                     WPOE_DB::get_table_name('event_form_field'),
-                    array(
+                    [
                         'event_id' => $event_id,
                         'label' => $form_field['label'],
                         'type' => $form_field['fieldType'],
@@ -130,8 +132,8 @@ class WPOE_DAO
                         'required' => $form_field['required'],
                         'extra' => $form_field['extra'],
                         'field_index' => $i
-                    ),
-                    array('%d', '%s', '%s', '%d', '%s')
+                    ],
+                    ['%d', '%s', '%s', '%d', '%s']
                 );
                 $i++;
             }
@@ -164,6 +166,32 @@ class WPOE_DAO
         return $events;
     }
 
+    public static function get_event_template(int $event_template_id): ?EventTemplate
+    {
+        global $wpdb;
+
+        $query = $wpdb->prepare("SELECT t.id, t.name, t.autoremove_submissions, t.autoremove_submissions_period,
+            f.id AS field_id, f.label, f.type, f.description, f.required, f.extra, f.field_index
+            FROM " . WPOE_DB::get_table_name('event_template') . " t
+            LEFT JOIN " . WPOE_DB::get_table_name('event_template_form_field') . " f ON f.template_id = t.id
+            WHERE t.id = %d ORDER BY f.field_index", $event_template_id);
+
+        $results = $wpdb->get_results($query, ARRAY_A);
+
+        if (count($results) === 0) {
+            return null;
+        }
+
+        $template = new EventTemplate();
+        $template->id = (int) $results[0]['id'];
+        $template->name = $results[0]['name'];
+        $template->autoremove = (bool) $results[0]['autoremove_submissions'];
+        $template->autoremovePeriod = $results[0]['autoremove_submissions_period'];
+        $template->formFields = WPOE_DAO::load_form_fields($results);
+
+        return $template;
+    }
+
     public static function create_event_template(EventTemplate $event_template): int
     {
         global $wpdb;
@@ -173,25 +201,25 @@ class WPOE_DAO
         try {
             // Insert the event
             $wpdb->insert(
-                WPOE_DB::get_table_name('event'),
-                array(
+                WPOE_DB::get_table_name('event_template'),
+                [
                     'name' => $event_template->name,
                     'autoremove_submissions' => $event_template->autoremove,
                     'autoremove_submissions_period' => $event_template->autoremovePeriod,
                     'waiting_list' => $event_template->waitingList,
-                ),
-                array('%s', '%s', '%d', '%d')
+                ],
+                ['%s', '%s', '%d', '%d']
             );
 
-            // Get the ID of the inserted event
+            // Get the ID of the inserted template
             $event_template_id = $wpdb->insert_id;
 
             // Insert the form fields
             $i = 0;
             foreach ($event_template->formFields as $form_field) {
                 $wpdb->insert(
-                    WPOE_DB::get_table_name('event_form_field'),
-                    array(
+                    WPOE_DB::get_table_name('event_template_form_field'),
+                    [
                         'template_id' => $event_template_id,
                         'label' => $form_field['label'],
                         'type' => $form_field['fieldType'],
@@ -199,8 +227,8 @@ class WPOE_DAO
                         'required' => $form_field['required'],
                         'extra' => $form_field['extra'],
                         'field_index' => $i
-                    ),
-                    array('%d', '%s', '%s', '%d', '%s')
+                    ],
+                    ['%d', '%s', '%s', '%d', '%s']
                 );
                 $i++;
             }
@@ -214,6 +242,23 @@ class WPOE_DAO
         }
     }
 
+    public static function delete_event_template(int $event_template_id): void
+    {
+        global $wpdb;
+
+        $wpdb->query('START TRANSACTION');
+
+        try {
+            $wpdb->delete(WPOE_DB::get_table_name('event_template_form_field'), ['template_id' => $event_template_id], ['%d']);
+            $wpdb->delete(WPOE_DB::get_table_name('event_template'), ['id' => $event_template_id], ['%d']);
+
+            $wpdb->query('COMMIT');
+        } catch (Exception $e) {
+            $wpdb->query('ROLLBACK');
+            die ('Error deleting event template');
+        }
+    }
+
     public static function register_to_event(int $event_id, ?string $registration_token, array $values): ?int
     {
         global $wpdb;
@@ -223,11 +268,11 @@ class WPOE_DAO
         try {
             $wpdb->insert(
                 WPOE_DB::get_table_name('event_registration'),
-                array(
+                [
                     'event_id' => $event_id,
                     'registration_token' => $registration_token,
-                ),
-                array('%d', '%s', '%s')
+                ],
+                ['%d', '%s', '%s']
             );
 
             $registration_id = $wpdb->insert_id;
@@ -235,12 +280,12 @@ class WPOE_DAO
             foreach ($values as $key => $value) {
                 $wpdb->insert(
                     WPOE_DB::get_table_name('event_registration_value'),
-                    array(
+                    [
                         'registration_id' => $registration_id,
                         'field_key' => $key,
                         'field_value' => $value,
-                    ),
-                    array('%d', '%s', '%s')
+                    ],
+                    ['%d', '%s', '%s']
                 );
             }
 

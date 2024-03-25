@@ -55,7 +55,7 @@ class WPOE_DB_Setup
           extra text NULL,
           field_index int NOT NULL,
           PRIMARY KEY  (id),
-          FOREIGN KEY (event_id) REFERENCES $event_template_table (id)
+          FOREIGN KEY (template_id) REFERENCES $event_template_table (id)
         ");
 
         $event_registration_table = WPOE_DB_Setup::create_table('event_registration', "

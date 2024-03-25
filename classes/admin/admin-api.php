@@ -82,6 +82,22 @@ class WPOE_Admin_API
 
         register_rest_route(
             'wpoe/v1',
+            '/admin/templates/(?P<id>\d+)',
+            [
+                'methods' => WP_REST_Server::READABLE,
+                'args' => [
+                    'id' => array(
+                        'type' => 'integer',
+                        'sanitize_callback' => 'absint'
+                    ),
+                ],
+                'permission_callback' => ['WPOE_Admin_API', 'can_manage_options'],
+                'callback' => ['WPOE_Admin_API', 'get_event_template'],
+            ]
+        );
+
+        register_rest_route(
+            'wpoe/v1',
             '/admin/templates',
             [
                 'methods' => 'POST',
@@ -113,6 +129,22 @@ class WPOE_Admin_API
                         'sanitize_callback' => 'rest_sanitize_request_arg'
                     )
                 ]
+            ]
+        );
+
+        register_rest_route(
+            'wpoe/v1',
+            '/admin/templates/(?P<id>\d+)',
+            [
+                'methods' => WP_REST_Server::DELETABLE,
+                'args' => [
+                    'id' => array(
+                        'type' => 'integer',
+                        'sanitize_callback' => 'absint'
+                    ),
+                ],
+                'permission_callback' => ['WPOE_Admin_API', 'can_manage_options'],
+                'callback' => ['WPOE_Admin_API', 'delete_event_template'],
             ]
         );
     }
@@ -155,8 +187,16 @@ class WPOE_Admin_API
         wp_die();
     }
 
-    public static function list_event_templates(WP_REST_Request $request) {
+    public static function list_event_templates(WP_REST_Request $request)
+    {
         wp_send_json(WPOE_DAO::list_event_templates());
+        wp_die();
+    }
+
+    public static function get_event_template(WP_REST_Request $request)
+    {
+        $id = (int) $request->get_param('id');
+        wp_send_json(WPOE_DAO::get_event_template($id));
         wp_die();
     }
 
@@ -180,9 +220,16 @@ class WPOE_Admin_API
             $event_template->formFields = (array) $request->get_param('formFields');
         }
 
-        $event_id = WPOE_DAO::create_event($event_template);
+        $event_id = WPOE_DAO::create_event_template($event_template);
         wp_send_json(['id' => $event_id]);
         wp_die();
+    }
+
+    public static function delete_event_template(WP_REST_Request $request)
+    {
+        $id = (int) $request->get_param('id');
+        WPOE_DAO::delete_event_template($id);
+        return new WP_REST_Response(null, 204);
     }
 
     public static function can_manage_options()

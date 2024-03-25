@@ -1,19 +1,21 @@
 import React, { useEffect, useState } from 'react';
-import { __ } from '@wordpress/i18n';
+import { sprintf, __, _x } from '@wordpress/i18n';
 import { Link, useNavigate } from 'react-router-dom';
 import apiFetch from '@wordpress/api-fetch';
 import Loading from '../../Loading';
-import { Button } from '@wordpress/components';
+import { Button, Modal } from '@wordpress/components';
 
 const ListTemplates = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
-  const [templates, setEvents] = useState([] as TemplateConfiguration[]);
+  const [templates, setTemplates] = useState([] as TemplateConfiguration[]);
+  const [templateToDelete, setTemplateToDelete] = useState(null);
+  const [showDeleteTemplateModal, setShowDeleteTemplateModal] = useState(false);
 
   useEffect(() => {
     setLoading(true);
     apiFetch({ path: '/wpoe/v1/admin/templates' }).then((result) => {
-      setEvents(result as TemplateConfiguration[]);
+      setTemplates(result as TemplateConfiguration[]);
       setLoading(false);
     });
   }, []);
@@ -22,13 +24,32 @@ const ListTemplates = () => {
     navigate('/template/new');
   }
 
+  const openDeleteTemplateModal = (template: TemplateConfiguration) => {
+    setTemplateToDelete(template);
+    setShowDeleteTemplateModal(true);
+  };
+
+  const closeDeleteTemplateModal = () => {
+    setTemplateToDelete(null);
+  }
+
+  const confirmDeleteTemplate = () => {
+    apiFetch({
+      path: `/wpoe/v1/admin/templates/${templateToDelete.id}`,
+      method: 'DELETE'
+    }).then(() => {
+      setTemplates(templates.filter(t => t.id !== templateToDelete.id));
+      setTemplateToDelete(null);
+    });
+  }
+
   if (loading) {
     return <Loading />;
   }
 
   return (
     <div>
-      <h2>{__('Event templates', 'wp-open-events')}</h2>
+      <h1 className='wp-heading-inline'>{__('Event templates', 'wp-open-events')} &nbsp;</h1>
       <Button onClick={newTemplate} variant='primary'>
         {__('Add event template', 'wp-open-events')}
       </Button>
@@ -43,18 +64,33 @@ const ListTemplates = () => {
             </tr>
           </thead>
           <tbody>
-            {templates.map((e: TemplateConfiguration) => {
-              return (<tr key={e.id}>
+            {templates.map((t: TemplateConfiguration) => {
+              return (<tr key={t.id}>
                 <td>
-                  <Link to={`/template/${e.id}`}>{e.name}</Link>
+                  <Link to={`/template/${t.id}`}>{t.name}</Link>
                 </td>
-                <td></td>
+                <td>
+                  <Button variant='primary' onClick={() => openDeleteTemplateModal(t)}>Delete</Button>
+                </td>
               </tr>)
             })}
           </tbody>
         </table>
       }
       <br />
+
+      {templateToDelete !== null &&
+        <Modal title={__('Delete template', 'wp-open-events')} onRequestClose={closeDeleteTemplateModal}>
+          <p>{sprintf(_x('Do you really want to delete the template %s?', 'Name of the template', 'wp-open-events'), templateToDelete.name)}</p>
+          <Button variant='primary' onClick={confirmDeleteTemplate}>
+            {__('Confirm', 'wp-open-events')}
+          </Button>
+          &nbsp;
+          <Button variant='secondary' onClick={closeDeleteTemplateModal}>
+            {__('Cancel', 'wp-open-events')}
+          </Button>
+        </Modal>
+      }
     </div>
   );
 }
