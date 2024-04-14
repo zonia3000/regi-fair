@@ -2,6 +2,10 @@
 
 require_once (WPOE_PLUGIN_DIR . 'classes/db.php');
 
+// Errors are explicitly checked and converted to exceptions in order to preserve API JSON output
+// (otherwise <div id="error"> could be printed at the beginning of the response payload)
+$wpdb->hide_errors();
+
 class WPOE_DAO
 {
     public static function list_events(): array
@@ -12,6 +16,10 @@ class WPOE_DAO
             FROM " . WPOE_DB::get_table_name('event') . " e ORDER BY e.date");
 
         $results = $wpdb->get_results($query, ARRAY_A);
+
+        if ($wpdb->last_error) {
+            throw new Exception($wpdb->last_error);
+        }
 
         $events = [];
         foreach ($results as $result) {
@@ -35,6 +43,10 @@ class WPOE_DAO
             WHERE e.id = %d ORDER BY f.field_index", $event_id);
 
         $results = $wpdb->get_results($query, ARRAY_A);
+
+        if ($wpdb->last_error) {
+            throw new Exception($wpdb->last_error);
+        }
 
         if (count($results) === 0) {
             return null;
@@ -62,6 +74,10 @@ class WPOE_DAO
             WHERE e.id = %d ORDER BY f.field_index", $event_id);
 
         $results = $wpdb->get_results($query, ARRAY_A);
+
+        if ($wpdb->last_error) {
+            throw new Exception($wpdb->last_error);
+        }
 
         if (count($results) === 0) {
             return null;
@@ -101,50 +117,50 @@ class WPOE_DAO
 
         $wpdb->query('START TRANSACTION');
 
-        try {
-            // Insert the event
+        // Insert the event
+        $wpdb->insert(
+            WPOE_DB::get_table_name('event'),
+            [
+                'name' => $event->name,
+                'date' => $event->date,
+                'autoremove_submissions' => $event->autoremove,
+                'autoremove_submissions_period' => $event->autoremovePeriod,
+                'max_participants' => $event->maxParticipants,
+                'waiting_list' => $event->waitingList,
+            ],
+            ['%s', '%s', '%d', '%d']
+        );
+
+        // Get the ID of the inserted event
+        $event_id = $wpdb->insert_id;
+
+        // Insert the form fields
+        $i = 0;
+        foreach ($event->formFields as $form_field) {
             $wpdb->insert(
-                WPOE_DB::get_table_name('event'),
+                WPOE_DB::get_table_name('event_form_field'),
                 [
-                    'name' => $event->name,
-                    'date' => $event->date,
-                    'autoremove_submissions' => $event->autoremove,
-                    'autoremove_submissions_period' => $event->autoremovePeriod,
-                    'max_participants' => $event->maxParticipants,
-                    'waiting_list' => $event->waitingList,
+                    'event_id' => $event_id,
+                    'label' => $form_field['label'],
+                    'type' => $form_field['fieldType'],
+                    'description' => $form_field['description'],
+                    'required' => $form_field['required'],
+                    'extra' => $form_field['extra'],
+                    'field_index' => $i
                 ],
-                ['%s', '%s', '%d', '%d']
+                ['%d', '%s', '%s', '%d', '%s']
             );
-
-            // Get the ID of the inserted event
-            $event_id = $wpdb->insert_id;
-
-            // Insert the form fields
-            $i = 0;
-            foreach ($event->formFields as $form_field) {
-                $wpdb->insert(
-                    WPOE_DB::get_table_name('event_form_field'),
-                    [
-                        'event_id' => $event_id,
-                        'label' => $form_field['label'],
-                        'type' => $form_field['fieldType'],
-                        'description' => $form_field['description'],
-                        'required' => $form_field['required'],
-                        'extra' => $form_field['extra'],
-                        'field_index' => $i
-                    ],
-                    ['%d', '%s', '%s', '%d', '%s']
-                );
-                $i++;
-            }
-
-            $wpdb->query('COMMIT');
-
-            return $event_id;
-        } catch (Exception $e) {
-            $wpdb->query('ROLLBACK');
-            die ('Error inserting event');
+            $i++;
         }
+
+        if ($wpdb->last_error) {
+            $wpdb->query('ROLLBACK');
+            throw new Exception($wpdb->last_error);
+        } else {
+            $wpdb->query('COMMIT');
+        }
+
+        return $event_id;
     }
 
     public static function list_event_templates(): array
@@ -155,6 +171,10 @@ class WPOE_DAO
             FROM " . WPOE_DB::get_table_name('event_template') . " t ORDER BY t.id");
 
         $results = $wpdb->get_results($query, ARRAY_A);
+
+        if ($wpdb->last_error) {
+            throw new Exception($wpdb->last_error);
+        }
 
         $events = [];
         foreach ($results as $result) {
@@ -178,6 +198,10 @@ class WPOE_DAO
 
         $results = $wpdb->get_results($query, ARRAY_A);
 
+        if ($wpdb->last_error) {
+            throw new Exception($wpdb->last_error);
+        }
+
         if (count($results) === 0) {
             return null;
         }
@@ -198,48 +222,48 @@ class WPOE_DAO
 
         $wpdb->query('START TRANSACTION');
 
-        try {
-            // Insert the event
+        // Insert the event
+        $wpdb->insert(
+            WPOE_DB::get_table_name('event_template'),
+            [
+                'name' => $event_template->name,
+                'autoremove_submissions' => $event_template->autoremove,
+                'autoremove_submissions_period' => $event_template->autoremovePeriod,
+                'waiting_list' => $event_template->waitingList,
+            ],
+            ['%s', '%s', '%d', '%d']
+        );
+
+        // Get the ID of the inserted template
+        $event_template_id = $wpdb->insert_id;
+
+        // Insert the form fields
+        $i = 0;
+        foreach ($event_template->formFields as $form_field) {
             $wpdb->insert(
-                WPOE_DB::get_table_name('event_template'),
+                WPOE_DB::get_table_name('event_template_form_field'),
                 [
-                    'name' => $event_template->name,
-                    'autoremove_submissions' => $event_template->autoremove,
-                    'autoremove_submissions_period' => $event_template->autoremovePeriod,
-                    'waiting_list' => $event_template->waitingList,
+                    'template_id' => $event_template_id,
+                    'label' => $form_field['label'],
+                    'type' => $form_field['fieldType'],
+                    'description' => $form_field['description'],
+                    'required' => $form_field['required'],
+                    'extra' => $form_field['extra'],
+                    'field_index' => $i
                 ],
-                ['%s', '%s', '%d', '%d']
+                ['%d', '%s', '%s', '%d', '%s']
             );
-
-            // Get the ID of the inserted template
-            $event_template_id = $wpdb->insert_id;
-
-            // Insert the form fields
-            $i = 0;
-            foreach ($event_template->formFields as $form_field) {
-                $wpdb->insert(
-                    WPOE_DB::get_table_name('event_template_form_field'),
-                    [
-                        'template_id' => $event_template_id,
-                        'label' => $form_field['label'],
-                        'type' => $form_field['fieldType'],
-                        'description' => $form_field['description'],
-                        'required' => $form_field['required'],
-                        'extra' => $form_field['extra'],
-                        'field_index' => $i
-                    ],
-                    ['%d', '%s', '%s', '%d', '%s']
-                );
-                $i++;
-            }
-
-            $wpdb->query('COMMIT');
-
-            return $event_template_id;
-        } catch (Exception $e) {
-            $wpdb->query('ROLLBACK');
-            die ('Error inserting event template');
+            $i++;
         }
+
+        if ($wpdb->last_error) {
+            $wpdb->query('ROLLBACK');
+            throw new Exception($wpdb->last_error);
+        } else {
+            $wpdb->query('COMMIT');
+        }
+
+        return $event_template_id;
     }
 
     public static function delete_event_template(int $event_template_id): void
@@ -248,53 +272,51 @@ class WPOE_DAO
 
         $wpdb->query('START TRANSACTION');
 
-        try {
-            $wpdb->delete(WPOE_DB::get_table_name('event_template_form_field'), ['template_id' => $event_template_id], ['%d']);
-            $wpdb->delete(WPOE_DB::get_table_name('event_template'), ['id' => $event_template_id], ['%d']);
+        $wpdb->delete(WPOE_DB::get_table_name('event_template_form_field'), ['template_id' => $event_template_id], ['%d']);
+        $wpdb->delete(WPOE_DB::get_table_name('event_template'), ['id' => $event_template_id], ['%d']);
 
-            $wpdb->query('COMMIT');
-        } catch (Exception $e) {
+        if ($wpdb->last_error) {
             $wpdb->query('ROLLBACK');
-            die ('Error deleting event template');
+            throw new Exception($wpdb->last_error);
+        } else {
+            $wpdb->query('COMMIT');
         }
     }
 
-    public static function register_to_event(int $event_id, ?string $registration_token, array $values): ?int
+    public static function register_to_event(int $event_id, ?string $registration_token, array $values): void
     {
         global $wpdb;
 
         $wpdb->query('START TRANSACTION');
 
-        try {
+        $wpdb->insert(
+            WPOE_DB::get_table_name('event_registration'),
+            [
+                'event_id' => $event_id,
+                'registration_token' => $registration_token,
+            ],
+            ['%d', '%s', '%s']
+        );
+
+        $registration_id = $wpdb->insert_id;
+
+        foreach ($values as $key => $value) {
             $wpdb->insert(
-                WPOE_DB::get_table_name('event_registration'),
+                WPOE_DB::get_table_name('event_registration_value'),
                 [
-                    'event_id' => $event_id,
-                    'registration_token' => $registration_token,
+                    'registration_id' => $registration_id,
+                    'field_key' => $key,
+                    'field_value' => $value,
                 ],
                 ['%d', '%s', '%s']
             );
+        }
 
-            $registration_id = $wpdb->insert_id;
-
-            foreach ($values as $key => $value) {
-                $wpdb->insert(
-                    WPOE_DB::get_table_name('event_registration_value'),
-                    [
-                        'registration_id' => $registration_id,
-                        'field_key' => $key,
-                        'field_value' => $value,
-                    ],
-                    ['%d', '%s', '%s']
-                );
-            }
-
-            $wpdb->query('COMMIT');
-
-            return null;
-        } catch (Exception $e) {
+        if ($wpdb->last_error) {
             $wpdb->query('ROLLBACK');
-            die ('Error inserting submission');
+            throw new Exception($wpdb->last_error);
+        } else {
+            $wpdb->query('COMMIT');
         }
     }
 }

@@ -31,6 +31,8 @@ add_action('enqueue_block_editor_assets', function () {
 require_once (WPOE_PLUGIN_DIR . 'classes/event-form.php');
 add_action('init', ['WPOE_Form', 'init']);
 
+require_once (WPOE_PLUGIN_DIR . 'classes/api-utils.php');
+
 require_once (WPOE_PLUGIN_DIR . 'classes/admin/admin-api.php');
 add_action('rest_api_init', ['WPOE_Admin_API', 'init']);
 

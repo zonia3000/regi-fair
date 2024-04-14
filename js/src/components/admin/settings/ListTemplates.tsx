@@ -3,21 +3,26 @@ import { sprintf, __, _x } from '@wordpress/i18n';
 import { Link, useNavigate } from 'react-router-dom';
 import apiFetch from '@wordpress/api-fetch';
 import Loading from '../../Loading';
-import { Button, Modal } from '@wordpress/components';
+import { Button, Modal, Notice } from '@wordpress/components';
+import { extractError } from '../../utils';
 
 const ListTemplates = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [templates, setTemplates] = useState([] as TemplateConfiguration[]);
   const [templateToDelete, setTemplateToDelete] = useState(null);
-  const [showDeleteTemplateModal, setShowDeleteTemplateModal] = useState(false);
+  const [error, setError] = useState('');
+  const [deleteError, setDeleteError] = useState('');
 
   useEffect(() => {
     setLoading(true);
-    apiFetch({ path: '/wpoe/v1/admin/templates' }).then((result) => {
-      setTemplates(result as TemplateConfiguration[]);
-      setLoading(false);
-    });
+    apiFetch({ path: '/wpoe/v1/admin/templates' })
+      .then((result) => {
+        setTemplates(result as TemplateConfiguration[]);
+        setLoading(false);
+      }).catch(err => {
+        setError(extractError(err));
+      });
   }, []);
 
   function newTemplate() {
@@ -26,7 +31,6 @@ const ListTemplates = () => {
 
   const openDeleteTemplateModal = (template: TemplateConfiguration) => {
     setTemplateToDelete(template);
-    setShowDeleteTemplateModal(true);
   };
 
   const closeDeleteTemplateModal = () => {
@@ -40,6 +44,8 @@ const ListTemplates = () => {
     }).then(() => {
       setTemplates(templates.filter(t => t.id !== templateToDelete.id));
       setTemplateToDelete(null);
+    }).catch(err => {
+      setDeleteError(extractError(err));
     });
   }
 
@@ -79,9 +85,12 @@ const ListTemplates = () => {
       }
       <br />
 
+      {error && <Notice status='error'>{error}</Notice>}
+
       {templateToDelete !== null &&
         <Modal title={__('Delete template', 'wp-open-events')} onRequestClose={closeDeleteTemplateModal}>
           <p>{sprintf(_x('Do you really want to delete the template %s?', 'Name of the template', 'wp-open-events'), templateToDelete.name)}</p>
+          {deleteError && <Notice status='error'>{deleteError}</Notice>}
           <Button variant='primary' onClick={confirmDeleteTemplate}>
             {__('Confirm', 'wp-open-events')}
           </Button>

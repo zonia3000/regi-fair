@@ -13,7 +13,7 @@ class WPOE_Admin_API
             '/admin/events',
             [
                 'methods' => WP_REST_Server::READABLE,
-                'permission_callback' => ['WPOE_Admin_API', 'can_manage_options'],
+                'permission_callback' => ['WPOE_Admin_API', 'is_events_admin'],
                 'callback' => ['WPOE_Admin_API', 'list_events'],
             ]
         );
@@ -29,7 +29,7 @@ class WPOE_Admin_API
                         'sanitize_callback' => 'absint'
                     ),
                 ],
-                'permission_callback' => ['WPOE_Admin_API', 'can_manage_options'],
+                'permission_callback' => ['WPOE_Admin_API', 'is_events_admin'],
                 'callback' => ['WPOE_Admin_API', 'get_event'],
             ]
         );
@@ -39,7 +39,7 @@ class WPOE_Admin_API
             '/admin/events',
             [
                 'methods' => 'POST',
-                'permission_callback' => ['WPOE_Admin_API', 'can_manage_options'],
+                'permission_callback' => ['WPOE_Admin_API', 'is_events_admin'],
                 'callback' => ['WPOE_Admin_API', 'create_event'],
                 'args' => [
                     'name' => array(
@@ -75,7 +75,7 @@ class WPOE_Admin_API
             '/admin/templates',
             [
                 'methods' => WP_REST_Server::READABLE,
-                'permission_callback' => ['WPOE_Admin_API', 'can_manage_options'],
+                'permission_callback' => ['WPOE_Admin_API', 'is_events_admin'],
                 'callback' => ['WPOE_Admin_API', 'list_event_templates'],
             ]
         );
@@ -91,7 +91,7 @@ class WPOE_Admin_API
                         'sanitize_callback' => 'absint'
                     ),
                 ],
-                'permission_callback' => ['WPOE_Admin_API', 'can_manage_options'],
+                'permission_callback' => ['WPOE_Admin_API', 'is_events_admin'],
                 'callback' => ['WPOE_Admin_API', 'get_event_template'],
             ]
         );
@@ -101,7 +101,7 @@ class WPOE_Admin_API
             '/admin/templates',
             [
                 'methods' => 'POST',
-                'permission_callback' => ['WPOE_Admin_API', 'can_manage_options'],
+                'permission_callback' => ['WPOE_Admin_API', 'is_events_admin'],
                 'callback' => ['WPOE_Admin_API', 'create_event_template'],
                 'args' => [
                     'templateName' => array(
@@ -143,7 +143,7 @@ class WPOE_Admin_API
                         'sanitize_callback' => 'absint'
                     ),
                 ],
-                'permission_callback' => ['WPOE_Admin_API', 'can_manage_options'],
+                'permission_callback' => ['WPOE_Admin_API', 'is_events_admin'],
                 'callback' => ['WPOE_Admin_API', 'delete_event_template'],
             ]
         );
@@ -151,88 +151,114 @@ class WPOE_Admin_API
 
     public static function list_events()
     {
-        wp_send_json(WPOE_DAO::list_events());
-        wp_die();
+        try {
+            return new WP_REST_Response(WPOE_DAO::list_events());
+        } catch (Exception $ex) {
+            return generic_server_error($ex);
+        }
     }
 
     public static function get_event(WP_REST_Request $request)
     {
-        $id = (int) $request->get_param('id');
-        wp_send_json(WPOE_DAO::get_event($id));
-        wp_die();
+        try {
+            $id = (int) $request->get_param('id');
+            return new WP_REST_Response(WPOE_DAO::get_event($id));
+        } catch (Exception $ex) {
+            return generic_server_error($ex);
+        }
     }
 
     public static function create_event(WP_REST_Request $request)
     {
-        $event = new Event;
+        try {
+            $event = new Event;
 
-        if ($request->get_param('name') !== null) {
-            $event->name = $request->get_param('name');
-        }
-        if ($request->get_param('date') !== null) {
-            $event->date = $request->get_param('date');
-        }
-        if ($request->get_param('autoremove') !== null) {
-            $event->autoremove = (bool) $request->get_param('autoremove');
-        }
-        if ($request->get_param('autoremovePeriod') !== null) {
-            $event->autoremovePeriod = (int) $request->get_param('autoremovePeriod');
-        }
-        if ($request->get_param('formFields') !== null) {
-            $event->formFields = (array) $request->get_param('formFields');
-        }
+            if ($request->get_param('name') !== null) {
+                $event->name = $request->get_param('name');
+            }
+            if ($request->get_param('date') !== null) {
+                $event->date = $request->get_param('date');
+            }
+            if ($request->get_param('autoremove') !== null) {
+                $event->autoremove = (bool) $request->get_param('autoremove');
+            }
+            if ($request->get_param('autoremovePeriod') !== null) {
+                $event->autoremovePeriod = (int) $request->get_param('autoremovePeriod');
+            }
+            if ($request->get_param('formFields') !== null) {
+                $event->formFields = (array) $request->get_param('formFields');
+            }
 
-        $event_id = WPOE_DAO::create_event($event);
-        wp_send_json(['id' => $event_id]);
-        wp_die();
+            $event_id = WPOE_DAO::create_event($event);
+            return new WP_REST_Response(['id' => $event_id]);
+        } catch (Exception $ex) {
+            return generic_server_error($ex);
+        }
     }
 
     public static function list_event_templates(WP_REST_Request $request)
     {
-        wp_send_json(WPOE_DAO::list_event_templates());
-        wp_die();
+        try {
+            return new WP_REST_Response(WPOE_DAO::list_event_templates());
+        } catch (Exception $ex) {
+            return generic_server_error($ex);
+        }
     }
 
     public static function get_event_template(WP_REST_Request $request)
     {
-        $id = (int) $request->get_param('id');
-        wp_send_json(WPOE_DAO::get_event_template($id));
-        wp_die();
+        try {
+            $id = (int) $request->get_param('id');
+            $template = WPOE_DAO::get_event_template($id);
+            if ($template === null) {
+                return new WP_REST_Response(['error' => __('Event template not found', 'wp-open-events')], 404);
+            }
+            return new WP_REST_Response($template);
+        } catch (Exception $ex) {
+            return generic_server_error($ex);
+        }
     }
 
     public static function create_event_template(WP_REST_Request $request)
     {
-        $event_template = new EventTemplate;
+        try {
+            $event_template = new EventTemplate;
 
-        if ($request->get_param('name') !== null) {
-            $event_template->name = $request->get_param('name');
-        }
-        if ($request->get_param('autoremove') !== null) {
-            $event_template->autoremove = (bool) $request->get_param('autoremove');
-        }
-        if ($request->get_param('autoremovePeriod') !== null) {
-            $event_template->autoremovePeriod = (int) $request->get_param('autoremovePeriod');
-        }
-        if ($request->get_param('waitingList') !== null) {
-            $event_template->waitingList = (bool) $request->get_param('waitingList');
-        }
-        if ($request->get_param('formFields') !== null) {
-            $event_template->formFields = (array) $request->get_param('formFields');
-        }
+            if ($request->get_param('name') !== null) {
+                $event_template->name = $request->get_param('name');
+            }
+            if ($request->get_param('autoremove') !== null) {
+                $event_template->autoremove = (bool) $request->get_param('autoremove');
+            }
+            if ($request->get_param('autoremovePeriod') !== null) {
+                $event_template->autoremovePeriod = (int) $request->get_param('autoremovePeriod');
+            }
+            if ($request->get_param('waitingList') !== null) {
+                $event_template->waitingList = (bool) $request->get_param('waitingList');
+            }
+            if ($request->get_param('formFields') !== null) {
+                $event_template->formFields = (array) $request->get_param('formFields');
+            }
 
-        $event_id = WPOE_DAO::create_event_template($event_template);
-        wp_send_json(['id' => $event_id]);
-        wp_die();
+            $event_id = WPOE_DAO::create_event_template($event_template);
+            return new WP_REST_Response(['id' => $event_id]);
+        } catch (Exception $ex) {
+            return generic_server_error($ex);
+        }
     }
 
     public static function delete_event_template(WP_REST_Request $request)
     {
-        $id = (int) $request->get_param('id');
-        WPOE_DAO::delete_event_template($id);
-        return new WP_REST_Response(null, 204);
+        try {
+            $id = (int) $request->get_param('id');
+            WPOE_DAO::delete_event_template($id);
+            return new WP_REST_Response(null, 204);
+        } catch (Exception $ex) {
+            return generic_server_error($ex);
+        }
     }
 
-    public static function can_manage_options()
+    public static function is_events_admin()
     {
         return current_user_can('manage_options');
     }
