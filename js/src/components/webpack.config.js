@@ -2,7 +2,8 @@ const path = require('path')
 
 module.exports = {
     entry: {
-        dashboard: './admin/dashboard/index.tsx',
+        events: './admin/events/index.tsx',
+        templates: './admin/templates/index.tsx',
         settings: './admin/settings/index.tsx',
         users: './users/index.tsx'
     },

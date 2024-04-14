@@ -8,14 +8,25 @@ class WPOE_Admin_Panel_Pages
             __('Events'),
             __('Events', 'wp-open-events'),
             'manage_options',
-            'wpoe-dashboard',
+            'wpoe-events',
             function () {
-                echo '<div id="wpoe-dashboard"></div>';
+                echo '<div id="wpoe-events"></div>';
             }
         );
 
         add_submenu_page(
-            'wpoe-dashboard',
+            'wpoe-events',
+            'wpoe-templates',
+            __('Templates', 'wp-open-events'),
+            'manage_options',
+            'wpoe-templates',
+            function () {
+                echo '<div id="wpoe-templates"></div>';
+            }
+        );
+
+        add_submenu_page(
+            'wpoe-events',
             'wpoe-settings',
             __('Settings', 'wp-open-events'),
             'manage_options',
@@ -28,8 +39,10 @@ class WPOE_Admin_Panel_Pages
 
     public static function enqueue_scripts($hook)
     {
-        if (str_contains($hook, 'wpoe-dashboard')) {
-            $page = 'dashboard';
+        if (str_contains($hook, 'wpoe-events')) {
+            $page = 'events';
+        } else if (str_contains($hook, 'wpoe-templates')) {
+            $page = 'templates';
         } else if (str_contains($hook, 'wpoe-settings')) {
             $page = 'settings';
         } else {

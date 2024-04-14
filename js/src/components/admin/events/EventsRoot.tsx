@@ -4,7 +4,7 @@ import EditEvent from './EditEvent';
 import ListEvents from './ListEvents';
 import { Routes, Route, HashRouter as Router } from 'react-router-dom';
 
-const Dashboard = () => {
+const EventsRoot = () => {
     return (
         <div className='wrap'>
             <Router>
@@ -17,4 +17,4 @@ const Dashboard = () => {
     );
 }
 
-export default Dashboard;
+export default EventsRoot;
