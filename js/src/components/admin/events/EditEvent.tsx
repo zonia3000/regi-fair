@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { Button, TextControl, CheckboxControl, BaseControl } from '@wordpress/components';
+import { Button, TextControl, CheckboxControl, BaseControl, Notice } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import apiFetch from '@wordpress/api-fetch';
 import Loading from '../../Loading';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import EditFormFields from '../fields/EditFormFields';
+import { extractError } from '../../utils';
 
 const EditEvent = () => {
 
     const { eventId } = useParams();
+    let [searchParams,] = useSearchParams();
     const navigate = useNavigate();
 
     const [loading, setLoading] = useState(true);
@@ -17,25 +19,48 @@ const EditEvent = () => {
     const [date, setDate] = useState((new Date()).toString());
     const [autoremove, setAutoremove] = useState(true);
     const [formFields, setFormFields] = useState([]);
+    const [error, setError] = useState('');
 
     useEffect(() => {
         if (eventId === 'new') {
-            setLoading(false);
+            const templateId = searchParams.get('template');
+            if (templateId) {
+                apiFetch({ path: `/wpoe/v1/admin/templates/${templateId}` })
+                    .then((result) => {
+                        const template = result as TemplateConfiguration;
+                        setAutoremove(template.autoremove);
+                        setFormFields(template.formFields);
+                    })
+                    .catch(err => {
+                        setError(extractError(err));
+                    })
+                    .finally(() => {
+                        setLoading(false);
+                    });
+            } else {
+                setLoading(false);
+            }
         } else {
             setLoading(true);
-            apiFetch({ path: '/wpoe/v1/admin/events/' + eventId }).then((result) => {
-                const event = result as EventConfiguration;
-                setEventData(event);
-                setEventName(event.name);
-                setDate(event.date);
-                setAutoremove(event.autoremove);
-                setFormFields(event.formFields);
-                setLoading(false);
-            });
+            apiFetch({ path: `/wpoe/v1/admin/events/${eventId}` })
+                .then((result) => {
+                    const event = result as EventConfiguration;
+                    setEventData(event);
+                    setEventName(event.name);
+                    setDate(event.date);
+                    setAutoremove(event.autoremove);
+                    setFormFields(event.formFields);
+                })
+                .catch(err => {
+                    setError(extractError(err));
+                })
+                .finally(() => {
+                    setLoading(false);
+                });
         }
     }, []);
 
-    const save = () => {
+    async function save() {
         const event: EventConfiguration = {
             id: null,
             name: eventName,
@@ -46,14 +71,22 @@ const EditEvent = () => {
             maxParticipants: null,
             waitingList: false
         };
-        apiFetch({
-            path: '/wpoe/v1/admin/events',
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(event),
-        });
+        setLoading(true);
+        try {
+            await apiFetch({
+                path: '/wpoe/v1/admin/events',
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(event),
+            });
+            back();
+        } catch (err) {
+            setError(extractError(err));
+        } finally {
+            setLoading(false);
+        }
     };
 
     function parseDate() {
@@ -92,6 +125,8 @@ const EditEvent = () => {
             />
 
             <br /><hr />
+
+            {error && <Notice status='error'>{error}</Notice>}
 
             <Button onClick={save} variant='primary'>
                 {__('Save', 'wp-open-events')}

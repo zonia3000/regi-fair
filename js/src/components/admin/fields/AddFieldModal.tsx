@@ -10,13 +10,13 @@ const AddFieldModal = (props: AddFieldModalProps) => {
     const [fieldType, setFieldType] = useState(null as FieldType);
     const [field, setField] = useState(null as Field);
 
-    const close = () => {
+    function close() {
         props.setShowAddFieldModal(false);
         setFieldType(null);
         setField(null);
     }
 
-    const save = () => {
+    function save() {
         props.saveCurrentField(field);
         close();
     }

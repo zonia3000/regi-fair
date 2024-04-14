@@ -13,27 +13,27 @@ const Form = (props: FormProps) => {
     useEffect(() => {
         props.setLoading(true);
         const path = props.admin ? '/wpoe/v1/events/' : '/wpoe/v1/admin/events/';
-        apiFetch({ path: path + props.eventId }).then((result) => {
-            const eventConfig = result as EventConfiguration;
-            setEvent(eventConfig);
-            setFields(eventConfig.formFields.map(_ => ''));
-            props.setLoading(false);
-        });
+        apiFetch({ path: path + props.eventId })
+            .then((result) => {
+                const eventConfig = result as EventConfiguration;
+                setEvent(eventConfig);
+                setFields(eventConfig.formFields.map(_ => ''));
+                props.setLoading(false);
+            });
     }, []);
 
-    const setFieldValue = (newValue: string, index: number) => {
+    function setFieldValue(newValue: string, index: number) {
         setFields(fields.map((oldValue: string, i: number) => (index === i) ? newValue : oldValue));
     };
 
-    const submitForm = async () => {
-        apiFetch({
+    async function submitForm() {
+        const result = await apiFetch({
             path: '/wpoe/v1/events/' + props.eventId + '/register',
             method: 'POST',
             data: fields
-        }).then((result) => {
-            console.log(result);
         });
-    };
+        console.log(result);
+    }
 
     if (props.loading) {
         return <Loading />;

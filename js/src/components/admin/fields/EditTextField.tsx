@@ -19,7 +19,7 @@ const EditTextField = (props: EditTextFieldProps) => {
     }, []);
 
 
-    const saveFieldLabel = (value: string) => {
+    function saveFieldLabel(value: string) {
         setFieldLabel(value);
         props.setField({
             ...props.field,
@@ -27,7 +27,7 @@ const EditTextField = (props: EditTextFieldProps) => {
         });
     }
 
-    const saveFieldDescription = (value: string) => {
+    function saveFieldDescription(value: string) {
         setFieldDescription(value);
         props.setField({
             ...props.field,
@@ -35,7 +35,7 @@ const EditTextField = (props: EditTextFieldProps) => {
         });
     }
 
-    const saveFieldRequired = (value: boolean) => {
+    function saveFieldRequired(value: boolean) {
         setFieldRequired(value);
         props.setField({
             ...props.field,

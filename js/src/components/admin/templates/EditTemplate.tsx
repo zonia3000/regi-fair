@@ -22,21 +22,23 @@ const EditTemplate = () => {
       setLoading(false);
     } else {
       setLoading(true);
-      apiFetch({ path: '/wpoe/v1/admin/templates/' + templateId })
+      apiFetch({ path: `/wpoe/v1/admin/templates/${templateId}` })
         .then((result) => {
           const template = result as TemplateConfiguration;
           setTemplateName(template.name);
           setAutoremove(template.autoremove);
           setFormFields(template.formFields);
-          setLoading(false);
         })
         .catch(err => {
           setError(extractError(err));
+        })
+        .finally(() => {
+          setLoading(false);
         });
     }
   }, []);
 
-  const save = async () => {
+  async function save() {
     const template: TemplateConfiguration = {
       id: null,
       name: templateName,
@@ -45,6 +47,7 @@ const EditTemplate = () => {
       autoremovePeriod: 30,
       waitingList: false
     };
+    setLoading(true);
     try {
       await apiFetch({
         path: '/wpoe/v1/admin/templates',
@@ -57,6 +60,8 @@ const EditTemplate = () => {
       back();
     } catch (err) {
       setError(extractError(err));
+    } finally {
+      setLoading(false);
     }
   };
 

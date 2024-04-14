@@ -8,12 +8,12 @@ const EditRadioField = (props: EditRadioFieldProps) => {
 
     const [options, setOptions] = useState(['', '']);
 
-    const addOption = () => {
+    function addOption() {
         setOptions([...options, '']);
         console.log(options);
     };
 
-    const saveFieldOptions = (value: string, index: number) => {
+    function saveFieldOptions(value: string, index: number) {
         setOptions(options.map((o, i) => i === index ? value : o));
         props.setField({
             ...props.field,

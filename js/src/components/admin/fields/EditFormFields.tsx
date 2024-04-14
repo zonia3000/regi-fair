@@ -9,9 +9,11 @@ const EditFormFields = (props: EditFormFieldsProps) => {
   const [currentFieldIndex, setCurrentFieldIndex] = useState(props.formFields.length);
   const [showAddFieldModal, setShowAddFieldModal] = useState(false);
 
-  const openAddFieldModal = () => setShowAddFieldModal(true);
+  function openAddFieldModal() {
+    setShowAddFieldModal(true);
+  }
 
-  const saveCurrentField = (field: Field) => {
+  function saveCurrentField(field: Field) {
     const newFields = props.formFields.map((f, i) => i === currentFieldIndex ? field : f);
     if (props.formFields.length <= currentFieldIndex) {
       newFields.push(field);

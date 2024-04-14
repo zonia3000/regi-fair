@@ -3,7 +3,7 @@ import { sprintf, __, _x } from '@wordpress/i18n';
 import { Link, useNavigate } from 'react-router-dom';
 import apiFetch from '@wordpress/api-fetch';
 import Loading from '../../Loading';
-import { Button, Modal, Notice } from '@wordpress/components';
+import { Button, Modal, Notice, Spinner } from '@wordpress/components';
 import { extractError } from '../../utils';
 
 const ListTemplates = () => {
@@ -13,15 +13,19 @@ const ListTemplates = () => {
   const [templateToDelete, setTemplateToDelete] = useState(null);
   const [error, setError] = useState('');
   const [deleteError, setDeleteError] = useState('');
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     setLoading(true);
     apiFetch({ path: '/wpoe/v1/admin/templates' })
       .then((result) => {
         setTemplates(result as TemplateConfiguration[]);
-        setLoading(false);
-      }).catch(err => {
+      })
+      .catch(err => {
         setError(extractError(err));
+      })
+      .finally(() => {
+        setLoading(false);
       });
   }, []);
 
@@ -29,24 +33,28 @@ const ListTemplates = () => {
     navigate('/template/new');
   }
 
-  const openDeleteTemplateModal = (template: TemplateConfiguration) => {
+  function openDeleteTemplateModal(template: TemplateConfiguration) {
     setTemplateToDelete(template);
   };
 
-  const closeDeleteTemplateModal = () => {
+  function closeDeleteTemplateModal() {
     setTemplateToDelete(null);
   }
 
-  const confirmDeleteTemplate = () => {
-    apiFetch({
-      path: `/wpoe/v1/admin/templates/${templateToDelete.id}`,
-      method: 'DELETE'
-    }).then(() => {
+  async function confirmDeleteTemplate() {
+    setDeleting(true);
+    try {
+      await apiFetch({
+        path: `/wpoe/v1/admin/templates/${templateToDelete.id}`,
+        method: 'DELETE'
+      });
       setTemplates(templates.filter(t => t.id !== templateToDelete.id));
       setTemplateToDelete(null);
-    }).catch(err => {
+    } catch (err) {
       setDeleteError(extractError(err));
-    });
+    } finally {
+      setDeleting(false);
+    }
   }
 
   if (loading) {
@@ -91,7 +99,8 @@ const ListTemplates = () => {
         <Modal title={__('Delete template', 'wp-open-events')} onRequestClose={closeDeleteTemplateModal}>
           <p>{sprintf(_x('Do you really want to delete the template %s?', 'Name of the template', 'wp-open-events'), templateToDelete.name)}</p>
           {deleteError && <Notice status='error'>{deleteError}</Notice>}
-          <Button variant='primary' onClick={confirmDeleteTemplate}>
+          {deleting && <p><Spinner />{__('Deleting...', 'wp-open-events')}</p>}
+          <Button variant='primary' onClick={confirmDeleteTemplate} disabled={deleting}>
             {__('Confirm', 'wp-open-events')}
           </Button>
           &nbsp;
