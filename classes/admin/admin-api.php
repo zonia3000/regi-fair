@@ -72,6 +72,22 @@ class WPOE_Admin_API
 
         register_rest_route(
             'wpoe/v1',
+            '/admin/events/(?P<id>\d+)',
+            [
+                'methods' => WP_REST_Server::DELETABLE,
+                'args' => [
+                    'id' => array(
+                        'type' => 'integer',
+                        'sanitize_callback' => 'absint'
+                    ),
+                ],
+                'permission_callback' => ['WPOE_Admin_API', 'is_events_admin'],
+                'callback' => ['WPOE_Admin_API', 'delete_event'],
+            ]
+        );
+
+        register_rest_route(
+            'wpoe/v1',
             '/admin/templates',
             [
                 'methods' => WP_REST_Server::READABLE,
@@ -191,6 +207,17 @@ class WPOE_Admin_API
 
             $event_id = WPOE_DAO::create_event($event);
             return new WP_REST_Response(['id' => $event_id]);
+        } catch (Exception $ex) {
+            return generic_server_error($ex);
+        }
+    }
+
+    public static function delete_event(WP_REST_Request $request)
+    {
+        try {
+            $id = (int) $request->get_param('id');
+            WPOE_DAO::delete_event($id);
+            return new WP_REST_Response(null, 204);
         } catch (Exception $ex) {
             return generic_server_error($ex);
         }

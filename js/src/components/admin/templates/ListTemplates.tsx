@@ -35,7 +35,7 @@ const ListTemplates = () => {
 
   function openDeleteTemplateModal(template: TemplateConfiguration) {
     setTemplateToDelete(template);
-  };
+  }
 
   function closeDeleteTemplateModal() {
     setTemplateToDelete(null);

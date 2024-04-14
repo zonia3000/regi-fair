@@ -163,6 +163,27 @@ class WPOE_DAO
         return $event_id;
     }
 
+    public static function delete_event(int $event_id): void
+    {
+        global $wpdb;
+
+        $wpdb->query('START TRANSACTION');
+
+        $wpdb->query($wpdb->prepare('DELETE FROM ' . WPOE_DB::get_table_name('event_registration_value') . ' rv JOIN '
+            . WPOE_DB::get_table_name('event_registration') . ' r ON rv.registration_id = r.id WHERE r.event_id = %d', $event_id));
+
+        $wpdb->delete(WPOE_DB::get_table_name('event_registration'), ['event_id' => $event_id], ['%d']);
+        $wpdb->delete(WPOE_DB::get_table_name('event_form_field'), ['event_id' => $event_id], ['%d']);
+        $wpdb->delete(WPOE_DB::get_table_name('event'), ['id' => $event_id], ['%d']);
+
+        if ($wpdb->last_error) {
+            $wpdb->query('ROLLBACK');
+            throw new Exception($wpdb->last_error);
+        } else {
+            $wpdb->query('COMMIT');
+        }
+    }
+
     public static function list_event_templates(): array
     {
         global $wpdb;
