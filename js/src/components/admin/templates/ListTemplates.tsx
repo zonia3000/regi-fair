@@ -5,6 +5,7 @@ import apiFetch from '@wordpress/api-fetch';
 import Loading from '../../Loading';
 import { Button, Modal, Notice, Spinner } from '@wordpress/components';
 import { extractError } from '../../utils';
+import '../../style.css';
 
 const ListTemplates = () => {
   const navigate = useNavigate();
@@ -70,7 +71,7 @@ const ListTemplates = () => {
 
       {templates.length === 0 && <p>{__('No event templates found', 'wp-open-events')}</p>}
       {templates.length !== 0 &&
-        <table className='widefat'>
+        <table className='widefat mt'>
           <thead>
             <tr>
               <th>{__('Name', 'wp-open-events')}</th>

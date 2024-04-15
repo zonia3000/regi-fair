@@ -6,6 +6,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import EditFormFields from '../fields/EditFormFields';
 import { Button, CheckboxControl, Notice, TextControl } from '@wordpress/components';
 import { extractError } from '../../utils';
+import '../../style.css';
 
 const EditTemplate = () => {
   const { templateId } = useParams();
@@ -16,6 +17,7 @@ const EditTemplate = () => {
   const [autoremove, setAutoremove] = useState(true);
   const [formFields, setFormFields] = useState([]);
   const [error, setError] = useState('');
+  const [valid, setValid] = useState(true);
 
   useEffect(() => {
     if (templateId === 'new') {
@@ -39,6 +41,11 @@ const EditTemplate = () => {
   }, []);
 
   async function save() {
+    setValid(true);
+    if (templateName.trim() === '') {
+      setValid(false);
+      return;
+    }
     const template: TemplateConfiguration = {
       id: null,
       name: templateName,
@@ -76,12 +83,15 @@ const EditTemplate = () => {
   return (
     <div>
       <h1>{templateId === 'new' ? __('Create template', 'wp-open-events') : __('Edit template', 'wp-open-events')}</h1>
-      <TextControl
-        label={__('Name', 'wp-open-events')}
-        onChange={setTemplateName}
-        value={templateName}
-        required
-      />
+      <div className={!valid && !templateName.trim() ? 'form-error' : ''}>
+        <TextControl
+          label={__('Name', 'wp-open-events')}
+          onChange={setTemplateName}
+          value={templateName}
+          required
+        />
+        <span className='error-text'>{__('Field is required', 'wp-open-events')}</span>
+      </div>
       <CheckboxControl
         label={__('Autoremove user data after the event', 'wp-open-events')}
         checked={autoremove}
@@ -92,7 +102,7 @@ const EditTemplate = () => {
 
       <br /><hr />
 
-      {error && <Notice status='error'>{error}</Notice>}
+      {error && <div className='mb'><Notice status='error'>{error}</Notice></div>}
 
       <Button onClick={save} variant='primary'>
         {__('Save', 'wp-open-events')}

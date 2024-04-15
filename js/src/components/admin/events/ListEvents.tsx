@@ -5,6 +5,7 @@ import Loading from '../../Loading';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button, Modal, Notice, SelectControl, Spinner } from '@wordpress/components';
 import { extractError } from '../../utils';
+import '../../style.css';
 
 const ListEvents = () => {
     const navigate = useNavigate();
@@ -120,7 +121,7 @@ const ListEvents = () => {
 
             {events.length === 0 && <p>{__('No events found', 'wp-open-events')}</p>}
             {events.length !== 0 &&
-                <table className='widefat'>
+                <table className='widefat mt'>
                     <thead>
                         <tr>
                             <th>{__('Name', 'wp-open-events')}</th>

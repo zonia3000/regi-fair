@@ -17,6 +17,9 @@ const AddFieldModal = (props: AddFieldModalProps) => {
     }
 
     function save() {
+        if (!field.validate()) {
+            return;
+        }
         props.saveCurrentField(field);
         close();
     }

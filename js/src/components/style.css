@@ -1,0 +1,44 @@
+.form-error {
+  color: #cc1818;
+}
+
+.form-error input {
+  border-color: #cc1818 !important;
+}
+
+.error-text {
+  display: none;
+}
+
+.form-error .error-text {
+  display: block;
+  margin-top: -5px;
+  margin-bottom: 10px;
+}
+
+.mt {
+  margin-top: 10px;
+}
+
+.mt-2 {
+  margin-top: 20px;
+}
+
+.mb {
+  margin-bottom: 10px;
+}
+
+.mb-2 {
+  margin-bottom: 20px;
+}
+
+.edit-radio-option-wrapper {
+  position: relative;
+}
+
+.edit-radio-option-wrapper .remove-option-btn {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  font-size: 20px;
+}

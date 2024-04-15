@@ -25,11 +25,18 @@ module.exports = {
                 test: /\.(js|jsx|tsx|ts)$/,
                 exclude: /node_module/,
                 use: 'babel-loader'
+            },
+            {
+                test: /\.css$/,
+                use: [
+                    { loader: 'style-loader' },
+                    { loader: 'css-loader' }
+                ]
             }
         ]
     },
     resolve: {
-        extensions: ['.js', '.jsx', '.tsx', '.ts'],
+        extensions: ['.js', '.jsx', '.tsx', '.ts', '.css'],
     },
     devtool: 'source-map'
 };

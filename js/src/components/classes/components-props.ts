@@ -20,6 +20,7 @@ export type TextFieldProps = {
     type: 'text' | 'email'
     setValue: (value: string) => void
     disabled?: boolean
+    required?: boolean
     validator?: (value: string) => boolean
 }
 
@@ -32,7 +33,7 @@ export type EditRadioFieldProps = EditFieldProps<RadioField> & {
 }
 
 export type EditTextFieldProps = EditFieldProps<Field> & {
-    fieldType: FieldType
+    fieldType: 'text' | 'email'
 }
 
 export type AddFieldModalProps = {
