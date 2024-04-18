@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { TextControl, CheckboxControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { EditTextFieldProps } from '../../classes/components-props';
@@ -7,6 +7,7 @@ import '../../style.css';
 const EditTextField = (props: EditTextFieldProps) => {
 
     const [fieldLabel, setFieldLabel] = useState('');
+    const fieldLabelRef = useRef(fieldLabel);
     const [fieldDescription, setFieldDescription] = useState('');
     const [fieldRequired, setFieldRequired] = useState(false);
     const [validated, setValidated] = useState(false);
@@ -17,12 +18,16 @@ const EditTextField = (props: EditTextFieldProps) => {
             fieldType: props.fieldType,
             required: false,
             description: '',
-            validate() {
+            validate: function () {
                 setValidated(true);
-                return fieldLabel !== '';
+                return fieldLabelRef.current.trim() !== '';
             }
         });
     }, []);
+
+    useEffect(() => {
+        fieldLabelRef.current = fieldLabel;
+    }, [fieldLabel]);
 
     function saveFieldLabel(value: string) {
         setFieldLabel(value);
@@ -60,7 +65,7 @@ const EditTextField = (props: EditTextFieldProps) => {
                 <span className='error-text'>{__('Field is required', 'wp-open-events')}</span>
             </div>
             <TextControl
-                label={__('Description', 'wp-open-events')}
+                label={__('Description (optional)', 'wp-open-events')}
                 onChange={saveFieldDescription}
                 value={fieldDescription}
                 required

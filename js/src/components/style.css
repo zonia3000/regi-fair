@@ -42,3 +42,7 @@
   bottom: 0;
   font-size: 20px;
 }
+
+.edit-radio-option-wrapper.form-error .remove-option-btn {
+  bottom: 20px;
+}

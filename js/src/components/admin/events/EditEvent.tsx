@@ -73,14 +73,25 @@ const EditEvent = () => {
         };
         setLoading(true);
         try {
-            await apiFetch({
-                path: '/wpoe/v1/admin/events',
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(event),
-            });
+            if (eventId === 'new') {
+                await apiFetch({
+                    path: '/wpoe/v1/admin/events',
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(event),
+                });
+            } else {
+                await apiFetch({
+                    path: `/wpoe/v1/admin/events/${eventId}`,
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(event),
+                });
+            }
             back();
         } catch (err) {
             setError(extractError(err));
@@ -126,7 +137,7 @@ const EditEvent = () => {
 
             <br /><hr />
 
-            {error && <Notice status='error'>{error}</Notice>}
+            {error && <div className='mb'><Notice status='error'>{error}</Notice></div>}
 
             <Button onClick={save} variant='primary'>
                 {__('Save', 'wp-open-events')}

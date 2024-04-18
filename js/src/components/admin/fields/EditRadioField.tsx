@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Button, CheckboxControl, TextControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { EditRadioFieldProps } from '../../classes/components-props';
@@ -7,9 +7,11 @@ import '../../style.css';
 const EditRadioField = (props: EditRadioFieldProps) => {
 
     const [fieldLabel, setFieldLabel] = useState('');
+    const fieldLabelRef = useRef(fieldLabel);
     const [fieldDescription, setFieldDescription] = useState('');
     const [fieldRequired, setFieldRequired] = useState(false);
     const [options, setOptions] = useState(['', '']);
+    const optionsRef = useRef(options);
     const [validated, setValidated] = useState(false);
 
     useEffect(() => {
@@ -21,10 +23,15 @@ const EditRadioField = (props: EditRadioFieldProps) => {
             options: ['', ''],
             validate() {
                 setValidated(true);
-                return fieldLabel !== '' && options.filter(o => o.trim() === '').length === 0;
+                return fieldLabelRef.current !== '' && optionsRef.current.filter(o => o.trim() === '').length === 0;
             }
         });
     }, []);
+
+    useEffect(() => {
+        fieldLabelRef.current = fieldLabel;
+        optionsRef.current = options;
+    }, [fieldLabel, options]);
 
     function saveFieldLabel(value: string) {
         setFieldLabel(value);
@@ -51,6 +58,7 @@ const EditRadioField = (props: EditRadioFieldProps) => {
     }
 
     function addOption() {
+        setValidated(false);
         setOptions([...options, '']);
     }
 
@@ -96,7 +104,7 @@ const EditRadioField = (props: EditRadioFieldProps) => {
                 <span className='error-text'>{__('Field is required', 'wp-open-events')}</span>
             </div>
             <TextControl
-                label={__('Description', 'wp-open-events')}
+                label={__('Description (optional)', 'wp-open-events')}
                 onChange={saveFieldDescription}
                 value={fieldDescription}
                 required
