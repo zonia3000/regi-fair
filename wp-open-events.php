@@ -33,10 +33,12 @@ add_action('init', ['WPOE_Form', 'init']);
 
 require_once (WPOE_PLUGIN_DIR . 'classes/api-utils.php');
 
-require_once (WPOE_PLUGIN_DIR . 'classes/admin/admin-api.php');
-add_action('rest_api_init', ['WPOE_Admin_API', 'init']);
-
+require_once (WPOE_PLUGIN_DIR . 'classes/admin/admin-api-events.php');
+require_once (WPOE_PLUGIN_DIR . 'classes/admin/admin-api-templates.php');
 require_once (WPOE_PLUGIN_DIR . 'classes/public-api.php');
+
+add_action('rest_api_init', ['WPOE_Admin_API_Events', 'init']);
+add_action('rest_api_init', ['WPOE_Admin_API_Templates', 'init']);
 add_action('rest_api_init', ['WPOE_Public_API', 'init']);
 
 require_once (WPOE_PLUGIN_DIR . 'classes/admin/db-setup.php');

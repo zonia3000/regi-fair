@@ -28,7 +28,7 @@ class WPOE_Public_API
     public static function register_to_event(WP_REST_Request $request)
     {
         $event_id = (int) $request->get_param('id');
-        $event = WPOE_DAO::get_event($event_id);
+        $event = WPOE_DAO_Events::get_event($event_id);
 
         if ($event === null) {
             return new WP_REST_Response(['error' => __('Event not found', 'wp-open-events')], 400);
@@ -50,7 +50,7 @@ class WPOE_Public_API
 
         $registration_token = bin2hex(openssl_random_pseudo_bytes(16));
 
-        $remaining_seats = WPOE_DAO::register_to_event($event_id, md5($registration_token), $values);
+        $remaining_seats = WPOE_DAO_Events::register_to_event($event_id, md5($registration_token), $values);
 
         return new WP_REST_Response(['remaining' => $remaining_seats]);
     }
@@ -58,6 +58,6 @@ class WPOE_Public_API
     public static function get_event(WP_REST_Request $request)
     {
         $id = (int) $request->get_param('id');
-        return new WP_REST_Response(WPOE_DAO::get_public_event_data($id));
+        return new WP_REST_Response(WPOE_DAO_Events::get_public_event_data($id));
     }
 }
