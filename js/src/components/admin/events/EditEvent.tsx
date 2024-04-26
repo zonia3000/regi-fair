@@ -19,6 +19,7 @@ const EditEvent = () => {
     const [date, setDate] = useState((new Date()).toString());
     const [autoremove, setAutoremove] = useState(true);
     const [formFields, setFormFields] = useState([]);
+    const [hasResponses, setHasResponses] = useState(false);
     const [error, setError] = useState('');
 
     useEffect(() => {
@@ -50,6 +51,7 @@ const EditEvent = () => {
                     setDate(event.date);
                     setAutoremove(event.autoremove);
                     setFormFields(event.formFields);
+                    setHasResponses(event.hasResponses || false);
                 })
                 .catch(err => {
                     setError(extractError(err));
@@ -125,6 +127,13 @@ const EditEvent = () => {
                 <input type='date' id='eventDate' className='components-text-control__input' required
                     value={date} onChange={e => setDate(e.target.value)} />
             </BaseControl>
+
+            {hasResponses && <div className='mt-2 mb'>
+                <Notice status='warning'>
+                    <strong>{__('Warning')}</strong>: &nbsp;
+                    {__('this event has already some registrations. Adding or removing fields can result in having some empty values in your registrations table.', 'wp-open-events')}
+                </Notice>
+            </div>}
 
             <EditFormFields formFields={formFields} setFormFields={setFormFields} />
 

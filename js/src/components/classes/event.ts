@@ -9,4 +9,5 @@ type EventConfiguration = {
     autoremovePeriod: number
     maxParticipants: number | null
     waitingList: boolean
+    hasResponses?: boolean
 };
