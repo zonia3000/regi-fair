@@ -37,9 +37,15 @@ require_once (WPOE_PLUGIN_DIR . 'classes/admin/admin-api-events.php');
 require_once (WPOE_PLUGIN_DIR . 'classes/admin/admin-api-templates.php');
 require_once (WPOE_PLUGIN_DIR . 'classes/public-api.php');
 
-add_action('rest_api_init', ['WPOE_Admin_API_Events', 'init']);
-add_action('rest_api_init', ['WPOE_Admin_API_Templates', 'init']);
-add_action('rest_api_init', ['WPOE_Public_API', 'init']);
+add_action('rest_api_init', function () {
+    (new WPOE_Templates_Admin_Controller())->register_routes();
+});
+add_action('rest_api_init', function () {
+    (new WPOE_Events_Admin_Controller())->register_routes();
+});
+add_action('rest_api_init', function () {
+    (new WPOE_Public_Controller())->register_routes();
+});
 
 require_once (WPOE_PLUGIN_DIR . 'classes/admin/db-setup.php');
 register_activation_hook(__FILE__, ['WPOE_DB_Setup', 'create_tables']);

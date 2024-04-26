@@ -1,5 +1,9 @@
 <?php
 
+if (!defined('ABSPATH')) {
+    exit;
+}
+
 require_once (WPOE_PLUGIN_DIR . 'classes/db.php');
 
 // Errors are explicitly checked and converted to exceptions in order to preserve API JSON output
@@ -39,7 +43,7 @@ class WPOE_DAO_Events
         $query = $wpdb->prepare("SELECT e.id, e.name, e.date, e.autoremove_submissions, e.autoremove_submissions_period,
             f.id AS field_id, f.label, f.type, f.description, f.required, f.extra, f.field_index
             FROM " . WPOE_DB::get_table_name('event') . " e
-            JOIN " . WPOE_DB::get_table_name('event_form_field') . " f ON f.event_id = e.id
+            LEFT JOIN " . WPOE_DB::get_table_name('event_form_field') . " f ON f.event_id = e.id
             WHERE e.id = %d ORDER BY f.field_index", $event_id);
 
         $results = $wpdb->get_results($query, ARRAY_A);

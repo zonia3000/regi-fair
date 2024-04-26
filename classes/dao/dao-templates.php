@@ -1,5 +1,9 @@
 <?php
 
+if (!defined('ABSPATH')) {
+  exit;
+}
+
 require_once (WPOE_PLUGIN_DIR . 'classes/db.php');
 
 // Errors are explicitly checked and converted to exceptions in order to preserve API JSON output
@@ -86,7 +90,7 @@ class WPOE_DAO_Templates
 
     $wpdb->query('START TRANSACTION');
 
-    // Insert the event
+    // Insert the template
     $wpdb->insert(
       WPOE_DB::get_table_name('event_template'),
       [
@@ -128,6 +132,64 @@ class WPOE_DAO_Templates
     }
 
     return $event_template_id;
+  }
+
+  public static function update_event_template(EventTemplate $event_template): bool
+  {
+    global $wpdb;
+
+    $wpdb->query('START TRANSACTION');
+
+    // Update the template
+    $updated_rows = $wpdb->update(
+      WPOE_DB::get_table_name('event_template'),
+      [
+        'name' => $event_template->name,
+        'autoremove_submissions' => $event_template->autoremove,
+        'autoremove_submissions_period' => $event_template->autoremovePeriod,
+        'waiting_list' => $event_template->waitingList
+      ],
+      ['id' => $event_template->id],
+      ['%s', '%s', '%d', '%d'],
+      ['%d']
+    );
+
+    if ($updated_rows === 1) {
+      // Delete old form fields
+      $wpdb->delete(
+        WPOE_DB::get_table_name('event_template_form_field'),
+        ['template_id' => $event_template->id],
+        ['%d']
+      );
+
+      // Insert the updated form fields
+      $i = 0;
+      foreach ($event_template->formFields as $form_field) {
+        $wpdb->insert(
+          WPOE_DB::get_table_name('event_template_form_field'),
+          [
+            'template_id' => $event_template->id,
+            'label' => $form_field['label'],
+            'type' => $form_field['fieldType'],
+            'description' => $form_field['description'],
+            'required' => $form_field['required'],
+            'extra' => $form_field['extra'],
+            'field_index' => $i
+          ],
+          ['%d', '%s', '%s', '%d', '%s']
+        );
+        $i++;
+      }
+    }
+
+    if ($wpdb->last_error) {
+      $wpdb->query('ROLLBACK');
+      throw new Exception($wpdb->last_error);
+    } else {
+      $wpdb->query('COMMIT');
+    }
+
+    return $updated_rows === 1;
   }
 
   public static function delete_event_template(int $event_template_id): void
