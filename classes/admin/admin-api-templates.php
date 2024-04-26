@@ -11,6 +11,13 @@ require_once (WPOE_PLUGIN_DIR . 'classes/api-utils.php');
 
 class WPOE_Templates_Admin_Controller extends WP_REST_Controller
 {
+  private $dao;
+
+  public function __construct()
+  {
+    $this->dao = new WPOE_DAO_Templates();
+  }
+
   public function register_routes()
   {
     $namespace = 'wpoe/v1';
@@ -72,7 +79,7 @@ class WPOE_Templates_Admin_Controller extends WP_REST_Controller
   public function get_items($request)
   {
     try {
-      return new WP_REST_Response(WPOE_DAO_Templates::list_event_templates());
+      return new WP_REST_Response($this->dao->list_event_templates());
     } catch (Exception $ex) {
       return generic_server_error($ex);
     }
@@ -86,7 +93,7 @@ class WPOE_Templates_Admin_Controller extends WP_REST_Controller
   {
     try {
       $id = (int) $request->get_param('id');
-      $template = WPOE_DAO_Templates::get_event_template($id);
+      $template = $this->dao->get_event_template($id);
       if ($template === null) {
         return new WP_Error('template_not_found', __('Event template not found', 'wp-open-events'), ['status' => 404]);
       }
@@ -109,7 +116,7 @@ class WPOE_Templates_Admin_Controller extends WP_REST_Controller
       $event_template->autoremovePeriod = (int) $request->get_param('autoremovePeriod');
       $event_template->waitingList = (bool) $request->get_param('waitingList');
       $event_template->formFields = (array) $request->get_param('formFields');
-      $event_id = WPOE_DAO_Templates::create_event_template($event_template);
+      $event_id = $this->dao->create_event_template($event_template);
       return new WP_REST_Response(['id' => $event_id]);
     } catch (Exception $ex) {
       return generic_server_error($ex);
@@ -130,7 +137,7 @@ class WPOE_Templates_Admin_Controller extends WP_REST_Controller
       $event_template->autoremovePeriod = (int) $request->get_param('autoremovePeriod');
       $event_template->waitingList = (bool) $request->get_param('waitingList');
       $event_template->formFields = (array) $request->get_param('formFields');
-      $updated = WPOE_DAO_Templates::update_event_template($event_template);
+      $updated = $this->dao->update_event_template($event_template);
       if ($updated) {
         return new WP_REST_Response(null, 204);
       }
@@ -148,7 +155,7 @@ class WPOE_Templates_Admin_Controller extends WP_REST_Controller
   {
     try {
       $id = (int) $request->get_param('id');
-      WPOE_DAO_Templates::delete_event_template($id);
+      $this->dao->delete_event_template($id);
       return new WP_REST_Response(null, 204);
     } catch (Exception $ex) {
       return generic_server_error($ex);

@@ -6,13 +6,17 @@ if (!defined('ABSPATH')) {
 
 require_once (WPOE_PLUGIN_DIR . 'classes/db.php');
 
-// Errors are explicitly checked and converted to exceptions in order to preserve API JSON output
-// (otherwise <div id="error"> could be printed at the beginning of the response payload)
-$wpdb->hide_errors();
-
 class WPOE_DAO_Templates
 {
-  public static function list_event_templates(): array
+  public function __construct()
+  {
+    global $wpdb;
+    // Errors are explicitly checked and converted to exceptions in order to preserve API JSON output
+    // (otherwise <div id="error"> could be printed at the beginning of the response payload)
+    $wpdb->hide_errors();
+  }
+
+  public function list_event_templates(): array
   {
     global $wpdb;
 
@@ -35,7 +39,7 @@ class WPOE_DAO_Templates
     return $events;
   }
 
-  public static function get_event_template(int $event_template_id): ?EventTemplate
+  public function get_event_template(int $event_template_id): ?EventTemplate
   {
     global $wpdb;
 
@@ -60,12 +64,12 @@ class WPOE_DAO_Templates
     $template->name = $results[0]['name'];
     $template->autoremove = (bool) $results[0]['autoremove_submissions'];
     $template->autoremovePeriod = $results[0]['autoremove_submissions_period'];
-    $template->formFields = WPOE_DAO_Templates::load_form_fields($results);
+    $template->formFields = $this->load_form_fields($results);
 
     return $template;
   }
 
-  private static function load_form_fields(array $results)
+  private function load_form_fields(array $results)
   {
     $formFields = [];
     foreach ($results as $result) {
@@ -84,7 +88,7 @@ class WPOE_DAO_Templates
     return $formFields;
   }
 
-  public static function create_event_template(EventTemplate $event_template): int
+  public function create_event_template(EventTemplate $event_template): int
   {
     global $wpdb;
 
@@ -134,7 +138,7 @@ class WPOE_DAO_Templates
     return $event_template_id;
   }
 
-  public static function update_event_template(EventTemplate $event_template): bool
+  public function update_event_template(EventTemplate $event_template): bool
   {
     global $wpdb;
 
@@ -192,7 +196,7 @@ class WPOE_DAO_Templates
     return $updated_rows === 1;
   }
 
-  public static function delete_event_template(int $event_template_id): void
+  public function delete_event_template(int $event_template_id): void
   {
     global $wpdb;
 

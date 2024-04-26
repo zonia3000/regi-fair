@@ -71,8 +71,8 @@ class WPOE_DB_Setup
           registration_id bigint NOT NULL,
           field_id bigint NOT NULL,
           field_value text NULL,
-          PRIMARY KEY  (registration_id, field_key),
-          FOREIGN KEY (registration_id) REFERENCES $event_registration_table (id)
+          PRIMARY KEY  (registration_id, field_id),
+          FOREIGN KEY (registration_id) REFERENCES $event_registration_table (id),
           FOREIGN KEY (field_id) REFERENCES $event_form_field_table (id)
         ");
 
@@ -82,7 +82,7 @@ class WPOE_DB_Setup
     public static function drop_tables()
     {
         global $wpdb;
-        $tables = ['event_form_field', 'event', 'event_registration', 'event_registration_value'];
+        $tables = ['event_form_field', 'event', 'event_template', 'event_template_form_field', 'event_registration', 'event_registration_value'];
 
         foreach ($tables as $table) {
             $wpdb->query('DROP TABLE IF EXISTS ' . WPOE_DB::get_table_name($table));

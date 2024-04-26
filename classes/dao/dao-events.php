@@ -6,13 +6,17 @@ if (!defined('ABSPATH')) {
 
 require_once (WPOE_PLUGIN_DIR . 'classes/db.php');
 
-// Errors are explicitly checked and converted to exceptions in order to preserve API JSON output
-// (otherwise <div id="error"> could be printed at the beginning of the response payload)
-$wpdb->hide_errors();
-
 class WPOE_DAO_Events
 {
-    public static function list_events(): array
+    public function __construct()
+    {
+        global $wpdb;
+        // Errors are explicitly checked and converted to exceptions in order to preserve API JSON output
+        // (otherwise <div id="error"> could be printed at the beginning of the response payload)
+        $wpdb->hide_errors();
+    }
+
+    public function list_events(): array
     {
         global $wpdb;
 
@@ -36,7 +40,7 @@ class WPOE_DAO_Events
         return $events;
     }
 
-    public static function get_event(int $event_id): ?Event
+    public function get_event(int $event_id): ?Event
     {
         global $wpdb;
 
@@ -56,18 +60,26 @@ class WPOE_DAO_Events
             return null;
         }
 
+        $query = $wpdb->prepare("SELECT COUNT(*) FROM " . WPOE_DB::get_table_name('event_registration') . " WHERE event_id = %d", $event_id);
+        $registrations_count = (int) $wpdb->get_var($query);
+        if ($wpdb->last_error) {
+            throw new Exception($wpdb->last_error);
+        }
+        $has_responses = $registrations_count > 0;
+
         $event = new Event();
         $event->id = (int) $results[0]['id'];
         $event->name = $results[0]['name'];
         $event->date = $results[0]['date'];
         $event->autoremove = (bool) $results[0]['autoremove_submissions'];
         $event->autoremovePeriod = $results[0]['autoremove_submissions_period'];
-        $event->formFields = WPOE_DAO_Events::load_form_fields($results);
+        $event->formFields = $this->load_form_fields($results);
+        $event->hasResponses = $has_responses;
 
         return $event;
     }
 
-    public static function get_public_event_data(int $event_id): ?PublicEventData
+    public function get_public_event_data(int $event_id): ?PublicEventData
     {
         global $wpdb;
 
@@ -91,12 +103,12 @@ class WPOE_DAO_Events
         $event->id = (int) $results[0]['id'];
         $event->name = $results[0]['name'];
         $event->date = $results[0]['date'];
-        $event->formFields = WPOE_DAO_Events::load_form_fields($results);
+        $event->formFields = $this->load_form_fields($results);
 
         return $event;
     }
 
-    private static function load_form_fields(array $results)
+    private function load_form_fields(array $results)
     {
         $formFields = [];
         foreach ($results as $result) {
@@ -115,7 +127,7 @@ class WPOE_DAO_Events
         return $formFields;
     }
 
-    public static function create_event(Event $event): int
+    public function create_event(Event $event): int
     {
         global $wpdb;
 
@@ -167,7 +179,7 @@ class WPOE_DAO_Events
         return $event_id;
     }
 
-    public static function delete_event(int $event_id): void
+    public function delete_event(int $event_id): void
     {
         global $wpdb;
 
@@ -188,12 +200,35 @@ class WPOE_DAO_Events
         }
     }
 
-    public static function register_to_event(int $event_id, ?string $registration_token, array $values): void
+    /**
+     * Returns:
+     * - null if the event has no maxiumum number of participants limit
+     * - an integer representing the number of remaining available seats if there is a maxiumum number of participants limit
+     * - false if there is a maxiumum number of participants limit and this limit has already been reached
+     */
+    public function register_to_event(int $event_id, ?string $registration_token, array $values, int|null $max_participants): int|false|null
     {
         global $wpdb;
 
         $wpdb->query('START TRANSACTION');
 
+        // Count the number of remaining seats
+        $remaining_seats = null;
+        if ($max_participants !== null) {
+            $query = $wpdb->prepare('SELECT COUNT(*) FROM ' . WPOE_DB::get_table_name('event_registration') . ' WHERE id = %d', $event_id);
+            $registrations_count = (int) $wpdb->get_var($query);
+            if ($wpdb->last_error) {
+                $wpdb->query('ROLLBACK');
+                throw new Exception($wpdb->last_error);
+            }
+            $remaining_seats = $max_participants - $registrations_count;
+            if ($remaining_seats <= 0) {
+                // Unable to register: no more seats available
+                return false;
+            }
+        }
+
+        // Insert the registration
         $wpdb->insert(
             WPOE_DB::get_table_name('event_registration'),
             [
@@ -205,15 +240,16 @@ class WPOE_DAO_Events
 
         $registration_id = $wpdb->insert_id;
 
-        foreach ($values as $key => $value) {
+        // Insert the registration fields
+        foreach ($values as $field_id => $field_value) {
             $wpdb->insert(
                 WPOE_DB::get_table_name('event_registration_value'),
                 [
                     'registration_id' => $registration_id,
-                    'field_key' => $key,
-                    'field_value' => $value,
+                    'field_id' => $field_id,
+                    'field_value' => $field_value,
                 ],
-                ['%d', '%s', '%s']
+                ['%d', '%d', '%s']
             );
         }
 
@@ -223,5 +259,7 @@ class WPOE_DAO_Events
         } else {
             $wpdb->query('COMMIT');
         }
+
+        return $remaining_seats;
     }
 }

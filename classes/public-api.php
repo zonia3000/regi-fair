@@ -67,7 +67,10 @@ class WPOE_Public_Controller extends WP_REST_Controller
 
         $registration_token = bin2hex(openssl_random_pseudo_bytes(16));
 
-        $remaining_seats = WPOE_DAO_Events::register_to_event($event_id, md5($registration_token), $values);
+        $remaining_seats = WPOE_DAO_Events::register_to_event($event_id, md5($registration_token), $values, $event->maxParticipants);
+        if ($remaining_seats === false) {
+            return new WP_Error('no_more_seats', __('No more seats available', 'wp-open-events'), ['status' => 400]);
+        }
 
         return new WP_REST_Response(['remaining' => $remaining_seats]);
     }

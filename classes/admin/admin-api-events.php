@@ -7,6 +7,13 @@ require_once (WPOE_PLUGIN_DIR . 'classes/api-utils.php');
 
 class WPOE_Events_Admin_Controller extends WP_REST_Controller
 {
+    private $dao;
+
+    public function __construct()
+    {
+        $this->dao = new WPOE_DAO_Events();
+    }
+
     public function register_routes()
     {
         $namespace = 'wpoe/v1';
@@ -68,7 +75,7 @@ class WPOE_Events_Admin_Controller extends WP_REST_Controller
     public function get_items($request)
     {
         try {
-            return new WP_REST_Response(WPOE_DAO_Events::list_events());
+            return new WP_REST_Response($this->dao->list_events());
         } catch (Exception $ex) {
             return generic_server_error($ex);
         }
@@ -82,7 +89,7 @@ class WPOE_Events_Admin_Controller extends WP_REST_Controller
     {
         try {
             $id = (int) $request->get_param('id');
-            $event = WPOE_DAO_Events::get_event($id);
+            $event = $this->dao->get_event($id);
             if ($event === null) {
                 return new WP_Error('event_not_found', __('Event not found', 'wp-open-events'), ['status' => 404]);
             }
@@ -105,7 +112,7 @@ class WPOE_Events_Admin_Controller extends WP_REST_Controller
             $event->autoremove = (bool) $request->get_param('autoremove');
             $event->autoremovePeriod = (int) $request->get_param('autoremovePeriod');
             $event->formFields = (array) $request->get_param('formFields');
-            $event_id = WPOE_DAO_Events::create_event($event);
+            $event_id = $this->dao->create_event($event);
             return new WP_REST_Response(['id' => $event_id]);
         } catch (Exception $ex) {
             return generic_server_error($ex);
@@ -120,7 +127,7 @@ class WPOE_Events_Admin_Controller extends WP_REST_Controller
     {
         try {
             $id = (int) $request->get_param('id');
-            WPOE_DAO_Events::delete_event($id);
+            $this->dao->delete_event($id);
             return new WP_REST_Response(null, 204);
         } catch (Exception $ex) {
             return generic_server_error($ex);

@@ -15,6 +15,7 @@ class Event extends PublicEventData
     public $autoremove = true;
     public $autoremovePeriod = 30;
     public $maxParticipants;
+    public $hasResponses = false;
 }
 
 class EventTemplate
