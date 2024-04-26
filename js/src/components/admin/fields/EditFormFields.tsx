@@ -1,26 +1,42 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { __ } from '@wordpress/i18n';
-import { Button, Modal } from '@wordpress/components';
-import AddFieldModal from './AddFieldModal';
+import { Button, Icon, Modal } from '@wordpress/components';
+import EditFieldModal from './EditFieldModal';
 import { EditFormFieldsProps } from '../../classes/components-props';
 
 const EditFormFields = (props: EditFormFieldsProps) => {
 
-  const [currentFieldIndex, setCurrentFieldIndex] = useState(props.formFields.length);
-  const [showAddFieldModal, setShowAddFieldModal] = useState(false);
+  const [showEditFieldModal, setShowEditFieldModal] = useState(false);
   const [fieldToDeleteIndex, setFieldToDeleteIndex] = useState(null);
+  const [fieldToEditIndex, setFieldToEditIndex] = useState(null);
+  const [fieldToEdit, setFieldToEdit] = useState(null);
+  const fieldToEditIndexRef = useRef(fieldToEditIndex);
+
+  useEffect(() => {
+    fieldToEditIndexRef.current = fieldToEditIndex;
+  }, [fieldToEditIndex])
 
   function openAddFieldModal() {
-    setShowAddFieldModal(true);
+    setFieldToEditIndex(null);
+    setFieldToEdit(null);
+    setShowEditFieldModal(true);
   }
 
-  function saveCurrentField(field: Field) {
-    const newFields = props.formFields.map((f, i) => i === currentFieldIndex ? field : f);
-    if (props.formFields.length <= currentFieldIndex) {
-      newFields.push(field);
+  function openEditFieldModal(fieldIndex: number) {
+    setFieldToEditIndex(fieldIndex);
+    setFieldToEdit(props.formFields[fieldIndex]);
+    setShowEditFieldModal(true);
+  }
+
+  function saveField(field: Field) {
+    const index = fieldToEditIndexRef.current;
+    if (index === null) {
+      props.setFormFields([...props.formFields, field]);
+    } else {
+      props.setFormFields(props.formFields.map((f, i) => i === index ? field : f));
     }
-    props.setFormFields(newFields);
-    setCurrentFieldIndex(currentFieldIndex + 1);
+    setFieldToEdit(null);
+    setFieldToEditIndex(null);
   }
 
   function openDeleteFieldModal(fieldIndex: number) {
@@ -36,6 +52,36 @@ const EditFormFields = (props: EditFormFieldsProps) => {
     setFieldToDeleteIndex(null);
   }
 
+  function moveFieldUp(fieldIndex: number) {
+    const oldFields = props.formFields;
+    const newFields = [];
+    for (let i = 0; i < oldFields.length; i++) {
+      if (i < fieldIndex - 1 || i > fieldIndex) {
+        newFields.push(oldFields[i]);
+      } else if (i === fieldIndex - 1) {
+        newFields.push(oldFields[fieldIndex]);
+      } else {
+        newFields.push(oldFields[fieldIndex - 1]);
+      }
+    }
+    props.setFormFields(newFields);
+  }
+
+  function moveFieldDown(fieldIndex: number) {
+    const oldFields = props.formFields;
+    const newFields = [];
+    for (let i = 0; i < oldFields.length; i++) {
+      if (i < fieldIndex || i > fieldIndex + 1) {
+        newFields.push(oldFields[i]);
+      } else if (i === fieldIndex) {
+        newFields.push(oldFields[fieldIndex + 1]);
+      } else {
+        newFields.push(oldFields[fieldIndex]);
+      }
+    }
+    props.setFormFields(newFields);
+  }
+
   return (
     <>
       <h2>{__('Event form', 'wp-open-events')}</h2>
@@ -48,6 +94,7 @@ const EditFormFields = (props: EditFormFieldsProps) => {
               <th>{__('Label', 'wp-open-events')}</th>
               <th>{__('Type', 'wp-open-events')}</th>
               <th>{__('Required', 'wp-open-events')}</th>
+              <th>{__('Position', 'wp-open-events')}</th>
               <th></th>
             </tr>
           </thead>
@@ -58,6 +105,16 @@ const EditFormFields = (props: EditFormFieldsProps) => {
                 <td>{f.fieldType}</td>
                 <td>{f.required ? __('Yes', 'wp-open-events') : __('No', 'wp-open-events')}</td>
                 <td>
+                  <Button variant='secondary' onClick={() => moveFieldUp(index)} disabled={index === 0}>
+                    <Icon icon='arrow-up' />
+                  </Button>
+                  <Button variant='secondary' onClick={() => moveFieldDown(index)} disabled={index === props.formFields.length - 1}>
+                    <Icon icon='arrow-down' />
+                  </Button>
+                </td>
+                <td>
+                  <Button variant='primary' onClick={() => openEditFieldModal(index)}>Edit</Button>
+                  &nbsp;
                   <Button variant='primary' onClick={() => openDeleteFieldModal(index)}>Delete</Button>
                 </td>
               </tr>)
@@ -71,10 +128,12 @@ const EditFormFields = (props: EditFormFieldsProps) => {
         {__('Add form field', 'wp-open-events')}
       </Button>
 
-      <AddFieldModal
-        showAddFieldModal={showAddFieldModal}
-        setShowAddFieldModal={setShowAddFieldModal}
-        saveCurrentField={saveCurrentField} />
+      <EditFieldModal
+        showEditFieldModal={showEditFieldModal}
+        setShowEditFieldModal={setShowEditFieldModal}
+        fieldToEdit={fieldToEdit}
+        setFieldToEdit={setFieldToEdit}
+        saveField={saveField} />
 
       {fieldToDeleteIndex !== null &&
         <Modal title={__('Delete field', 'wp-open-events')} onRequestClose={closeDeleteFieldModal}>

@@ -7,6 +7,9 @@ require_once (WPOE_PLUGIN_DIR . 'classes/api-utils.php');
 
 class WPOE_Events_Admin_Controller extends WP_REST_Controller
 {
+    /**
+     * @var WPOE_DAO_Events
+     */
     private $dao;
 
     public function __construct()
@@ -110,10 +113,50 @@ class WPOE_Events_Admin_Controller extends WP_REST_Controller
             $event->name = $request->get_param('name');
             $event->date = $request->get_param('date');
             $event->autoremove = (bool) $request->get_param('autoremove');
-            $event->autoremovePeriod = (int) $request->get_param('autoremovePeriod');
-            $event->formFields = (array) $request->get_param('formFields');
+            if ($event->autoremove) {
+                if ($request->get_param('autoremovePeriod') !== null) {
+                    $event->autoremovePeriod = (int) $request->get_param('autoremovePeriod');
+                } else {
+                    $event->autoremovePeriod = 30; // default value
+                }
+            } else {
+                $event->autoremovePeriod = null;
+            }
+            $event->formFields = get_form_field_from_request($request);
             $event_id = $this->dao->create_event($event);
             return new WP_REST_Response(['id' => $event_id]);
+        } catch (Exception $ex) {
+            return generic_server_error($ex);
+        }
+    }
+
+    /**
+     * @param WP_REST_Request $request
+     * @return WP_Error|WP_REST_Response
+     */
+    public function update_item($request)
+    {
+        try {
+            $event = new Event;
+            $event->id = (int) $request->get_param('id');
+            $event->name = $request->get_param('name');
+            $event->date = $request->get_param('date');
+            $event->autoremove = (bool) $request->get_param('autoremove');
+            if ($event->autoremove) {
+                if ($request->get_param('autoremovePeriod') !== null) {
+                    $event->autoremovePeriod = (int) $request->get_param('autoremovePeriod');
+                } else {
+                    $event->autoremovePeriod = 30; // default value
+                }
+            } else {
+                $event->autoremovePeriod = null;
+            }
+            $event->formFields = get_form_field_from_request($request);
+            $updated = $this->dao->update_event($event);
+            if ($updated) {
+                return new WP_REST_Response(null, 204);
+            }
+            return new WP_Error('event_not_found', __('Event not found', 'wp-open-events'), ['status' => 404]);
         } catch (Exception $ex) {
             return generic_server_error($ex);
         }
@@ -146,7 +189,7 @@ class WPOE_Events_Admin_Controller extends WP_REST_Controller
         $schema['properties']['name'] = ['type' => 'string', 'required' => true];
         $schema['properties']['date'] = ['type' => 'string', 'required' => true, 'format' => 'date'];
         $schema['properties']['autoremove'] = ['type' => 'boolean', 'required' => true];
-        $schema['properties']['autoremovePeriod'] = ['type' => 'integer', 'required' => true, 'minimum' => 1];
+        $schema['properties']['autoremovePeriod'] = ['type' => 'integer', 'required' => false, 'minimum' => 1];
         $schema['properties']['waitingList'] = ['type' => 'boolean', 'required' => true];
         $schema['properties']['formFields'] = get_form_fields_schema();
 

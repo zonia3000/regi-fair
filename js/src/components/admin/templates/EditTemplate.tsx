@@ -5,7 +5,7 @@ import Loading from '../../Loading';
 import { useNavigate, useParams } from 'react-router-dom';
 import EditFormFields from '../fields/EditFormFields';
 import { Button, CheckboxControl, Notice, TextControl } from '@wordpress/components';
-import { extractError } from '../../utils';
+import { cleanupFields, extractError } from '../../utils';
 import '../../style.css';
 
 const EditTemplate = () => {
@@ -47,7 +47,7 @@ const EditTemplate = () => {
       return;
     }
     const template: TemplateConfiguration = {
-      id: null,
+      id: templateId === 'new' ? null : Number(templateId),
       name: templateName,
       formFields,
       autoremove: autoremove,
@@ -56,14 +56,28 @@ const EditTemplate = () => {
     };
     setLoading(true);
     try {
-      await apiFetch({
-        path: '/wpoe/v1/admin/templates',
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(template),
-      });
+      if (templateId === 'new') {
+        await apiFetch({
+          path: '/wpoe/v1/admin/templates',
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(template),
+        });
+      } else {
+        await apiFetch({
+          path: `/wpoe/v1/admin/templates/${templateId}`,
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            ...template,
+            formFields: cleanupFields(template.formFields)
+          }),
+        });
+      }
       back();
     } catch (err) {
       setError(extractError(err));

@@ -11,6 +11,9 @@ require_once (WPOE_PLUGIN_DIR . 'classes/api-utils.php');
 
 class WPOE_Templates_Admin_Controller extends WP_REST_Controller
 {
+  /**
+   * @var WPOE_DAO_Templates
+   */
   private $dao;
 
   public function __construct()
@@ -113,9 +116,17 @@ class WPOE_Templates_Admin_Controller extends WP_REST_Controller
       $event_template = new EventTemplate;
       $event_template->name = $request->get_param('name');
       $event_template->autoremove = (bool) $request->get_param('autoremove');
-      $event_template->autoremovePeriod = (int) $request->get_param('autoremovePeriod');
+      if ($event_template->autoremove) {
+        if ($request->get_param('autoremovePeriod') !== null) {
+          $event_template->autoremovePeriod = (int) $request->get_param('autoremovePeriod');
+        } else {
+          $event_template->autoremovePeriod = 30; // default value
+        }
+      } else {
+        $event_template->autoremovePeriod = null;
+      }
       $event_template->waitingList = (bool) $request->get_param('waitingList');
-      $event_template->formFields = (array) $request->get_param('formFields');
+      $event_template->formFields = get_form_field_from_request($request);
       $event_id = $this->dao->create_event_template($event_template);
       return new WP_REST_Response(['id' => $event_id]);
     } catch (Exception $ex) {
@@ -136,7 +147,7 @@ class WPOE_Templates_Admin_Controller extends WP_REST_Controller
       $event_template->autoremove = (bool) $request->get_param('autoremove');
       $event_template->autoremovePeriod = (int) $request->get_param('autoremovePeriod');
       $event_template->waitingList = (bool) $request->get_param('waitingList');
-      $event_template->formFields = (array) $request->get_param('formFields');
+      $event_template->formFields = get_form_field_from_request($request);
       $updated = $this->dao->update_event_template($event_template);
       if ($updated) {
         return new WP_REST_Response(null, 204);
@@ -173,7 +184,7 @@ class WPOE_Templates_Admin_Controller extends WP_REST_Controller
 
     $schema['properties']['name'] = ['type' => 'string', 'required' => true];
     $schema['properties']['autoremove'] = ['type' => 'boolean', 'required' => true];
-    $schema['properties']['autoremovePeriod'] = ['type' => 'integer', 'required' => true, 'minimum' => 1];
+    $schema['properties']['autoremovePeriod'] = ['type' => 'integer', 'required' => false, 'minimum' => 1];
     $schema['properties']['waitingList'] = ['type' => 'boolean', 'required' => true];
     $schema['properties']['formFields'] = get_form_fields_schema();
 

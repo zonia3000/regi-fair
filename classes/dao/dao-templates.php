@@ -44,10 +44,10 @@ class WPOE_DAO_Templates
     global $wpdb;
 
     $query = $wpdb->prepare("SELECT t.id, t.name, t.autoremove_submissions, t.autoremove_submissions_period,
-                f.id AS field_id, f.label, f.type, f.description, f.required, f.extra, f.field_index
+                f.id AS field_id, f.label, f.type, f.description, f.required, f.extra, f.position
                 FROM " . WPOE_DB::get_table_name('event_template') . " t
                 LEFT JOIN " . WPOE_DB::get_table_name('event_template_form_field') . " f ON f.template_id = t.id
-                WHERE t.id = %d ORDER BY f.field_index", $event_template_id);
+                WHERE t.id = %d ORDER BY f.position", $event_template_id);
 
     $results = $wpdb->get_results($query, ARRAY_A);
 
@@ -75,13 +75,13 @@ class WPOE_DAO_Templates
     foreach ($results as $result) {
       if ($result['field_id'] !== null) {
         $field = new FormField();
-        $field->id = $result['field_id'];
+        $field->id = (int) $result['field_id'];
         $field->label = $result['label'];
         $field->fieldType = $result['type'];
         $field->description = $result['description'];
         $field->required = (bool) $result['required'];
-        $field->extra = $result['extra'];
-        $field->order = (int) $result['field_index'];
+        $field->extra = isset($result['extra']) ? json_decode($result['extra']) : null;
+        $field->position = (int) $result['position'];
         $formFields[] = $field;
       }
     }
@@ -110,22 +110,20 @@ class WPOE_DAO_Templates
     $event_template_id = $wpdb->insert_id;
 
     // Insert the form fields
-    $i = 0;
     foreach ($event_template->formFields as $form_field) {
       $wpdb->insert(
         WPOE_DB::get_table_name('event_template_form_field'),
         [
           'template_id' => $event_template_id,
-          'label' => $form_field['label'],
-          'type' => $form_field['fieldType'],
-          'description' => $form_field['description'],
-          'required' => $form_field['required'],
-          'extra' => $form_field['extra'],
-          'field_index' => $i
+          'label' => $form_field->label,
+          'type' => $form_field->fieldType,
+          'description' => $form_field->description,
+          'required' => $form_field->required,
+          'extra' => $form_field->extra === null ? null : json_encode($form_field->extra),
+          'position' => $form_field->position
         ],
-        ['%d', '%s', '%s', '%d', '%s']
+        ['%d', '%s', '%s', '%s', '%d', '%s', '%d']
       );
-      $i++;
     }
 
     if ($wpdb->last_error) {
@@ -158,31 +156,63 @@ class WPOE_DAO_Templates
       ['%d']
     );
 
-    if ($updated_rows === 1) {
-      // Delete old form fields
-      $wpdb->delete(
-        WPOE_DB::get_table_name('event_template_form_field'),
-        ['template_id' => $event_template->id],
-        ['%d']
-      );
+    if ($updated_rows !== false) {
+      $current_field_ids = [];
+      foreach ($event_template->formFields as $form_field) {
+        if ($form_field->id !== null) {
+          $current_field_ids[] = $form_field->id;
+        }
+      }
+
+      if (count($current_field_ids) > 0) {
+        // Delete form fields whose ids are not present anymore
+        $placeholders = array_fill(0, count($current_field_ids), '%d');
+        $query = $wpdb->prepare('DELETE FROM '
+          . WPOE_DB::get_table_name('event_template_form_field')
+          . ' WHERE id NOT IN (' . join(',', $placeholders) . ')', $current_field_ids);
+        $wpdb->query($query);
+      } else {
+        // Delete all old form fields
+        $wpdb->delete(
+          WPOE_DB::get_table_name('event_template_form_field'),
+          ['template_id' => $event_template->id],
+          ['%d']
+        );
+      }
 
       // Insert the updated form fields
-      $i = 0;
       foreach ($event_template->formFields as $form_field) {
-        $wpdb->insert(
-          WPOE_DB::get_table_name('event_template_form_field'),
-          [
-            'template_id' => $event_template->id,
-            'label' => $form_field['label'],
-            'type' => $form_field['fieldType'],
-            'description' => $form_field['description'],
-            'required' => $form_field['required'],
-            'extra' => $form_field['extra'],
-            'field_index' => $i
-          ],
-          ['%d', '%s', '%s', '%d', '%s']
-        );
-        $i++;
+        if ($form_field->id === null) {
+          $wpdb->insert(
+            WPOE_DB::get_table_name('event_template_form_field'),
+            [
+              'template_id' => $event_template->id,
+              'label' => $form_field->label,
+              'type' => $form_field->fieldType,
+              'description' => $form_field->description,
+              'required' => $form_field->required,
+              'extra' => $form_field->extra === null ? null : json_encode($form_field->extra),
+              'position' => $form_field->position
+            ],
+            ['%d', '%s', '%s', '%s', '%d', '%s', '%d'],
+          );
+        } else {
+          $wpdb->update(
+            WPOE_DB::get_table_name('event_template_form_field'),
+            [
+              'template_id' => $event_template->id,
+              'label' => $form_field->label,
+              'type' => $form_field->fieldType,
+              'description' => $form_field->description,
+              'required' => $form_field->required,
+              'extra' => $form_field->extra === null ? null : json_encode($form_field->extra),
+              'position' => $form_field->position
+            ],
+            ['id' => $form_field->id],
+            ['%d', '%s', '%s', '%s', '%d', '%s', '%d'],
+            ['%d']
+          );
+        }
       }
     }
 
@@ -193,7 +223,7 @@ class WPOE_DAO_Templates
       $wpdb->query('COMMIT');
     }
 
-    return $updated_rows === 1;
+    return $updated_rows !== false;
   }
 
   public function delete_event_template(int $event_template_id): void

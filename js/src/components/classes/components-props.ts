@@ -36,8 +36,10 @@ export type EditTextFieldProps = EditFieldProps<Field> & {
     fieldType: 'text' | 'email'
 }
 
-export type AddFieldModalProps = {
-    showAddFieldModal: boolean
-    setShowAddFieldModal: (value: boolean) => void
-    saveCurrentField: <T extends Field>(field: T) => void
+export type EditFieldModalProps = {
+    showEditFieldModal: boolean
+    setShowEditFieldModal: (value: boolean) => void
+    fieldToEdit: Field | null
+    setFieldToEdit: (field: Field) => void
+    saveField: (field: Field) => void
 }

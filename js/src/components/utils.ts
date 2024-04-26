@@ -4,3 +4,16 @@ export function extractError(err: unknown): string {
   }
   return 'Unexpected error';
 }
+
+/**
+ * Prepares the fields to be used as request body in API calls,
+ * removing all the invalid or read-only properties.
+ */
+export function cleanupFields(fields: Field[]): Field[] {
+  return fields.map(f => ({
+    ...f,
+    position: undefined,
+    validators: undefined,
+    extra: f.extra || undefined
+  }));
+}

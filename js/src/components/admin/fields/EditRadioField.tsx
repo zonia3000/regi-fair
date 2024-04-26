@@ -15,23 +15,36 @@ const EditRadioField = (props: EditRadioFieldProps) => {
     const [validated, setValidated] = useState(false);
 
     useEffect(() => {
-        props.setField({
-            label: '',
-            fieldType: 'radio',
-            required: false,
-            description: '',
-            options: ['', ''],
-            validate() {
-                setValidated(true);
-                return fieldLabelRef.current !== '' && optionsRef.current.filter(o => o.trim() === '').length === 0;
-            }
-        });
+        if (props.field === null) {
+            props.setField({
+                label: '',
+                fieldType: 'radio',
+                required: false,
+                description: '',
+                options: ['', ''],
+                validate
+            });
+        } else {
+            props.setField({
+                ...props.field,
+                validate
+            });
+            setFieldLabel(props.field.label);
+            setFieldDescription(props.field.description);
+            setFieldRequired(props.field.required);
+            setOptions(props.field.options);
+        }
     }, []);
 
     useEffect(() => {
         fieldLabelRef.current = fieldLabel;
         optionsRef.current = options;
     }, [fieldLabel, options]);
+
+    function validate() {
+        setValidated(true);
+        return fieldLabelRef.current !== '' && optionsRef.current.filter(o => o.trim() === '').length === 0;
+    }
 
     function saveFieldLabel(value: string) {
         setFieldLabel(value);

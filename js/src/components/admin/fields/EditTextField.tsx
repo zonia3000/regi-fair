@@ -13,21 +13,33 @@ const EditTextField = (props: EditTextFieldProps) => {
     const [validated, setValidated] = useState(false);
 
     useEffect(() => {
-        props.setField({
-            label: '',
-            fieldType: props.fieldType,
-            required: false,
-            description: '',
-            validate: function () {
-                setValidated(true);
-                return fieldLabelRef.current.trim() !== '';
-            }
-        });
+        if (props.field === null) {
+            props.setField({
+                label: '',
+                fieldType: props.fieldType,
+                required: false,
+                description: '',
+                validate
+            });
+        } else {
+            props.setField({
+                ...props.field,
+                validate
+            });
+            setFieldLabel(props.field.label);
+            setFieldDescription(props.field.description);
+            setFieldRequired(props.field.required);
+        }
     }, []);
 
     useEffect(() => {
         fieldLabelRef.current = fieldLabel;
     }, [fieldLabel]);
+
+    function validate() {
+        setValidated(true);
+        return fieldLabelRef.current.trim() !== '';
+    }
 
     function saveFieldLabel(value: string) {
         setFieldLabel(value);

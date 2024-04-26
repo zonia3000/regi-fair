@@ -31,7 +31,7 @@ class WPOE_DB_Setup
           description text NULL,
           required bit DEFAULT 1,
           extra text NULL,
-          field_index int NOT NULL,
+          position int NOT NULL,
           PRIMARY KEY  (id),
           FOREIGN KEY (event_id) REFERENCES $event_table (id)
         ");
@@ -53,7 +53,7 @@ class WPOE_DB_Setup
           description text NULL,
           required bit DEFAULT 1,
           extra text NULL,
-          field_index int NOT NULL,
+          position int NOT NULL,
           PRIMARY KEY  (id),
           FOREIGN KEY (template_id) REFERENCES $event_template_table (id)
         ");

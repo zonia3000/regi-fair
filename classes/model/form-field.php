@@ -2,12 +2,40 @@
 
 class FormField
 {
+    /**
+     * @var int|null
+     */
     public $id;
+
+    /**
+     * @var string
+     */
     public $label;
+
+    /**
+     * @var string
+     */
     public $fieldType;
+
+    /**
+     * @var bool
+     */
     public $required;
+
+    /**
+     * @var string
+     */
     public $description;
+
+    /**
+     * @var object|null
+     */
     public $extra;
+
     public $validators = [];
-    public $order;
+
+    /**
+     * @var int
+     */
+    public $position;
 }

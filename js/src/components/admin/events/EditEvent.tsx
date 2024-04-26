@@ -5,7 +5,7 @@ import apiFetch from '@wordpress/api-fetch';
 import Loading from '../../Loading';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import EditFormFields from '../fields/EditFormFields';
-import { extractError } from '../../utils';
+import { cleanupFields, extractError } from '../../utils';
 
 const EditEvent = () => {
 
@@ -64,7 +64,7 @@ const EditEvent = () => {
 
     async function save() {
         const event: EventConfiguration = {
-            id: null,
+            id: eventId === 'new' ? null : Number(eventId),
             name: eventName,
             date: parseDate(),
             formFields,
@@ -91,7 +91,10 @@ const EditEvent = () => {
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify(event),
+                    body: JSON.stringify({
+                        ...event,
+                        formFields: cleanupFields(event.formFields)
+                    }),
                 });
             }
             back();

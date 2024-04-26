@@ -1,17 +1,29 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, Modal } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import EditTextField from './EditTextField';
 import EditRadioField from './EditRadioField';
-import { AddFieldModalProps } from '../../classes/components-props';
+import { EditFieldModalProps } from '../../classes/components-props';
 
-const AddFieldModal = (props: AddFieldModalProps) => {
+const EditFieldModal = (props: EditFieldModalProps) => {
 
+    const [createNew, setCreateNew] = useState(true);
     const [fieldType, setFieldType] = useState(null as FieldType);
-    const [field, setField] = useState(null as Field);
+    const [field, setField] = useState(props.fieldToEdit);
+
+    useEffect(() => {
+        if (props.fieldToEdit !== null) {
+            setCreateNew(false);
+            setFieldType(props.fieldToEdit.fieldType);
+            setField(props.fieldToEdit);
+        } else {
+            setCreateNew(true);
+        }
+    }, [props.fieldToEdit]);
 
     function close() {
-        props.setShowAddFieldModal(false);
+        props.setShowEditFieldModal(false);
+        props.setFieldToEdit(null);
         setFieldType(null);
         setField(null);
     }
@@ -20,14 +32,14 @@ const AddFieldModal = (props: AddFieldModalProps) => {
         if (!field.validate()) {
             return;
         }
-        props.saveCurrentField(field);
+        props.saveField(field);
         close();
     }
 
     return (
         <>
-            {props.showAddFieldModal && (
-                <Modal title={__('Add field', 'wp-open-events')} onRequestClose={close}>
+            {props.showEditFieldModal && (
+                <Modal title={createNew ? __('Add field', 'wp-open-events') : __('Edit field', 'wp-open-events')} onRequestClose={close}>
                     {fieldType === null && (
                         <>
                             <p>{__('Select field type', 'wp-open-events')}</p>
@@ -60,9 +72,11 @@ const AddFieldModal = (props: AddFieldModalProps) => {
                                 {__('Save', 'wp-open-events')}
                             </Button>
                             &nbsp;
-                            <Button variant='secondary' onClick={() => setFieldType(null)}>
-                                {__('Cancel', 'wp-open-events')}
-                            </Button>
+                            {createNew &&
+                                <Button variant='secondary' onClick={() => setFieldType(null)}>
+                                    {__('Cancel', 'wp-open-events')}
+                                </Button>
+                            }
                         </>
                     )}
                 </Modal>
@@ -71,4 +85,4 @@ const AddFieldModal = (props: AddFieldModalProps) => {
     );
 };
 
-export default AddFieldModal;
+export default EditFieldModal;
