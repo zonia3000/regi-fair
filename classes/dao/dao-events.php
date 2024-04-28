@@ -5,36 +5,34 @@ if (!defined('ABSPATH')) {
 }
 
 require_once (WPOE_PLUGIN_DIR . 'classes/db.php');
+require_once (WPOE_PLUGIN_DIR . 'classes/dao/base-dao.php');
 
-class WPOE_DAO_Events
+class WPOE_DAO_Events extends WPOE_Base_DAO
 {
     public function __construct()
     {
-        global $wpdb;
-        // Errors are explicitly checked and converted to exceptions in order to preserve API JSON output
-        // (otherwise <div id="error"> could be printed at the beginning of the response payload)
-        $wpdb->hide_errors();
+        parent::__construct();
     }
 
     public function list_events(): array
     {
         global $wpdb;
 
-        $query = $wpdb->prepare("SELECT e.id, e.name, e.date 
-            FROM " . WPOE_DB::get_table_name('event') . " e ORDER BY e.date");
+        $query = $wpdb->prepare("SELECT e.id, e.name, e.date, COUNT(r.id) AS registrations 
+            FROM " . WPOE_DB::get_table_name('event') . " e
+            LEFT JOIN " . WPOE_DB::get_table_name('event_registration') . " r ON e.id = r.event_id
+            GROUP BY (e.id) ORDER BY e.date");
 
         $results = $wpdb->get_results($query, ARRAY_A);
-
-        if ($wpdb->last_error) {
-            throw new Exception($wpdb->last_error);
-        }
+        $this->check_results('retrieving events list');
 
         $events = [];
         foreach ($results as $result) {
             $events[] = [
                 'id' => (int) $result['id'],
                 'name' => $result['name'],
-                'date' => $result['date']
+                'date' => $result['date'],
+                'registrations' => (int) $result['registrations']
             ];
         }
         return $events;
@@ -48,23 +46,19 @@ class WPOE_DAO_Events
             f.id AS field_id, f.label, f.type, f.description, f.required, f.extra, f.position
             FROM " . WPOE_DB::get_table_name('event') . " e
             LEFT JOIN " . WPOE_DB::get_table_name('event_form_field') . " f ON f.event_id = e.id
-            WHERE e.id = %d ORDER BY f.position", $event_id);
+            WHERE e.id = %d AND NOT f.deleted ORDER BY f.position", $event_id);
 
         $results = $wpdb->get_results($query, ARRAY_A);
-
-        if ($wpdb->last_error) {
-            throw new Exception($wpdb->last_error);
-        }
+        $this->check_results('retrieving event');
 
         if (count($results) === 0) {
             return null;
         }
 
         $query = $wpdb->prepare("SELECT COUNT(*) FROM " . WPOE_DB::get_table_name('event_registration') . " WHERE event_id = %d", $event_id);
-        $registrations_count = (int) $wpdb->get_var($query);
-        if ($wpdb->last_error) {
-            throw new Exception($wpdb->last_error);
-        }
+        $var = $wpdb->get_var($query);
+        $this->check_var($var, 'retrieving event registrations count');
+        $registrations_count = (int) $var;
         $has_responses = $registrations_count > 0;
 
         $event = new Event();
@@ -87,13 +81,10 @@ class WPOE_DAO_Events
             f.id AS field_id, f.label, f.type, f.description, f.required, f.extra, f.position
             FROM " . WPOE_DB::get_table_name('event') . " e
             LEFT JOIN " . WPOE_DB::get_table_name('event_form_field') . " f ON f.event_id = e.id
-            WHERE e.id = %d ORDER BY f.position", $event_id);
+            WHERE e.id = %d AND NOT f.deleted ORDER BY f.position", $event_id);
 
         $results = $wpdb->get_results($query, ARRAY_A);
-
-        if ($wpdb->last_error) {
-            throw new Exception($wpdb->last_error);
-        }
+        $this->check_results('retrieving public event data');
 
         if (count($results) === 0) {
             return null;
@@ -127,81 +118,89 @@ class WPOE_DAO_Events
         return $formFields;
     }
 
+    /**
+     * Returns the id of the created event
+     */
     public function create_event(Event $event): int
     {
         global $wpdb;
 
-        $wpdb->query('START TRANSACTION');
+        try {
+            $result = $wpdb->query('START TRANSACTION');
+            $this->check_result($result, 'starting transaction');
 
-        // Insert the event
-        $wpdb->insert(
-            WPOE_DB::get_table_name('event'),
-            [
-                'name' => $event->name,
-                'date' => $event->date,
-                'autoremove_submissions' => $event->autoremove,
-                'autoremove_submissions_period' => $event->autoremovePeriod,
-                'max_participants' => $event->maxParticipants,
-                'waiting_list' => $event->waitingList,
-            ],
-            ['%s', '%s', '%d', '%d']
-        );
-
-        // Get the ID of the inserted event
-        $event_id = $wpdb->insert_id;
-
-        // Insert the form fields
-        $i = 0;
-        foreach ($event->formFields as $form_field) {
-            $wpdb->insert(
-                WPOE_DB::get_table_name('event_form_field'),
+            // Insert the event
+            $result = $wpdb->insert(
+                WPOE_DB::get_table_name('event'),
                 [
-                    'event_id' => $event_id,
-                    'label' => $form_field->label,
-                    'type' => $form_field->fieldType,
-                    'description' => $form_field->description,
-                    'required' => $form_field->required,
-                    'extra' => $form_field->extra === null ? null : json_encode($form_field->extra),
-                    'position' => $i
+                    'name' => $event->name,
+                    'date' => $event->date,
+                    'autoremove_submissions' => $event->autoremove,
+                    'autoremove_submissions_period' => $event->autoremovePeriod,
+                    'max_participants' => $event->maxParticipants,
+                    'waiting_list' => $event->waitingList,
                 ],
-                ['%d', '%s', '%s', '%d', '%s']
+                ['%s', '%s', '%d', '%d']
             );
-            $i++;
-        }
+            $this->check_result($result, 'inserting event');
 
-        if ($wpdb->last_error) {
+            // Get the ID of the inserted event
+            $event_id = $wpdb->insert_id;
+
+            // Insert the form fields
+            $i = 0;
+            foreach ($event->formFields as $form_field) {
+                $result = $wpdb->insert(
+                    WPOE_DB::get_table_name('event_form_field'),
+                    [
+                        'event_id' => $event_id,
+                        'label' => $form_field->label,
+                        'type' => $form_field->fieldType,
+                        'description' => $form_field->description,
+                        'required' => $form_field->required,
+                        'extra' => $form_field->extra === null ? null : json_encode($form_field->extra),
+                        'position' => $i
+                    ],
+                    ['%d', '%s', '%s', '%d', '%s']
+                );
+                $this->check_result($result, 'inserting event form field');
+                $i++;
+            }
+        } catch (Exception $ex) {
             $wpdb->query('ROLLBACK');
-            throw new Exception($wpdb->last_error);
-        } else {
-            $wpdb->query('COMMIT');
+            throw $ex;
         }
+        $result = $wpdb->query('COMMIT');
+        $this->check_result($result, 'creating event');
 
         return $event_id;
     }
 
-    public function update_event(Event $event): bool
+    public function update_event(Event $event): void
     {
         global $wpdb;
 
-        $wpdb->query('START TRANSACTION');
+        $result = $wpdb->query('START TRANSACTION');
+        $this->check_result($result, 'starting transaction');
 
-        // Update the template
-        $updated_rows = $wpdb->update(
-            WPOE_DB::get_table_name('event'),
-            [
-                'name' => $event->name,
-                'date' => $event->date,
-                'autoremove_submissions' => $event->autoremove,
-                'autoremove_submissions_period' => $event->autoremovePeriod,
-                'max_participants' => $event->maxParticipants,
-                'waiting_list' => $event->waitingList
-            ],
-            ['id' => $event->id],
-            ['%s', '%s', '%d', '%d', '%d', '%d'],
-            ['%d']
-        );
+        try {
+            // Update the template
+            $result = $wpdb->update(
+                WPOE_DB::get_table_name('event'),
+                [
+                    'name' => $event->name,
+                    'date' => $event->date,
+                    'autoremove_submissions' => $event->autoremove,
+                    'autoremove_submissions_period' => $event->autoremovePeriod,
+                    'max_participants' => $event->maxParticipants,
+                    'waiting_list' => $event->waitingList
+                ],
+                ['id' => $event->id],
+                ['%s', '%s', '%d', '%d', '%d', '%d'],
+                ['%d']
+            );
+            $this->check_result($result, 'updating event');
 
-        if ($updated_rows !== false) {
             $current_field_ids = [];
             foreach ($event->formFields as $form_field) {
                 if ($form_field->id !== null) {
@@ -209,26 +208,90 @@ class WPOE_DAO_Events
                 }
             }
 
+            // Retrieve the list of fields to delete, store them in a map having field id as keys and field label as values.
+            $results = [];
             if (count($current_field_ids) > 0) {
-                // Delete form fields whose ids are not present anymore
                 $placeholders = array_fill(0, count($current_field_ids), '%d');
-                $query = $wpdb->prepare('DELETE FROM '
-                    . WPOE_DB::get_table_name('event_form_field')
-                    . ' WHERE id NOT IN (' . join(',', $placeholders) . ')', $current_field_ids);
-                $wpdb->query($query);
-            } else {
-                // Delete all old form fields
-                $wpdb->delete(
-                    WPOE_DB::get_table_name('event_form_field'),
-                    ['event_id' => $event->id],
-                    ['%d']
+                $query = $wpdb->prepare(
+                    'SELECT id FROM ' . WPOE_DB::get_table_name('event_form_field')
+                    . ' WHERE event_id = %d AND id NOT IN (' . join(',', $placeholders) . ')',
+                    $event->id,
+                    ...$current_field_ids
                 );
+                $results = $wpdb->get_results($query, ARRAY_A);
+            } else {
+                $query = $wpdb->prepare(
+                    'SELECT id FROM ' . WPOE_DB::get_table_name('event_form_field') . ' WHERE event_id = %d',
+                    $event->id
+                );
+                $results = $wpdb->get_results($query, ARRAY_A);
+            }
+            $this->check_results('retrieving form fields to delete');
+
+            if (count($results) > 0) {
+                $field_ids_to_delete = [];
+                foreach ($results as $result) {
+                    $field_id = (int) $result['id'];
+                    $field_ids_to_delete[] = $field_id;
+                }
+
+                // Select the fields to preserve because they are associated with some registration values
+                // These fields will be marked as deleted but they will not be really removed from the database
+                $placeholders = array_fill(0, count($field_ids_to_delete), '%d');
+                $query = $wpdb->prepare(
+                    'SELECT DISTINCT rv.field_id FROM '
+                    . WPOE_DB::get_table_name('event_registration')
+                    . ' r JOIN ' . WPOE_DB::get_table_name('event_registration_value')
+                    . ' rv ON r.id = rv.registration_id AND field_id IN (' . join(',', $placeholders) . ')',
+                    ...$field_ids_to_delete
+                );
+                $results = $wpdb->get_results($query, ARRAY_A);
+                $this->check_results('retrieving form fields to preserve');
+
+                if (count($results) > 0) {
+                    // Marking referenced fields as deleted
+                    $referenced_ids = [];
+                    foreach ($results as $result) {
+                        $field_id = (int) $result['field_id'];
+                        $referenced_ids[] = $field_id;
+                    }
+
+                    $placeholders = array_fill(0, count($referenced_ids), '%d');
+                    $query = $wpdb->prepare(
+                        'UPDATE ' . WPOE_DB::get_table_name('event_form_field')
+                        . ' SET deleted = 1 WHERE id IN (' . join(',', $placeholders) . ')',
+                        ...$referenced_ids
+                    );
+                    $result = $wpdb->query($query);
+                    $this->check_result($result, 'marking fields as deleted');
+
+                    // Recompute the list of ids that can be deleted
+                    $unreferenced_ids = [];
+                    foreach ($field_ids_to_delete as $field_id) {
+                        if (!in_array($field_id, $referenced_ids)) {
+                            $unreferenced_ids[] = $field_id;
+                        }
+                    }
+                    $field_ids_to_delete = $unreferenced_ids;
+                }
+
+                if (count($field_ids_to_delete)) {
+                    // Delete the form fields without references
+                    foreach ($field_ids_to_delete as $field_id) {
+                        $result = $wpdb->delete(
+                            WPOE_DB::get_table_name('event_form_field'),
+                            ['id' => $field_id],
+                            ['%d']
+                        );
+                        $this->check_result($result, 'deleting form field');
+                    }
+                }
             }
 
-            // Insert the updated form fields
             foreach ($event->formFields as $form_field) {
                 if ($form_field->id === null) {
-                    $wpdb->insert(
+                    // Insert a new form field
+                    $result = $wpdb->insert(
                         WPOE_DB::get_table_name('event_form_field'),
                         [
                             'event_id' => $event->id,
@@ -241,8 +304,10 @@ class WPOE_DAO_Events
                         ],
                         ['%d', '%s', '%s', '%s', '%d', '%s', '%d'],
                     );
+                    $this->check_result($result, 'inserting form field');
                 } else {
-                    $wpdb->update(
+                    // Update an existing form field
+                    $result = $wpdb->update(
                         WPOE_DB::get_table_name('event_form_field'),
                         [
                             'event_id' => $event->id,
@@ -257,101 +322,44 @@ class WPOE_DAO_Events
                         ['%d', '%s', '%s', '%s', '%d', '%s', '%d'],
                         ['%d']
                     );
+                    $this->check_result($result, 'updating form field');
                 }
             }
-        }
-
-        if ($wpdb->last_error) {
+        } catch (Exception $ex) {
             $wpdb->query('ROLLBACK');
-            throw new Exception($wpdb->last_error);
-        } else {
-            $wpdb->query('COMMIT');
+            throw $ex;
         }
 
-        return $updated_rows !== false;
+        $result = $wpdb->query('COMMIT');
+        $this->check_result($result, 'updating event');
     }
 
     public function delete_event(int $event_id): void
     {
         global $wpdb;
 
-        $wpdb->query('START TRANSACTION');
+        $result = $wpdb->query('START TRANSACTION');
+        $this->check_result($result, 'starting transaction');
 
-        $wpdb->query($wpdb->prepare('DELETE FROM ' . WPOE_DB::get_table_name('event_registration_value') . ' rv JOIN '
-            . WPOE_DB::get_table_name('event_registration') . ' r ON rv.registration_id = r.id WHERE r.event_id = %d', $event_id));
+        try {
+            $result = $wpdb->query($wpdb->prepare('DELETE FROM ' . WPOE_DB::get_table_name('event_registration_value') . ' rv JOIN '
+                . WPOE_DB::get_table_name('event_registration') . ' r ON rv.registration_id = r.id WHERE r.event_id = %d', $event_id));
+            $this->check_result($result, 'deleting registrations values');
 
-        $wpdb->delete(WPOE_DB::get_table_name('event_registration'), ['event_id' => $event_id], ['%d']);
-        $wpdb->delete(WPOE_DB::get_table_name('event_form_field'), ['event_id' => $event_id], ['%d']);
-        $wpdb->delete(WPOE_DB::get_table_name('event'), ['id' => $event_id], ['%d']);
+            $result = $wpdb->delete(WPOE_DB::get_table_name('event_registration'), ['event_id' => $event_id], ['%d']);
+            $this->check_result($result, 'deleting registrations');
 
-        if ($wpdb->last_error) {
+            $result = $wpdb->delete(WPOE_DB::get_table_name('event_form_field'), ['event_id' => $event_id], ['%d']);
+            $this->check_result($result, 'deleting event form fields');
+
+            $result = $wpdb->delete(WPOE_DB::get_table_name('event'), ['id' => $event_id], ['%d']);
+            $this->check_result($result, 'deleting event');
+        } catch (Exception $ex) {
             $wpdb->query('ROLLBACK');
-            throw new Exception($wpdb->last_error);
-        } else {
-            $wpdb->query('COMMIT');
-        }
-    }
-
-    /**
-     * Returns:
-     * - null if the event has no maxiumum number of participants limit
-     * - an integer representing the number of remaining available seats if there is a maxiumum number of participants limit
-     * - false if there is a maxiumum number of participants limit and this limit has already been reached
-     */
-    public function register_to_event(int $event_id, ?string $registration_token, array $values, int|null $max_participants): int|false|null
-    {
-        global $wpdb;
-
-        $wpdb->query('START TRANSACTION');
-
-        // Count the number of remaining seats
-        $remaining_seats = null;
-        if ($max_participants !== null) {
-            $query = $wpdb->prepare('SELECT COUNT(*) FROM ' . WPOE_DB::get_table_name('event_registration') . ' WHERE id = %d', $event_id);
-            $registrations_count = (int) $wpdb->get_var($query);
-            if ($wpdb->last_error) {
-                $wpdb->query('ROLLBACK');
-                throw new Exception($wpdb->last_error);
-            }
-            $remaining_seats = $max_participants - $registrations_count;
-            if ($remaining_seats <= 0) {
-                // Unable to register: no more seats available
-                return false;
-            }
+            throw $ex;
         }
 
-        // Insert the registration
-        $wpdb->insert(
-            WPOE_DB::get_table_name('event_registration'),
-            [
-                'event_id' => $event_id,
-                'registration_token' => $registration_token,
-            ],
-            ['%d', '%s', '%s']
-        );
-
-        $registration_id = $wpdb->insert_id;
-
-        // Insert the registration fields
-        foreach ($values as $field_id => $field_value) {
-            $wpdb->insert(
-                WPOE_DB::get_table_name('event_registration_value'),
-                [
-                    'registration_id' => $registration_id,
-                    'field_id' => $field_id,
-                    'field_value' => $field_value,
-                ],
-                ['%d', '%d', '%s']
-            );
-        }
-
-        if ($wpdb->last_error) {
-            $wpdb->query('ROLLBACK');
-            throw new Exception($wpdb->last_error);
-        } else {
-            $wpdb->query('COMMIT');
-        }
-
-        return $remaining_seats;
+        $result = $wpdb->query('COMMIT');
+        $this->check_result($result, 'deleting event');
     }
 }

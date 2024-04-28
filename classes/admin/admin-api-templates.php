@@ -141,18 +141,21 @@ class WPOE_Templates_Admin_Controller extends WP_REST_Controller
   public function update_item($request)
   {
     try {
-      $event_template = new EventTemplate;
-      $event_template->id = (int) $request->get_param('id');
+      $id = (int) $request->get_param('id');
+      $event_template = $this->dao->get_event_template($id);
+      if ($event_template === null) {
+        return new WP_Error('template_not_found', __('Event template not found', 'wp-open-events'), ['status' => 404]);
+      }
+
+      $event_template = new EventTemplate();
+      $event_template->id = $id;
       $event_template->name = $request->get_param('name');
       $event_template->autoremove = (bool) $request->get_param('autoremove');
       $event_template->autoremovePeriod = (int) $request->get_param('autoremovePeriod');
       $event_template->waitingList = (bool) $request->get_param('waitingList');
       $event_template->formFields = get_form_field_from_request($request);
-      $updated = $this->dao->update_event_template($event_template);
-      if ($updated) {
-        return new WP_REST_Response(null, 204);
-      }
-      return new WP_Error('template_not_found', __('Event template not found', 'wp-open-events'), ['status' => 404]);
+      $this->dao->update_event_template($event_template);
+      return new WP_REST_Response(null, 204);
     } catch (Exception $ex) {
       return generic_server_error($ex);
     }

@@ -82,7 +82,7 @@ const ListEvents = () => {
         window.location.href = newTemplatePage;
     }
 
-    function openDeleteEventModal(event: Event) {
+    function openDeleteEventModal(event: EventConfiguration) {
         setEventToDelete(event);
     }
 
@@ -126,6 +126,7 @@ const ListEvents = () => {
                         <tr>
                             <th>{__('Name', 'wp-open-events')}</th>
                             <th>{__('Date', 'wp-open-events')}</th>
+                            <th>{__('Registrations', 'wp-open-events')}</th>
                             <th></th>
                         </tr>
                     </thead>
@@ -136,6 +137,12 @@ const ListEvents = () => {
                                     <Link to={`/event/${e.id}`}>{e.name}</Link>
                                 </td>
                                 <td>{e.date}</td>
+                                <td>
+                                    {e.registrations === 0 && '-'}
+                                    {e.registrations > 0 &&
+                                        <Link to={`/event/${e.id}/registrations`}>{e.registrations}</Link>
+                                    }
+                                </td>
                                 <td>
                                     <Button variant='primary' onClick={() => openDeleteEventModal(e)}>Delete</Button>
                                 </td>

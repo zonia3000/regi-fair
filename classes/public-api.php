@@ -9,11 +9,16 @@ class WPOE_Public_Controller extends WP_REST_Controller
     /**
      * @var WPOE_DAO_Events
      */
-    private $dao;
+    private $events_dao;
+    /**
+     * @var WPOE_DAO_Registrations
+     */
+    private $registrations_dao;
 
     public function __construct()
     {
-        $this->dao = new WPOE_DAO_Events();
+        $this->events_dao = new WPOE_DAO_Events();
+        $this->registrations_dao = new WPOE_DAO_Registrations();
     }
 
     public function register_routes()
@@ -45,7 +50,7 @@ class WPOE_Public_Controller extends WP_REST_Controller
     public function get_item($request)
     {
         $id = (int) $request->get_param('id');
-        return new WP_REST_Response($this->dao->get_public_event_data($id));
+        return new WP_REST_Response($this->events_dao->get_public_event_data($id));
     }
 
     /**
@@ -55,7 +60,7 @@ class WPOE_Public_Controller extends WP_REST_Controller
     public function create_item($request)
     {
         $event_id = (int) $request->get_param('id');
-        $event = $this->dao->get_event($event_id);
+        $event = $this->events_dao->get_event($event_id);
 
         if ($event === null) {
             return new WP_Error('event_not_found', __('Event not found', 'wp-open-events'), ['status' => 400]);
@@ -77,7 +82,7 @@ class WPOE_Public_Controller extends WP_REST_Controller
 
         $registration_token = bin2hex(openssl_random_pseudo_bytes(16));
 
-        $remaining_seats = $this->dao->register_to_event($event_id, md5($registration_token), $values, $event->maxParticipants);
+        $remaining_seats = $this->registrations_dao->register_to_event($event_id, md5($registration_token), $values, $event->maxParticipants);
         if ($remaining_seats === false) {
             return new WP_Error('no_more_seats', __('No more seats available', 'wp-open-events'), ['status' => 400]);
         }

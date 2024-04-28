@@ -1,5 +1,9 @@
 <?php
 
+if (!defined('ABSPATH')) {
+    exit;
+}
+
 require_once (WPOE_PLUGIN_DIR . 'classes/model/event.php');
 require_once (WPOE_PLUGIN_DIR . 'classes/model/form-field.php');
 require_once (WPOE_PLUGIN_DIR . 'classes/dao/dao-events.php');
@@ -137,8 +141,14 @@ class WPOE_Events_Admin_Controller extends WP_REST_Controller
     public function update_item($request)
     {
         try {
-            $event = new Event;
-            $event->id = (int) $request->get_param('id');
+            $id = (int) $request->get_param('id');
+            $event = $this->dao->get_event($id);
+            if ($event === null) {
+                return new WP_Error('event_not_found', __('Event not found', 'wp-open-events'), ['status' => 404]);
+            }
+
+            $event = new Event();
+            $event->id = $id;
             $event->name = $request->get_param('name');
             $event->date = $request->get_param('date');
             $event->autoremove = (bool) $request->get_param('autoremove');
@@ -152,11 +162,8 @@ class WPOE_Events_Admin_Controller extends WP_REST_Controller
                 $event->autoremovePeriod = null;
             }
             $event->formFields = get_form_field_from_request($request);
-            $updated = $this->dao->update_event($event);
-            if ($updated) {
-                return new WP_REST_Response(null, 204);
-            }
-            return new WP_Error('event_not_found', __('Event not found', 'wp-open-events'), ['status' => 404]);
+            $this->dao->update_event($event);
+            return new WP_REST_Response(null, 204);
         } catch (Exception $ex) {
             return generic_server_error($ex);
         }

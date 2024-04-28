@@ -32,6 +32,7 @@ class WPOE_DB_Setup
           required bit DEFAULT 1,
           extra text NULL,
           position int NOT NULL,
+          deleted bit DEFAULT 0,
           PRIMARY KEY  (id),
           FOREIGN KEY (event_id) REFERENCES $event_table (id)
         ");

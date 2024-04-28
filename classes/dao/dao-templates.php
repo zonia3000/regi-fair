@@ -6,14 +6,11 @@ if (!defined('ABSPATH')) {
 
 require_once (WPOE_PLUGIN_DIR . 'classes/db.php');
 
-class WPOE_DAO_Templates
+class WPOE_DAO_Templates extends WPOE_Base_DAO
 {
   public function __construct()
   {
-    global $wpdb;
-    // Errors are explicitly checked and converted to exceptions in order to preserve API JSON output
-    // (otherwise <div id="error"> could be printed at the beginning of the response payload)
-    $wpdb->hide_errors();
+    parent::__construct();
   }
 
   public function list_event_templates(): array
@@ -24,10 +21,7 @@ class WPOE_DAO_Templates
                 FROM " . WPOE_DB::get_table_name('event_template') . " t ORDER BY t.id");
 
     $results = $wpdb->get_results($query, ARRAY_A);
-
-    if ($wpdb->last_error) {
-      throw new Exception($wpdb->last_error);
-    }
+    $this->check_results('retrieving the list of event templates');
 
     $events = [];
     foreach ($results as $result) {
@@ -50,10 +44,7 @@ class WPOE_DAO_Templates
                 WHERE t.id = %d ORDER BY f.position", $event_template_id);
 
     $results = $wpdb->get_results($query, ARRAY_A);
-
-    if ($wpdb->last_error) {
-      throw new Exception($wpdb->last_error);
-    }
+    $this->check_results('retrieving the event template');
 
     if (count($results) === 0) {
       return null;
@@ -92,71 +83,77 @@ class WPOE_DAO_Templates
   {
     global $wpdb;
 
-    $wpdb->query('START TRANSACTION');
+    try {
+      $result = $wpdb->query('START TRANSACTION');
+      $this->check_result($result, 'starting transaction');
 
-    // Insert the template
-    $wpdb->insert(
-      WPOE_DB::get_table_name('event_template'),
-      [
-        'name' => $event_template->name,
-        'autoremove_submissions' => $event_template->autoremove,
-        'autoremove_submissions_period' => $event_template->autoremovePeriod,
-        'waiting_list' => $event_template->waitingList,
-      ],
-      ['%s', '%s', '%d', '%d']
-    );
-
-    // Get the ID of the inserted template
-    $event_template_id = $wpdb->insert_id;
-
-    // Insert the form fields
-    foreach ($event_template->formFields as $form_field) {
-      $wpdb->insert(
-        WPOE_DB::get_table_name('event_template_form_field'),
+      // Insert the template
+      $result = $wpdb->insert(
+        WPOE_DB::get_table_name('event_template'),
         [
-          'template_id' => $event_template_id,
-          'label' => $form_field->label,
-          'type' => $form_field->fieldType,
-          'description' => $form_field->description,
-          'required' => $form_field->required,
-          'extra' => $form_field->extra === null ? null : json_encode($form_field->extra),
-          'position' => $form_field->position
+          'name' => $event_template->name,
+          'autoremove_submissions' => $event_template->autoremove,
+          'autoremove_submissions_period' => $event_template->autoremovePeriod,
+          'waiting_list' => $event_template->waitingList,
         ],
-        ['%d', '%s', '%s', '%s', '%d', '%s', '%d']
+        ['%s', '%s', '%d', '%d']
       );
+      $this->check_result($result, 'inserting event template');
+
+      // Get the ID of the inserted template
+      $event_template_id = $wpdb->insert_id;
+
+      // Insert the form fields
+      foreach ($event_template->formFields as $form_field) {
+        $result = $wpdb->insert(
+          WPOE_DB::get_table_name('event_template_form_field'),
+          [
+            'template_id' => $event_template_id,
+            'label' => $form_field->label,
+            'type' => $form_field->fieldType,
+            'description' => $form_field->description,
+            'required' => $form_field->required,
+            'extra' => $form_field->extra === null ? null : json_encode($form_field->extra),
+            'position' => $form_field->position
+          ],
+          ['%d', '%s', '%s', '%s', '%d', '%s', '%d']
+        );
+        $this->check_result($result, 'inserting event template form field');
+      }
+    } catch (Exception $ex) {
+      $wpdb->query('ROLLBACK');
+      throw $ex;
     }
 
-    if ($wpdb->last_error) {
-      $wpdb->query('ROLLBACK');
-      throw new Exception($wpdb->last_error);
-    } else {
-      $wpdb->query('COMMIT');
-    }
+    $result = $wpdb->query('COMMIT');
+    $this->check_result($result, 'creating event template');
 
     return $event_template_id;
   }
 
-  public function update_event_template(EventTemplate $event_template): bool
+  public function update_event_template(EventTemplate $event_template): void
   {
     global $wpdb;
 
-    $wpdb->query('START TRANSACTION');
+    try {
+      $result = $wpdb->query('START TRANSACTION');
+      $this->check_result($result, 'starting transaction');
 
-    // Update the template
-    $updated_rows = $wpdb->update(
-      WPOE_DB::get_table_name('event_template'),
-      [
-        'name' => $event_template->name,
-        'autoremove_submissions' => $event_template->autoremove,
-        'autoremove_submissions_period' => $event_template->autoremovePeriod,
-        'waiting_list' => $event_template->waitingList
-      ],
-      ['id' => $event_template->id],
-      ['%s', '%s', '%d', '%d'],
-      ['%d']
-    );
+      // Update the template
+      $result = $wpdb->update(
+        WPOE_DB::get_table_name('event_template'),
+        [
+          'name' => $event_template->name,
+          'autoremove_submissions' => $event_template->autoremove,
+          'autoremove_submissions_period' => $event_template->autoremovePeriod,
+          'waiting_list' => $event_template->waitingList
+        ],
+        ['id' => $event_template->id],
+        ['%s', '%s', '%d', '%d'],
+        ['%d']
+      );
+      $this->check_result($result, 'updating event template');
 
-    if ($updated_rows !== false) {
       $current_field_ids = [];
       foreach ($event_template->formFields as $form_field) {
         if ($form_field->id !== null) {
@@ -170,20 +167,21 @@ class WPOE_DAO_Templates
         $query = $wpdb->prepare('DELETE FROM '
           . WPOE_DB::get_table_name('event_template_form_field')
           . ' WHERE id NOT IN (' . join(',', $placeholders) . ')', $current_field_ids);
-        $wpdb->query($query);
+        $result = $wpdb->query($query);
       } else {
         // Delete all old form fields
-        $wpdb->delete(
+        $result = $wpdb->delete(
           WPOE_DB::get_table_name('event_template_form_field'),
           ['template_id' => $event_template->id],
           ['%d']
         );
       }
+      $this->check_result($result, 'deleting event template form fields');
 
       // Insert the updated form fields
       foreach ($event_template->formFields as $form_field) {
         if ($form_field->id === null) {
-          $wpdb->insert(
+          $result = $wpdb->insert(
             WPOE_DB::get_table_name('event_template_form_field'),
             [
               'template_id' => $event_template->id,
@@ -196,8 +194,9 @@ class WPOE_DAO_Templates
             ],
             ['%d', '%s', '%s', '%s', '%d', '%s', '%d'],
           );
+          $this->check_result($result, 'inserting new event template form field');
         } else {
-          $wpdb->update(
+          $result = $wpdb->update(
             WPOE_DB::get_table_name('event_template_form_field'),
             [
               'template_id' => $event_template->id,
@@ -212,34 +211,38 @@ class WPOE_DAO_Templates
             ['%d', '%s', '%s', '%s', '%d', '%s', '%d'],
             ['%d']
           );
+          $this->check_result($result, 'updating event template form field');
         }
       }
-    }
-
-    if ($wpdb->last_error) {
+    } catch (Exception $ex) {
       $wpdb->query('ROLLBACK');
-      throw new Exception($wpdb->last_error);
-    } else {
-      $wpdb->query('COMMIT');
+      throw $ex;
     }
 
-    return $updated_rows !== false;
+    $result = $wpdb->query('COMMIT');
+    $this->check_result($result, 'updating event template');
   }
 
   public function delete_event_template(int $event_template_id): void
   {
     global $wpdb;
 
-    $wpdb->query('START TRANSACTION');
+    try {
+      $result = $wpdb->query('START TRANSACTION');
+      $this->check_result($result, 'starting transaction');
 
-    $wpdb->delete(WPOE_DB::get_table_name('event_template_form_field'), ['template_id' => $event_template_id], ['%d']);
-    $wpdb->delete(WPOE_DB::get_table_name('event_template'), ['id' => $event_template_id], ['%d']);
+      $result = $wpdb->delete(WPOE_DB::get_table_name('event_template_form_field'), ['template_id' => $event_template_id], ['%d']);
+      $this->check_result($result, 'deleting event template form fields');
 
-    if ($wpdb->last_error) {
+      $result = $wpdb->delete(WPOE_DB::get_table_name('event_template'), ['id' => $event_template_id], ['%d']);
+      $this->check_result($result, 'deleting event template');
+
+    } catch (Exception $ex) {
       $wpdb->query('ROLLBACK');
-      throw new Exception($wpdb->last_error);
-    } else {
-      $wpdb->query('COMMIT');
+      throw $ex;
     }
+
+    $result = $wpdb->query('COMMIT');
+    $this->check_result($result, 'deleting event template');
   }
 }
