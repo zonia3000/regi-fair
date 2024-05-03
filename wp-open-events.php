@@ -20,7 +20,7 @@ add_action('plugins_loaded', function () {
     load_plugin_textdomain('wp-open-events', false, dirname(plugin_basename(__FILE__)) . '/languages/');
 });
 
-require_once (WPOE_PLUGIN_DIR . 'classes/create-admin-menu.php');
+require_once (WPOE_PLUGIN_DIR . 'classes/admin/create-admin-menu.php');
 add_action('admin_menu', ['WPOE_Admin_Panel_Pages', 'create_menu']);
 add_action('admin_enqueue_scripts', ['WPOE_Admin_Panel_Pages', 'enqueue_scripts']);
 
