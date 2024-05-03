@@ -73,6 +73,21 @@ class WPOE_Events_Admin_Controller extends WP_REST_Controller
                 'schema' => [$this, 'get_item_schema']
             ]
         );
+
+        register_rest_route(
+            $namespace,
+            '/admin/events/(?P<id>\d+)/references',
+            [
+                'args' => [
+                    'id' => ['type' => 'integer', 'required' => true, 'minimum' => 1]
+                ],
+                [
+                    'methods' => WP_REST_Server::READABLE,
+                    'permission_callback' => 'is_events_admin',
+                    'callback' => [$this, 'get_referencing_post']
+                ],
+            ]
+        );
     }
 
     /**
@@ -101,6 +116,20 @@ class WPOE_Events_Admin_Controller extends WP_REST_Controller
                 return new WP_Error('event_not_found', __('Event not found', 'wp-open-events'), ['status' => 404]);
             }
             return new WP_REST_Response($event);
+        } catch (Exception $ex) {
+            return generic_server_error($ex);
+        }
+    }
+
+    /**
+     * @param WP_REST_Request $request
+     * @return WP_Error|WP_REST_Response
+     */
+    public function get_referencing_post($request)
+    {
+        try {
+            $event_id = $request->get_param('id');
+            return new WP_REST_Response($this->dao->get_referencing_posts($event_id));
         } catch (Exception $ex) {
             return generic_server_error($ex);
         }

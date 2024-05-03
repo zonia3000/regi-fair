@@ -4,6 +4,9 @@ type EventConfiguration = {
     name: string
     date: string
     registrations?: number
+    postTitle?: string | null
+    postPermalink?: string | null
+    hasMultipleReferences?: boolean
     formFields: Field[]
     autoremove: boolean
     autoremovePeriod: number

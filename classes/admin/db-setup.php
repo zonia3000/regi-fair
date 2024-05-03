@@ -13,7 +13,7 @@ class WPOE_DB_Setup
         global $wpdb;
 
         $event_table = WPOE_DB_Setup::create_table('event', "
-          id bigint NOT NULL AUTO_INCREMENT,
+          id bigint unsigned NOT NULL AUTO_INCREMENT,
           name varchar(255) NOT NULL,
           date date NOT NULL,
           autoremove_submissions bit DEFAULT 1,
@@ -24,8 +24,8 @@ class WPOE_DB_Setup
         ");
 
         $event_form_field_table = WPOE_DB_Setup::create_table('event_form_field', "
-          id bigint NOT NULL AUTO_INCREMENT,
-          event_id bigint NOT NULL,
+          id bigint unsigned NOT NULL AUTO_INCREMENT,
+          event_id bigint unsigned NOT NULL,
           label varchar(255) NOT NULL,
           type varchar(255) NOT NULL,
           description text NULL,
@@ -37,8 +37,17 @@ class WPOE_DB_Setup
           FOREIGN KEY (event_id) REFERENCES $event_table (id)
         ");
 
+        WPOE_DB_Setup::create_table('event_post', "
+          event_id bigint unsigned NOT NULL,
+          post_id bigint unsigned NOT NULL,
+          updated_at timestamp DEFAULT CURRENT_TIMESTAMP,
+          PRIMARY KEY  (event_id, post_id),
+          FOREIGN KEY (event_id) REFERENCES $event_table (id),
+          FOREIGN KEY (post_id) REFERENCES " . $wpdb->prefix . "posts (ID)
+        ");
+
         $event_template_table = WPOE_DB_Setup::create_table('event_template', "
-          id bigint NOT NULL AUTO_INCREMENT,
+          id bigint unsigned NOT NULL AUTO_INCREMENT,
           name varchar(255) NOT NULL,
           autoremove_submissions bit DEFAULT 1,
           autoremove_submissions_period int DEFAULT 30,
@@ -47,8 +56,8 @@ class WPOE_DB_Setup
         ");
 
         WPOE_DB_Setup::create_table('event_template_form_field', "
-          id bigint NOT NULL AUTO_INCREMENT,
-          template_id bigint NOT NULL,
+          id bigint unsigned NOT NULL AUTO_INCREMENT,
+          template_id bigint unsigned NOT NULL,
           label varchar(255) NOT NULL,
           type varchar(255) NOT NULL,
           description text NULL,
@@ -60,8 +69,8 @@ class WPOE_DB_Setup
         ");
 
         $event_registration_table = WPOE_DB_Setup::create_table('event_registration', "
-          id bigint NOT NULL AUTO_INCREMENT,
-          event_id bigint NOT NULL,
+          id bigint unsigned NOT NULL AUTO_INCREMENT,
+          event_id bigint unsigned NOT NULL,
           registration_token varchar(255) NULL,
           inserted_at timestamp DEFAULT CURRENT_TIMESTAMP,
           PRIMARY KEY  (id),
@@ -69,8 +78,8 @@ class WPOE_DB_Setup
         ");
 
         WPOE_DB_Setup::create_table('event_registration_value', "
-          registration_id bigint NOT NULL,
-          field_id bigint NOT NULL,
+          registration_id bigint unsigned NOT NULL,
+          field_id bigint unsigned NOT NULL,
           field_value text NULL,
           PRIMARY KEY  (registration_id, field_id),
           FOREIGN KEY (registration_id) REFERENCES $event_registration_table (id),

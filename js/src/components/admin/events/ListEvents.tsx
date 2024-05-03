@@ -3,7 +3,7 @@ import { __ } from '@wordpress/i18n';
 import apiFetch from '@wordpress/api-fetch';
 import Loading from '../../Loading';
 import { Link, useNavigate } from 'react-router-dom';
-import { Button, Modal, Notice, SelectControl, Spinner } from '@wordpress/components';
+import { Button, Icon, Modal, Notice, SelectControl, Spinner } from '@wordpress/components';
 import { extractError } from '../../utils';
 import '../../style.css';
 
@@ -21,6 +21,10 @@ const ListEvents = () => {
     const [eventToDelete, setEventToDelete] = useState(null);
     const [deleteError, setDeleteError] = useState('');
     const [deleting, setDeleting] = useState(false);
+    const [selectedEventWithMultipleReferences, setSelectedEventWithMultipleReferences] = useState(null);
+    const [loadingEventReferences, setLoadingEventReferences] = useState(false);
+    const [loadingEventReferencesError, setLoadingEventReferencesError] = useState('');
+    const [referencingPosts, setReferencingPosts] = useState([] as Array<{ title: string, permalink: string }>);
 
     useEffect(() => {
         setLoading(true);
@@ -88,6 +92,9 @@ const ListEvents = () => {
 
     function closeDeleteEventModal() {
         setEventToDelete(null);
+        setLoadingEventReferencesError('');
+        setReferencingPosts([]);
+        setLoadingEventReferences(false);
     }
 
     async function confirmDeleteEvent() {
@@ -104,6 +111,23 @@ const ListEvents = () => {
         } finally {
             setDeleting(false);
         }
+    }
+
+    async function openEventWithMultipleReferencesModal(event: EventConfiguration) {
+        setSelectedEventWithMultipleReferences(event);
+        setLoadingEventReferences(true);
+        try {
+            const references = await apiFetch({ path: `/wpoe/v1/admin/events/${event.id}/references` })
+            setReferencingPosts(references as Array<{ title: string, permalink: string }>);
+        } catch (err) {
+            setLoadingEventReferencesError(extractError(err));
+        } finally {
+            setLoadingEventReferences(false);
+        }
+    }
+
+    function closeEventWithMultipleReferencesModal() {
+        setSelectedEventWithMultipleReferences(null);
     }
 
     if (loading) {
@@ -127,6 +151,7 @@ const ListEvents = () => {
                             <th>{__('Name', 'wp-open-events')}</th>
                             <th>{__('Date', 'wp-open-events')}</th>
                             <th>{__('Registrations', 'wp-open-events')}</th>
+                            <th>{__('Post', 'wp-open-events')}</th>
                             <th></th>
                         </tr>
                     </thead>
@@ -141,6 +166,17 @@ const ListEvents = () => {
                                     {e.registrations === 0 && '-'}
                                     {e.registrations > 0 &&
                                         <Link to={`/event/${e.id}/registrations`}>{e.registrations}</Link>
+                                    }
+                                </td>
+                                <td>
+                                    {!e.postPermalink && '-'}
+                                    {e.postPermalink &&
+                                        <Link to={e.postPermalink} target='_blank'>{e.postTitle}</Link>
+                                    }
+                                    {e.hasMultipleReferences &&
+                                        <Button className='warning-sign' variant='link' onClick={() => openEventWithMultipleReferencesModal(e)}>
+                                            <Icon icon='warning' />
+                                        </Button>
                                     }
                                 </td>
                                 <td>
@@ -199,6 +235,21 @@ const ListEvents = () => {
                     <Button variant='secondary' onClick={closeDeleteEventModal}>
                         {__('Cancel', 'wp-open-events')}
                     </Button>
+                </Modal>
+            }
+
+            {selectedEventWithMultipleReferences !== null &&
+                <Modal title={__('Event form is referenced in multiple posts', 'wp-open-events')} onRequestClose={closeEventWithMultipleReferencesModal}>
+                    <p>{__('This plugin expects that an event form is referenced only in one published post.', 'wp-open-events')}</p>
+                    <p><strong>{__('Please, ensure that you have only one post referencing this event.', 'wp-open-events')}</strong></p>
+                    <p>{__('The following posts are referencing the same event form:', 'wp-open-events')}</p>
+                    <ul>
+                        {referencingPosts.map((p, i) => <li key={`reference_${i}`}>
+                            <Link to={p.permalink} target='_blank'>{p.title}</Link>
+                        </li>)}
+                    </ul>
+                    {loadingEventReferencesError && <Notice status='error'>{loadingEventReferencesError}</Notice>}
+                    {loadingEventReferences && <p><Spinner />{__('Loading...', 'wp-open-events')}</p>}
                 </Modal>
             }
         </div>

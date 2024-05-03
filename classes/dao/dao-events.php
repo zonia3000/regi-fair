@@ -18,21 +18,40 @@ class WPOE_DAO_Events extends WPOE_Base_DAO
     {
         global $wpdb;
 
-        $query = $wpdb->prepare("SELECT e.id, e.name, e.date, COUNT(r.id) AS registrations 
+        $query = $wpdb->prepare("SELECT e.id, e.name, e.date, COUNT(r.id) AS registrations,
+            p.post_id AS post_id, p2.post_id AS other_post_id
             FROM " . WPOE_DB::get_table_name('event') . " e
             LEFT JOIN " . WPOE_DB::get_table_name('event_registration') . " r ON e.id = r.event_id
-            GROUP BY (e.id) ORDER BY e.date");
+            LEFT JOIN (
+              SELECT event_id, post_id FROM " . WPOE_DB::get_table_name('event_post') . "
+              ORDER BY updated_at DESC LIMIT 1
+            ) AS p ON p.event_id = r.event_id
+            LEFT JOIN " . WPOE_DB::get_table_name('event_post') . " p2 ON p2.event_id = r.event_id AND p.post_id <> p2.post_id
+            GROUP BY e.id, p.event_id ORDER BY e.date DESC");
 
         $results = $wpdb->get_results($query, ARRAY_A);
         $this->check_results('retrieving events list');
 
         $events = [];
         foreach ($results as $result) {
+            $post_permalink = null;
+            $post_title = null;
+            if ($result['post_id'] !== null) {
+                $post_id = (int) $result['post_id'];
+                $permalink = get_permalink($post_id);
+                if ($permalink !== false) {
+                    $post_permalink = $permalink;
+                    $post_title = get_the_title($post_id);
+                }
+            }
             $events[] = [
                 'id' => (int) $result['id'],
                 'name' => $result['name'],
                 'date' => $result['date'],
-                'registrations' => (int) $result['registrations']
+                'registrations' => (int) $result['registrations'],
+                'postTitle' => $post_title,
+                'postPermalink' => $post_permalink,
+                'hasMultipleReferences' => $result['other_post_id'] !== null
             ];
         }
         return $events;
@@ -361,5 +380,74 @@ class WPOE_DAO_Events extends WPOE_Base_DAO
 
         $result = $wpdb->query('COMMIT');
         $this->check_result($result, 'deleting event');
+    }
+
+    public function get_referencing_posts(int $event_id): array
+    {
+        global $wpdb;
+        $query = $wpdb->prepare(
+            'SELECT post_id FROM ' . WPOE_DB::get_table_name('event_post') . ' WHERE event_id = %d ORDER BY updated_at DESC',
+            $event_id
+        );
+        $results = $wpdb->get_results($query, ARRAY_A);
+        $this->check_results('loading posts referencing the event');
+        $posts = [];
+        foreach ($results as $result) {
+            $post_id = (int) $result['post_id'];
+            $permalink = get_permalink($post_id);
+            if ($permalink !== false) {
+                $post_title = get_the_title($post_id);
+                $posts[] = [
+                    'permalink' => $permalink,
+                    'title' => $post_title
+                ];
+            }
+        }
+        return $posts;
+    }
+
+    public function set_post_events(int $post_id, array $events_ids)
+    {
+        global $wpdb;
+
+        $result = $wpdb->query('START TRANSACTION');
+        $this->check_result($result, 'starting transaction');
+
+        try {
+            $result = $wpdb->delete(
+                WPOE_DB::get_table_name('event_post'),
+                ['post_id' => $post_id],
+                ['%d']
+            );
+            $this->check_result($result, 'removing associations between post and events');
+
+            foreach ($events_ids as $event_id) {
+                $result = $wpdb->insert(
+                    WPOE_DB::get_table_name('event_post'),
+                    [
+                        'event_id' => $event_id,
+                        'post_id' => $post_id
+                    ]
+                );
+                $this->check_result($result, 'adding association between post and event');
+            }
+        } catch (Exception $ex) {
+            $wpdb->query('ROLLBACK');
+            throw $ex;
+        }
+
+        $result = $wpdb->query('COMMIT');
+        $this->check_result($result, 'associating post to events');
+    }
+
+    public function delete_event_post(int $post_id)
+    {
+        global $wpdb;
+        $result = $wpdb->delete(
+            WPOE_DB::get_table_name('event_post'),
+            ['post_id' => $post_id],
+            ['%d']
+        );
+        $this->check_result($result, 'removing associations between post and events');
     }
 }
