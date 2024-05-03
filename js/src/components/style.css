@@ -73,3 +73,7 @@
   color: #f98e1d !important;
   position: absolute;
 }
+
+.components-base-control__help {
+  margin-top: -5px !important;
+}

@@ -33,24 +33,45 @@ class PublicEventData
     public $availableSeats;
 }
 
+class PostReference
+{
+    /**
+     * @var string
+     */
+    public $title;
+
+    /**
+     * @var string
+     */
+    public $permalink;
+}
+
 class Event extends PublicEventData
 {
     /**
      * @var bool
      */
     public $autoremove = true;
+
     /**
      * @var int|null
      */
     public $autoremovePeriod;
+
     /**
      * @var int|null
      */
     public $maxParticipants;
+
     /**
      * @var bool
      */
     public $hasResponses = false;
+
+    /**
+     * @var PostReference[]
+     */
+    public $posts;
 }
 
 class EventTemplate
