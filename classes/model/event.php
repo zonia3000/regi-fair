@@ -31,6 +31,21 @@ class PublicEventData
      * @var int|null
      */
     public $availableSeats;
+
+    /**
+     * @var bool
+     */
+    public $editableRegistrations = true;
+
+    /**
+     * @var string|null
+     */
+    public $adminEmail;
+
+    /**
+     * @var string|null
+     */
+    public $extraEmailContent;
 }
 
 class PostReference
@@ -72,37 +87,4 @@ class Event extends PublicEventData
      * @var PostReference[]
      */
     public $posts;
-}
-
-class EventTemplate
-{
-    /**
-     * @var int
-     */
-    public $id;
-
-    /**
-     * @var string
-     */
-    public $name;
-
-    /**
-     * @var FormField[]
-     */
-    public $formFields = [];
-
-    /**
-     * @var bool
-     */
-    public $autoremove = true;
-
-    /**
-     * @var int|null
-     */
-    public $autoremovePeriod;
-
-    /**
-     * @var bool
-     */
-    public $waitingList = false;
 }

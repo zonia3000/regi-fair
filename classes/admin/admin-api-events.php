@@ -142,20 +142,7 @@ class WPOE_Events_Admin_Controller extends WP_REST_Controller
     public function create_item($request)
     {
         try {
-            $event = new Event;
-            $event->name = $request->get_param('name');
-            $event->date = $request->get_param('date');
-            $event->autoremove = (bool) $request->get_param('autoremove');
-            if ($event->autoremove) {
-                if ($request->get_param('autoremovePeriod') !== null) {
-                    $event->autoremovePeriod = (int) $request->get_param('autoremovePeriod');
-                } else {
-                    $event->autoremovePeriod = 30; // default value
-                }
-            } else {
-                $event->autoremovePeriod = null;
-            }
-            $event->formFields = get_form_field_from_request($request);
+            $event = $this->get_event_from_request($request);
             $event_id = $this->dao->create_event($event);
             return new WP_REST_Response(['id' => $event_id]);
         } catch (Exception $ex) {
@@ -176,26 +163,42 @@ class WPOE_Events_Admin_Controller extends WP_REST_Controller
                 return new WP_Error('event_not_found', __('Event not found', 'wp-open-events'), ['status' => 404]);
             }
 
-            $event = new Event();
+            $event = $this->get_event_from_request($request);
             $event->id = $id;
-            $event->name = $request->get_param('name');
-            $event->date = $request->get_param('date');
-            $event->autoremove = (bool) $request->get_param('autoremove');
-            if ($event->autoremove) {
-                if ($request->get_param('autoremovePeriod') !== null) {
-                    $event->autoremovePeriod = (int) $request->get_param('autoremovePeriod');
-                } else {
-                    $event->autoremovePeriod = 30; // default value
-                }
-            } else {
-                $event->autoremovePeriod = null;
-            }
-            $event->formFields = get_form_field_from_request($request);
             $this->dao->update_event($event);
             return new WP_REST_Response(null, 204);
         } catch (Exception $ex) {
             return generic_server_error($ex);
         }
+    }
+
+    private function get_event_from_request(WP_REST_Request $request): Event
+    {
+        $event = new Event();
+        $event->name = $request->get_param('name');
+        $event->date = $request->get_param('date');
+        $event->autoremove = (bool) $request->get_param('autoremove');
+        if ($event->autoremove) {
+            if ($request->get_param('autoremovePeriod') !== null) {
+                $event->autoremovePeriod = (int) $request->get_param('autoremovePeriod');
+            } else {
+                $event->autoremovePeriod = 30; // default value
+            }
+        } else {
+            $event->autoremovePeriod = null;
+        }
+        $event->waitingList = (bool) $request->get_param('waitingList');
+        $event->editableRegistrations = (bool) $request->get_param('editableRegistrations');
+        $admin_email = $request->get_param('adminEmail');
+        if ($admin_email) {
+            $event->adminEmail = $admin_email;
+        }
+        $extra_email_content = $request->get_param('extraEmailContent');
+        if ($extra_email_content) {
+            $event->extraEmailContent = $extra_email_content;
+        }
+        $event->formFields = get_form_field_from_request($request);
+        return $event;
     }
 
     /**
@@ -215,7 +218,7 @@ class WPOE_Events_Admin_Controller extends WP_REST_Controller
 
     public function get_item_schema()
     {
-        // Returned cached copy whenever available.
+        // Returns cached copy whenever available.
         if ($this->schema) {
             return $this->add_additional_fields_schema($this->schema);
         }
@@ -227,6 +230,9 @@ class WPOE_Events_Admin_Controller extends WP_REST_Controller
         $schema['properties']['autoremove'] = ['type' => 'boolean', 'required' => true];
         $schema['properties']['autoremovePeriod'] = ['type' => 'integer', 'required' => false, 'minimum' => 1];
         $schema['properties']['waitingList'] = ['type' => 'boolean', 'required' => true];
+        $schema['properties']['adminEmail'] = ['type' => 'string', 'format' => 'email', 'required' => false];
+        $schema['properties']['editableRegistrations'] = ['type' => 'boolean', 'required' => true];
+        $schema['properties']['extraEmailContent'] = ['type' => 'string', 'required' => false];
         $schema['properties']['formFields'] = get_form_fields_schema();
 
         // Cache generated schema on endpoint instance.

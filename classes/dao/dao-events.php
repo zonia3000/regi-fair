@@ -62,15 +62,16 @@ class WPOE_DAO_Events extends WPOE_Base_DAO
         global $wpdb;
 
         $query = $wpdb->prepare("SELECT e.id, e.name, e.date, e.autoremove_submissions, e.autoremove_submissions_period,
+            e.editable_registrations, e.admin_email, e.extra_email_content,
             f.id AS field_id, f.label, f.type, f.description, f.required, f.extra, f.position
             FROM " . WPOE_DB::get_table_name('event') . " e
             LEFT JOIN " . WPOE_DB::get_table_name('event_form_field') . " f ON f.event_id = e.id
-            WHERE e.id = %d AND NOT f.deleted ORDER BY f.position", $event_id);
+            WHERE e.id = %d AND (f.deleted IS NULL OR NOT f.deleted) ORDER BY f.position", $event_id);
 
-        $results = $wpdb->get_results($query, ARRAY_A);
+        $event_results = $wpdb->get_results($query, ARRAY_A);
         $this->check_results('retrieving event');
 
-        if (count($results) === 0) {
+        if (count($event_results) === 0) {
             return null;
         }
 
@@ -81,13 +82,17 @@ class WPOE_DAO_Events extends WPOE_Base_DAO
         $has_responses = $registrations_count > 0;
 
         $event = new Event();
-        $event->id = (int) $results[0]['id'];
-        $event->name = $results[0]['name'];
-        $event->date = $results[0]['date'];
-        $event->autoremove = (bool) $results[0]['autoremove_submissions'];
-        $event->autoremovePeriod = $results[0]['autoremove_submissions_period'];
-        $event->formFields = $this->load_form_fields($results);
+        $event->id = (int) $event_results[0]['id'];
+        $event->name = $event_results[0]['name'];
+        $event->date = $event_results[0]['date'];
+        $event->autoremove = (bool) $event_results[0]['autoremove_submissions'];
+        $event->autoremovePeriod = $event_results[0]['autoremove_submissions_period'];
+        $event->formFields = $this->load_form_fields($event_results);
         $event->hasResponses = $has_responses;
+        $event->editableRegistrations = (bool) $event_results[0]['editable_registrations'];
+        $event->adminEmail = $event_results[0]['admin_email'];
+        $event->extraEmailContent = $event_results[0]['extra_email_content'];
+        $event->posts = $this->get_referencing_posts($event_id);
 
         return $event;
     }
@@ -96,7 +101,7 @@ class WPOE_DAO_Events extends WPOE_Base_DAO
     {
         global $wpdb;
 
-        $query = $wpdb->prepare("SELECT e.id, e.name,
+        $query = $wpdb->prepare("SELECT e.id, e.name, e.editable_registrations,
             f.id AS field_id, f.label, f.type, f.description, f.required, f.extra, f.position
             FROM " . WPOE_DB::get_table_name('event') . " e
             LEFT JOIN " . WPOE_DB::get_table_name('event_form_field') . " f ON f.event_id = e.id
@@ -113,6 +118,7 @@ class WPOE_DAO_Events extends WPOE_Base_DAO
         $event->id = (int) $results[0]['id'];
         $event->name = $results[0]['name'];
         $event->date = $results[0]['date'];
+        $event->editableRegistrations = (bool) $results[0]['editable_registrations'];
         $event->formFields = $this->load_form_fields($results);
 
         return $event;
@@ -158,8 +164,11 @@ class WPOE_DAO_Events extends WPOE_Base_DAO
                     'autoremove_submissions_period' => $event->autoremovePeriod,
                     'max_participants' => $event->maxParticipants,
                     'waiting_list' => $event->waitingList,
+                    'editable_registrations' => $event->editableRegistrations,
+                    'admin_email' => $event->adminEmail,
+                    'extra_email_content' => $event->extraEmailContent
                 ],
-                ['%s', '%s', '%d', '%d']
+                ['%s', '%s', '%d', '%d', '%d', '%d', '%d', '%s', '%s']
             );
             $this->check_result($result, 'inserting event');
 
@@ -212,10 +221,13 @@ class WPOE_DAO_Events extends WPOE_Base_DAO
                     'autoremove_submissions' => $event->autoremove,
                     'autoremove_submissions_period' => $event->autoremovePeriod,
                     'max_participants' => $event->maxParticipants,
-                    'waiting_list' => $event->waitingList
+                    'waiting_list' => $event->waitingList,
+                    'editable_registrations' => $event->editableRegistrations,
+                    'admin_email' => $event->adminEmail,
+                    'extra_email_content' => $event->extraEmailContent
                 ],
                 ['id' => $event->id],
-                ['%s', '%s', '%d', '%d', '%d', '%d'],
+                ['%s', '%s', '%d', '%d', '%d', '%d', '%d', '%s', '%s'],
                 ['%d']
             );
             $this->check_result($result, 'updating event');
@@ -382,6 +394,10 @@ class WPOE_DAO_Events extends WPOE_Base_DAO
         $this->check_result($result, 'deleting event');
     }
 
+    /**
+     * Returns post associated with the given event.
+     * @return PostReference[]
+     */
     public function get_referencing_posts(int $event_id): array
     {
         global $wpdb;
@@ -397,10 +413,10 @@ class WPOE_DAO_Events extends WPOE_Base_DAO
             $permalink = get_permalink($post_id);
             if ($permalink !== false) {
                 $post_title = get_the_title($post_id);
-                $posts[] = [
-                    'permalink' => $permalink,
-                    'title' => $post_title
-                ];
+                $post_reference = new PostReference();
+                $post_reference->permalink = $permalink;
+                $post_reference->title = $post_title;
+                $posts[] = $post_reference;
             }
         }
         return $posts;

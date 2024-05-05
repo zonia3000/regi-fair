@@ -6,4 +6,7 @@ type TemplateConfiguration = {
   autoremove: boolean,
   autoremovePeriod: number
   waitingList: boolean
+  adminEmail: string | null
+  editableRegistrations: boolean
+  extraEmailContent: string
 };

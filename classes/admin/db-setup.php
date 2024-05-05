@@ -20,6 +20,9 @@ class WPOE_DB_Setup
           autoremove_submissions_period int DEFAULT 30,
           max_participants int DEFAULT NULL,
           waiting_list bit DEFAULT 0,
+          editable_registrations bit DEFAULT 1,
+          admin_email varchar(255) NULL,
+          extra_email_content text NULL,
           PRIMARY KEY  (id)
         ");
 
@@ -52,6 +55,9 @@ class WPOE_DB_Setup
           autoremove_submissions bit DEFAULT 1,
           autoremove_submissions_period int DEFAULT 30,
           waiting_list bit DEFAULT 0,
+          editable_registrations bit DEFAULT 1,
+          admin_email varchar(255) NULL,
+          extra_email_content text NULL,
           PRIMARY KEY  (id)
         ");
 

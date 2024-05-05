@@ -13,4 +13,7 @@ type EventConfiguration = {
     maxParticipants: number | null
     waitingList: boolean
     hasResponses?: boolean
+    adminEmail: string | null
+    editableRegistrations: boolean
+    extraEmailContent: string
 };

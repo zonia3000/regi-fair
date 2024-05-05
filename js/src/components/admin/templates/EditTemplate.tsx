@@ -4,9 +4,10 @@ import apiFetch from '@wordpress/api-fetch';
 import Loading from '../../Loading';
 import { useNavigate, useParams } from 'react-router-dom';
 import EditFormFields from '../fields/EditFormFields';
-import { Button, CheckboxControl, Notice, TextControl } from '@wordpress/components';
+import { Button, CheckboxControl, Notice, TextControl, TextareaControl } from '@wordpress/components';
 import { cleanupFields, extractError } from '../../utils';
 import '../../style.css';
+import { Settings } from '../../classes/settings';
 
 const EditTemplate = () => {
   const { templateId } = useParams();
@@ -16,20 +17,51 @@ const EditTemplate = () => {
   const [templateName, setTemplateName] = useState('');
   const [autoremove, setAutoremove] = useState(true);
   const [formFields, setFormFields] = useState([]);
+  const [notifyAdmin, setNotifyAdmin] = useState(false);
+  const [adminEmail, setAdminEmail] = useState('');
+  const [editableRegistrations, setEditableRegistrations] = useState(true);
+  const [customizeEmailContent, setCustomizeEmailContent] = useState(false);
+  const [emailExtraContent, setEmailExtraContent] = useState('');
   const [error, setError] = useState('');
   const [valid, setValid] = useState(true);
 
   useEffect(() => {
+    setLoading(true);
     if (templateId === 'new') {
-      setLoading(false);
+      apiFetch({ path: `/wpoe/v1/admin/settings` })
+        .then((result) => {
+          const settings = result as Settings;
+          if (settings.defaultAdminEmail) {
+            setNotifyAdmin(true);
+            setAdminEmail(settings.defaultAdminEmail);
+          }
+          if (settings.defaultExtraEmailContent) {
+            setCustomizeEmailContent(true);
+            setEmailExtraContent(settings.defaultExtraEmailContent);
+          }
+        })
+        .catch(err => {
+          setError(extractError(err));
+        })
+        .finally(() => {
+          setLoading(false);
+        });
     } else {
-      setLoading(true);
       apiFetch({ path: `/wpoe/v1/admin/templates/${templateId}` })
         .then((result) => {
           const template = result as TemplateConfiguration;
           setTemplateName(template.name);
           setAutoremove(template.autoremove);
           setFormFields(template.formFields);
+          if (template.adminEmail) {
+            setNotifyAdmin(true);
+            setAdminEmail(template.adminEmail);
+          }
+          setEditableRegistrations(template.editableRegistrations);
+          if (template.extraEmailContent) {
+            setCustomizeEmailContent(true);
+            setEmailExtraContent(template.extraEmailContent);
+          }
         })
         .catch(err => {
           setError(extractError(err));
@@ -52,7 +84,10 @@ const EditTemplate = () => {
       formFields,
       autoremove: autoremove,
       autoremovePeriod: 30,
-      waitingList: false
+      waitingList: false,
+      adminEmail: notifyAdmin ? adminEmail.trim() : null,
+      editableRegistrations,
+      extraEmailContent: customizeEmailContent ? emailExtraContent.trim() : null
     };
     setLoading(true);
     try {
@@ -75,7 +110,7 @@ const EditTemplate = () => {
           body: JSON.stringify({
             ...template,
             formFields: cleanupFields(template.formFields)
-          }),
+          })
         });
       }
       back();
@@ -111,6 +146,37 @@ const EditTemplate = () => {
         checked={autoremove}
         onChange={setAutoremove}
       />
+      <CheckboxControl
+        label={__('Allow the users to edit or delete their registrations', 'wp-open-events')}
+        checked={editableRegistrations}
+        onChange={setEditableRegistrations}
+      />
+      <CheckboxControl
+        label={__('Notify an administrator by e-mail when a new registration is created', 'wp-open-events')}
+        checked={notifyAdmin}
+        onChange={setNotifyAdmin}
+      />
+      {notifyAdmin &&
+        <TextControl
+          label={__('Administrator e-mail address', 'wp-open-events')}
+          onChange={setAdminEmail}
+          value={adminEmail}
+          required
+        />
+      }
+      <CheckboxControl
+        label={__('Add custom message to confirmation e-mail', 'wp-open-events')}
+        checked={customizeEmailContent}
+        onChange={setCustomizeEmailContent}
+      />
+      {customizeEmailContent &&
+        <TextareaControl
+          label={__('Custom confirmation e-mail content', 'wp-open-events')}
+          onChange={setEmailExtraContent}
+          value={emailExtraContent}
+          help={__('This content will be added at the end of the confirmation e-mail messages. Allowed HTML tags: <b>, <i>, <a>, <hr>', 'wp-open-events')}
+        />
+      }
 
       <EditFormFields formFields={formFields} setFormFields={setFormFields} />
 

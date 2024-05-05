@@ -38,6 +38,7 @@ class WPOE_DAO_Templates extends WPOE_Base_DAO
     global $wpdb;
 
     $query = $wpdb->prepare("SELECT t.id, t.name, t.autoremove_submissions, t.autoremove_submissions_period,
+                t.editable_registrations, t.admin_email, t.extra_email_content,
                 f.id AS field_id, f.label, f.type, f.description, f.required, f.extra, f.position
                 FROM " . WPOE_DB::get_table_name('event_template') . " t
                 LEFT JOIN " . WPOE_DB::get_table_name('event_template_form_field') . " f ON f.template_id = t.id
@@ -55,6 +56,9 @@ class WPOE_DAO_Templates extends WPOE_Base_DAO
     $template->name = $results[0]['name'];
     $template->autoremove = (bool) $results[0]['autoremove_submissions'];
     $template->autoremovePeriod = $results[0]['autoremove_submissions_period'];
+    $template->editableRegistrations = (bool) $results[0]['editable_registrations'];
+    $template->adminEmail = $results[0]['admin_email'];
+    $template->extraEmailContent = $results[0]['extra_email_content'];
     $template->formFields = $this->load_form_fields($results);
 
     return $template;
@@ -95,8 +99,11 @@ class WPOE_DAO_Templates extends WPOE_Base_DAO
           'autoremove_submissions' => $event_template->autoremove,
           'autoremove_submissions_period' => $event_template->autoremovePeriod,
           'waiting_list' => $event_template->waitingList,
+          'editable_registrations' => $event_template->editableRegistrations,
+          'admin_email' => $event_template->adminEmail,
+          'extra_email_content' => $event_template->extraEmailContent
         ],
-        ['%s', '%s', '%d', '%d']
+        ['%s', '%s', '%d', '%d', '%d', '%s', '%s']
       );
       $this->check_result($result, 'inserting event template');
 
@@ -146,10 +153,13 @@ class WPOE_DAO_Templates extends WPOE_Base_DAO
           'name' => $event_template->name,
           'autoremove_submissions' => $event_template->autoremove,
           'autoremove_submissions_period' => $event_template->autoremovePeriod,
-          'waiting_list' => $event_template->waitingList
+          'waiting_list' => $event_template->waitingList,
+          'editable_registrations' => $event_template->editableRegistrations,
+          'admin_email' => $event_template->adminEmail,
+          'extra_email_content' => $event_template->extraEmailContent
         ],
         ['id' => $event_template->id],
-        ['%s', '%s', '%d', '%d'],
+        ['%s', '%s', '%d', '%d', '%d', '%s', '%s'],
         ['%d']
       );
       $this->check_result($result, 'updating event template');
