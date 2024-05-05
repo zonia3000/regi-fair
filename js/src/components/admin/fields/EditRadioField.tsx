@@ -21,7 +21,9 @@ const EditRadioField = (props: EditRadioFieldProps) => {
                 fieldType: 'radio',
                 required: false,
                 description: '',
-                options: ['', ''],
+                extra: {
+                    options: ['', '']
+                },
                 validate
             });
         } else {
@@ -32,7 +34,7 @@ const EditRadioField = (props: EditRadioFieldProps) => {
             setFieldLabel(props.field.label);
             setFieldDescription(props.field.description);
             setFieldRequired(props.field.required);
-            setOptions(props.field.options);
+            setOptions(props.field.extra.options);
         }
     }, []);
 
@@ -80,30 +82,13 @@ const EditRadioField = (props: EditRadioFieldProps) => {
     }
 
     function saveFieldOptions(value: string, index: number) {
-        setOptions(options.map((o, i) => i === index ? value : o));
+        const updatedOptions = options.map((o, i) => i === index ? value : o);
+        setOptions(updatedOptions);
         props.setField({
             ...props.field,
-            options
+            extra: { options: updatedOptions }
         });
     }
-
-    const optionsList = options.map((option, index) => {
-        return (
-            <div className={validated && option.trim() === '' ? 'form-error edit-radio-option-wrapper' : 'edit-radio-option-wrapper'} key={index}>
-                <TextControl
-                    label={__('Option', 'wp-open-events') + ' ' + (index + 1)}
-                    onChange={value => saveFieldOptions(value, index)}
-                    value={option}
-                    required
-                />
-                {options.length > 2 &&
-                    <Button aria-label={__('Remove option', 'wp-open-events')} onClick={() => removeOption(index)} className='remove-option-btn'>
-                        &times;
-                    </Button>
-                }
-                <span className='error-text'>{__('Field is required', 'wp-open-events')}</span>
-            </div>);
-    });
 
     return (
         <>
@@ -128,7 +113,23 @@ const EditRadioField = (props: EditRadioFieldProps) => {
                 onChange={saveFieldRequired}
                 className={'mt-2 mb-2'}
             />
-            {optionsList}
+            {options.map((option, index) => {
+                return (
+                    <div className={validated && option.trim() === '' ? 'form-error edit-radio-option-wrapper' : 'edit-radio-option-wrapper'} key={index}>
+                        <TextControl
+                            label={__('Option', 'wp-open-events') + ' ' + (index + 1)}
+                            onChange={value => saveFieldOptions(value, index)}
+                            value={option}
+                            required
+                        />
+                        {options.length > 2 &&
+                            <Button aria-label={__('Remove option', 'wp-open-events')} onClick={() => removeOption(index)} className='remove-option-btn'>
+                                &times;
+                            </Button>
+                        }
+                        <span className='error-text'>{__('Field is required', 'wp-open-events')}</span>
+                    </div>);
+            })}
             <Button onClick={addOption} variant='primary'>
                 {__('Add option', 'wp-open-events')}
             </Button>

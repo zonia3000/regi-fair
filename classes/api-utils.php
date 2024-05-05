@@ -55,7 +55,7 @@ function get_form_field_from_request($request)
       $field->description = $value['description'];
     }
     if (isset($value['extra']) && $value['extra'] !== null) {
-      $value->extra = $value['extra'];
+      $field->extra = $value['extra'];
     }
     $field->position = $i;
     $form_fields[] = $field;
