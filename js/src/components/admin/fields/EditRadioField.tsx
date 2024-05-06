@@ -52,7 +52,8 @@ const EditRadioField = (props: EditRadioFieldProps) => {
         setFieldLabel(value);
         props.setField({
             ...props.field,
-            label: value
+            label: value,
+            validate
         });
     }
 
@@ -60,7 +61,8 @@ const EditRadioField = (props: EditRadioFieldProps) => {
         setFieldDescription(value);
         props.setField({
             ...props.field,
-            description: value
+            description: value,
+            validate
         });
     }
 
@@ -68,7 +70,8 @@ const EditRadioField = (props: EditRadioFieldProps) => {
         setFieldRequired(value);
         props.setField({
             ...props.field,
-            required: value
+            required: value,
+            validate
         });
     }
 
@@ -86,7 +89,8 @@ const EditRadioField = (props: EditRadioFieldProps) => {
         setOptions(updatedOptions);
         props.setField({
             ...props.field,
-            extra: { options: updatedOptions }
+            extra: { options: updatedOptions },
+            validate
         });
     }
 

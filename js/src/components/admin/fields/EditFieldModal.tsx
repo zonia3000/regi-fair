@@ -36,6 +36,11 @@ const EditFieldModal = (props: EditFieldModalProps) => {
         close();
     }
 
+    function unsetField() {
+        setFieldType(null);
+        setField(null);
+    }
+
     return (
         <>
             {props.showEditFieldModal && (
@@ -73,7 +78,7 @@ const EditFieldModal = (props: EditFieldModalProps) => {
                             </Button>
                             &nbsp;
                             {createNew &&
-                                <Button variant='secondary' onClick={() => setFieldType(null)}>
+                                <Button variant='secondary' onClick={unsetField}>
                                     {__('Cancel', 'wp-open-events')}
                                 </Button>
                             }

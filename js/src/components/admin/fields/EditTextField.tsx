@@ -10,22 +10,39 @@ const EditTextField = (props: EditTextFieldProps) => {
     const fieldLabelRef = useRef(fieldLabel);
     const [fieldDescription, setFieldDescription] = useState('');
     const [fieldRequired, setFieldRequired] = useState(false);
+    const [useAsConfirmationAddress, setUseAsConfirmationAddress] = useState(false);
     const [validated, setValidated] = useState(false);
 
     useEffect(() => {
         if (props.field === null) {
-            props.setField({
+            console.log(props.fieldType)
+            const field: Field = {
                 label: '',
                 fieldType: props.fieldType,
                 required: false,
                 description: '',
                 validate
-            });
+            };
+            if (props.fieldType === 'email') {
+                setUseAsConfirmationAddress(true);
+                field.extra = {
+                    confirmationAddress: true
+                }
+            }
+            props.setField(field);
         } else {
-            props.setField({
+            const field: Field = {
                 ...props.field,
                 validate
-            });
+            }
+            if (props.fieldType === 'email' && props.field.extra
+                && 'confirmationAddress' in props.field.extra && props.field.extra.confirmationAddress) {
+                setUseAsConfirmationAddress(true);
+                field.extra = {
+                    confirmationAddress: true
+                }
+            }
+            props.setField(field);
             setFieldLabel(props.field.label);
             setFieldDescription(props.field.description);
             setFieldRequired(props.field.required);
@@ -45,7 +62,8 @@ const EditTextField = (props: EditTextFieldProps) => {
         setFieldLabel(value);
         props.setField({
             ...props.field,
-            label: value
+            label: value,
+            validate
         });
     }
 
@@ -53,7 +71,8 @@ const EditTextField = (props: EditTextFieldProps) => {
         setFieldDescription(value);
         props.setField({
             ...props.field,
-            description: value
+            description: value,
+            validate
         });
     }
 
@@ -61,7 +80,19 @@ const EditTextField = (props: EditTextFieldProps) => {
         setFieldRequired(value);
         props.setField({
             ...props.field,
-            required: value
+            required: value,
+            validate
+        });
+    }
+
+    function saveUseAsConfirmationAddress(value: boolean) {
+        setUseAsConfirmationAddress(value);
+        props.setField({
+            ...props.field,
+            extra: {
+                confirmationAddress: value
+            },
+            validate
         });
     }
 
@@ -88,6 +119,14 @@ const EditTextField = (props: EditTextFieldProps) => {
                 onChange={saveFieldRequired}
                 className='mt-2'
             />
+            {props.fieldType === 'email' &&
+                <CheckboxControl
+                    label={__('Use this address to send confirmation e-mail when the user register to the event', 'wp-open-events')}
+                    checked={useAsConfirmationAddress}
+                    onChange={saveUseAsConfirmationAddress}
+                    className='mt-2'
+                />
+            }
         </>
     );
 };
