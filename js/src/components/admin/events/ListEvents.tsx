@@ -92,6 +92,7 @@ const ListEvents = () => {
 
     function closeDeleteEventModal() {
         setEventToDelete(null);
+        setDeleteError('');
         setLoadingEventReferencesError('');
         setReferencingPosts([]);
         setLoadingEventReferences(false);
@@ -226,7 +227,7 @@ const ListEvents = () => {
                 <Modal title={__('Delete event', 'wp-open-events')} onRequestClose={closeDeleteEventModal}>
                     <p>{__('Do you really want to delete this event?', 'wp-open-events')}</p>
                     <p><strong>{__('WARNING: all the saved registrations will be deleted', 'wp-open-events')}</strong></p>
-                    {deleteError && <Notice status='error'>{deleteError}</Notice>}
+                    {deleteError && <Notice className='mb' status='error'>{deleteError}</Notice>}
                     {deleting && <p><Spinner />{__('Deleting...', 'wp-open-events')}</p>}
                     <Button variant='primary' onClick={confirmDeleteEvent} disabled={deleting}>
                         {__('Confirm', 'wp-open-events')}

@@ -18,16 +18,14 @@ class WPOE_DAO_Events extends WPOE_Base_DAO
     {
         global $wpdb;
 
-        $query = $wpdb->prepare("SELECT e.id, e.name, e.date, COUNT(r.id) AS registrations,
-            p.post_id AS post_id, p2.post_id AS other_post_id
+        $query = $wpdb->prepare("SELECT e.id, e.name, e.date, COUNT(r.id) AS registrations, p.posts
             FROM " . WPOE_DB::get_table_name('event') . " e
             LEFT JOIN " . WPOE_DB::get_table_name('event_registration') . " r ON e.id = r.event_id
             LEFT JOIN (
-              SELECT event_id, post_id FROM " . WPOE_DB::get_table_name('event_post') . "
-              ORDER BY updated_at DESC LIMIT 1
-            ) AS p ON p.event_id = r.event_id
-            LEFT JOIN " . WPOE_DB::get_table_name('event_post') . " p2 ON p2.event_id = r.event_id AND p.post_id <> p2.post_id
-            GROUP BY e.id, p.event_id ORDER BY e.date DESC");
+              SELECT event_id, GROUP_CONCAT(post_id ORDER BY updated_at DESC) AS posts
+              FROM " . WPOE_DB::get_table_name('event_post') . " GROUP BY event_id  
+            ) AS p ON p.event_id = e.id
+            GROUP BY e.id ORDER BY e.date DESC");
 
         $results = $wpdb->get_results($query, ARRAY_A);
         $this->check_results('retrieving events list');
@@ -36,8 +34,12 @@ class WPOE_DAO_Events extends WPOE_Base_DAO
         foreach ($results as $result) {
             $post_permalink = null;
             $post_title = null;
-            if ($result['post_id'] !== null) {
-                $post_id = (int) $result['post_id'];
+            if ($result['posts'] === null) {
+                $posts = [];
+            } else {
+                $posts_result = $result['posts'];
+                $posts = explode(',', $posts_result);
+                $post_id = (int) ($posts[0]);
                 $permalink = get_permalink($post_id);
                 if ($permalink !== false) {
                     $post_permalink = $permalink;
@@ -51,7 +53,7 @@ class WPOE_DAO_Events extends WPOE_Base_DAO
                 'registrations' => (int) $result['registrations'],
                 'postTitle' => $post_title,
                 'postPermalink' => $post_permalink,
-                'hasMultipleReferences' => $result['other_post_id'] !== null
+                'hasMultipleReferences' => count($posts) > 1
             ];
         }
         return $events;
@@ -189,7 +191,7 @@ class WPOE_DAO_Events extends WPOE_Base_DAO
                         'extra' => $form_field->extra === null ? null : json_encode($form_field->extra),
                         'position' => $i
                     ],
-                    ['%d', '%s', '%s', '%d', '%s']
+                    ['%d', '%s', '%s', '%s', '%d', '%s', '%d']
                 );
                 $this->check_result($result, 'inserting event form field');
                 $i++;
@@ -373,7 +375,14 @@ class WPOE_DAO_Events extends WPOE_Base_DAO
         $this->check_result($result, 'starting transaction');
 
         try {
-            $result = $wpdb->query($wpdb->prepare('DELETE FROM ' . WPOE_DB::get_table_name('event_registration_value') . ' rv JOIN '
+            $result = $wpdb->delete(
+                WPOE_DB::get_table_name('event_post'),
+                ['event_id' => $event_id],
+                ['%d']
+            );
+            $this->check_result($result, 'removing associations between post and events');
+
+            $result = $wpdb->query($wpdb->prepare('DELETE rv FROM ' . WPOE_DB::get_table_name('event_registration_value') . ' rv JOIN '
                 . WPOE_DB::get_table_name('event_registration') . ' r ON rv.registration_id = r.id WHERE r.event_id = %d', $event_id));
             $this->check_result($result, 'deleting registrations values');
 
