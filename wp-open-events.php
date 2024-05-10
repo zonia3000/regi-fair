@@ -37,6 +37,7 @@ require_once (WPOE_PLUGIN_DIR . 'classes/admin/admin-api-events.php');
 require_once (WPOE_PLUGIN_DIR . 'classes/admin/admin-api-templates.php');
 require_once (WPOE_PLUGIN_DIR . 'classes/admin/admin-api-registrations.php');
 require_once (WPOE_PLUGIN_DIR . 'classes/admin/admin-api-settings.php');
+require_once (WPOE_PLUGIN_DIR . 'classes/validators/validator.php');
 require_once (WPOE_PLUGIN_DIR . 'classes/mail-sender.php');
 require_once (WPOE_PLUGIN_DIR . 'classes/public-api.php');
 

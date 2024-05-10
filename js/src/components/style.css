@@ -8,6 +8,7 @@
 
 .error-text {
   display: none;
+  font-size: 13px;
 }
 
 .form-error .error-text {

@@ -14,14 +14,22 @@ export type EditFormFieldsProps = {
     setFormFields: (value: Field[]) => void
 }
 
-export type TextFieldProps = {
+export type BaseFieldProps = {
     label: string
-    value: string,
+    disabled: boolean
+    required: boolean
+}
+
+export type TextFieldProps = BaseFieldProps & {
+    value: string
     type: 'text' | 'email'
     setValue: (value: string) => void
-    disabled?: boolean
-    required?: boolean
-    validator?: (value: string) => boolean
+}
+
+export type RadioFieldProps = BaseFieldProps & {
+    value: string
+    setValue: (value: string) => void
+    options: string[]
 }
 
 export type EditFieldProps<T extends Field> = {

@@ -59,45 +59,78 @@ class WPOE_Public_Controller extends WP_REST_Controller
      */
     public function create_item($request)
     {
-        $event_id = (int) $request->get_param('id');
-        $event = $this->events_dao->get_event($event_id);
+        try {
+            $event_id = (int) $request->get_param('id');
+            $event = $this->events_dao->get_event($event_id);
 
-        if ($event === null) {
-            return new WP_Error('event_not_found', __('Event not found', 'wp-open-events'), ['status' => 400]);
-        }
-
-        $input = json_decode($request->get_body());
-        if (count($input) !== count($event->formFields)) {
-            return new WP_Error('invalid_form_fields', __('Invalid form field number', 'wp-open-events'), ['status' => 400]);
-        }
-
-        // TODO: validation
-
-        $values = [];
-        $i = 0;
-        $user_email = [];
-        foreach ($event->formFields as $field) {
-            $values[$field->id] = $input[$i];
-            if ($field->fieldType === 'email' && $field->extra !== null && property_exists($field->extra, 'confirmationAddress') && $field->extra->confirmationAddress === true) {
-                $user_email[] = $input[$i];
+            if ($event === null) {
+                return new WP_Error('event_not_found', __('Event not found', 'wp-open-events'), ['status' => 400]);
             }
-            $i++;
+
+            $input = json_decode($request->get_body());
+            $error = $this->validate_request($event, $input);
+            if ($error !== null) {
+                return $error;
+            }
+
+            $values = [];
+            $i = 0;
+            $user_email = [];
+            foreach ($event->formFields as $field) {
+                $values[$field->id] = $input[$i];
+                if ($field->fieldType === 'email' && $field->extra !== null && property_exists($field->extra, 'confirmationAddress') && $field->extra->confirmationAddress === true) {
+                    $user_email[] = $input[$i];
+                }
+                $i++;
+            }
+
+            $registration_token = bin2hex(openssl_random_pseudo_bytes(16));
+
+            $remaining_seats = $this->registrations_dao->register_to_event($event_id, md5($registration_token), $values, $event->maxParticipants);
+            if ($remaining_seats === false) {
+                return new WP_Error('no_more_seats', __('No more seats available', 'wp-open-events'), ['status' => 400]);
+            }
+
+            if (count($user_email) > 0) {
+                WPOE_Mail_Sender::send_registration_confirmation($event, $user_email, $registration_token, $values);
+            }
+            if ($event->adminEmail !== null) {
+                WPOE_Mail_Sender::send_new_registration_to_admin($event, $values);
+            }
+
+            return new WP_REST_Response(['remaining' => $remaining_seats]);
+        } catch (Exception $ex) {
+            return generic_server_error($ex);
+        }
+    }
+
+    private function validate_request(Event $event, $input): WP_Error|WP_REST_Response|null
+    {
+        if (!is_array($input)) {
+            return new WP_Error('invalid_form_fields', __('The payload must be an array', 'wp-open-events'), ['status' => 400]);
+        }
+        if (count($input) !== count($event->formFields)) {
+            return new WP_Error('invalid_form_fields', __('Invalid number of fields', 'wp-open-events'), ['status' => 400]);
         }
 
-        $registration_token = bin2hex(openssl_random_pseudo_bytes(16));
-
-        $remaining_seats = $this->registrations_dao->register_to_event($event_id, md5($registration_token), $values, $event->maxParticipants);
-        if ($remaining_seats === false) {
-            return new WP_Error('no_more_seats', __('No more seats available', 'wp-open-events'), ['status' => 400]);
+        $errors = [];
+        foreach ($event->formFields as $index => $field) {
+            try {
+                WPOE_Validator::validate($field, $input[$index]);
+            } catch (WPOE_Validation_Exception $ex) {
+                $errors[$index] = $ex->getMessage();
+            }
         }
-
-        if (count($user_email) > 0) {
-            WPOE_Mail_Sender::send_registration_confirmation($event, $user_email, $registration_token, $values);
+        if (count($errors) > 0) {
+            return new WP_REST_Response([
+                'code' => 'invalid_form_fields',
+                'message' => __('Some fields are not valid', 'wp-open-events'),
+                'data' => [
+                    'status' => 400,
+                    'fieldsErrors' => (object) $errors
+                ]
+            ], 400);
         }
-        if ($event->adminEmail !== null) {
-            WPOE_Mail_Sender::send_new_registration_to_admin($event, $values);
-        }
-
-        return new WP_REST_Response(['remaining' => $remaining_seats]);
+        return null;
     }
 }

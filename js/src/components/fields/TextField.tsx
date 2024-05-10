@@ -1,26 +1,21 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { TextControl } from '@wordpress/components';
 import { TextFieldProps } from '../classes/components-props';
 import { __ } from '@wordpress/i18n';
 
 const TextField = (props: TextFieldProps) => {
-    const [valid, setValid] = useState(true);
-
-    const onChange = function (value: string) {
-        // TODO: validator
+    function onChange(value: string) {
         props.setValue(value);
-    };
+    }
 
     return (
-        <>
-            <TextControl
-                label={__(props.label, 'wp-open-events')}
-                onChange={onChange}
-                value={props.value}
-                type={props.type}
-                disabled={!!props.disabled}
-            />
-        </>
+        <TextControl
+            label={props.label + (props.required ? '' : ` (${__('optional', 'wp-open-events')})`)}
+            onChange={onChange}
+            value={props.value}
+            type={props.type}
+            disabled={!!props.disabled}
+        />
     );
 };
 
