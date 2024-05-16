@@ -1,5 +1,7 @@
 import { expect, test } from '@playwright/test';
-import { getNonceAndCookiesForApi } from '../utils';
+import { adminAuthState, getNonceAndCookiesForApi } from '../utils';
+
+test.use({ storageState: adminAuthState });
 
 test('Template Admin API', async ({ page, context, request }) => {
 
@@ -12,6 +14,7 @@ test('Template Admin API', async ({ page, context, request }) => {
         autoremove: true,
         autoremovePeriod: 30,
         waitingList: false,
+        editableRegistrations: true,
         formFields: []
       }
     });
@@ -28,6 +31,7 @@ test('Template Admin API', async ({ page, context, request }) => {
         autoremove: true,
         autoremovePeriod: 30,
         waitingList: false,
+        editableRegistrations: true,
         formFields: []
       }
     });
@@ -117,6 +121,7 @@ test('Template Admin API', async ({ page, context, request }) => {
         autoremove: true,
         autoremovePeriod: 30,
         waitingList: false,
+        editableRegistrations: true,
         formFields: [
           { fieldType: 'text', label: 'Name', required: true }
         ]

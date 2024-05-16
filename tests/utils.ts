@@ -1,15 +1,10 @@
 import { expect, BrowserContext, Page } from '@playwright/test';
 
-export async function adminLogin(page: Page) {
-  await page.goto('/wp-login.php');
-  await page.getByRole('textbox', { name: ' Username or Email Address ' }).fill('admin');
-  await page.getByRole('textbox', { name: 'Password' }).fill('password');
-  await page.getByText('Log In').click();
-}
+export const adminAuthState = 'tests/.auth/admin.json';
 
 export async function getNonceAndCookiesForApi(page: Page, context: BrowserContext) {
-  await adminLogin(page);
-  await page.getByRole('link', { name: 'Events' }).first().click();
+  await page.goto('/wp-admin');
+  await page.locator('#adminmenu').getByRole('link', { name: 'Events' }).first().click();
   await page.getByText('Your events').waitFor();
   const nonce = await page.evaluate(async () => {
     return (window as any).wpoe_request.nonce;
