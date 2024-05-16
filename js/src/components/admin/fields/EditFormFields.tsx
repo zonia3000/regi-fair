@@ -105,10 +105,10 @@ const EditFormFields = (props: EditFormFieldsProps) => {
                 <td>{f.fieldType}</td>
                 <td>{f.required ? __('Yes', 'wp-open-events') : __('No', 'wp-open-events')}</td>
                 <td>
-                  <Button variant='secondary' onClick={() => moveFieldUp(index)} disabled={index === 0}>
+                  <Button variant='secondary' onClick={() => moveFieldUp(index)} disabled={index === 0} aria-label={__('Move field up', 'wp-open-events')}>
                     <Icon icon='arrow-up' />
                   </Button>
-                  <Button variant='secondary' onClick={() => moveFieldDown(index)} disabled={index === props.formFields.length - 1}>
+                  <Button variant='secondary' onClick={() => moveFieldDown(index)} disabled={index === props.formFields.length - 1} aria-label={__('Move field down', 'wp-open-events')}>
                     <Icon icon='arrow-down' />
                   </Button>
                 </td>

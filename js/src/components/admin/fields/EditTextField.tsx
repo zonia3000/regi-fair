@@ -6,6 +6,7 @@ import '../../style.css';
 
 const EditTextField = (props: EditTextFieldProps) => {
 
+    const [initializing, setInitializing] = useState(true);
     const [fieldLabel, setFieldLabel] = useState('');
     const fieldLabelRef = useRef(fieldLabel);
     const [fieldDescription, setFieldDescription] = useState('');
@@ -47,6 +48,7 @@ const EditTextField = (props: EditTextFieldProps) => {
             setFieldDescription(props.field.description);
             setFieldRequired(props.field.required);
         }
+        setInitializing(false);
     }, []);
 
     useEffect(() => {
@@ -94,6 +96,10 @@ const EditTextField = (props: EditTextFieldProps) => {
             },
             validate
         });
+    }
+
+    if (initializing) {
+        return;
     }
 
     return (

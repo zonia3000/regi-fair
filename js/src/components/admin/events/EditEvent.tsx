@@ -15,6 +15,7 @@ const EditEvent = () => {
     const navigate = useNavigate();
 
     const [loading, setLoading] = useState(true);
+    const [found, setFound] = useState(false);
     const [eventData, setEventData] = useState(null);
     const [eventName, setEventName] = useState('');
     const [date, setDate] = useState((new Date()).toString());
@@ -31,6 +32,7 @@ const EditEvent = () => {
     useEffect(() => {
         if (eventId === 'new') {
             setLoading(true);
+            setFound(true);
             const templateId = searchParams.get('template');
             if (templateId) {
                 apiFetch({ path: `/wpoe/v1/admin/templates/${templateId}` })
@@ -79,6 +81,7 @@ const EditEvent = () => {
             setLoading(true);
             apiFetch({ path: `/wpoe/v1/admin/events/${eventId}` })
                 .then((result) => {
+                    setFound(true);
                     const event = result as EventConfiguration;
                     setEventData(event);
                     setEventName(event.name);
@@ -97,7 +100,11 @@ const EditEvent = () => {
                     }
                 })
                 .catch(err => {
-                    setError(extractError(err));
+                    if (err.code === 'event_not_found') {
+                        setFound(false);
+                    } else {
+                        setError(extractError(err));
+                    }
                 })
                 .finally(() => {
                     setLoading(false);
@@ -161,6 +168,10 @@ const EditEvent = () => {
 
     if (loading) {
         return <Loading />;
+    }
+
+    if (!found) {
+        return <p>{__('Event not found', 'wp-open-events')}</p>
     }
 
     return (

@@ -14,6 +14,7 @@ const EditTemplate = () => {
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(true);
+  const [found, setFound] = useState(false);
   const [templateName, setTemplateName] = useState('');
   const [autoremove, setAutoremove] = useState(true);
   const [formFields, setFormFields] = useState([]);
@@ -28,6 +29,7 @@ const EditTemplate = () => {
   useEffect(() => {
     setLoading(true);
     if (templateId === 'new') {
+      setFound(true);
       apiFetch({ path: `/wpoe/v1/admin/settings` })
         .then((result) => {
           const settings = result as Settings;
@@ -49,6 +51,7 @@ const EditTemplate = () => {
     } else {
       apiFetch({ path: `/wpoe/v1/admin/templates/${templateId}` })
         .then((result) => {
+          setFound(true);
           const template = result as TemplateConfiguration;
           setTemplateName(template.name);
           setAutoremove(template.autoremove);
@@ -64,7 +67,11 @@ const EditTemplate = () => {
           }
         })
         .catch(err => {
-          setError(extractError(err));
+          if (err.code === 'template_not_found') {
+            setFound(false);
+          } else {
+            setError(extractError(err));
+          }
         })
         .finally(() => {
           setLoading(false);
@@ -127,6 +134,10 @@ const EditTemplate = () => {
 
   if (loading) {
     return <Loading />;
+  }
+
+  if (!found) {
+    return <p>{__('Template not found', 'wp-open-events')}</p>
   }
 
   return (

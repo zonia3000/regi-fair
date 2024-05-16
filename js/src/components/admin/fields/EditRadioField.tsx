@@ -6,6 +6,7 @@ import '../../style.css';
 
 const EditRadioField = (props: EditRadioFieldProps) => {
 
+    const [initializing, setInitializing] = useState(true);
     const [fieldLabel, setFieldLabel] = useState('');
     const fieldLabelRef = useRef(fieldLabel);
     const [fieldDescription, setFieldDescription] = useState('');
@@ -36,6 +37,7 @@ const EditRadioField = (props: EditRadioFieldProps) => {
             setFieldRequired(props.field.required);
             setOptions(props.field.extra.options);
         }
+        setInitializing(false);
     }, []);
 
     useEffect(() => {
@@ -92,6 +94,10 @@ const EditRadioField = (props: EditRadioFieldProps) => {
             extra: { options: updatedOptions },
             validate
         });
+    }
+
+    if (initializing) {
+        return;
     }
 
     return (

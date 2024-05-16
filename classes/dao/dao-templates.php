@@ -174,9 +174,13 @@ class WPOE_DAO_Templates extends WPOE_Base_DAO
       if (count($current_field_ids) > 0) {
         // Delete form fields whose ids are not present anymore
         $placeholders = array_fill(0, count($current_field_ids), '%d');
-        $query = $wpdb->prepare('DELETE FROM '
+        $query = $wpdb->prepare(
+          'DELETE FROM '
           . WPOE_DB::get_table_name('event_template_form_field')
-          . ' WHERE id NOT IN (' . join(',', $placeholders) . ')', $current_field_ids);
+          . ' WHERE template_id = %d AND id NOT IN (' . join(',', $placeholders) . ')',
+          $event_template->id,
+          ...$current_field_ids,
+        );
         $result = $wpdb->query($query);
       } else {
         // Delete all old form fields
