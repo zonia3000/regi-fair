@@ -172,9 +172,9 @@ class WPOE_Events_Admin_Controller extends WP_REST_Controller
         }
     }
 
-    private function get_event_from_request(WP_REST_Request $request): Event
+    private function get_event_from_request(WP_REST_Request $request): WPOE_Event
     {
-        $event = new Event();
+        $event = new WPOE_Event();
         $event->name = $request->get_param('name');
         $event->date = $request->get_param('date');
         $event->autoremove = (bool) $request->get_param('autoremove');

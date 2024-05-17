@@ -59,7 +59,7 @@ class WPOE_DAO_Events extends WPOE_Base_DAO
         return $events;
     }
 
-    public function get_event(int $event_id): ?Event
+    public function get_event(int $event_id): ?WPOE_Event
     {
         global $wpdb;
 
@@ -83,7 +83,7 @@ class WPOE_DAO_Events extends WPOE_Base_DAO
         $registrations_count = (int) $var;
         $has_responses = $registrations_count > 0;
 
-        $event = new Event();
+        $event = new WPOE_Event();
         $event->id = (int) $event_results[0]['id'];
         $event->name = $event_results[0]['name'];
         $event->date = $event_results[0]['date'];
@@ -99,7 +99,7 @@ class WPOE_DAO_Events extends WPOE_Base_DAO
         return $event;
     }
 
-    public function get_public_event_data(int $event_id): ?PublicEventData
+    public function get_public_event_data(int $event_id): ?WPOE_Public_Event_Data
     {
         global $wpdb;
 
@@ -116,7 +116,7 @@ class WPOE_DAO_Events extends WPOE_Base_DAO
             return null;
         }
 
-        $event = new PublicEventData();
+        $event = new WPOE_Public_Event_Data();
         $event->id = (int) $results[0]['id'];
         $event->name = $results[0]['name'];
         $event->date = $results[0]['date'];
@@ -131,7 +131,7 @@ class WPOE_DAO_Events extends WPOE_Base_DAO
         $formFields = [];
         foreach ($results as $result) {
             if ($result['field_id'] !== null) {
-                $field = new FormField();
+                $field = new WPOE_Form_Field();
                 $field->id = (int) $result['field_id'];
                 $field->label = $result['label'];
                 $field->fieldType = $result['type'];
@@ -148,7 +148,7 @@ class WPOE_DAO_Events extends WPOE_Base_DAO
     /**
      * Returns the id of the created event
      */
-    public function create_event(Event $event): int
+    public function create_event(WPOE_Event $event): int
     {
         global $wpdb;
 
@@ -206,7 +206,7 @@ class WPOE_DAO_Events extends WPOE_Base_DAO
         return $event_id;
     }
 
-    public function update_event(Event $event): void
+    public function update_event(WPOE_Event $event): void
     {
         global $wpdb;
 
@@ -405,7 +405,7 @@ class WPOE_DAO_Events extends WPOE_Base_DAO
 
     /**
      * Returns post associated with the given event.
-     * @return PostReference[]
+     * @return WPOE_Post_Reference[]
      */
     public function get_referencing_posts(int $event_id): array
     {
@@ -422,7 +422,7 @@ class WPOE_DAO_Events extends WPOE_Base_DAO
             $permalink = get_permalink($post_id);
             if ($permalink !== false) {
                 $post_title = get_the_title($post_id);
-                $post_reference = new PostReference();
+                $post_reference = new WPOE_Post_Reference();
                 $post_reference->permalink = $permalink;
                 $post_reference->title = $post_title;
                 $posts[] = $post_reference;

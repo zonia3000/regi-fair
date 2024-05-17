@@ -7,11 +7,11 @@ if (!defined('ABSPATH')) {
 abstract class WPOE_Base_Validator
 {
   /**
-   * @var FormField
+   * @var WPOE_Form_Field
    */
   protected $field;
 
-  public function __construct(FormField $field)
+  public function __construct(WPOE_Form_Field $field)
   {
     $this->field = $field;
   }

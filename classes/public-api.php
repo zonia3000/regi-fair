@@ -104,7 +104,7 @@ class WPOE_Public_Controller extends WP_REST_Controller
         }
     }
 
-    private function validate_request(Event $event, $input): WP_Error|WP_REST_Response|null
+    private function validate_request(WPOE_Event $event, $input): WP_Error|WP_REST_Response|null
     {
         if (!is_array($input)) {
             return new WP_Error('invalid_form_fields', __('The payload must be an array', 'wp-open-events'), ['status' => 400]);

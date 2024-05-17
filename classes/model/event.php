@@ -1,6 +1,6 @@
 <?php
 
-class PublicEventData
+class WPOE_Public_Event_Data
 {
     /**
      * @var int
@@ -18,7 +18,7 @@ class PublicEventData
     public $date;
 
     /**
-     * @var FormField[]
+     * @var WPOE_Form_Field[]
      */
     public $formFields = [];
 
@@ -48,7 +48,7 @@ class PublicEventData
     public $extraEmailContent;
 }
 
-class PostReference
+class WPOE_Post_Reference
 {
     /**
      * @var string
@@ -61,7 +61,7 @@ class PostReference
     public $permalink;
 }
 
-class Event extends PublicEventData
+class WPOE_Event extends WPOE_Public_Event_Data
 {
     /**
      * @var bool
@@ -84,7 +84,7 @@ class Event extends PublicEventData
     public $hasResponses = false;
 
     /**
-     * @var PostReference[]
+     * @var WPOE_Post_Reference[]
      */
     public $posts;
 }

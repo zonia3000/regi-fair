@@ -58,8 +58,8 @@ add_action('rest_api_init', function () {
 });
 
 require_once (WPOE_PLUGIN_DIR . 'classes/admin/event-post-mapper.php');
-add_action('save_post', ['Event_Post_Mapper', 'save_post_callback'], 10, 3);
-add_action('delete_post', ['Event_Post_Mapper', 'delete_post_callback']);
+add_action('save_post', ['WPOE_Event_Post_Mapper', 'save_post_callback'], 10, 3);
+add_action('delete_post', ['WPOE_Event_Post_Mapper', 'delete_post_callback']);
 
 require_once (WPOE_PLUGIN_DIR . 'classes/admin/db-setup.php');
 register_activation_hook(__FILE__, ['WPOE_DB_Setup', 'create_tables']);

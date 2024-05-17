@@ -36,7 +36,7 @@ function get_form_fields_schema()
 
 /**
  * @param WP_REST_Request $request
- * @return FormField[]
+ * @return WPOE_Form_Field[]
  */
 function get_form_field_from_request($request)
 {
@@ -44,7 +44,7 @@ function get_form_field_from_request($request)
   $values = $request->get_param('formFields');
   $i = 0;
   foreach ($values as $value) {
-    $field = new FormField();
+    $field = new WPOE_Form_Field();
     if (isset($value['id']) && $value['id'] !== null) {
       $field->id = $value['id'];
     }

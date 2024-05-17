@@ -12,7 +12,7 @@ require_once (WPOE_PLUGIN_DIR . 'classes/validators/radio-validator.php');
 
 class WPOE_Validator
 {
-  public static function validate(FormField $form_field, mixed $input)
+  public static function validate(WPOE_Form_Field $form_field, mixed $input)
   {
     switch ($form_field->fieldType) {
       case 'text':

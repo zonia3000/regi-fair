@@ -1,6 +1,6 @@
 <?php
 
-class FormField
+class WPOE_Form_Field
 {
     /**
      * @var int|null

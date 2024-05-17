@@ -6,7 +6,7 @@ if (!defined('ABSPATH')) {
 
 class WPOE_Radio_Validator extends WPOE_Base_Validator
 {
-  public function __construct(FormField $field)
+  public function __construct(WPOE_Form_Field $field)
   {
     parent::__construct($field);
   }

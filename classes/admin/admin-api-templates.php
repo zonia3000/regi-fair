@@ -142,9 +142,9 @@ class WPOE_Templates_Admin_Controller extends WP_REST_Controller
     }
   }
 
-  private function get_event_template_from_request(WP_REST_Request $request): EventTemplate
+  private function get_event_template_from_request(WP_REST_Request $request): WPOE_Event_Template
   {
-    $event_template = new EventTemplate();
+    $event_template = new WPOE_Event_Template();
     $event_template->name = $request->get_param('name');
     $event_template->autoremove = (bool) $request->get_param('autoremove');
     if ($event_template->autoremove) {

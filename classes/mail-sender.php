@@ -5,7 +5,7 @@ class WPOE_Mail_Sender
   /**
    * @param string|string[] $to
    */
-  public static function send_registration_confirmation(Event $event, $to, string $registration_token, array $values)
+  public static function send_registration_confirmation(WPOE_Event $event, $to, string $registration_token, array $values)
   {
     $subject = sprintf(__('Registration to the event "%s" is confirmed', 'wp-open-events'), $event->name);
     $body = '<p>' . __('Dear user,') . '<br/>'
@@ -40,7 +40,7 @@ class WPOE_Mail_Sender
     wp_mail($to, $subject, $body, $headers);
   }
 
-  public static function send_new_registration_to_admin(Event $event, array $values)
+  public static function send_new_registration_to_admin(WPOE_Event $event, array $values)
   {
     $subject = sprintf(__('New registration for the event "%s"', 'wp-open-events'), $event->name);
     $body = '<p>' . __('Dear admin,') . '<br/>'

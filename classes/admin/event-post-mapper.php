@@ -6,7 +6,7 @@
  * The link can be used to modify the event registration. The mapping is also used to check if there
  * are multiple pages associated with the same event (discouraged case, reported as warning).
  */
-class Event_Post_Mapper
+class WPOE_Event_Post_Mapper
 {
   public static function save_post_callback(int $post_id, WP_Post $post, bool $update)
   {

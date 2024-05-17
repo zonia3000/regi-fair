@@ -33,7 +33,7 @@ class WPOE_DAO_Templates extends WPOE_Base_DAO
     return $events;
   }
 
-  public function get_event_template(int $event_template_id): ?EventTemplate
+  public function get_event_template(int $event_template_id): ?WPOE_Event_Template
   {
     global $wpdb;
 
@@ -51,7 +51,7 @@ class WPOE_DAO_Templates extends WPOE_Base_DAO
       return null;
     }
 
-    $template = new EventTemplate();
+    $template = new WPOE_Event_Template();
     $template->id = (int) $results[0]['id'];
     $template->name = $results[0]['name'];
     $template->autoremove = (bool) $results[0]['autoremove_submissions'];
@@ -69,7 +69,7 @@ class WPOE_DAO_Templates extends WPOE_Base_DAO
     $formFields = [];
     foreach ($results as $result) {
       if ($result['field_id'] !== null) {
-        $field = new FormField();
+        $field = new WPOE_Form_Field();
         $field->id = (int) $result['field_id'];
         $field->label = $result['label'];
         $field->fieldType = $result['type'];
@@ -83,7 +83,7 @@ class WPOE_DAO_Templates extends WPOE_Base_DAO
     return $formFields;
   }
 
-  public function create_event_template(EventTemplate $event_template): int
+  public function create_event_template(WPOE_Event_Template $event_template): int
   {
     global $wpdb;
 
@@ -138,7 +138,7 @@ class WPOE_DAO_Templates extends WPOE_Base_DAO
     return $event_template_id;
   }
 
-  public function update_event_template(EventTemplate $event_template): void
+  public function update_event_template(WPOE_Event_Template $event_template): void
   {
     global $wpdb;
 
