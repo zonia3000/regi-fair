@@ -60,17 +60,25 @@ test('Template Admin API', async ({ page, context, request }) => {
     expect(body.code).toEqual('rest_missing_callback_param');
   });
 
-  await test.step('Create template - validate missing fields', async () => {
+  await test.step('Create template - validate empty name', async () => {
     const response = await request.post('/index.php?rest_route=/wpoe/v1/admin/templates', {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce
       },
-      data: {}
+      data: {
+        name: '',
+        autoremove: true,
+        autoremovePeriod: 30,
+        waitingList: false,
+        editableRegistrations: true,
+        formFields: []
+      }
     });
     expect(response.status()).toEqual(400);
     const body = await response.json();
-    expect(body.code).toEqual('rest_missing_callback_param');
+    expect(body.code).toEqual('rest_invalid_param');
+    expect(body.data.params.name).toEqual('name must be at least 1 character long.');
   });
 
   await test.step('Get not existing template returns 404', async () => {

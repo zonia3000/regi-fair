@@ -159,7 +159,7 @@ const EditEvent = () => {
     };
 
     function parseDate() {
-        return new Date(date).toISOString().slice(0, 10);
+        return new Date(date).toISOString();
     }
 
     function back() {

@@ -225,8 +225,8 @@ class WPOE_Events_Admin_Controller extends WP_REST_Controller
 
         $schema = parent::get_item_schema();
 
-        $schema['properties']['name'] = ['type' => 'string', 'required' => true];
-        $schema['properties']['date'] = ['type' => 'string', 'required' => true, 'format' => 'date'];
+        $schema['properties']['name'] = ['type' => 'string', 'required' => true, 'minLength' => 1];
+        $schema['properties']['date'] = ['type' => 'string', 'required' => true, 'format' => 'date-time'];
         $schema['properties']['autoremove'] = ['type' => 'boolean', 'required' => true];
         $schema['properties']['autoremovePeriod'] = ['type' => 'integer', 'required' => false, 'minimum' => 1];
         $schema['properties']['waitingList'] = ['type' => 'boolean', 'required' => true];

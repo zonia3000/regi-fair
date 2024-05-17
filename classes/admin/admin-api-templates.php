@@ -194,7 +194,7 @@ class WPOE_Templates_Admin_Controller extends WP_REST_Controller
 
     $schema = parent::get_item_schema();
 
-    $schema['properties']['name'] = ['type' => 'string', 'required' => true];
+    $schema['properties']['name'] = ['type' => 'string', 'required' => true, 'minLength' => 1];
     $schema['properties']['autoremove'] = ['type' => 'boolean', 'required' => true];
     $schema['properties']['autoremovePeriod'] = ['type' => 'integer', 'required' => false, 'minimum' => 1];
     $schema['properties']['waitingList'] = ['type' => 'boolean', 'required' => true];

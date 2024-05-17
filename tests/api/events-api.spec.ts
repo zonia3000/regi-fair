@@ -11,7 +11,7 @@ test('Events Admin API', async ({ page, context, request }) => {
     const response = await request.post('/index.php?rest_route=/wpoe/v1/admin/events', {
       data: {
         name: 'test',
-        date: '2024-04-01',
+        date: '2024-04-01T00:00:00.000Z',
         autoremove: true,
         autoremovePeriod: 30,
         waitingList: false,
@@ -29,7 +29,7 @@ test('Events Admin API', async ({ page, context, request }) => {
       data: {
         id: 1,
         name: 'test',
-        date: '2024-04-01',
+        date: '2024-04-01T00:00:00.000Z',
         autoremove: true,
         autoremovePeriod: 30,
         waitingList: false,
@@ -60,6 +60,50 @@ test('Events Admin API', async ({ page, context, request }) => {
     expect(response.status()).toEqual(400);
     const body = await response.json();
     expect(body.code).toEqual('rest_missing_callback_param');
+  });
+
+  await test.step('Create event - validate empty name', async () => {
+    const response = await request.post('/index.php?rest_route=/wpoe/v1/admin/events', {
+      headers: {
+        'Cookie': cookies,
+        'X-WP-Nonce': nonce
+      },
+      data: {
+        name: '',
+        date: '2024-04-01T00:00:00.000Z',
+        autoremove: true,
+        autoremovePeriod: 30,
+        waitingList: false,
+        editableRegistrations: true,
+        formFields: []
+      }
+    });
+    expect(response.status()).toEqual(400);
+    const body = await response.json();
+    expect(body.code).toEqual('rest_invalid_param');
+    expect(body.data.params.name).toEqual('name must be at least 1 character long.');
+  });
+
+  await test.step('Create event - validate invalid date', async () => {
+    const response = await request.post('/index.php?rest_route=/wpoe/v1/admin/events', {
+      headers: {
+        'Cookie': cookies,
+        'X-WP-Nonce': nonce
+      },
+      data: {
+        name: 'test',
+        date: '00:00',
+        autoremove: true,
+        autoremovePeriod: 30,
+        waitingList: false,
+        editableRegistrations: true,
+        formFields: []
+      }
+    });
+    expect(response.status()).toEqual(400);
+    const body = await response.json();
+    expect(body.code).toEqual('rest_invalid_param');
+    expect(body.data.params.date).toEqual('Invalid date.');
   });
 
   await test.step('Create event - validate missing fields', async () => {
