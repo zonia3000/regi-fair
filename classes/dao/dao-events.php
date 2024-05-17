@@ -103,7 +103,7 @@ class WPOE_DAO_Events extends WPOE_Base_DAO
     {
         global $wpdb;
 
-        $query = $wpdb->prepare("SELECT e.id, e.name, e.editable_registrations,
+        $query = $wpdb->prepare("SELECT e.id, e.name, e.editable_registrations, e.date,
             f.id AS field_id, f.label, f.type, f.description, f.required, f.extra, f.position
             FROM " . WPOE_DB::get_table_name('event') . " e
             LEFT JOIN " . WPOE_DB::get_table_name('event_form_field') . " f ON f.event_id = e.id
