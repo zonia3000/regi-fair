@@ -3,10 +3,10 @@
     "apiVersion": 2,
     "name": "wp-open-events/form",
     "version": "0.0.1",
-    "title": "WP Open Event Form",
+    "title": "WP Open Events Form",
     "category": "widgets",
     "icon": "smiley",
-    "description": "WP Open Event Form",
+    "description": "WP Open Events Form",
     "textdomain": "wp-open-events",
     "supports": {
         "html": false,

@@ -115,7 +115,7 @@ class WPOE_Templates_Admin_Controller extends WP_REST_Controller
     try {
       $event_template = $this->get_event_template_from_request($request);
       $template_id = $this->dao->create_event_template($event_template);
-      return new WP_REST_Response(['id' => $template_id]);
+      return new WP_REST_Response(['id' => $template_id], 201);
     } catch (Exception $ex) {
       return generic_server_error($ex);
     }

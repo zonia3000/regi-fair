@@ -1,7 +1,7 @@
 {
     "name": "wp-open-events-form",
     "version": "0.0.1",
-    "description": "WP Open Event Form",
+    "description": "WP Open Events Form",
     "author": "Sonia Zorba",
     "license": "GPL-2.0-or-later",
     "scripts": {

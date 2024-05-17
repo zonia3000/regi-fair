@@ -14,22 +14,23 @@ export default function Edit({ attributes, setAttributes }) {
 
     useEffect(() => {
         if (!attributes.eventId) {
-            apiFetch({ path: '/wpoe/v1/admin/events' }).then((result) => {
-                setEventsOptions(
-                    [{
-                        label: __('Select...', 'wp-open-events'),
-                        value: ''
-                    }].concat(
-                        result.map(event => {
-                            return {
-                                value: event.id,
-                                label: event.name
-                            };
-                        })
-                    )
-                );
-                setLoading(false);
-            });
+            apiFetch({ path: '/wpoe/v1/admin/events' })
+                .then((result) => {
+                    setEventsOptions(
+                        [{
+                            label: __('Select...', 'wp-open-events'),
+                            value: ''
+                        }].concat(
+                            result.map(event => {
+                                return {
+                                    value: event.id,
+                                    label: event.name
+                                };
+                            })
+                        )
+                    );
+                    setLoading(false);
+                });
         }
     }, []);
 

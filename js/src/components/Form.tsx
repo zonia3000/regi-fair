@@ -11,18 +11,28 @@ import RadioField from './fields/RadioField';
 
 const Form = (props: FormProps) => {
     const [event, setEvent] = useState(null as EventConfiguration);
+    const [found, setFound] = useState(false);
     const [fields, setFields] = useState([]);
     const [error, setError] = useState('');
     const [fieldsErrors, setFieldsErrors] = useState({});
 
     useEffect(() => {
         props.setLoading(true);
-        const path = props.admin ? '/wpoe/v1/events/' : '/wpoe/v1/admin/events/';
-        apiFetch({ path: path + props.eventId })
+        apiFetch({ path: `/wpoe/v1/events/${props.eventId}` })
             .then((result) => {
+                setFound(true);
                 const eventConfig = result as EventConfiguration;
                 setEvent(eventConfig);
                 setFields(eventConfig.formFields.map(_ => ''));
+            })
+            .catch(err => {
+                if (err.code === 'event_not_found') {
+                    setFound(false);
+                } else {
+                    setError(extractError(err));
+                }
+            })
+            .finally(() => {
                 props.setLoading(false);
             });
     }, []);
@@ -49,7 +59,16 @@ const Form = (props: FormProps) => {
     }
 
     if (props.loading) {
-        return <Loading />;
+        return <Loading />
+    }
+
+    if (!found) {
+        if (props.admin) {
+            return <p>{__('Event not found', 'wp-open-events')}</p>
+        } else {
+            // Show nothing in public posts
+            return;
+        }
     }
 
     return (

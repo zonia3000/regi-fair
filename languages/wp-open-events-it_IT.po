@@ -168,14 +168,14 @@ msgstr "I tuoi eventi"
 #: js/build/block/block.json
 #: js/src/block/src/block.json
 msgctxt "block title"
-msgid "WP Open Event Form"
-msgstr "Modulo WP Open Event"
+msgid "WP Open Events Form"
+msgstr "Modulo WP Open Events"
 
 #: js/build/block/block.json
 #: js/src/block/src/block.json
 msgctxt "block description"
-msgid "WP Open Event Form"
-msgstr "Modulo WP Open Event"
+msgid "WP Open Events Form"
+msgstr "Modulo WP Open Events"
 
 #: js/build/components/dashboard.js:1
 msgid "Add event"

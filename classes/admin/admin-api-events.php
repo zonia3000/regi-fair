@@ -144,7 +144,7 @@ class WPOE_Events_Admin_Controller extends WP_REST_Controller
         try {
             $event = $this->get_event_from_request($request);
             $event_id = $this->dao->create_event($event);
-            return new WP_REST_Response(['id' => $event_id]);
+            return new WP_REST_Response(['id' => $event_id], 201);
         } catch (Exception $ex) {
             return generic_server_error($ex);
         }

@@ -50,7 +50,11 @@ class WPOE_Public_Controller extends WP_REST_Controller
     public function get_item($request)
     {
         $id = (int) $request->get_param('id');
-        return new WP_REST_Response($this->events_dao->get_public_event_data($id));
+        $event = $this->events_dao->get_public_event_data($id);
+        if ($event === null) {
+            return new WP_Error('event_not_found', __('Event not found', 'wp-open-events'), ['status' => 404]);
+        }
+        return new WP_REST_Response($event);
     }
 
     /**

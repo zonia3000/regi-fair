@@ -172,11 +172,11 @@ msgstr ""
 #: js/build/block/block.json
 #: js/src/block/src/block.json
 msgctxt "block title"
-msgid "WP Open Event Form"
+msgid "WP Open Events Form"
 msgstr ""
 
 #: js/build/block/block.json
 #: js/src/block/src/block.json
 msgctxt "block description"
-msgid "WP Open Event Form"
+msgid "WP Open Events Form"
 msgstr ""
