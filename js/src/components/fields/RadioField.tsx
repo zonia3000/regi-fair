@@ -1,5 +1,5 @@
 import React from 'react';
-import { RadioControl, TextControl } from '@wordpress/components';
+import { RadioControl } from '@wordpress/components';
 import { RadioFieldProps } from '../classes/components-props';
 import { __ } from '@wordpress/i18n';
 

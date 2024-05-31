@@ -14,6 +14,7 @@ const Form = (props: FormProps) => {
     const [found, setFound] = useState(false);
     const [fields, setFields] = useState([]);
     const [error, setError] = useState('');
+    const [submitted, setSubmitted] = useState(false);
     const [fieldsErrors, setFieldsErrors] = useState({});
 
     useEffect(() => {
@@ -44,12 +45,16 @@ const Form = (props: FormProps) => {
     async function submitForm() {
         setError('');
         setFieldsErrors({});
+        setSubmitted(false);
         try {
             await apiFetch({
                 path: `/wpoe/v1/events/${props.eventId}`,
                 method: 'POST',
                 data: fields
             });
+            setSubmitted(true);
+            // reset field values
+            setFields(fields.map(_ => ''));
         } catch (err) {
             if (typeof err === 'object' && 'data' in err && 'fieldsErrors' in err.data) {
                 setFieldsErrors(err.data.fieldsErrors);
@@ -94,9 +99,11 @@ const Form = (props: FormProps) => {
                 </div>);
             })}
 
-            {error && <Notice status='error' className='mt mb-2'>{error}</Notice>}
+            {error && <Notice status='error' className='mt-2 mb-2'>{error}</Notice>}
 
-            <Button variant='primary' className='mt' onClick={submitForm}>{__('Register to the event', 'wp-open-events')}</Button>
+            {submitted && <Notice status='success' className='mt-2 mb-2'>{__('Your registration has been submitted', 'wp-open-events')}</Notice>}
+
+            <Button variant='primary' className='mt' onClick={submitForm} disabled={props.disabled}>{__('Register to the event', 'wp-open-events')}</Button>
         </>
     )
 };
