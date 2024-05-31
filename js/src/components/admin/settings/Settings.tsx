@@ -16,6 +16,7 @@ const Settings = function () {
     const [defaultTrackIpAddresses, setDefaultTrackIpAddresses] = useState(false);
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState('');
+    const [updated, setUpdated] = useState(false);
 
     useEffect(() => {
         setLoading(true);
@@ -38,9 +39,10 @@ const Settings = function () {
 
     async function save() {
         setSaving(true);
+        setUpdated(false);
         setError('');
         try {
-            await apiFetch({
+            const response = await apiFetch({
                 path: `/wpoe/v1/admin/settings`,
                 method: 'PUT',
                 headers: {
@@ -53,6 +55,8 @@ const Settings = function () {
                     defaultTrackIpAddresses
                 })
             });
+            setDefaultExtraEmailContent((response as any).defaultExtraEmailContent);
+            setUpdated(true);
         } catch (err) {
             setError(extractError(err));
         } finally {
@@ -88,7 +92,7 @@ const Settings = function () {
                 label={__('Default extra content for confirmation e-mail messages', 'wp-open-events')}
                 onChange={setDefaultExtraEmailContent}
                 value={defaultExtraEmailContent}
-                help={__('This content will be added at the end of the confirmation e-mail messages. Allowed HTML tags: <b>, <i>, <a>, <hr>', 'wp-open-events')}
+                help={__('This content will be added at the end of the confirmation e-mail messages. Allowed HTML tags: <b>, <i>, <a>, <hr>, <p>, <br>', 'wp-open-events')}
             />
 
             <CheckboxControl
@@ -97,7 +101,9 @@ const Settings = function () {
                 checked={defaultTrackIpAddresses}
             />
 
-            {error && <div className='mb'><Notice status='error'>{error}</Notice></div>}
+            {error && <div className='mt-2 mb'><Notice status='error'>{error}</Notice></div>}
+
+            {updated && <Notice status='success' className='mt-2 mb'>{__('Settings updated', 'wp-open-events')}</Notice>}
 
             <Button onClick={save} variant='primary' disabled={saving} className='mt'>
                 {saving && <Spinner />}

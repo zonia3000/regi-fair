@@ -63,3 +63,11 @@ function get_form_field_from_request($request)
   }
   return $form_fields;
 }
+
+function strip_forbidden_html_tags(string $content): string
+{
+  return wp_kses(
+    $content,
+    ['b' => [], 'i' => [], 'a' => ['href' => [], 'title' => []], 'hr' => [], 'p' => [], 'br' => []]
+  );
+}

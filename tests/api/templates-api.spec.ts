@@ -139,4 +139,45 @@ test('Template Admin API', async ({ page, context, request }) => {
     const body = await response.json();
     expect(body.code).toEqual('template_not_found');
   });
+
+  await test.step('Create template - forbidden tags are stripped', async () => {
+    const eventName = Math.random().toString(36).substring(7);
+    const createTemplateResponse = await request.post('/index.php?rest_route=/wpoe/v1/admin/templates', {
+      headers: {
+        'Cookie': cookies,
+        'X-WP-Nonce': nonce
+      },
+      data: {
+        name: eventName,
+        date: '2024-04-01T00:00:00.000Z',
+        autoremove: true,
+        autoremovePeriod: 30,
+        waitingList: false,
+        editableRegistrations: true,
+        formFields: [],
+        extraEmailContent: 'Test <b>content</b><br /><div>foo</div>',
+      }
+    });
+    expect(createTemplateResponse.status()).toEqual(201);
+    let body = await createTemplateResponse.json();
+    const templateId = body.id;
+
+    const getTemplateResponse = await request.get(`/index.php?rest_route=/wpoe/v1/admin/templates/${templateId}`, {
+      headers: {
+        'Cookie': cookies,
+        'X-WP-Nonce': nonce
+      }
+    });
+    expect(getTemplateResponse.status()).toEqual(200);
+    body = await getTemplateResponse.json();
+    expect(body.extraEmailContent).toEqual('Test <b>content</b><br />foo');
+
+    const deleteTemplateResponse = await request.delete(`/index.php?rest_route=/wpoe/v1/admin/templates/${templateId}`, {
+      headers: {
+        'Cookie': cookies,
+        'X-WP-Nonce': nonce
+      }
+    });
+    expect(deleteTemplateResponse.status()).toEqual(204);
+  });
 });

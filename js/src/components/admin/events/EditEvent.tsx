@@ -232,7 +232,7 @@ const EditEvent = () => {
                     label={__('Custom confirmation e-mail content', 'wp-open-events')}
                     onChange={setEmailExtraContent}
                     value={emailExtraContent}
-                    help={__('This content will be added at the end of the confirmation e-mail messages. Allowed HTML tags: <b>, <i>, <a>, <hr>', 'wp-open-events')}
+                    help={__('This content will be added at the end of the confirmation e-mail messages. Allowed HTML tags: <b>, <i>, <a>, <hr>, <p>, <br>', 'wp-open-events')}
                 />
             }
 

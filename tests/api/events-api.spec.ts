@@ -130,4 +130,45 @@ test('Events Admin API', async ({ page, context, request }) => {
     const body = await response.json();
     expect(body.code).toEqual('event_not_found');
   });
+
+  await test.step('Create event - forbidden tags are stripped', async () => {
+    const eventName = Math.random().toString(36).substring(7);
+    const createEventResponse = await request.post('/index.php?rest_route=/wpoe/v1/admin/events', {
+      headers: {
+        'Cookie': cookies,
+        'X-WP-Nonce': nonce
+      },
+      data: {
+        name: eventName,
+        date: '2024-04-01T00:00:00.000Z',
+        autoremove: true,
+        autoremovePeriod: 30,
+        waitingList: false,
+        editableRegistrations: true,
+        formFields: [],
+        extraEmailContent: 'Test <b>content</b><br /><div>foo</div>',
+      }
+    });
+    expect(createEventResponse.status()).toEqual(201);
+    let body = await createEventResponse.json();
+    const eventId = body.id;
+
+    const getEventResponse = await request.get(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId}`, {
+      headers: {
+        'Cookie': cookies,
+        'X-WP-Nonce': nonce
+      }
+    });
+    expect(getEventResponse.status()).toEqual(200);
+    body = await getEventResponse.json();
+    expect(body.extraEmailContent).toEqual('Test <b>content</b><br />foo');
+
+    const deleteEventResponse = await request.delete(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId}`, {
+      headers: {
+        'Cookie': cookies,
+        'X-WP-Nonce': nonce
+      }
+    });
+    expect(deleteEventResponse.status()).toEqual(204);
+  });
 });

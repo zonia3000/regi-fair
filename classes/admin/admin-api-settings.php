@@ -49,6 +49,7 @@ class WPOE_Settings_Admin_Controller extends WP_REST_Controller
   public function update_item($request)
   {
     $settings_to_update = (array) json_decode($request->get_body());
+    $settings_to_update['defaultExtraEmailContent'] = strip_forbidden_html_tags($settings_to_update['defaultExtraEmailContent']);
     $updated_settings = WPOE_Settings_Manager::update_settings($settings_to_update);
     return new WP_REST_Response($updated_settings);
   }

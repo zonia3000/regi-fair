@@ -38,9 +38,14 @@ export default defineConfig({
       testMatch: /auth\.setup\.ts/
     },
     {
+      name: 'settings',
+      testMatch: /settings\.setup\.ts/,
+      dependencies: ['auth']
+    },
+    {
       name: 'create_test_event',
       testMatch: /create-test-event\.setup\.ts/,
-      dependencies: ['auth']
+      dependencies: ['auth', 'settings']
     },
 
     {

@@ -195,7 +195,7 @@ class WPOE_Events_Admin_Controller extends WP_REST_Controller
         }
         $extra_email_content = $request->get_param('extraEmailContent');
         if ($extra_email_content) {
-            $event->extraEmailContent = $extra_email_content;
+            $event->extraEmailContent = strip_forbidden_html_tags($extra_email_content);
         }
         $event->formFields = get_form_field_from_request($request);
         return $event;

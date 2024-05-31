@@ -164,7 +164,7 @@ class WPOE_Templates_Admin_Controller extends WP_REST_Controller
     }
     $extra_email_content = $request->get_param('extraEmailContent');
     if ($extra_email_content) {
-      $event_template->extraEmailContent = $extra_email_content;
+      $event_template->extraEmailContent = strip_forbidden_html_tags($extra_email_content);
     }
     $event_template->formFields = get_form_field_from_request($request);
     return $event_template;
