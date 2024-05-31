@@ -23,7 +23,9 @@ test('Create event from template', async ({ page, context, request }) => {
         autoremovePeriod: 30,
         waitingList: false,
         editableRegistrations: true,
-        formFields: TEST_FIELDS
+        formFields: TEST_FIELDS,
+        adminEmail: 'test2@example.com',
+        extraEmailContent: 'foo'
       }
     });
     expect(response.status()).toEqual(201);
@@ -48,6 +50,10 @@ test('Create event from template', async ({ page, context, request }) => {
   await test.step('Verify data loaded from template', async () => {
     await expect(page.getByRole('checkbox', { name: 'Autoremove user data after the event' })).toBeChecked();
     await expect(page.getByRole('checkbox', { name: 'Allow the users to edit or delete their registrations' })).toBeChecked();
+    await expect(page.getByRole('checkbox', { name: 'Notify an administrator by e-mail when a new registration is created' })).toBeChecked();
+    await expect(page.getByRole('textbox', { name: 'Administrator e-mail address' })).toHaveValue('test2@example.com');
+    await expect(page.getByRole('checkbox', { name: 'Add custom message to confirmation e-mail' })).toBeChecked();
+    await expect(page.getByRole('textbox', { name: 'Custom confirmation e-mail content' })).toHaveValue('foo');
 
     await expect(page.getByRole('row')).toHaveCount(7);
 

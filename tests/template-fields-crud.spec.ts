@@ -19,6 +19,12 @@ test('Template fields CRUD', async ({ page }) => {
   await test.step('Open "create template" page', async () => {
     await page.getByRole('button', { name: 'Add event template' }).click();
     await page.getByRole('textbox', { name: 'Name', exact: true }).fill(templateName);
+    await expect(page.getByRole('checkbox', { name: 'Autoremove user data after the event' })).toBeChecked();
+    await expect(page.getByRole('checkbox', { name: 'Allow the users to edit or delete their registrations' })).toBeChecked();
+    await expect(page.getByRole('checkbox', { name: 'Notify an administrator by e-mail when a new registration is created' })).toBeChecked();
+    await expect(page.getByRole('textbox', { name: 'Administrator e-mail address' })).toHaveValue('test@example.com');
+    await expect(page.getByRole('checkbox', { name: 'Add custom message to confirmation e-mail' })).toBeChecked();
+    await expect(page.getByRole('textbox', { name: 'Custom confirmation e-mail content' })).toHaveValue('Test <b>content</b><br />foo');
   });
 
   await testFieldsCRUD(page, templateName);
