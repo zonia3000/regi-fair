@@ -1,6 +1,6 @@
 import { expect, BrowserContext, Page } from '@playwright/test';
 
-export const adminAuthState = 'tests/.auth/admin.json';
+export const adminAuthStateFile = 'tests/.state/admin-session.json';
 
 export async function getNonceAndCookiesForApi(page: Page, context: BrowserContext) {
   await page.goto('/wp-admin');
@@ -13,3 +13,5 @@ export async function getNonceAndCookiesForApi(page: Page, context: BrowserConte
   const cookies = (await context.cookies()).map(c => `${c.name}=${c.value}`).join('; ');
   return { nonce, cookies };
 }
+
+export const testPostStateFile = 'tests/.state/test-post.json';

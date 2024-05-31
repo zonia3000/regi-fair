@@ -1,7 +1,8 @@
 import { expect, test } from '@playwright/test';
-import { adminAuthState, getNonceAndCookiesForApi } from './utils';
+import { adminAuthStateFile, getNonceAndCookiesForApi } from './utils';
+import { TEST_FIELDS } from './test-fields';
 
-test.use({ storageState: adminAuthState });
+test.use({ storageState: adminAuthStateFile });
 
 test('Create event from template', async ({ page, context, request }) => {
 
@@ -22,48 +23,10 @@ test('Create event from template', async ({ page, context, request }) => {
         autoremovePeriod: 30,
         waitingList: false,
         editableRegistrations: true,
-        formFields: [
-          {
-            label: 'text-field-1',
-            fieldType: 'text',
-            required: true,
-            description: 'text-field-description-1'
-          },
-          {
-            label: 'text-field-2',
-            fieldType: 'text',
-            required: false
-          },
-          {
-            label: 'email-field-1',
-            fieldType: 'email',
-            required: true,
-            description: 'email-field-description-1',
-            extra: { confirmationAddress: true }
-          },
-          {
-            label: 'email-field-2',
-            fieldType: 'email',
-            required: false,
-            extra: { confirmationAddress: false }
-          },
-          {
-            label: 'radio-field-1',
-            fieldType: 'radio',
-            required: true,
-            description: 'radio-field-description-1',
-            extra: { options: ['op1-1', 'op1-2', 'op1-3'] }
-          },
-          {
-            label: 'radio-field-2',
-            fieldType: 'radio',
-            required: false,
-            extra: { options: ['op2-1', 'op2-2'] }
-          },
-        ]
+        formFields: TEST_FIELDS
       }
     });
-    expect(response.status()).toEqual(200);
+    expect(response.status()).toEqual(201);
     const body = await response.json();
     templateId = body.id;
   });

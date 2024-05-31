@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
-import { adminAuthState, getNonceAndCookiesForApi } from './utils';
+import { adminAuthStateFile, getNonceAndCookiesForApi } from './utils';
 
-test.use({ storageState: adminAuthState });
+test.use({ storageState: adminAuthStateFile });
 test.slow();
 
 test('Event referenced in posts', async ({ page, context, request }) => {

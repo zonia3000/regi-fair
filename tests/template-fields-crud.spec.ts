@@ -1,8 +1,8 @@
 import { expect, test } from '@playwright/test';
 import { testFieldsCRUD } from './fields-crud';
-import { adminAuthState } from './utils';
+import { adminAuthStateFile } from './utils';
 
-test.use({ storageState: adminAuthState });
+test.use({ storageState: adminAuthStateFile });
 
 test('Template fields CRUD', async ({ page }) => {
 

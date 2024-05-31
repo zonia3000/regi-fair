@@ -38,21 +38,27 @@ export default defineConfig({
       testMatch: /auth\.setup\.ts/
     },
     {
+      name: 'create_test_event',
+      testMatch: /create-test-event\.setup\.ts/,
+      dependencies: ['auth']
+    },
+
+    {
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
-      dependencies: ['auth']
+      dependencies: ['auth', 'create_test_event']
     },
 
     {
       name: 'firefox',
       use: { ...devices['Desktop Firefox'] },
-      dependencies: ['auth']
+      dependencies: ['auth', 'create_test_event']
     },
 
     {
       name: 'webkit',
       use: { ...devices['Desktop Safari'] },
-      dependencies: ['auth']
+      dependencies: ['auth', 'create_test_event']
     },
 
     /* Test against mobile viewports. */
