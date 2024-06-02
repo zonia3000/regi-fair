@@ -158,7 +158,7 @@ class WPOE_Public_Controller extends WP_REST_Controller
             $values = $this->map_input_to_values($event, $input);
             $user_email = $this->get_user_email($event, $input);
 
-            $this->registrations_dao->update_registration($registration['id'], $values);
+            $remaining = $this->registrations_dao->update_registration($registration['id'], $values, $event_id, $event->maxParticipants);
 
             if (count($user_email) > 0) {
                 WPOE_Mail_Sender::send_registration_updated_confirmation($event, $user_email, $token, $values);
@@ -167,7 +167,9 @@ class WPOE_Public_Controller extends WP_REST_Controller
                 WPOE_Mail_Sender::send_registration_updated_to_admin($event, $values);
             }
 
-            return new WP_REST_Response(null, 204);
+            return new WP_REST_Response([
+                'remaining' => $remaining
+            ]);
         } catch (Exception $ex) {
             return generic_server_error($ex);
         }
@@ -226,7 +228,7 @@ class WPOE_Public_Controller extends WP_REST_Controller
                 return new WP_Error('registration_not_found', __('Registration not found', 'wp-open-events'), ['status' => 400]);
             }
 
-            $this->registrations_dao->delete_registration($registration['id']);
+            $remaining = $this->registrations_dao->delete_registration($registration['id'], $event_id, $event->maxParticipants);
 
             $user_email = $this->get_user_email($event, $registration['values']);
 
@@ -237,7 +239,9 @@ class WPOE_Public_Controller extends WP_REST_Controller
                 WPOE_Mail_Sender::send_registration_deleted_to_admin($event);
             }
 
-            return new WP_REST_Response(null, 204);
+            return new WP_REST_Response([
+                'remaining' => $remaining
+            ]);
         } catch (Exception $ex) {
             return generic_server_error($ex);
         }

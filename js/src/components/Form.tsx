@@ -4,7 +4,7 @@ import apiFetch from '@wordpress/api-fetch';
 import Loading from './Loading';
 import TextField from './fields/TextField';
 import { Button, Modal, Notice } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
+import { __, _x, sprintf } from '@wordpress/i18n';
 import { extractError } from './utils';
 import './style.css';
 import RadioField from './fields/RadioField';
@@ -21,6 +21,8 @@ const Form = (props: FormProps) => {
     const [showConfirmDeleteRegistrationModal, setShowConfirmDeleteRegistrationModal] = useState(false);
     const [deletionError, setDeletionError] = useState('');
     const [deleted, setDeleted] = useState(false);
+    const [availableSeats, setAvailableSeats] = useState(null);
+    const [lastSeatTaken, setLastSeatTaken] = useState(false);
 
     useEffect(() => {
         props.setLoading(true);
@@ -45,6 +47,9 @@ const Form = (props: FormProps) => {
             setFound(true);
             setEvent(eventConfig);
             setFields(eventConfig.formFields.map(_ => ''));
+            if (!isNaN(eventConfig.availableSeats)) {
+                setAvailableSeats(eventConfig.availableSeats);
+            }
         } catch (err) {
             if (err.code === 'event_not_found') {
                 setFound(false);
@@ -82,20 +87,27 @@ const Form = (props: FormProps) => {
         setSubmitted(false);
         setDeleted(false);
         try {
+            let result: { remaining: null | number };
             if (editingExisting) {
-                await apiFetch({
+                result = await apiFetch({
                     path: `/wpoe/v1/events/${props.eventId}/${registrationToken}`,
                     method: 'PUT',
                     data: fields
                 });
             } else {
-                await apiFetch({
+                result = await apiFetch({
                     path: `/wpoe/v1/events/${props.eventId}`,
                     method: 'POST',
                     data: fields
                 });
                 // reset field values
                 setFields(fields.map(_ => ''));
+            }
+            if (result.remaining !== null) {
+                setAvailableSeats(result.remaining);
+                if (result.remaining === 0) {
+                    setLastSeatTaken(true);
+                }
             }
             setSubmitted(true);
         } catch (err) {
@@ -113,7 +125,7 @@ const Form = (props: FormProps) => {
         setDeleted(false);
         setSubmitted(false);
         try {
-            await apiFetch({
+            const result: { remaining: null | number } = await apiFetch({
                 path: `/wpoe/v1/events/${props.eventId}/${registrationToken}`,
                 method: 'DELETE'
             });
@@ -124,6 +136,9 @@ const Form = (props: FormProps) => {
             setDeleted(true);
             setShowConfirmDeleteRegistrationModal(false);
             setEditingExisting(false);
+            if (result.remaining !== null) {
+                setAvailableSeats(result.remaining);
+            }
         } catch (err) {
             setDeletionError(extractError(err));
         }
@@ -144,60 +159,92 @@ const Form = (props: FormProps) => {
 
     return (
         <>
-            {editingExisting && <Notice status='info' className='mb-2'>{__('Welcome back. You are editing an existing registration', 'wp-open-events')}</Notice>}
-
-            {event.formFields.map((field: Field, index: number) => {
-                return (<div key={`field-${index}`} className={index.toString() in fieldsErrors ? 'form-error mt' : 'mt'}>
-                    {
-                        (field.fieldType === 'text' || field.fieldType === 'email')
-                        && <TextField
-                            required={field.required}
-                            label={field.label} disabled={props.disabled} type={field.fieldType}
-                            value={fields[index]} setValue={(v: string) => setFieldValue(v, index)} />
-                    }
-                    {
-                        field.fieldType === 'radio'
-                        && <RadioField
-                            required={field.required}
-                            label={field.label} disabled={props.disabled} options={(field.extra as any).options}
-                            value={fields[index]} setValue={(v: string) => setFieldValue(v, index)} />
-                    }
-                    {index.toString() in fieldsErrors &&
-                        <span className='error-text'>{(fieldsErrors as any)[index.toString()]}</span>}
-                </div>);
-            })}
-
-            {error && <Notice status='error' className='mt-2 mb-2'>{error}</Notice>}
-
-            {submitted && <Notice status='success' className='mt-2 mb-2'>
-                {editingExisting ? __('Your registration has been updated', 'wp-open-events')
-                    : __('Your registration has been submitted', 'wp-open-events')}
-            </Notice>}
-
-            {deleted
-                && <Notice status='success' className='mt-2 mb-2'>
-                    {__('Your registration has been deleted', 'wp-open-events')}
+            {editingExisting &&
+                <Notice status='info' className='mb-2'>
+                    {__('Welcome back. You are editing an existing registration', 'wp-open-events')}
                 </Notice>
             }
 
-            <Button variant='primary' className='mt' onClick={submitForm} disabled={props.disabled}>
-                {editingExisting ? __('Update the registration', 'wp-open-events') : __('Register to the event', 'wp-open-events')}
-            </Button>
-
-            {editingExisting &&
-                <Button variant='secondary' className='ml mt' onClick={() => setShowConfirmDeleteRegistrationModal(true)} disabled={props.disabled}>
-                    {__('Delete the registration', 'wp-open-events')}
-                </Button>
+            {!editingExisting && availableSeats !== null && availableSeats > 0 &&
+                <Notice status='info'>
+                    {sprintf(_x('There are still %d seats available', 'number of available seats', 'wp-open-events'), availableSeats)}
+                </Notice>
             }
 
-            {showConfirmDeleteRegistrationModal &&
-                <Modal title={__('Confirm registration deletion', 'wp-open-events')} onRequestClose={() => setShowConfirmDeleteRegistrationModal(false)}>
-                    <p>{__('Do you really want to delete the registration to this event?', 'wp-open-events')}</p>
-                    {deletionError && <Notice status='error' className='mt-2 mb-2'>{deletionError}</Notice>}
-                    <Button variant='primary' onClick={deleteRegistration}>
-                        {__('Confirm', 'wp-open-events')}
+            {availableSeats !== null && availableSeats === 0 && editingExisting &&
+                <Notice status='info'>
+                    {__('There are no more seats available', 'wp-open-events')}
+                </Notice>
+            }
+
+            {availableSeats !== null && availableSeats === 0 && !editingExisting &&
+                <Notice status='info'>{lastSeatTaken ? __('Congratulation! You took the last seat available!', 'wp-open-events')
+                    : __('We are sorry. You can\'t register because there are no more seats available', 'wp-open-events')}
+                </Notice>
+            }
+
+            {(editingExisting || availableSeats === null || availableSeats > 0) &&
+                event.formFields.map((field: Field, index: number) => {
+                    return (<div key={`field-${index}`} className={index.toString() in fieldsErrors ? 'form-error mt' : 'mt'}>
+                        {
+                            (field.fieldType === 'text' || field.fieldType === 'email')
+                            && <TextField
+                                required={field.required}
+                                label={field.label} disabled={props.disabled} type={field.fieldType}
+                                value={fields[index]} setValue={(v: string) => setFieldValue(v, index)} />
+                        }
+                        {
+                            field.fieldType === 'radio'
+                            && <RadioField
+                                required={field.required}
+                                label={field.label} disabled={props.disabled} options={(field.extra as any).options}
+                                value={fields[index]} setValue={(v: string) => setFieldValue(v, index)} />
+                        }
+                        {index.toString() in fieldsErrors &&
+                            <span className='error-text'>{(fieldsErrors as any)[index.toString()]}</span>}
+                    </div>);
+                })
+            }
+
+            {error && <Notice status='error' className='mt-2 mb-2'>{error}</Notice>}
+
+
+            {(editingExisting || availableSeats === null || availableSeats > 0) &&
+                <>
+                    {submitted &&
+                        <Notice status='success' className='mt-2 mb-2'>
+                            {editingExisting ? __('Your registration has been updated', 'wp-open-events')
+                                : __('Your registration has been submitted', 'wp-open-events')}
+                        </Notice>
+                    }
+
+                    {deleted &&
+                        <Notice status='success' className='mt-2 mb-2'>
+                            {__('Your registration has been deleted', 'wp-open-events')}
+                        </Notice>
+                    }
+
+                    <Button variant='primary' className='mt' onClick={submitForm} disabled={props.disabled}>
+                        {editingExisting ? __('Update the registration', 'wp-open-events') : __('Register to the event', 'wp-open-events')}
                     </Button>
-                </Modal>}
+
+                    {editingExisting &&
+                        <Button variant='secondary' className='ml mt' onClick={() => setShowConfirmDeleteRegistrationModal(true)} disabled={props.disabled}>
+                            {__('Delete the registration', 'wp-open-events')}
+                        </Button>
+                    }
+
+                    {showConfirmDeleteRegistrationModal &&
+                        <Modal title={__('Confirm registration deletion', 'wp-open-events')} onRequestClose={() => setShowConfirmDeleteRegistrationModal(false)}>
+                            <p>{__('Do you really want to delete the registration to this event?', 'wp-open-events')}</p>
+                            {deletionError && <Notice status='error' className='mt-2 mb-2'>{deletionError}</Notice>}
+                            <Button variant='primary' onClick={deleteRegistration}>
+                                {__('Confirm', 'wp-open-events')}
+                            </Button>
+                        </Modal>
+                    }
+                </>
+            }
         </>
     )
 };

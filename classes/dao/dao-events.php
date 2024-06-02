@@ -64,7 +64,7 @@ class WPOE_DAO_Events extends WPOE_Base_DAO
         global $wpdb;
 
         $query = $wpdb->prepare("SELECT e.id, e.name, e.date, e.autoremove_submissions, e.autoremove_submissions_period,
-            e.editable_registrations, e.admin_email, e.extra_email_content,
+            e.editable_registrations, e.admin_email, e.extra_email_content, e.max_participants,
             f.id AS field_id, f.label, f.type, f.description, f.required, f.extra, f.position
             FROM " . WPOE_DB::get_table_name('event') . " e
             LEFT JOIN " . WPOE_DB::get_table_name('event_form_field') . " f ON f.event_id = e.id
@@ -77,16 +77,16 @@ class WPOE_DAO_Events extends WPOE_Base_DAO
             return null;
         }
 
-        $query = $wpdb->prepare("SELECT COUNT(*) FROM " . WPOE_DB::get_table_name('event_registration') . " WHERE event_id = %d", $event_id);
-        $var = $wpdb->get_var($query);
-        $this->check_var($var, 'retrieving event registrations count');
-        $registrations_count = (int) $var;
+        $registrations_count = $registrations_count = $this->get_registrations_count($event_id);
         $has_responses = $registrations_count > 0;
 
         $event = new WPOE_Event();
         $event->id = (int) $event_results[0]['id'];
         $event->name = $event_results[0]['name'];
         $event->date = $event_results[0]['date'];
+        if ($event_results[0]['max_participants']) {
+            $event->maxParticipants = $event_results[0]['max_participants'];
+        }
         $event->autoremove = (bool) $event_results[0]['autoremove_submissions'];
         $event->autoremovePeriod = $event_results[0]['autoremove_submissions_period'];
         $event->formFields = $this->load_form_fields($event_results);
@@ -103,7 +103,7 @@ class WPOE_DAO_Events extends WPOE_Base_DAO
     {
         global $wpdb;
 
-        $query = $wpdb->prepare("SELECT e.id, e.name, e.editable_registrations, e.date,
+        $query = $wpdb->prepare("SELECT e.id, e.name, e.editable_registrations, e.date, e.max_participants,
             f.id AS field_id, f.label, f.type, f.description, f.required, f.extra, f.position
             FROM " . WPOE_DB::get_table_name('event') . " e
             LEFT JOIN " . WPOE_DB::get_table_name('event_form_field') . " f ON f.event_id = e.id
@@ -123,7 +123,22 @@ class WPOE_DAO_Events extends WPOE_Base_DAO
         $event->editableRegistrations = (bool) $results[0]['editable_registrations'];
         $event->formFields = $this->load_form_fields($results);
 
+        if ($results[0]['max_participants']) {
+            $max_participants = (int) $results[0]['max_participants'];
+            $registrations_count = $this->get_registrations_count($event_id);
+            $event->availableSeats = $max_participants - $registrations_count;
+        }
+
         return $event;
+    }
+
+    private function get_registrations_count(int $event_id): int
+    {
+        global $wpdb;
+        $query = $wpdb->prepare("SELECT COUNT(*) FROM " . WPOE_DB::get_table_name('event_registration') . " WHERE event_id = %d", $event_id);
+        $var = $wpdb->get_var($query);
+        $this->check_var($var, 'retrieving event registrations count');
+        return (int) $var;
     }
 
     private function load_form_fields(array $results)

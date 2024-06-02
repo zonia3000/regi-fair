@@ -11,6 +11,7 @@ type EventConfiguration = {
     autoremove: boolean
     autoremovePeriod: number
     maxParticipants: number | null
+    availableSeats?: number,
     waitingList: boolean
     hasResponses?: boolean
     adminEmail: string | null

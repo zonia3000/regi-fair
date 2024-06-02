@@ -22,6 +22,8 @@ const EditEvent = () => {
     const [autoremove, setAutoremove] = useState(true);
     const [formFields, setFormFields] = useState([]);
     const [hasResponses, setHasResponses] = useState(false);
+    const [hasMaxParticipants, setHasMaxParticipants] = useState(false);
+    const [maxParticipants, setMaxParticipants] = useState('');
     const [notifyAdmin, setNotifyAdmin] = useState(false);
     const [adminEmail, setAdminEmail] = useState('');
     const [editableRegistrations, setEditableRegistrations] = useState(true);
@@ -89,6 +91,10 @@ const EditEvent = () => {
                     setAutoremove(event.autoremove);
                     setFormFields(event.formFields);
                     setHasResponses(event.hasResponses || false);
+                    if (event.maxParticipants) {
+                        setHasMaxParticipants(true);
+                        setMaxParticipants(event.maxParticipants.toString());
+                    }
                     if (event.adminEmail) {
                         setNotifyAdmin(true);
                         setAdminEmail(event.adminEmail);
@@ -122,7 +128,7 @@ const EditEvent = () => {
             formFields,
             autoremove: autoremove,
             autoremovePeriod: 30,
-            maxParticipants: null,
+            maxParticipants: hasMaxParticipants ? Number(maxParticipants) : null,
             waitingList: false,
             extraEmailContent: customizeEmailContent ? emailExtraContent.trim() : null
         };
@@ -198,6 +204,21 @@ const EditEvent = () => {
             <EditFormFields formFields={formFields} setFormFields={setFormFields} />
 
             <br /><br />
+            <CheckboxControl
+                label={__('Set a maximum number of participants', 'wp-open-events')}
+                checked={hasMaxParticipants}
+                onChange={setHasMaxParticipants}
+            />
+            {hasMaxParticipants &&
+                <TextControl
+                    label={__('Total seats available', 'wp-open-events')}
+                    onChange={setMaxParticipants}
+                    value={maxParticipants}
+                    type='number'
+                    required
+                />
+            }
+
             <CheckboxControl
                 label={__('Autoremove user data after the event', 'wp-open-events')}
                 checked={autoremove}

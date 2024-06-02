@@ -187,6 +187,9 @@ class WPOE_Events_Admin_Controller extends WP_REST_Controller
         } else {
             $event->autoremovePeriod = null;
         }
+        if ($request->get_param('maxParticipants')) {
+            $event->maxParticipants = (int) $request->get_param('maxParticipants');
+        }
         $event->waitingList = (bool) $request->get_param('waitingList');
         $event->editableRegistrations = (bool) $request->get_param('editableRegistrations');
         $admin_email = $request->get_param('adminEmail');
@@ -229,6 +232,7 @@ class WPOE_Events_Admin_Controller extends WP_REST_Controller
         $schema['properties']['date'] = ['type' => 'string', 'required' => true, 'format' => 'date-time'];
         $schema['properties']['autoremove'] = ['type' => 'boolean', 'required' => true];
         $schema['properties']['autoremovePeriod'] = ['type' => 'integer', 'required' => false, 'minimum' => 1];
+        $schema['properties']['maxParticipants'] = ['type' => 'integer', 'required' => false, 'minimum' => 1];
         $schema['properties']['waitingList'] = ['type' => 'boolean', 'required' => true];
         $schema['properties']['adminEmail'] = ['type' => 'string', 'format' => 'email', 'required' => false];
         $schema['properties']['editableRegistrations'] = ['type' => 'boolean', 'required' => true];
