@@ -4,11 +4,22 @@ import fs from 'fs';
 
 test('Register to event [anonymous]', async ({ page }) => {
 
+  let registrationToken = '';
+  // Intercept successful registration response
+  page.on('response', async (response) => {
+    if (response.request().method() === 'POST' && response.status() === 201 && response.url().includes('wpoe')) {
+      const responseBody = await response.json();
+      registrationToken = responseBody.token;
+    }
+  });
+
   const registerBtn = page.getByRole('button', { name: 'Register to the event' });
 
+  let testPageId: number;
   await test.step('Open test event page', async () => {
     const { id } = JSON.parse(fs.readFileSync(testPostStateFile).toString());
-    await page.goto(`/?p=${id}`);
+    testPageId = id;
+    await page.goto(`/?p=${testPageId}`);
     await registerBtn.waitFor();
   });
 
@@ -47,5 +58,46 @@ test('Register to event [anonymous]', async ({ page }) => {
     await expect(page.getByRole('textbox', { name: 'email-field-1' })).toHaveValue('');
     await expect(page.getByRole('textbox', { name: 'email-field-2' })).toHaveValue('');
     await expect(page.getByLabel('op1-3')).not.toBeChecked();
+    expect(registrationToken).not.toBe('');
+  });
+
+  await test.step('Reopen the registration for editing', async () => {
+    await page.goto(`/?p=${testPageId}#registration=${registrationToken}`);
+    await page.getByText('Welcome back').first().waitFor();
+    await expect(page.getByRole('textbox', { name: 'text-field-1' })).toHaveValue('foo');
+    await expect(page.getByRole('textbox', { name: 'text-field-2' })).toHaveValue('');
+    await expect(page.getByRole('textbox', { name: 'email-field-1' })).toHaveValue('test@example.com');
+    await expect(page.getByRole('textbox', { name: 'email-field-2' })).toHaveValue('');
+    await expect(page.getByLabel('op1-3')).toBeChecked();
+  });
+
+  await test.step('Trigger validation on registration editing', async () => {
+    await page.getByRole('textbox', { name: 'email-field-1' }).fill('');
+    await page.getByRole('textbox', { name: 'email-field-2' }).fill('foo');
+    await page.getByRole('button', { name: 'Update the registration' }).click();
+    await page.getByText('Some fields are not valid').first().waitFor();
+    await expect(page.getByText('Required field', { exact: true })).toHaveCount(1);
+    await expect(page.getByText('Invalid e-mail address')).toHaveCount(1);
+  });
+
+  await test.step('Edit the registration', async () => {
+    await page.getByRole('textbox', { name: 'email-field-1' }).fill('test@example.com');
+    await page.getByRole('textbox', { name: 'email-field-2' }).fill('');
+    await page.getByLabel('op1-2').check();
+    await page.getByRole('button', { name: 'Update the registration' }).click();
+    await page.getByText('Your registration has been updated').first().waitFor();
+    await expect(page.getByRole('textbox', { name: 'text-field-1' })).toHaveValue('foo');
+  });
+
+  await test.step('Delete the registration', async () => {
+    await page.getByRole('button', { name: 'Delete the registration' }).click();
+    await page.getByRole('dialog').getByText('Do you really want to delete the registration to this event?').waitFor();
+    await page.getByRole('dialog').getByRole('button', { name: 'Confirm' }).click();
+    await page.getByText('Your registration has been deleted').first().waitFor();
+    await expect(page.getByRole('textbox', { name: 'text-field-1' })).toHaveValue('');
+    await expect(page.getByRole('textbox', { name: 'text-field-2' })).toHaveValue('');
+    await expect(page.getByRole('textbox', { name: 'email-field-1' })).toHaveValue('');
+    await expect(page.getByRole('textbox', { name: 'email-field-2' })).toHaveValue('');
+    await expect(page.getByLabel('op1-2')).not.toBeChecked();
   });
 });

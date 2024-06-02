@@ -28,6 +28,10 @@ const Form = (props: FormProps) => {
             .finally(() => {
                 props.setLoading(false);
             });
+        window.addEventListener('hashchange', loadEventData);
+        return () => {
+            window.removeEventListener('hashchange', loadEventData);
+        };
     }, []);
 
     function setFieldValue(newValue: string, index: number) {
