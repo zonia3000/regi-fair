@@ -79,8 +79,10 @@ class WPOE_DB_Setup
           event_id bigint unsigned NOT NULL,
           registration_token varchar(255) NULL,
           inserted_at timestamp DEFAULT CURRENT_TIMESTAMP,
+          updated_at timestamp DEFAULT CURRENT_TIMESTAMP,
           PRIMARY KEY  (id),
-          FOREIGN KEY (event_id) REFERENCES $event_table (id)
+          FOREIGN KEY (event_id) REFERENCES $event_table (id),
+          UNIQUE (registration_token)
         ");
 
         WPOE_DB_Setup::create_table('event_registration_value', "

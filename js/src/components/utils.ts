@@ -12,6 +12,7 @@ export function extractError(err: unknown): string {
 export function cleanupFields(fields: Field[]): Field[] {
   return fields.map(f => ({
     ...f,
+    description: f.description || undefined,
     position: undefined,
     validators: undefined,
     extra: f.extra || undefined

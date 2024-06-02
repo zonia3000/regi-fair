@@ -41,6 +41,28 @@ class WPOE_Public_Controller extends WP_REST_Controller
                 ]
             ]
         );
+
+        register_rest_route(
+            $namespace,
+            '/events/(?P<id>\d+)/(?P<registration_token>\w+)',
+            [
+                [
+                    'methods' => WP_REST_Server::READABLE,
+                    'callback' => [$this, 'get_registration'],
+                    'permission_callback' => '__return_true'
+                ],
+                [
+                    'methods' => WP_REST_Server::EDITABLE,
+                    'callback' => [$this, 'update_registration'],
+                    'permission_callback' => '__return_true'
+                ],
+                [
+                    'methods' => WP_REST_Server::DELETABLE,
+                    'callback' => [$this, 'delete_registration'],
+                    'permission_callback' => '__return_true'
+                ]
+            ]
+        );
     }
 
     /**
@@ -77,16 +99,8 @@ class WPOE_Public_Controller extends WP_REST_Controller
                 return $error;
             }
 
-            $values = [];
-            $i = 0;
-            $user_email = [];
-            foreach ($event->formFields as $field) {
-                $values[$field->id] = $input[$i];
-                if ($field->fieldType === 'email' && $field->extra !== null && property_exists($field->extra, 'confirmationAddress') && $field->extra->confirmationAddress === true) {
-                    $user_email[] = $input[$i];
-                }
-                $i++;
-            }
+            $values = $this->map_input_to_values($event, $input);
+            $user_email = $this->get_user_email($event, $input);
 
             $registration_token = bin2hex(openssl_random_pseudo_bytes(16));
 
@@ -102,10 +116,155 @@ class WPOE_Public_Controller extends WP_REST_Controller
                 WPOE_Mail_Sender::send_new_registration_to_admin($event, $values);
             }
 
-            return new WP_REST_Response(['remaining' => $remaining_seats]);
+            return new WP_REST_Response([
+                'remaining' => $remaining_seats,
+                'token' => $registration_token
+            ], 201);
         } catch (Exception $ex) {
             return generic_server_error($ex);
         }
+    }
+
+    /**
+     * @param WP_REST_Request $request
+     * @return WP_Error|WP_REST_Response
+     */
+    public function update_registration($request)
+    {
+        try {
+            $event_id = (int) $request->get_param('id');
+            $event = $this->events_dao->get_event($event_id);
+
+            if ($event === null) {
+                return new WP_Error('event_not_found', __('Event not found', 'wp-open-events'), ['status' => 400]);
+            }
+
+            if (!$event->editableRegistrations) {
+                return new WP_Error('registrations_not_editable', __('This event doesn\'t allow to edit the registrations', 'wp-open-events'), ['status' => 403]);
+            }
+
+            $token = $request->get_param('registration_token');
+            $registration = $this->registrations_dao->get_registration(md5($token));
+            if ($registration === null) {
+                return new WP_Error('registration_not_found', __('Registration not found', 'wp-open-events'), ['status' => 400]);
+            }
+
+            $input = json_decode($request->get_body());
+            $error = $this->validate_request($event, $input);
+            if ($error !== null) {
+                return $error;
+            }
+
+            $values = $this->map_input_to_values($event, $input);
+            $user_email = $this->get_user_email($event, $input);
+
+            $this->registrations_dao->update_registration($registration['id'], $values);
+
+            if (count($user_email) > 0) {
+                WPOE_Mail_Sender::send_registration_updated_confirmation($event, $user_email, $token, $values);
+            }
+            if ($event->adminEmail !== null) {
+                WPOE_Mail_Sender::send_registration_updated_to_admin($event, $values);
+            }
+
+            return new WP_REST_Response(null, 204);
+        } catch (Exception $ex) {
+            return generic_server_error($ex);
+        }
+    }
+
+    /**
+     * @param WP_REST_Request $request
+     * @return WP_Error|WP_REST_Response
+     */
+    public function get_registration($request)
+    {
+        try {
+            $event_id = (int) $request->get_param('id');
+            $event = $this->events_dao->get_event($event_id);
+
+            if ($event === null) {
+                return new WP_Error('event_not_found', __('Event not found', 'wp-open-events'), ['status' => 404]);
+            }
+
+            if (!$event->editableRegistrations) {
+                return new WP_Error('registrations_not_editable', __('This event doesn\'t allow to edit the registrations', 'wp-open-events'), ['status' => 403]);
+            }
+
+            $token = $request->get_param('registration_token');
+            $registration = $this->registrations_dao->get_registration(md5($token));
+            if ($registration === null) {
+                return new WP_Error('registration_not_found', __('Registration not found', 'wp-open-events'), ['status' => 404]);
+            }
+            return new WP_REST_Response($registration['values']);
+        } catch (Exception $ex) {
+            return generic_server_error($ex);
+        }
+    }
+
+    /**
+     * @param WP_REST_Request $request
+     * @return WP_Error|WP_REST_Response
+     */
+    public function delete_registration($request)
+    {
+        try {
+            $event_id = (int) $request->get_param('id');
+            $event = $this->events_dao->get_event($event_id);
+
+            if ($event === null) {
+                return new WP_Error('event_not_found', __('Event not found', 'wp-open-events'), ['status' => 400]);
+            }
+
+            if (!$event->editableRegistrations) {
+                return new WP_Error('registrations_not_editable', __('This event doesn\'t allow to edit the registrations', 'wp-open-events'), ['status' => 403]);
+            }
+
+            $token = $request->get_param('registration_token');
+            $registration = $this->registrations_dao->get_registration(md5($token));
+            if ($registration === null) {
+                return new WP_Error('registration_not_found', __('Registration not found', 'wp-open-events'), ['status' => 400]);
+            }
+
+            $this->registrations_dao->delete_registration($registration['id']);
+
+            $user_email = $this->get_user_email($event, $registration['values']);
+
+            if (count($user_email) > 0) {
+                WPOE_Mail_Sender::send_registration_deleted_confirmation($event, $user_email);
+            }
+            if ($event->adminEmail !== null) {
+                WPOE_Mail_Sender::send_registration_deleted_to_admin($event);
+            }
+
+            return new WP_REST_Response(null, 204);
+        } catch (Exception $ex) {
+            return generic_server_error($ex);
+        }
+    }
+
+    private function map_input_to_values(WPOE_Event $event, array $input): array
+    {
+        $values = [];
+        $i = 0;
+        foreach ($event->formFields as $field) {
+            $values[$field->id] = $input[$i];
+            $i++;
+        }
+        return $values;
+    }
+
+    private function get_user_email(WPOE_Event $event, array $input): array
+    {
+        $i = 0;
+        $user_email = [];
+        foreach ($event->formFields as $field) {
+            if ($field->fieldType === 'email' && $field->extra !== null && property_exists($field->extra, 'confirmationAddress') && $field->extra->confirmationAddress === true) {
+                $user_email[] = $input[$i];
+            }
+            $i++;
+        }
+        return $user_email;
     }
 
     private function validate_request(WPOE_Event $event, $input): WP_Error|WP_REST_Response|null

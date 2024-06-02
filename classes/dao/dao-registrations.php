@@ -152,4 +152,120 @@ class WPOE_DAO_Registrations extends WPOE_Base_DAO
 
     return $remaining_seats;
   }
+
+  public function get_registration(string $registration_token): array|null
+  {
+    global $wpdb;
+
+    $query = $wpdb->prepare('SELECT id FROM ' . WPOE_DB::get_table_name('event_registration') . ' WHERE registration_token = %s', $registration_token);
+    $results = $wpdb->get_results($query);
+    $this->check_results('retrieving registration');
+    if (count($results) === 0) {
+      return null;
+    }
+    if (count($results) > 1) {
+      throw new Exception('Multiple registrations associated with the same token');
+    }
+
+    $registration_id = $results[0]->id;
+
+    $query = $wpdb->prepare("SELECT f.label, rv.field_value
+      FROM " . WPOE_DB::get_table_name('event_registration') . " r
+      RIGHT JOIN " . WPOE_DB::get_table_name('event_form_field') . " f ON f.event_id = r.event_id
+      LEFT JOIN " . WPOE_DB::get_table_name('event_registration_value') . " rv ON f.id = rv.field_id AND rv.registration_id = r.id
+      WHERE r.id = %d AND NOT f.deleted
+      ORDER BY f.position", $registration_id);
+    $results = $wpdb->get_results($query, ARRAY_A);
+    $this->check_results('retrieving the event registration value');
+
+    $values = [];
+    foreach ($results as $row) {
+      array_push($values, $row['field_value']);
+    }
+
+    return [
+      'id' => $registration_id,
+      'values' => $values
+    ];
+  }
+
+  public function update_registration(int $registration_id, array $values)
+  {
+    global $wpdb;
+
+    try {
+      $result = $wpdb->query('START TRANSACTION');
+      $this->check_result($result, 'starting transaction');
+
+      // Update registration updated_at
+      $result = $wpdb->update(
+        WPOE_DB::get_table_name('event_registration'),
+        ['updated_at' => current_time('mysql')],
+        ['id' => $registration_id],
+        ['%s'],
+        ['%d']
+      );
+      $this->check_result($result, 'updating registration');
+
+      // Delete the registration fields
+      $result = $wpdb->delete(
+        WPOE_DB::get_table_name('event_registration_value'),
+        ['registration_id' => $registration_id,],
+        ['%d']
+      );
+      $this->check_result($result, 'deleting event registration fields');
+
+      // Insert the registration fields
+      foreach ($values as $field_id => $field_value) {
+        $result = $wpdb->insert(
+          WPOE_DB::get_table_name('event_registration_value'),
+          [
+            'registration_id' => $registration_id,
+            'field_id' => $field_id,
+            'field_value' => $field_value,
+          ],
+          ['%d', '%d', '%s']
+        );
+        $this->check_result($result, 'inserting event registration field');
+      }
+    } catch (Exception $ex) {
+      $wpdb->query('ROLLBACK');
+      throw $ex;
+    }
+
+    $result = $wpdb->query('COMMIT');
+    $this->check_result($result, 'updating registration');
+  }
+
+  public function delete_registration(int $registration_id)
+  {
+    global $wpdb;
+
+    try {
+      $result = $wpdb->query('START TRANSACTION');
+      $this->check_result($result, 'starting transaction');
+
+      // Delete the registration fields
+      $result = $wpdb->delete(
+        WPOE_DB::get_table_name('event_registration_value'),
+        ['registration_id' => $registration_id],
+        ['%d']
+      );
+      $this->check_result($result, 'deleting event registration fields');
+
+      // Delete the registration
+      $result = $wpdb->delete(
+        WPOE_DB::get_table_name('event_registration'),
+        ['id' => $registration_id],
+        ['%d']
+      );
+      $this->check_result($result, 'deleting event registration');
+    } catch (Exception $ex) {
+      $wpdb->query('ROLLBACK');
+      throw $ex;
+    }
+
+    $result = $wpdb->query('COMMIT');
+    $this->check_result($result, 'deleting registration');
+  }
 }

@@ -5,7 +5,7 @@ type Field = {
     label: string
     fieldType: FieldType
     required: boolean
-    description: string
+    description?: string
     extra?: object
     validate: () => boolean
 }
