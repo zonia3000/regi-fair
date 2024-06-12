@@ -214,7 +214,7 @@ const EditEvent = () => {
             />
             {hasMaxParticipants &&
                 <TextControl
-                    label={__('Total seats available', 'wp-open-events')}
+                    label={__('Total available seats', 'wp-open-events')}
                     onChange={setMaxParticipants}
                     value={maxParticipants}
                     type='number'

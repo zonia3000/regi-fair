@@ -186,7 +186,7 @@ const EditInputField = (props: EditInputFieldProps) => {
             }
             {props.fieldType === 'number' && useAsNumberOfPeople &&
                 <>
-                    <Notice status='info' className='mt-2'>
+                    <Notice status='info' className='mt-2' isDismissible={false}>
                         {__('This input will be used to allow adding multiple people with the same registration.', 'wp-open-events')}
                     </Notice>
                     <p>
@@ -197,7 +197,8 @@ const EditInputField = (props: EditInputFieldProps) => {
             }
             {props.fieldType === 'number' && !useAsNumberOfPeople &&
                 <TextControl
-                    label={__('Minum value (optional)', 'wp-open-events')}
+                    label={__('Minimum value (optional)', 'wp-open-events')}
+                    type='number'
                     onChange={saveMin}
                     value={min}
                 />
@@ -205,6 +206,7 @@ const EditInputField = (props: EditInputFieldProps) => {
             {props.fieldType === 'number' &&
                 <TextControl
                     label={__('Maximum value (optional)', 'wp-open-events')}
+                    type='number'
                     onChange={saveMax}
                     value={max}
                 />
