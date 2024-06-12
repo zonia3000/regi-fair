@@ -116,6 +116,8 @@ class WPOE_Templates_Admin_Controller extends WP_REST_Controller
       $event_template = $this->get_event_template_from_request($request);
       $template_id = $this->dao->create_event_template($event_template);
       return new WP_REST_Response(['id' => $template_id], 201);
+    } catch (WPOE_Validation_Exception $ex) {
+      return new WP_Error('invalid_payload', $ex->getMessage(), ['status' => 400]);
     } catch (Exception $ex) {
       return generic_server_error($ex);
     }
@@ -137,6 +139,8 @@ class WPOE_Templates_Admin_Controller extends WP_REST_Controller
       $event_template->id = $id;
       $this->dao->update_event_template($event_template);
       return new WP_REST_Response(null, 204);
+    } catch (WPOE_Validation_Exception $ex) {
+      return new WP_Error('invalid_payload', $ex->getMessage(), ['status' => 400]);
     } catch (Exception $ex) {
       return generic_server_error($ex);
     }

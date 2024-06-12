@@ -27,7 +27,7 @@ class WPOE_DAO_Registrations extends WPOE_Base_DAO
     $results = $wpdb->get_results($query, ARRAY_A);
     $this->check_results('retrieving the event registrations');
 
-    $query = $wpdb->prepare('SELECT COUNT(*) FROM ' . WPOE_DB::get_table_name('event_registration')
+    $query = $wpdb->prepare('SELECT COALESCE(SUM(number_of_people), 0) AS number_of_people FROM ' . WPOE_DB::get_table_name('event_registration')
       . ' WHERE event_id = %d', $event_id);
     $var = $wpdb->get_var($query);
     $this->check_var($var, 'retrieving the event registrations count');
@@ -92,7 +92,7 @@ class WPOE_DAO_Registrations extends WPOE_Base_DAO
    * - an integer representing the number of remaining available seats if there is a maxiumum number of participants limit
    * - false if there is a maxiumum number of participants limit and this limit has already been reached
    */
-  public function register_to_event(int $event_id, ?string $registration_token, array $values, int|null $max_participants): int|false|null
+  public function register_to_event(int $event_id, ?string $registration_token, array $values, int $number_of_people, int|null $max_participants): int|false|null
   {
     global $wpdb;
 
@@ -106,7 +106,7 @@ class WPOE_DAO_Registrations extends WPOE_Base_DAO
       if ($max_participants !== null) {
         $registrations_count = $this->get_registrations_count($event_id);
         $remaining_seats = $max_participants - $registrations_count;
-        if ($remaining_seats <= 0) {
+        if ($remaining_seats < $number_of_people) {
           // Unable to register: no more seats available
           $wpdb->query('ROLLBACK');
           return false;
@@ -119,6 +119,7 @@ class WPOE_DAO_Registrations extends WPOE_Base_DAO
         [
           'event_id' => $event_id,
           'registration_token' => $registration_token,
+          'number_of_people' => $number_of_people
         ],
         ['%d', '%s', '%s']
       );
@@ -148,7 +149,7 @@ class WPOE_DAO_Registrations extends WPOE_Base_DAO
     $this->check_result($result, 'inserting registration');
 
     if ($remaining_seats !== null) {
-      $remaining_seats--;
+      $remaining_seats -= $number_of_people;
     }
     return $remaining_seats;
   }
@@ -189,7 +190,7 @@ class WPOE_DAO_Registrations extends WPOE_Base_DAO
     ];
   }
 
-  public function update_registration(int $registration_id, array $values, int $event_id, int|null $max_participants): int|false|null
+  public function update_registration(int $registration_id, array $values, int $event_id, int $number_of_people, int|null $max_participants): int|false|null
   {
     global $wpdb;
 
@@ -199,12 +200,39 @@ class WPOE_DAO_Registrations extends WPOE_Base_DAO
       $result = $wpdb->query('START TRANSACTION');
       $this->check_result($result, 'starting transaction');
 
+      if ($max_participants !== null) {
+        $registrations_count = $this->get_registrations_count($event_id);
+        $remaining_seats = $max_participants - $registrations_count;
+
+        $query = $wpdb->prepare('SELECT number_of_people FROM ' . WPOE_DB::get_table_name('event_registration') . ' WHERE id = %d', $registration_id);
+        $var = $wpdb->get_var($query);
+        $this->check_var($var, 'retrieving previous number of people');
+        $previous_number_of_people = (int) $var;
+
+        if ($number_of_people > $previous_number_of_people) {
+          $people_to_add = $number_of_people - $previous_number_of_people;
+
+          if ($remaining_seats < $people_to_add) {
+            // Unable to update the registration: no more seats available
+            $wpdb->query('ROLLBACK');
+            return false;
+          }
+          $remaining_seats -= $people_to_add;
+        } else if ($number_of_people < $previous_number_of_people) {
+          $people_to_remove = $previous_number_of_people - $number_of_people;
+          $remaining_seats += $people_to_remove;
+        }
+      }
+
       // Update registration updated_at
       $result = $wpdb->update(
         WPOE_DB::get_table_name('event_registration'),
-        ['updated_at' => current_time('mysql')],
+        [
+          'updated_at' => current_time('mysql'),
+          'number_of_people' => $number_of_people
+        ],
         ['id' => $registration_id],
-        ['%s'],
+        ['%s', '%d'],
         ['%d']
       );
       $this->check_result($result, 'updating registration');
@@ -229,11 +257,6 @@ class WPOE_DAO_Registrations extends WPOE_Base_DAO
           ['%d', '%d', '%s']
         );
         $this->check_result($result, 'inserting event registration field');
-      }
-
-      if ($max_participants !== null) {
-        $registrations_count = $this->get_registrations_count($event_id);
-        $remaining_seats = $max_participants - $registrations_count;
       }
     } catch (Exception $ex) {
       $wpdb->query('ROLLBACK');
@@ -286,10 +309,13 @@ class WPOE_DAO_Registrations extends WPOE_Base_DAO
     return $remaining_seats;
   }
 
+  /**
+   * Returns the number of people registered to the event.
+   */
   private function get_registrations_count(int $event_id): int
   {
     global $wpdb;
-    $query = $wpdb->prepare('SELECT COUNT(*) FROM ' . WPOE_DB::get_table_name('event_registration') . ' WHERE event_id = %d', $event_id);
+    $query = $wpdb->prepare('SELECT COALESCE(SUM(number_of_people), 0) AS number_of_people FROM ' . WPOE_DB::get_table_name('event_registration') . ' WHERE event_id = %d', $event_id);
     $var = $wpdb->get_var($query);
     $this->check_var($var, 'counting number of registrations');
     return (int) $var;

@@ -8,6 +8,7 @@ require_once (WPOE_PLUGIN_DIR . 'classes/validators/validation-exception.php');
 require_once (WPOE_PLUGIN_DIR . 'classes/validators/base-validator.php');
 require_once (WPOE_PLUGIN_DIR . 'classes/validators/text-validator.php');
 require_once (WPOE_PLUGIN_DIR . 'classes/validators/email-validator.php');
+require_once (WPOE_PLUGIN_DIR . 'classes/validators/number-validator.php');
 require_once (WPOE_PLUGIN_DIR . 'classes/validators/radio-validator.php');
 
 class WPOE_Validator
@@ -21,11 +22,14 @@ class WPOE_Validator
       case 'email':
         $validator = new WPOE_Email_Validator($form_field);
         break;
+      case 'number':
+        $validator = new WPOE_Number_Validator($form_field);
+        break;
       case 'radio':
         $validator = new WPOE_Radio_Validator($form_field);
         break;
       default:
-        throw new Exception('Unsupported field type ' . $form_field->fieldType);
+        throw new WPOE_Validation_Exception('Unsupported field type ' . $form_field->fieldType);
     }
     $validator->validate($input);
   }

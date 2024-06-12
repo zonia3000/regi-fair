@@ -145,6 +145,8 @@ class WPOE_Events_Admin_Controller extends WP_REST_Controller
             $event = $this->get_event_from_request($request);
             $event_id = $this->dao->create_event($event);
             return new WP_REST_Response(['id' => $event_id], 201);
+        } catch (WPOE_Validation_Exception $ex) {
+            return new WP_Error('invalid_payload', $ex->getMessage(), ['status' => 400]);
         } catch (Exception $ex) {
             return generic_server_error($ex);
         }
@@ -167,6 +169,8 @@ class WPOE_Events_Admin_Controller extends WP_REST_Controller
             $event->id = $id;
             $this->dao->update_event($event);
             return new WP_REST_Response(null, 204);
+        } catch (WPOE_Validation_Exception $ex) {
+            return new WP_Error('invalid_payload', $ex->getMessage(), ['status' => 400]);
         } catch (Exception $ex) {
             return generic_server_error($ex);
         }

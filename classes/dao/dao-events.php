@@ -135,7 +135,7 @@ class WPOE_DAO_Events extends WPOE_Base_DAO
     private function get_registrations_count(int $event_id): int
     {
         global $wpdb;
-        $query = $wpdb->prepare("SELECT COUNT(*) FROM " . WPOE_DB::get_table_name('event_registration') . " WHERE event_id = %d", $event_id);
+        $query = $wpdb->prepare("SELECT COALESCE(SUM(number_of_people), 0) AS number_of_people FROM " . WPOE_DB::get_table_name('event_registration') . " WHERE event_id = %d", $event_id);
         $var = $wpdb->get_var($query);
         $this->check_var($var, 'retrieving event registrations count');
         return (int) $var;

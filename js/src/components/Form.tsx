@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { FormProps } from './classes/components-props';
 import apiFetch from '@wordpress/api-fetch';
 import Loading from './Loading';
-import TextField from './fields/TextField';
+import InputField from './fields/InputField';
 import { Button, Modal, Notice } from '@wordpress/components';
 import { __, _x, sprintf } from '@wordpress/i18n';
 import { extractError } from './utils';
@@ -12,7 +12,7 @@ import RadioField from './fields/RadioField';
 const Form = (props: FormProps) => {
     const [event, setEvent] = useState(null as EventConfiguration);
     const [found, setFound] = useState(false);
-    const [fields, setFields] = useState([]);
+    const [fields, setFields] = useState([] as string[]);
     const [error, setError] = useState('');
     const [submitted, setSubmitted] = useState(false);
     const [fieldsErrors, setFieldsErrors] = useState({});
@@ -165,7 +165,7 @@ const Form = (props: FormProps) => {
                 </Notice>
             }
 
-            {!editingExisting && availableSeats !== null && availableSeats > 0 &&
+            {availableSeats !== null && availableSeats > 0 &&
                 <Notice status='info'>
                     {sprintf(_x('There are still %d seats available', 'number of available seats', 'wp-open-events'), availableSeats)}
                 </Notice>
@@ -187,10 +187,12 @@ const Form = (props: FormProps) => {
                 event.formFields.map((field: Field, index: number) => {
                     return (<div key={`field-${index}`} className={index.toString() in fieldsErrors ? 'form-error mt' : 'mt'}>
                         {
-                            (field.fieldType === 'text' || field.fieldType === 'email')
-                            && <TextField
+                            (field.fieldType === 'text' || field.fieldType === 'email' || field.fieldType === 'number')
+                            && <InputField
                                 required={field.required}
                                 label={field.label} disabled={props.disabled} type={field.fieldType}
+                                min={field.extra && 'min' in field.extra ? Number(field.extra.min) : undefined}
+                                max={field.extra && 'max' in field.extra ? Number(field.extra.max) : undefined}
                                 value={fields[index]} setValue={(v: string) => setFieldValue(v, index)} />
                         }
                         {

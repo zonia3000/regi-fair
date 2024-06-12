@@ -1,4 +1,4 @@
-type FieldType = 'text' | 'email' | 'radio'
+type FieldType = 'text' | 'email' | 'number' | 'radio'
 
 type Field = {
     id?: number

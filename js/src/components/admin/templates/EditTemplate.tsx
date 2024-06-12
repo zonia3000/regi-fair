@@ -105,7 +105,10 @@ const EditTemplate = () => {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify(template),
+          body: JSON.stringify({
+            ...template,
+            formFields: cleanupFields(template.formFields)
+          }),
         });
       } else {
         await apiFetch({

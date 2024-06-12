@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Modal } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import EditTextField from './EditTextField';
+import EditInputField from './EditInputField';
 import EditRadioField from './EditRadioField';
 import { EditFieldModalProps } from '../../classes/components-props';
 
@@ -10,14 +10,18 @@ const EditFieldModal = (props: EditFieldModalProps) => {
     const [createNew, setCreateNew] = useState(true);
     const [fieldType, setFieldType] = useState(null as FieldType);
     const [field, setField] = useState(props.fieldToEdit);
+    const [useAsNumberOfPeople, setUseAsNumberOfPeople] = useState(false);
 
     useEffect(() => {
         if (props.fieldToEdit !== null) {
             setCreateNew(false);
             setFieldType(props.fieldToEdit.fieldType);
             setField(props.fieldToEdit);
+            setUseAsNumberOfPeople(props.fieldToEdit.extra && 'useAsNumberOfPeople' in props.fieldToEdit.extra
+                && props.fieldToEdit.extra.useAsNumberOfPeople === true);
         } else {
             setCreateNew(true);
+            setUseAsNumberOfPeople(false);
         }
     }, [props.fieldToEdit]);
 
@@ -26,6 +30,7 @@ const EditFieldModal = (props: EditFieldModalProps) => {
         props.setFieldToEdit(null);
         setFieldType(null);
         setField(null);
+        setUseAsNumberOfPeople(false);
     }
 
     function save() {
@@ -39,6 +44,7 @@ const EditFieldModal = (props: EditFieldModalProps) => {
     function unsetField() {
         setFieldType(null);
         setField(null);
+        setUseAsNumberOfPeople(false);
     }
 
     return (
@@ -56,16 +62,30 @@ const EditFieldModal = (props: EditFieldModalProps) => {
                                 {__('E-mail', 'wp-open-events')}
                             </Button>
                             &nbsp;
+                            <Button variant='primary' onClick={() => setFieldType('number')}>
+                                {__('Number', 'wp-open-events')}
+                            </Button>
+                            &nbsp;
                             <Button variant='primary' onClick={() => setFieldType('radio')}>
                                 {__('Radio', 'wp-open-events')}
+                            </Button>
+                            &nbsp;
+                            <Button variant='primary' onClick={() => {
+                                setUseAsNumberOfPeople(true);
+                                setFieldType('number');
+                            }}>
+                                {__('Number of people', 'wp-open-events')}
                             </Button>
                         </>
                     )}
                     {fieldType === 'text' && (
-                        <EditTextField field={field} setField={setField} fieldType='text' />
+                        <EditInputField field={field} setField={setField} fieldType='text' />
                     )}
                     {fieldType === 'email' && (
-                        <EditTextField field={field} setField={setField} fieldType='email' />
+                        <EditInputField field={field} setField={setField} fieldType='email' />
+                    )}
+                    {fieldType === 'number' && (
+                        <EditInputField field={field} setField={setField} fieldType='number' useAsNumberOfPeople={useAsNumberOfPeople} />
                     )}
                     {fieldType === 'radio' && (
                         <EditRadioField field={field as RadioField} setField={setField} />

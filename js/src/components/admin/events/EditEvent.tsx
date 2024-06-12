@@ -141,7 +141,10 @@ const EditEvent = () => {
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify(event),
+                    body: JSON.stringify({
+                        ...event,
+                        formFields: cleanupFields(event.formFields)
+                    }),
                 });
             } else {
                 await apiFetch({

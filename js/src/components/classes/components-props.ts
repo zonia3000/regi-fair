@@ -20,9 +20,11 @@ export type BaseFieldProps = {
     required: boolean
 }
 
-export type TextFieldProps = BaseFieldProps & {
+export type InputFieldProps = BaseFieldProps & {
     value: string
-    type: 'text' | 'email'
+    type: 'text' | 'email' | 'number'
+    min?: number
+    max?: number
     setValue: (value: string) => void
 }
 
@@ -40,9 +42,12 @@ export type EditFieldProps<T extends Field> = {
 export type EditRadioFieldProps = EditFieldProps<RadioField> & {
 }
 
-export type EditTextFieldProps = EditFieldProps<Field> & {
+export type EditInputFieldProps = EditFieldProps<Field> & ({
     fieldType: 'text' | 'email'
-}
+} | {
+    fieldType: 'number'
+    useAsNumberOfPeople: boolean
+})
 
 export type EditFieldModalProps = {
     showEditFieldModal: boolean

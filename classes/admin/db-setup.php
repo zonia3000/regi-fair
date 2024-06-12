@@ -80,6 +80,7 @@ class WPOE_DB_Setup
           registration_token varchar(255) NULL,
           inserted_at timestamp DEFAULT CURRENT_TIMESTAMP,
           updated_at timestamp DEFAULT CURRENT_TIMESTAMP,
+          number_of_people integer NOT NULL DEFAULT 1,
           PRIMARY KEY  (id),
           FOREIGN KEY (event_id) REFERENCES $event_table (id),
           UNIQUE (registration_token)

@@ -1,9 +1,9 @@
 import React from 'react';
 import { TextControl } from '@wordpress/components';
-import { TextFieldProps } from '../classes/components-props';
+import { InputFieldProps } from '../classes/components-props';
 import { __ } from '@wordpress/i18n';
 
-const TextField = (props: TextFieldProps) => {
+const InputField = (props: InputFieldProps) => {
     function onChange(value: string) {
         props.setValue(value);
     }
@@ -14,9 +14,11 @@ const TextField = (props: TextFieldProps) => {
             onChange={onChange}
             value={props.value}
             type={props.type}
+            min={props.min}
+            max={props.max}
             disabled={!!props.disabled}
         />
     );
 };
 
-export default TextField;
+export default InputField;
