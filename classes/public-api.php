@@ -302,7 +302,11 @@ class WPOE_Public_Controller extends WP_REST_Controller
         $i = 0;
         foreach ($event->formFields as $field) {
             if ($field->fieldType === 'number' && $field->extra !== null && property_exists($field->extra, 'useAsNumberOfPeople') && $field->extra->useAsNumberOfPeople === true) {
-                return (int) $input[$i];
+                $count = (int) $input[$i];
+                if ($count === 0) {
+                    return 1;
+                }
+                return $count;
             }
             $i++;
         }
