@@ -154,11 +154,12 @@ class WPOE_DAO_Registrations extends WPOE_Base_DAO
     return $remaining_seats;
   }
 
-  public function get_registration(string $registration_token): array|null
+  public function get_registration(int $event_id, string $registration_token): array|null
   {
     global $wpdb;
 
-    $query = $wpdb->prepare('SELECT id FROM ' . WPOE_DB::get_table_name('event_registration') . ' WHERE registration_token = %s', $registration_token);
+    $query = $wpdb->prepare('SELECT id FROM ' . WPOE_DB::get_table_name('event_registration')
+      . ' WHERE event_id = %d AND registration_token = %s', $event_id, $registration_token);
     $results = $wpdb->get_results($query);
     $this->check_results('retrieving registration');
     if (count($results) === 0) {
