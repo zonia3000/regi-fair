@@ -189,7 +189,7 @@ const ListEvents = () => {
                 </table>}
             <br />
 
-            {error && <Notice status='error'>{error}</Notice>}
+            {error && <Notice status='error' isDismissible={false}>{error}</Notice>}
 
             {showCreateEventModal &&
                 <Modal title={__('Create event', 'wp-open-events')} onRequestClose={closeCreateEventModal}>
@@ -203,7 +203,8 @@ const ListEvents = () => {
                         </Button>
                     </>}
                     {chooseTemplate && templatesLoading && <Loading />}
-                    {chooseTemplate && !templatesLoading && templatesError && <Notice status='error'>{templatesError}</Notice>}
+                    {chooseTemplate && !templatesLoading && templatesError &&
+                        <Notice status='error' isDismissible={false}>{templatesError}</Notice>}
                     {chooseTemplate && !templatesLoading && !templatesError && templates.length === 0 && <>
                         <p>{__('No templates found', 'wp-open-events')}</p>
                         <Button variant='primary' onClick={openCreateTemplatePage}>
@@ -227,7 +228,7 @@ const ListEvents = () => {
                 <Modal title={__('Delete event', 'wp-open-events')} onRequestClose={closeDeleteEventModal}>
                     <p>{__('Do you really want to delete this event?', 'wp-open-events')}</p>
                     <p><strong>{__('WARNING: all the saved registrations will be deleted', 'wp-open-events')}</strong></p>
-                    {deleteError && <Notice className='mb' status='error'>{deleteError}</Notice>}
+                    {deleteError && <Notice className='mb' status='error' isDismissible={false}>{deleteError}</Notice>}
                     {deleting && <p><Spinner />{__('Deleting...', 'wp-open-events')}</p>}
                     <Button variant='primary' onClick={confirmDeleteEvent} disabled={deleting}>
                         {__('Confirm', 'wp-open-events')}
@@ -249,7 +250,8 @@ const ListEvents = () => {
                             <Link to={p.permalink} target='_blank'>{p.title}</Link>
                         </li>)}
                     </ul>
-                    {loadingEventReferencesError && <Notice status='error'>{loadingEventReferencesError}</Notice>}
+                    {loadingEventReferencesError &&
+                        <Notice status='error' isDismissible={false}>{loadingEventReferencesError}</Notice>}
                     {loadingEventReferences && <p><Spinner />{__('Loading...', 'wp-open-events')}</p>}
                 </Modal>
             }

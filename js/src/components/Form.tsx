@@ -160,26 +160,27 @@ const Form = (props: FormProps) => {
     return (
         <>
             {editingExisting &&
-                <Notice status='info' className='mb-2'>
+                <Notice status='info' className='mb-2' isDismissible={false}>
                     {__('Welcome back. You are editing an existing registration', 'wp-open-events')}
                 </Notice>
             }
 
             {availableSeats !== null && availableSeats > 0 &&
-                <Notice status='info'>
+                <Notice status='info' isDismissible={false}>
                     {sprintf(_x('There are still %d seats available', 'number of available seats', 'wp-open-events'), availableSeats)}
                 </Notice>
             }
 
             {availableSeats !== null && availableSeats === 0 && editingExisting &&
-                <Notice status='info'>
+                <Notice status='info' isDismissible={false}>
                     {__('There are no more seats available', 'wp-open-events')}
                 </Notice>
             }
 
             {availableSeats !== null && availableSeats === 0 && !editingExisting &&
-                <Notice status='info'>{lastSeatTaken ? __('Congratulation! You took the last seat available!', 'wp-open-events')
-                    : __('We are sorry. You can\'t register because there are no more seats available', 'wp-open-events')}
+                <Notice status='info' isDismissible={false}>
+                    {lastSeatTaken ? __('Congratulation! You took the last seat available!', 'wp-open-events')
+                        : __('We are sorry. You can\'t register because there are no more seats available', 'wp-open-events')}
                 </Notice>
             }
 
@@ -208,20 +209,20 @@ const Form = (props: FormProps) => {
                 })
             }
 
-            {error && <Notice status='error' className='mt-2 mb-2'>{error}</Notice>}
+            {error && <Notice status='error' className='mt-2 mb-2' isDismissible={false}>{error}</Notice>}
 
 
             {(editingExisting || availableSeats === null || availableSeats > 0) &&
                 <>
                     {submitted &&
-                        <Notice status='success' className='mt-2 mb-2'>
+                        <Notice status='success' className='mt-2 mb-2' isDismissible={false}>
                             {editingExisting ? __('Your registration has been updated', 'wp-open-events')
                                 : __('Your registration has been submitted', 'wp-open-events')}
                         </Notice>
                     }
 
                     {deleted &&
-                        <Notice status='success' className='mt-2 mb-2'>
+                        <Notice status='success' className='mt-2 mb-2' isDismissible={false}>
                             {__('Your registration has been deleted', 'wp-open-events')}
                         </Notice>
                     }
@@ -239,7 +240,11 @@ const Form = (props: FormProps) => {
                     {showConfirmDeleteRegistrationModal &&
                         <Modal title={__('Confirm registration deletion', 'wp-open-events')} onRequestClose={() => setShowConfirmDeleteRegistrationModal(false)}>
                             <p>{__('Do you really want to delete the registration to this event?', 'wp-open-events')}</p>
-                            {deletionError && <Notice status='error' className='mt-2 mb-2'>{deletionError}</Notice>}
+                            {deletionError &&
+                                <Notice status='error' className='mt-2 mb-2' isDismissible={false}>
+                                    {deletionError}
+                                </Notice>
+                            }
                             <Button variant='primary' onClick={deleteRegistration}>
                                 {__('Confirm', 'wp-open-events')}
                             </Button>

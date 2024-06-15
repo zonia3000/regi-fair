@@ -101,9 +101,13 @@ const Settings = function () {
                 checked={defaultTrackIpAddresses}
             />
 
-            {error && <div className='mt-2 mb'><Notice status='error'>{error}</Notice></div>}
+            {error && <div className='mt-2 mb'><Notice status='error' isDismissible={false}>{error}</Notice></div>}
 
-            {updated && <Notice status='success' className='mt-2 mb'>{__('Settings updated', 'wp-open-events')}</Notice>}
+            {updated &&
+                <Notice status='success' className='mt-2 mb' isDismissible={false}>
+                    {__('Settings updated', 'wp-open-events')}
+                </Notice>
+            }
 
             <Button onClick={save} variant='primary' disabled={saving} className='mt'>
                 {saving && <Spinner />}

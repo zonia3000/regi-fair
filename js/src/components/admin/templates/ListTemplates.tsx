@@ -94,12 +94,12 @@ const ListTemplates = () => {
       }
       <br />
 
-      {error && <Notice status='error'>{error}</Notice>}
+      {error && <Notice status='error' isDismissible={false}>{error}</Notice>}
 
       {templateToDelete !== null &&
         <Modal title={__('Delete template', 'wp-open-events')} onRequestClose={closeDeleteTemplateModal}>
           <p>{sprintf(_x('Do you really want to delete the template %s?', 'Name of the template', 'wp-open-events'), templateToDelete.name)}</p>
-          {deleteError && <Notice status='error'>{deleteError}</Notice>}
+          {deleteError && <Notice status='error' isDismissible={false}>{deleteError}</Notice>}
           {deleting && <p><Spinner />{__('Deleting...', 'wp-open-events')}</p>}
           <Button variant='primary' onClick={confirmDeleteTemplate} disabled={deleting}>
             {__('Confirm', 'wp-open-events')}

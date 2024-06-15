@@ -198,7 +198,7 @@ const EditEvent = () => {
             </BaseControl>
 
             {hasResponses && <div className='mt-2 mb'>
-                <Notice status='warning'>
+                <Notice status='warning' isDismissible={false}>
                     <strong>{__('Warning')}</strong>: &nbsp;
                     {__('this event has already some registrations. Adding or removing fields can result in having some empty values in your registrations table.', 'wp-open-events')}
                 </Notice>
@@ -262,7 +262,10 @@ const EditEvent = () => {
 
             <br /><hr />
 
-            {error && <div className='mb'><Notice status='error'>{error}</Notice></div>}
+            {error &&
+                <div className='mb'>
+                    <Notice status='error' isDismissible={false}>{error}</Notice>
+                </div>}
 
             <Button onClick={save} variant='primary'>
                 {__('Save', 'wp-open-events')}

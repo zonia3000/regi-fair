@@ -46,7 +46,7 @@ const ListRegistrations = () => {
 
   return (
     <div>
-      {error && <div className='mb'><Notice status='error'>{error}</Notice></div>}
+      {error && <div className='mb'><Notice status='error' isDismissible={false}>{error}</Notice></div>}
       {!error &&
         <div>
           <h1 className='wp-heading-inline'>

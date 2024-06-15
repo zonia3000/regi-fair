@@ -196,7 +196,7 @@ const EditTemplate = () => {
 
       <br /><hr />
 
-      {error && <div className='mb'><Notice status='error'>{error}</Notice></div>}
+      {error && <div className='mb'><Notice status='error' isDismissible={false}>{error}</Notice></div>}
 
       <Button onClick={save} variant='primary'>
         {__('Save', 'wp-open-events')}
