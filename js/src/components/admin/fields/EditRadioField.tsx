@@ -83,7 +83,13 @@ const EditRadioField = (props: EditRadioFieldProps) => {
     }
 
     function removeOption(index: number) {
-        setOptions(options.filter((_, i) => i !== index));
+        const updatedOptions = options.filter((_, i) => i !== index);
+        setOptions(updatedOptions);
+        props.setField({
+            ...props.field,
+            extra: { options: updatedOptions },
+            validate
+        });
     }
 
     function saveFieldOptions(value: string, index: number) {

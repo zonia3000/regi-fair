@@ -1,5 +1,6 @@
 import { afterAll, afterEach, beforeAll, vi } from 'vitest';
 import { server } from './__tests__/__mocks__/api';
+import '@testing-library/jest-dom/vitest';
 
 // Fixes "TypeError: window.matchMedia is not a function"
 Object.defineProperty(window, 'matchMedia', {
