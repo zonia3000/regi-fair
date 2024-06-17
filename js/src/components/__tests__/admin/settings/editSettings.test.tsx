@@ -30,15 +30,17 @@ test('Edit settings', async () => {
   expect(extraEmailContentInput).toHaveValue('extra content');
   expect(trackIpCheckbox).not.toBeChecked();
 
-  await userEvent.clear(adminEmailInput);
-  await userEvent.type(adminEmailInput, 'foo@example.com');
-  await userEvent.clear(autoremovePeriodInput);
-  await userEvent.type(autoremovePeriodInput, '10');
-  await userEvent.clear(extraEmailContentInput);
-  await userEvent.type(extraEmailContentInput, 'foobar');
-  await userEvent.click(trackIpCheckbox);
+  const user = userEvent.setup();
 
-  await userEvent.click(screen.getByRole('button', { name: 'Save' }));
+  await user.clear(adminEmailInput);
+  await user.type(adminEmailInput, 'foo@example.com');
+  await user.clear(autoremovePeriodInput);
+  await user.type(autoremovePeriodInput, '10');
+  await user.clear(extraEmailContentInput);
+  await user.type(extraEmailContentInput, 'foobar');
+  await user.click(trackIpCheckbox);
+
+  await user.click(screen.getByRole('button', { name: 'Save' }));
 
   await screen.findAllByText('Settings updated');
 

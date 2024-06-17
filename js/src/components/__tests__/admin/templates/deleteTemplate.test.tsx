@@ -40,11 +40,13 @@ test('Delete template', async () => {
     })
   );
 
-  await userEvent.click(within(rows[1]).getByRole('button', { name: 'Delete' }));
-  await userEvent.click(screen.getByRole('button', { name: 'Cancel' }));
+  const user = userEvent.setup();
 
-  await userEvent.click(within(rows[2]).getByRole('button', { name: 'Delete' }));
-  await userEvent.click(screen.getByRole('button', { name: 'Confirm' }));
+  await user.click(within(rows[1]).getByRole('button', { name: 'Delete' }));
+  await user.click(screen.getByRole('button', { name: 'Cancel' }));
+
+  await user.click(within(rows[2]).getByRole('button', { name: 'Delete' }));
+  await user.click(screen.getByRole('button', { name: 'Confirm' }));
 
   expect(deleted).toEqual(true);
   rows = screen.getAllByRole('row');

@@ -30,8 +30,10 @@ editEventTest('Change field position', {
   const rows = screen.getAllByRole('row');
   expect(rows.length).toEqual(4);
 
-  await userEvent.click(within(rows[1]).getByLabelText('Move field down'));
-  await userEvent.click(within(rows[3]).getByLabelText('Move field up'));
+  const user = userEvent.setup();
+
+  await user.click(within(rows[1]).getByLabelText('Move field down'));
+  await user.click(within(rows[3]).getByLabelText('Move field up'));
 
 }, (requestBody: any) => {
   expect(requestBody.formFields.length).toEqual(3);

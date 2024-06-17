@@ -61,10 +61,12 @@ test('Create event from template', async () => {
     })
   );
 
-  await userEvent.type(screen.getByRole('textbox', { name: 'Name' }), 'Event name');
-  await userEvent.type(screen.getByText('Date'), '2050-01-01');
+  const user = userEvent.setup();
 
-  await userEvent.click(screen.getByRole('button', { name: 'Save' }));
+  await user.type(screen.getByRole('textbox', { name: 'Name' }), 'Event name');
+  await user.type(screen.getByText('Date'), '2050-01-01');
+
+  await user.click(screen.getByRole('button', { name: 'Save' }));
 
   expect(requestBody.id).toEqual(null);
   expect(requestBody.adminEmail).toEqual('template@example.com');

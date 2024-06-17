@@ -28,19 +28,21 @@ test('Validate base template fields', async () => {
     })
   );
 
-  await userEvent.click(screen.getByRole('button', { name: 'Save' }));
+  const user = userEvent.setup();
+
+  await user.click(screen.getByRole('button', { name: 'Save' }));
   expect(screen.getAllByText('Field is required').length).toEqual(1);
 
   const adminEmailInput = screen.getByRole('textbox', { name: 'Administrator e-mail address' });
-  await userEvent.clear(adminEmailInput);
+  await user.clear(adminEmailInput);
 
-  await userEvent.click(screen.getByRole('button', { name: 'Save' }));
+  await user.click(screen.getByRole('button', { name: 'Save' }));
   expect(screen.getAllByText('Field is required').length).toEqual(2);
 
-  await userEvent.type(adminEmailInput, 'admin@example.com');
-  await userEvent.type(screen.getByRole('textbox', { name: 'Name' }), 'Template name');
+  await user.type(adminEmailInput, 'admin@example.com');
+  await user.type(screen.getByRole('textbox', { name: 'Name' }), 'Template name');
 
-  await userEvent.click(screen.getByRole('button', { name: 'Save' }));
+  await user.click(screen.getByRole('button', { name: 'Save' }));
 
   expect(requestBody.name).toEqual('Template name');
   expect(requestBody.adminEmail).toEqual('admin@example.com');

@@ -24,11 +24,13 @@ editEventTest('Delete field', {
   const rows = screen.getAllByRole('row');
   expect(rows.length).toEqual(3);
 
-  await userEvent.click(within(rows[1]).getByRole('button', { name: 'Delete' }));
-  await userEvent.click(screen.getByRole('button', { name: 'Cancel' }));
+  const user = userEvent.setup();
 
-  await userEvent.click(within(rows[2]).getByRole('button', { name: 'Delete' }));
-  await userEvent.click(screen.getByRole('button', { name: 'Confirm' }));
+  await user.click(within(rows[1]).getByRole('button', { name: 'Delete' }));
+  await user.click(screen.getByRole('button', { name: 'Cancel' }));
+
+  await user.click(within(rows[2]).getByRole('button', { name: 'Delete' }));
+  await user.click(screen.getByRole('button', { name: 'Confirm' }));
 
 }, (requestBody: any) => {
   expect(requestBody.formFields.length).toEqual(1);

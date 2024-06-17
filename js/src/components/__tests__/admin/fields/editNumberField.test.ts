@@ -23,7 +23,9 @@ editEventTest('Unset number field min and max', {
   expect(cells[1].textContent).toEqual('number');
   expect(cells[2].textContent).toEqual('Yes');
 
-  await userEvent.click(within(rows[1]).getByRole('button', { name: 'Edit' }));
+  const user = userEvent.setup();
+
+  await user.click(within(rows[1]).getByRole('button', { name: 'Edit' }));
 
   expect((screen.getByRole('textbox', { name: 'Label' }) as HTMLInputElement).value).toEqual('Number field');
   expect((screen.getByRole('textbox', { name: 'Description (optional)' }) as HTMLInputElement).value).toEqual('');
@@ -31,10 +33,10 @@ editEventTest('Unset number field min and max', {
   expect((screen.getByRole('spinbutton', { name: 'Minimum value (optional)' }) as HTMLInputElement).value).toEqual('5');
   expect((screen.getByRole('spinbutton', { name: 'Maximum value (optional)' }) as HTMLInputElement).value).toEqual('10');
 
-  await userEvent.clear(screen.getByRole('spinbutton', { name: 'Minimum value (optional)' }));
-  await userEvent.clear(screen.getByRole('spinbutton', { name: 'Maximum value (optional)' }));
+  await user.clear(screen.getByRole('spinbutton', { name: 'Minimum value (optional)' }));
+  await user.clear(screen.getByRole('spinbutton', { name: 'Maximum value (optional)' }));
 
-  await userEvent.click(screen.getByRole('button', { name: 'Save' }));
+  await user.click(screen.getByRole('button', { name: 'Save' }));
 
 }, (requestBody: any) => {
   expect(requestBody.formFields.length).toEqual(1);
