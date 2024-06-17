@@ -5,6 +5,10 @@ import { within } from '@testing-library/dom';
 import userEvent from '@testing-library/user-event';
 
 createEventTest('Create required text field with description', async () => {
+
+  await userEvent.type(screen.getByRole('textbox', { name: 'Name' }), 'Event name');
+  await userEvent.type(screen.getByText('Date'), '2050-01-01');
+
   const addFormFieldBtn = screen.getByRole('button', { name: 'Add form field' });
   await userEvent.click(addFormFieldBtn);
   await userEvent.click(screen.getByRole('button', { name: 'Text' }));
@@ -12,6 +16,7 @@ createEventTest('Create required text field with description', async () => {
   // Check empty label validation
   await userEvent.click(screen.getByRole('button', { name: 'Save' }));
   expect(screen.getByRole('textbox', { name: 'Label' })).not.toBeValid();
+  expect(screen.getAllByText('Field is required').length).toEqual(1);
 
   await userEvent.type(screen.getByRole('textbox', { name: 'Label' }), 'Text field');
   await userEvent.type(screen.getByRole('textbox', { name: 'Description (optional)' }), 'Text field description');
@@ -42,6 +47,9 @@ createEventTest('Create required text field with description', async () => {
 });
 
 createEventTest('Create optional text field without description', async () => {
+
+  await userEvent.type(screen.getByRole('textbox', { name: 'Name' }), 'Event name');
+  await userEvent.type(screen.getByText('Date'), '2050-01-01');
 
   const addFormFieldBtn = screen.getByRole('button', { name: 'Add form field' });
   await userEvent.click(addFormFieldBtn);

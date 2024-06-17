@@ -13,7 +13,7 @@ const EditRadioField = (props: EditRadioFieldProps) => {
     const [fieldRequired, setFieldRequired] = useState(false);
     const [options, setOptions] = useState(['', '']);
     const optionsRef = useRef(options);
-    const [validated, setValidated] = useState(false);
+    const [valid, setValid] = useState(true);
 
     useEffect(() => {
         if (props.field === null) {
@@ -46,8 +46,9 @@ const EditRadioField = (props: EditRadioFieldProps) => {
     }, [fieldLabel, options]);
 
     function validate() {
-        setValidated(true);
-        return fieldLabelRef.current !== '' && optionsRef.current.filter(o => o.trim() === '').length === 0;
+        const valid = fieldLabelRef.current !== '' && optionsRef.current.filter(o => o.trim() === '').length === 0;
+        setValid(valid);
+        return valid;
     }
 
     function saveFieldLabel(value: string) {
@@ -78,22 +79,18 @@ const EditRadioField = (props: EditRadioFieldProps) => {
     }
 
     function addOption() {
-        setValidated(false);
-        setOptions([...options, '']);
+        updateOptions([...options, '']);
     }
 
     function removeOption(index: number) {
-        const updatedOptions = options.filter((_, i) => i !== index);
-        setOptions(updatedOptions);
-        props.setField({
-            ...props.field,
-            extra: { options: updatedOptions },
-            validate
-        });
+        updateOptions(options.filter((_, i) => i !== index));
     }
 
     function saveFieldOptions(value: string, index: number) {
-        const updatedOptions = options.map((o, i) => i === index ? value : o);
+        updateOptions(options.map((o, i) => i === index ? value : o));
+    }
+
+    function updateOptions(updatedOptions: string[]) {
         setOptions(updatedOptions);
         props.setField({
             ...props.field,
@@ -108,14 +105,16 @@ const EditRadioField = (props: EditRadioFieldProps) => {
 
     return (
         <>
-            <div className={validated && fieldLabel.trim() === '' ? 'form-error' : ''}>
+            <div className={!valid && !fieldLabel.trim() ? 'form-error' : ''}>
                 <TextControl
                     label={__('Label', 'wp-open-events')}
                     onChange={saveFieldLabel}
                     value={fieldLabel}
                     required
                 />
-                <span className='error-text'>{__('Field is required', 'wp-open-events')}</span>
+                {!valid && !fieldLabel.trim() &&
+                    <span className='error-text'>{__('Field is required', 'wp-open-events')}</span>
+                }
             </div>
             <TextControl
                 label={__('Description (optional)', 'wp-open-events')}
@@ -131,7 +130,7 @@ const EditRadioField = (props: EditRadioFieldProps) => {
             />
             {options.map((option, index) => {
                 return (
-                    <div className={validated && option.trim() === '' ? 'form-error edit-radio-option-wrapper' : 'edit-radio-option-wrapper'} key={index}>
+                    <div className={!valid && !option.trim() ? 'form-error edit-radio-option-wrapper' : 'edit-radio-option-wrapper'} key={index}>
                         <TextControl
                             label={__('Option', 'wp-open-events') + ' ' + (index + 1)}
                             onChange={value => saveFieldOptions(value, index)}
@@ -143,7 +142,9 @@ const EditRadioField = (props: EditRadioFieldProps) => {
                                 &times;
                             </Button>
                         }
-                        <span className='error-text'>{__('Field is required', 'wp-open-events')}</span>
+                        {!valid && !option.trim() &&
+                            <span className='error-text'>{__('Field is required', 'wp-open-events')}</span>
+                        }
                     </div>);
             })}
             <Button onClick={addOption} variant='primary'>

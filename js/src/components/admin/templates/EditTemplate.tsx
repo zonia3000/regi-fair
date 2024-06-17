@@ -80,9 +80,9 @@ const EditTemplate = () => {
   }, []);
 
   async function save() {
-    setValid(true);
-    if (templateName.trim() === '') {
-      setValid(false);
+    const valid = validate();
+    setValid(valid);
+    if (!valid) {
       return;
     }
     const template: TemplateConfiguration = {
@@ -129,7 +129,17 @@ const EditTemplate = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }
+
+  function validate() {
+    if (!templateName.trim()) {
+      return false;
+    }
+    if (notifyAdmin && !adminEmail.trim()) {
+      return false;
+    }
+    return true;
+  }
 
   function back() {
     navigate('/');
@@ -153,7 +163,9 @@ const EditTemplate = () => {
           value={templateName}
           required
         />
-        <span className='error-text'>{__('Field is required', 'wp-open-events')}</span>
+        {!valid && !templateName.trim() &&
+          <span className='error-text'>{__('Field is required', 'wp-open-events')}</span>
+        }
       </div>
       <CheckboxControl
         label={__('Autoremove user data after the event', 'wp-open-events')}
@@ -171,12 +183,17 @@ const EditTemplate = () => {
         onChange={setNotifyAdmin}
       />
       {notifyAdmin &&
-        <TextControl
-          label={__('Administrator e-mail address', 'wp-open-events')}
-          onChange={setAdminEmail}
-          value={adminEmail}
-          required
-        />
+        <div className={!valid && !adminEmail.trim() ? 'form-error' : ''}>
+          <TextControl
+            label={__('Administrator e-mail address', 'wp-open-events')}
+            onChange={setAdminEmail}
+            value={adminEmail}
+            required
+          />
+          {!valid && !adminEmail.trim() &&
+            <span className='error-text'>{__('Field is required', 'wp-open-events')}</span>
+          }
+        </div>
       }
       <CheckboxControl
         label={__('Add custom message to confirmation e-mail', 'wp-open-events')}

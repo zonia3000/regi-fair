@@ -16,9 +16,8 @@ const EditEvent = () => {
 
     const [loading, setLoading] = useState(true);
     const [found, setFound] = useState(false);
-    const [eventData, setEventData] = useState(null);
     const [eventName, setEventName] = useState('');
-    const [date, setDate] = useState((new Date()).toString());
+    const [date, setDate] = useState('');
     const [autoremove, setAutoremove] = useState(true);
     const [formFields, setFormFields] = useState([]);
     const [hasResponses, setHasResponses] = useState(false);
@@ -30,6 +29,7 @@ const EditEvent = () => {
     const [customizeEmailContent, setCustomizeEmailContent] = useState(false);
     const [emailExtraContent, setEmailExtraContent] = useState('');
     const [error, setError] = useState('');
+    const [valid, setValid] = useState(true);
 
     useEffect(() => {
         if (eventId === 'new') {
@@ -85,7 +85,6 @@ const EditEvent = () => {
                 .then((result) => {
                     setFound(true);
                     const event = result as EventConfiguration;
-                    setEventData(event);
                     setEventName(event.name);
                     setDate(event.date);
                     setAutoremove(event.autoremove);
@@ -119,6 +118,11 @@ const EditEvent = () => {
     }, []);
 
     async function save() {
+        const valid = validate();
+        setValid(valid);
+        if (!valid) {
+            return;
+        }
         const event: EventConfiguration = {
             id: eventId === 'new' ? null : Number(eventId),
             name: eventName,
@@ -165,7 +169,23 @@ const EditEvent = () => {
         } finally {
             setLoading(false);
         }
-    };
+    }
+
+    function validate() {
+        if (!eventName.trim()) {
+            return false;
+        }
+        if (!date) {
+            return false;
+        }
+        if (hasMaxParticipants && !maxParticipants) {
+            return false;
+        }
+        if (notifyAdmin && !adminEmail) {
+            return false;
+        }
+        return true;
+    }
 
     function parseDate() {
         return new Date(date).toISOString();
@@ -186,16 +206,26 @@ const EditEvent = () => {
     return (
         <div>
             <h1>{eventId === 'new' ? __('Create event', 'wp-open-events') : __('Edit event', 'wp-open-events')}</h1>
-            <TextControl
-                label={__('Name', 'wp-open-events')}
-                onChange={setEventName}
-                value={eventName}
-                required
-            />
-            <BaseControl label={__('Date', 'wp-open-events')} __nextHasNoMarginBottom={false} id='eventDate'>
-                <input type='date' id='eventDate' className='components-text-control__input' required
-                    value={date} onChange={e => setDate(e.target.value)} />
-            </BaseControl>
+            <div className={!valid && !eventName.trim() ? 'form-error' : ''}>
+                <TextControl
+                    label={__('Name', 'wp-open-events')}
+                    onChange={setEventName}
+                    value={eventName}
+                    required
+                />
+                {!valid && !eventName.trim() &&
+                    <span className='error-text'>{__('Field is required', 'wp-open-events')}</span>
+                }
+            </div>
+            <div className={!valid && !date ? 'form-error' : ''}>
+                <BaseControl label={__('Date', 'wp-open-events')} __nextHasNoMarginBottom={false} id='eventDate'>
+                    <input type='date' id='eventDate' className='components-text-control__input' required
+                        value={date} onChange={e => setDate(e.target.value)} />
+                </BaseControl>
+                {!valid && !date &&
+                    <span className='error-text'>{__('Field is required', 'wp-open-events')}</span>
+                }
+            </div>
 
             {hasResponses && <div className='mt-2 mb'>
                 <Notice status='warning' isDismissible={false}>
@@ -213,13 +243,18 @@ const EditEvent = () => {
                 onChange={setHasMaxParticipants}
             />
             {hasMaxParticipants &&
-                <TextControl
-                    label={__('Total available seats', 'wp-open-events')}
-                    onChange={setMaxParticipants}
-                    value={maxParticipants}
-                    type='number'
-                    required
-                />
+                <div className={!valid && !maxParticipants ? 'form-error' : ''}>
+                    <TextControl
+                        label={__('Total available seats', 'wp-open-events')}
+                        onChange={setMaxParticipants}
+                        value={maxParticipants}
+                        type='number'
+                        required
+                    />
+                    {!valid && !maxParticipants &&
+                        <span className='error-text'>{__('Field is required', 'wp-open-events')}</span>
+                    }
+                </div>
             }
 
             <CheckboxControl
@@ -239,12 +274,17 @@ const EditEvent = () => {
                 onChange={setNotifyAdmin}
             />
             {notifyAdmin &&
-                <TextControl
-                    label={__('Administrator e-mail address', 'wp-open-events')}
-                    onChange={setAdminEmail}
-                    value={adminEmail}
-                    required
-                />
+                <div className={!valid && !adminEmail ? 'form-error' : ''}>
+                    <TextControl
+                        label={__('Administrator e-mail address', 'wp-open-events')}
+                        onChange={setAdminEmail}
+                        value={adminEmail}
+                        required
+                    />
+                    {!valid && !adminEmail &&
+                        <span className='error-text'>{__('Field is required', 'wp-open-events')}</span>
+                    }
+                </div>
             }
             <CheckboxControl
                 label={__('Add custom message to confirmation e-mail', 'wp-open-events')}

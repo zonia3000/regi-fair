@@ -1,0 +1,46 @@
+import { expect } from 'vitest';
+import { screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event';
+import { createEventTest } from '../../__base__/createEvent.setup';
+
+createEventTest('Validate base event fields', async () => {
+
+  const saveBtn = screen.getByRole('button', { name: 'Save' });
+  await userEvent.click(saveBtn);
+
+  expect(screen.getAllByText('Field is required').length).toEqual(2);
+
+  await userEvent.type(screen.getByRole('textbox', { name: 'Name' }), 'Event name');
+
+  await userEvent.click(saveBtn);
+  expect(screen.getAllByText('Field is required').length).toEqual(1);
+
+  await userEvent.type(screen.getByText('Date'), '2050-01-01');
+
+  const maxParticipantsCheckbox = screen.getByRole('checkbox', { name: 'Set a maximum number of participants' });
+  await userEvent.click(maxParticipantsCheckbox);
+  expect(maxParticipantsCheckbox).toBeChecked();
+
+  const availableSeatsInput = screen.getByRole('spinbutton', { name: 'Total available seats' });
+  expect(availableSeatsInput).toBeVisible();
+  expect(availableSeatsInput).not.toBeValid();
+
+  await userEvent.click(saveBtn);
+  expect(screen.getAllByText('Field is required').length).toEqual(1);
+
+  const adminEmailInput = screen.getByRole('textbox', { name: 'Administrator e-mail address' });
+  await userEvent.clear(adminEmailInput);
+
+  await userEvent.click(saveBtn);
+  expect(screen.getAllByText('Field is required').length).toEqual(2);
+
+  await userEvent.type(availableSeatsInput, '300');
+  await userEvent.type(adminEmailInput, 'admin@example.com');
+
+}, (requestBody: any) => {
+  expect(requestBody.name).toEqual('Event name');
+  expect(requestBody.date).toEqual('2050-01-01T00:00:00.000Z');
+  expect(requestBody.adminEmail).toEqual('admin@example.com');
+  expect(requestBody.maxParticipants).toEqual(300);
+  expect(requestBody.formFields.length).toEqual(0);
+});

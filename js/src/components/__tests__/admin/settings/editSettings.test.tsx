@@ -27,13 +27,14 @@ test('Edit settings', async () => {
 
   expect(adminEmailInput).toHaveValue('test@example.com');
   expect(autoremovePeriodInput).toHaveValue(30);
-  expect(extraEmailContentInput).toHaveValue('');
+  expect(extraEmailContentInput).toHaveValue('extra content');
   expect(trackIpCheckbox).not.toBeChecked();
 
   await userEvent.clear(adminEmailInput);
   await userEvent.type(adminEmailInput, 'foo@example.com');
   await userEvent.clear(autoremovePeriodInput);
   await userEvent.type(autoremovePeriodInput, '10');
+  await userEvent.clear(extraEmailContentInput);
   await userEvent.type(extraEmailContentInput, 'foobar');
   await userEvent.click(trackIpCheckbox);
 

@@ -6,7 +6,7 @@ const handlers = [
     return HttpResponse.json({
       defaultAdminEmail: 'test@example.com',
       defaultAutoremovePeriod: 30,
-      defaultExtraEmailContent: '',
+      defaultExtraEmailContent: 'extra content',
       defaultTrackIpAddresses: false
     });
   })

@@ -6,14 +6,22 @@ import userEvent from '@testing-library/user-event';
 
 createEventTest('Create required radio field with description', async () => {
 
+  await userEvent.type(screen.getByRole('textbox', { name: 'Name' }), 'Event name');
+  await userEvent.type(screen.getByText('Date'), '2050-01-01');
+
   const addFormFieldBtn = screen.getByRole('button', { name: 'Add form field' });
   await userEvent.click(addFormFieldBtn);
   await userEvent.click(screen.getByRole('button', { name: 'Radio' }));
-  await userEvent.type(screen.getByRole('textbox', { name: 'Label' }), 'Radio field');
   await userEvent.type(screen.getByRole('textbox', { name: 'Description (optional)' }), 'Radio field description');
   await userEvent.type(screen.getByRole('textbox', { name: 'Option 1' }), 'option1');
   await userEvent.type(screen.getByRole('textbox', { name: 'Option 2' }), 'option2');
   await userEvent.click(screen.getByRole('checkbox', { name: 'Required' }));
+  await userEvent.click(screen.getByRole('button', { name: 'Save' }));
+
+  // check invalid empty label
+  expect(screen.getAllByText('Field is required').length).toEqual(1);
+  await userEvent.type(screen.getByRole('textbox', { name: 'Label' }), 'Radio field');
+
   await userEvent.click(screen.getByRole('button', { name: 'Save' }));
 
   const rows = screen.getAllByRole('row');
@@ -46,6 +54,9 @@ createEventTest('Create required radio field with description', async () => {
 
 createEventTest('Create optional radio field without description and 3 options', async () => {
 
+  await userEvent.type(screen.getByRole('textbox', { name: 'Name' }), 'Event name');
+  await userEvent.type(screen.getByText('Date'), '2050-01-01');
+
   const addFormFieldBtn = screen.getByRole('button', { name: 'Add form field' });
   await userEvent.click(addFormFieldBtn);
   await userEvent.click(screen.getByRole('button', { name: 'Radio' }));
@@ -57,7 +68,9 @@ createEventTest('Create optional radio field without description and 3 options',
   await userEvent.type(screen.getByRole('textbox', { name: 'Option 3' }), 'option3');
   expect(screen.getAllByRole('textbox', { name: /Option \d+/ }).length).toEqual(4);
   await userEvent.click(screen.getByRole('button', { name: 'Save' }));
+  // Check invalid empty option
   expect(screen.getByRole('textbox', { name: 'Option 4' })).not.toBeValid();
+  expect(screen.getAllByText('Field is required').length).toEqual(1);
   await userEvent.type(screen.getByRole('textbox', { name: 'Option 4' }), 'option4');
   await userEvent.click(screen.getAllByLabelText('Remove option')[3]);
   expect(screen.getAllByRole('textbox', { name: /Option \d+/ }).length).toEqual(3);

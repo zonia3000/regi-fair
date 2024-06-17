@@ -15,7 +15,7 @@ const EditInputField = (props: EditInputFieldProps) => {
     const [useAsNumberOfPeople, setUseAsNumberOfPeople] = useState(false);
     const [min, setMin] = useState('');
     const [max, setMax] = useState('');
-    const [validated, setValidated] = useState(false);
+    const [valid, setValid] = useState(true);
 
     useEffect(() => {
         if (props.field === null) {
@@ -75,8 +75,9 @@ const EditInputField = (props: EditInputFieldProps) => {
     }, [fieldLabel]);
 
     function validate() {
-        setValidated(true);
-        return fieldLabelRef.current.trim() !== '';
+        const valid = fieldLabelRef.current.trim() !== '';
+        setValid(valid);
+        return valid;
     }
 
     function saveFieldLabel(value: string) {
@@ -155,14 +156,16 @@ const EditInputField = (props: EditInputFieldProps) => {
 
     return (
         <>
-            <div className={validated && !fieldLabel.trim() ? 'form-error' : ''}>
+            <div className={!valid && !fieldLabel.trim() ? 'form-error' : ''}>
                 <TextControl
                     label={__('Label', 'wp-open-events')}
                     onChange={saveFieldLabel}
                     value={fieldLabel}
                     required
                 />
-                <span className='error-text'>{__('Field is required', 'wp-open-events')}</span>
+                {!valid && !fieldLabel.trim() &&
+                    <span className='error-text'>{__('Field is required', 'wp-open-events')}</span>
+                }
             </div>
             <TextControl
                 label={__('Description (optional)', 'wp-open-events')}

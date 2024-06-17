@@ -6,6 +6,9 @@ import userEvent from '@testing-library/user-event';
 
 createEventTest('Create required email field with description', async () => {
 
+  await userEvent.type(screen.getByRole('textbox', { name: 'Name' }), 'Event name');
+  await userEvent.type(screen.getByText('Date'), '2050-01-01');
+
   const addFormFieldBtn = screen.getByRole('button', { name: 'Add form field' });
   await userEvent.click(addFormFieldBtn);
   await userEvent.click(screen.getByRole('button', { name: 'E-mail' }));
@@ -40,6 +43,9 @@ createEventTest('Create required email field with description', async () => {
 });
 
 createEventTest('Create optional email field without description', async () => {
+
+  await userEvent.type(screen.getByRole('textbox', { name: 'Name' }), 'Event name');
+  await userEvent.type(screen.getByText('Date'), '2050-01-01');
 
   const addFormFieldBtn = screen.getByRole('button', { name: 'Add form field' });
   await userEvent.click(addFormFieldBtn);
