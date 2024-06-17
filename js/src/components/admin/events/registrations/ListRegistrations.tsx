@@ -1,15 +1,17 @@
 import apiFetch from "@wordpress/api-fetch";
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { RegistrationsList } from "../../../classes/registration";
 import { extractError } from "../../../utils";
 import { __, _x, sprintf } from "@wordpress/i18n";
 import Loading from "../../../Loading";
-import { Notice } from "@wordpress/components";
+import { Button, Notice } from "@wordpress/components";
 import Pagination from "../../Pagination";
 
 const ListRegistrations = () => {
   const { eventId } = useParams();
+
+  const navigate = useNavigate();
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -38,6 +40,10 @@ const ListRegistrations = () => {
     } finally {
       setLoading(false);
     }
+  }
+
+  function back() {
+    navigate('/');
   }
 
   if (loading) {
@@ -81,6 +87,10 @@ const ListRegistrations = () => {
             setPageSize={setPageSize}
             total={total}
           />
+
+          <Button onClick={back} variant='secondary' className='mt'>
+            {__('Back', 'wp-open-events')}
+          </Button>
         </div>
       }
     </div>

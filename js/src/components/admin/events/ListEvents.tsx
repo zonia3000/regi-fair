@@ -175,7 +175,7 @@ const ListEvents = () => {
                                         <Link to={e.postPermalink} target='_blank'>{e.postTitle}</Link>
                                     }
                                     {e.hasMultipleReferences &&
-                                        <Button className='warning-sign' variant='link' onClick={() => openEventWithMultipleReferencesModal(e)}>
+                                        <Button className='warning-sign' variant='link' onClick={() => openEventWithMultipleReferencesModal(e)} aria-label={__('Warning', 'wp-open-events')}>
                                             <Icon icon='warning' />
                                         </Button>
                                     }

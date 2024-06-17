@@ -200,7 +200,11 @@ const EditEvent = () => {
     }
 
     if (!found) {
-        return <p>{__('Event not found', 'wp-open-events')}</p>
+        if (error) {
+            return (<div className='mb'><Notice status='error' isDismissible={false}>{error}</Notice></div>);
+        } else {
+            return <p>{__('Event not found', 'wp-open-events')}</p>
+        }
     }
 
     return (

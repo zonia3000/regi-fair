@@ -5,11 +5,52 @@ import { within } from '@testing-library/dom';
 import { server } from '../../__mocks__/api';
 import { HttpResponse, http } from "msw";
 import { test } from 'vitest';
-import { Route, Routes, MemoryRouter } from 'react-router-dom';
-import EditEvent from '../../../admin/events/EditEvent';
 import userEvent from '@testing-library/user-event';
+import EventsRoot from '../../../admin/events/EventsRoot';
+
+test('Create first template', async () => {
+
+  server.use(
+    http.get('/wpoe/v1/admin/events', async () => {
+      return HttpResponse.json([]);
+    })
+  );
+
+  server.use(
+    http.get('/wpoe/v1/admin/templates', async () => {
+      return HttpResponse.json([]);
+    })
+  );
+
+  render(<EventsRoot />);
+
+  const user = userEvent.setup();
+
+  expect(await screen.findByText('Your events')).toBeInTheDocument();
+  expect(await screen.findByText('No events found')).toBeInTheDocument();
+
+  await user.click(screen.getByText('Add event'));
+  await user.click(screen.getByText('From template'));
+
+  expect(await screen.findByText('No templates found')).toBeInTheDocument();
+  expect(await screen.findByText('Create your first template')).toBeInTheDocument();
+
+  server.restoreHandlers();
+});
 
 test('Create event from template', async () => {
+
+  server.use(
+    http.get('/wpoe/v1/admin/events', async () => {
+      return HttpResponse.json([]);
+    })
+  );
+
+  server.use(
+    http.get('/wpoe/v1/admin/templates', async () => {
+      return HttpResponse.json([{ id: 1, name: 'template1' }])
+    })
+  );
 
   server.use(
     http.get('/wpoe/v1/admin/templates/1', async () => {
@@ -26,14 +67,20 @@ test('Create event from template', async () => {
     })
   );
 
-  render(
-    <MemoryRouter initialEntries={["/event/new?template=1"]}>
-      <Routes>
-        <Route path="/" element={<div></div>} />
-        <Route path="/event/:eventId" element={<EditEvent />} />
-      </Routes>
-    </MemoryRouter>
-  );
+  render(<EventsRoot />);
+
+  expect(await screen.findByText('Your events')).toBeInTheDocument();
+  expect(await screen.findByText('No events found')).toBeInTheDocument();
+
+  const user = userEvent.setup();
+
+  await user.click(screen.getByText('Add event'));
+  await user.click(within(screen.getByRole('dialog')).getByLabelText('Close'));
+  await user.click(screen.getByText('Add event'));
+  await user.click(screen.getByText('From template'));
+
+  await user.selectOptions(screen.getByRole('combobox', { name: 'Select template' }), 'template1');
+  await user.click(screen.getByText('Create'));
 
   await screen.findByText('Create event');
 
@@ -60,8 +107,6 @@ test('Create event from template', async () => {
       return HttpResponse.json({ id: 1 });
     })
   );
-
-  const user = userEvent.setup();
 
   await user.type(screen.getByRole('textbox', { name: 'Name' }), 'Event name');
   await user.type(screen.getByText('Date'), '2050-01-01');

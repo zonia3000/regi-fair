@@ -30,13 +30,14 @@ createEventTest('Validate base event fields', async () => {
   await user.click(saveBtn);
   expect(screen.getAllByText('Field is required').length).toEqual(1);
 
+  await user.type(availableSeatsInput, '300');
+
   const adminEmailInput = screen.getByRole('textbox', { name: 'Administrator e-mail address' });
   await user.clear(adminEmailInput);
 
   await user.click(saveBtn);
-  expect(screen.getAllByText('Field is required').length).toEqual(2);
+  expect(screen.getAllByText('Field is required').length).toEqual(1);
 
-  await user.type(availableSeatsInput, '300');
   await user.type(adminEmailInput, 'admin@example.com');
 
 }, (requestBody: any) => {
