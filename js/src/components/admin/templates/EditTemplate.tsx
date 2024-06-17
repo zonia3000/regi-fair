@@ -150,7 +150,11 @@ const EditTemplate = () => {
   }
 
   if (!found) {
-    return <p>{__('Template not found', 'wp-open-events')}</p>
+    if (error) {
+      return (<div className='mb'><Notice status='error' isDismissible={false}>{error}</Notice></div>);
+    } else {
+      return (<p>{__('Template not found', 'wp-open-events')}</p>);
+    }
   }
 
   return (
