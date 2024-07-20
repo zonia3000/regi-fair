@@ -108,3 +108,73 @@ function strip_forbidden_html_tags(string $content): string
     ['b' => [], 'i' => [], 'a' => ['href' => [], 'title' => []], 'hr' => [], 'p' => [], 'br' => []]
   );
 }
+
+function get_user_email(WPOE_Event $event, array $input): array
+{
+  $i = 0;
+  $user_email = [];
+  foreach ($event->formFields as $field) {
+    if ($field->fieldType === 'email' && $field->extra !== null && property_exists($field->extra, 'confirmationAddress') && $field->extra->confirmationAddress === true) {
+      $user_email[] = $input[$i];
+    }
+    $i++;
+  }
+  return $user_email;
+}
+
+function get_number_of_people(WPOE_Event $event, array $input): int
+{
+  $i = 0;
+  foreach ($event->formFields as $field) {
+    if ($field->fieldType === 'number' && $field->extra !== null && property_exists($field->extra, 'useAsNumberOfPeople') && $field->extra->useAsNumberOfPeople === true) {
+      $count = (int) $input[$i];
+      if ($count === 0) {
+        return 1;
+      }
+      return $count;
+    }
+    $i++;
+  }
+  return 1;
+}
+
+function validate_event_request(WPOE_Event $event, $input): WP_Error|WP_REST_Response|null
+{
+  if (!is_array($input)) {
+    return new WP_Error('invalid_form_fields', __('The payload must be an array', 'wp-open-events'), ['status' => 400]);
+  }
+  if (count($input) !== count($event->formFields)) {
+    return new WP_Error('invalid_form_fields', __('Invalid number of fields', 'wp-open-events'), ['status' => 400]);
+  }
+
+  $errors = [];
+  foreach ($event->formFields as $index => $field) {
+    try {
+      WPOE_Validator::validate($field, $input[$index]);
+    } catch (WPOE_Validation_Exception $ex) {
+      $errors[$index] = $ex->getMessage();
+    }
+  }
+  if (count($errors) > 0) {
+    return new WP_REST_Response([
+      'code' => 'invalid_form_fields',
+      'message' => __('Some fields are not valid', 'wp-open-events'),
+      'data' => [
+        'status' => 400,
+        'fieldsErrors' => (object) $errors
+      ]
+    ], 400);
+  }
+  return null;
+}
+
+function map_input_to_values(WPOE_Event $event, array $input): array
+{
+  $values = [];
+  $i = 0;
+  foreach ($event->formFields as $field) {
+    $values[$field->id] = $input[$i];
+    $i++;
+  }
+  return $values;
+}

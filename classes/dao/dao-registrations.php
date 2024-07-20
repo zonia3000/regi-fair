@@ -67,7 +67,7 @@ class WPOE_DAO_Registrations extends WPOE_Base_DAO
     $rows = [];
     foreach ($ids as $id) {
       $row_data = $body_map[$id];
-      $row = [$body_map[$id]['inserted_at']];
+      $row = [$id, $body_map[$id]['inserted_at']];
       foreach ($head_labels as $label) {
         if (array_key_exists($label, $row_data)) {
           $cell = $row_data[$label];
@@ -171,6 +171,18 @@ class WPOE_DAO_Registrations extends WPOE_Base_DAO
 
     $registration_id = $results[0]->id;
 
+    $values = $this->get_registration_values($registration_id);
+
+    return [
+      'id' => $registration_id,
+      'values' => $values
+    ];
+  }
+
+  public function get_registration_values(int $registration_id): array|null
+  {
+    global $wpdb;
+
     $query = $wpdb->prepare("SELECT f.label, rv.field_value
       FROM " . WPOE_DB::get_table_name('event_registration') . " r
       RIGHT JOIN " . WPOE_DB::get_table_name('event_form_field') . " f ON f.event_id = r.event_id
@@ -185,10 +197,7 @@ class WPOE_DAO_Registrations extends WPOE_Base_DAO
       array_push($values, $row['field_value']);
     }
 
-    return [
-      'id' => $registration_id,
-      'values' => $values
-    ];
+    return $values;
   }
 
   public function update_registration(int $registration_id, array $values, int $event_id, int $number_of_people, int|null $max_participants): int|false|null
@@ -269,6 +278,9 @@ class WPOE_DAO_Registrations extends WPOE_Base_DAO
     return $remaining_seats;
   }
 
+  /**
+   * Returns the number of remaining seats, or null if the event has no max participants set.
+   */
   public function delete_registration(int $registration_id, int $event_id, int|null $max_participants): int|null
   {
     global $wpdb;

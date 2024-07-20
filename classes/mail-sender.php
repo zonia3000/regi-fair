@@ -62,6 +62,19 @@ class WPOE_Mail_Sender
     wp_mail($event->adminEmail, $subject, $body, $headers);
   }
 
+  public static function send_registration_updated_by_admin(WPOE_Event $event, $to, array $values)
+  {
+    $subject = sprintf(__('Registration to the event "%s" has been updated', 'wp-open-events'), $event->name);
+    $body = '<p>' . __('Dear user,') . '<br/>'
+      . sprintf(__('your registration to the event "%s" has been updated by an administrator.'), $event->name) . '</p>'
+      . '<p>' . __('The updated data is:') . '</p>';
+
+    $body .= WPOE_Mail_Sender::get_registration_fields_content($event, $values);
+
+    $headers = array('Content-Type: text/html; charset=UTF-8');
+    wp_mail($to, $subject, $body, $headers);
+  }
+
   /**
    * @param string|string[] $to
    */
@@ -70,6 +83,19 @@ class WPOE_Mail_Sender
     $subject = sprintf(__('Registration to the event "%s" has been deleted', 'wp-open-events'), $event->name);
     $body = '<p>' . __('Dear user,') . '<br/>'
       . sprintf(__('your registration to the event "%s" has been deleted.'), $event->name) . '</p>';
+
+    $headers = array('Content-Type: text/html; charset=UTF-8');
+    wp_mail($to, $subject, $body, $headers);
+  }
+
+  /**
+   * @param string|string[] $to
+   */
+  public static function send_registration_deleted_by_admin(WPOE_Event $event, $to)
+  {
+    $subject = sprintf(__('Registration to the event "%s" has been deleted', 'wp-open-events'), $event->name);
+    $body = '<p>' . __('Dear user,') . '<br/>'
+      . sprintf(__('your registration to the event "%s" has been deleted by an administrator.'), $event->name) . '</p>';
 
     $headers = array('Content-Type: text/html; charset=UTF-8');
     wp_mail($to, $subject, $body, $headers);

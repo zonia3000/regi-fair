@@ -72,9 +72,10 @@ const ListRegistrations = () => {
             <tbody>
               {rows.map((r, i) =>
                 <tr key={`row_${i}`}>
-                  {r.map((c: string, j: number) =>
+                  {r.map((c: string, j: number) => (
+                    j > 0 &&
                     <td key={`cell_${i}_${j}`}>{c}</td>
-                  )}
+                  ))}
                 </tr>
               )}
             </tbody>

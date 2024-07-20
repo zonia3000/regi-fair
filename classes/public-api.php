@@ -94,14 +94,14 @@ class WPOE_Public_Controller extends WP_REST_Controller
             }
 
             $input = json_decode($request->get_body());
-            $error = $this->validate_request($event, $input);
+            $error = validate_event_request($event, $input);
             if ($error !== null) {
                 return $error;
             }
 
-            $values = $this->map_input_to_values($event, $input);
-            $user_email = $this->get_user_email($event, $input);
-            $number_of_people = $this->get_number_of_people($event, $input);
+            $values = map_input_to_values($event, $input);
+            $user_email = get_user_email($event, $input);
+            $number_of_people = get_number_of_people($event, $input);
 
             $registration_token = bin2hex(openssl_random_pseudo_bytes(16));
 
@@ -151,14 +151,14 @@ class WPOE_Public_Controller extends WP_REST_Controller
             }
 
             $input = json_decode($request->get_body());
-            $error = $this->validate_request($event, $input);
+            $error = validate_event_request($event, $input);
             if ($error !== null) {
                 return $error;
             }
 
-            $values = $this->map_input_to_values($event, $input);
-            $user_email = $this->get_user_email($event, $input);
-            $number_of_people = $this->get_number_of_people($event, $input);
+            $values = map_input_to_values($event, $input);
+            $user_email = get_user_email($event, $input);
+            $number_of_people = get_number_of_people($event, $input);
 
             $remaining_seats = $this->registrations_dao->update_registration($registration['id'], $values, $event_id, $number_of_people, $event->maxParticipants);
             if ($remaining_seats === false) {
@@ -256,7 +256,7 @@ class WPOE_Public_Controller extends WP_REST_Controller
 
             $remaining = $this->registrations_dao->delete_registration($registration['id'], $event_id, $event->maxParticipants);
 
-            $user_email = $this->get_user_email($event, $registration['values']);
+            $user_email = get_user_email($event, $registration['values']);
 
             if (count($user_email) > 0) {
                 WPOE_Mail_Sender::send_registration_deleted_confirmation($event, $user_email);
@@ -271,75 +271,5 @@ class WPOE_Public_Controller extends WP_REST_Controller
         } catch (Exception $ex) {
             return generic_server_error($ex);
         }
-    }
-
-    private function map_input_to_values(WPOE_Event $event, array $input): array
-    {
-        $values = [];
-        $i = 0;
-        foreach ($event->formFields as $field) {
-            $values[$field->id] = $input[$i];
-            $i++;
-        }
-        return $values;
-    }
-
-    private function get_user_email(WPOE_Event $event, array $input): array
-    {
-        $i = 0;
-        $user_email = [];
-        foreach ($event->formFields as $field) {
-            if ($field->fieldType === 'email' && $field->extra !== null && property_exists($field->extra, 'confirmationAddress') && $field->extra->confirmationAddress === true) {
-                $user_email[] = $input[$i];
-            }
-            $i++;
-        }
-        return $user_email;
-    }
-
-    private function get_number_of_people(WPOE_Event $event, array $input): int
-    {
-        $i = 0;
-        foreach ($event->formFields as $field) {
-            if ($field->fieldType === 'number' && $field->extra !== null && property_exists($field->extra, 'useAsNumberOfPeople') && $field->extra->useAsNumberOfPeople === true) {
-                $count = (int) $input[$i];
-                if ($count === 0) {
-                    return 1;
-                }
-                return $count;
-            }
-            $i++;
-        }
-        return 1;
-    }
-
-    private function validate_request(WPOE_Event $event, $input): WP_Error|WP_REST_Response|null
-    {
-        if (!is_array($input)) {
-            return new WP_Error('invalid_form_fields', __('The payload must be an array', 'wp-open-events'), ['status' => 400]);
-        }
-        if (count($input) !== count($event->formFields)) {
-            return new WP_Error('invalid_form_fields', __('Invalid number of fields', 'wp-open-events'), ['status' => 400]);
-        }
-
-        $errors = [];
-        foreach ($event->formFields as $index => $field) {
-            try {
-                WPOE_Validator::validate($field, $input[$index]);
-            } catch (WPOE_Validation_Exception $ex) {
-                $errors[$index] = $ex->getMessage();
-            }
-        }
-        if (count($errors) > 0) {
-            return new WP_REST_Response([
-                'code' => 'invalid_form_fields',
-                'message' => __('Some fields are not valid', 'wp-open-events'),
-                'data' => [
-                    'status' => 400,
-                    'fieldsErrors' => (object) $errors
-                ]
-            ], 400);
-        }
-        return null;
     }
 }
