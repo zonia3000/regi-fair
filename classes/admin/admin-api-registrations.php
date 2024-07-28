@@ -54,6 +54,11 @@ class WPOE_Registrations_Admin_Controller extends WP_REST_Controller
           'sendEmail' => ['type' => 'boolean', 'required' => false, 'default' => false]
         ],
         [
+          'methods' => WP_REST_Server::READABLE,
+          'permission_callback' => 'is_events_admin',
+          'callback' => [$this, 'get_item']
+        ],
+        [
           'methods' => WP_REST_Server::EDITABLE,
           'permission_callback' => 'is_events_admin',
           'callback' => [$this, 'update_item'],
@@ -91,6 +96,32 @@ class WPOE_Registrations_Admin_Controller extends WP_REST_Controller
           ['eventName' => $event->name]
         )
       );
+    } catch (Exception $ex) {
+      return generic_server_error($ex);
+    }
+  }
+
+  /**
+   * @param WP_REST_Request $request
+   * @return WP_Error|WP_REST_Response
+   */
+  public function get_item($request)
+  {
+    try {
+      $event_id = (int) $request->get_param('eventId');
+      $event = $this->events_dao->get_event($event_id);
+      if ($event === null) {
+        return new WP_Error('event_not_found', __('Event not found', 'wp-open-events'), ['status' => 404]);
+      }
+
+      $registration_id = (int) $request->get_param('registrationId');
+
+      $registration = $this->registrations_dao->get_registration_by_id($event_id, $registration_id);
+      if ($registration === null) {
+        return new WP_Error('registration_not_found', __('Registration not found', 'wp-open-events'), ['status' => 404]);
+      }
+
+      return new WP_REST_Response($registration);
     } catch (Exception $ex) {
       return generic_server_error($ex);
     }

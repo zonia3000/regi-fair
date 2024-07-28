@@ -86,16 +86,15 @@ test('Admin edit and delete registration with email notification', async ({ page
   });
 
   await test.step('Verify that the registration has been updated', async () => {
-    const response = await request.get(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId}/registrations&page=1&pageSize=10`, {
+    const response = await request.get(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId}/registrations/${registrationId}`, {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce
       }
     });
     expect(response.status()).toEqual(200);
-    const { body } = await response.json();
-    expect(body.length).toEqual(1);
-    expect(body[0][2]).toEqual('test2@example.com');
+    const { values } = await response.json();
+    expect(values[0]).toEqual('test2@example.com');
   });
 
   await test.step('Delete the registration', async () => {

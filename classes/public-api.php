@@ -145,7 +145,7 @@ class WPOE_Public_Controller extends WP_REST_Controller
             }
 
             $token = $request->get_param('registration_token');
-            $registration = $this->registrations_dao->get_registration($event_id, md5($token));
+            $registration = $this->registrations_dao->get_registration_from_token($event_id, md5($token));
             if ($registration === null) {
                 return new WP_Error('registration_not_found', __('Registration not found', 'wp-open-events'), ['status' => 400]);
             }
@@ -220,7 +220,7 @@ class WPOE_Public_Controller extends WP_REST_Controller
             }
 
             $token = $request->get_param('registration_token');
-            $registration = $this->registrations_dao->get_registration($event_id, md5($token));
+            $registration = $this->registrations_dao->get_registration_from_token($event_id, md5($token));
             if ($registration === null) {
                 return new WP_Error('registration_not_found', __('Registration not found', 'wp-open-events'), ['status' => 404]);
             }
@@ -249,7 +249,7 @@ class WPOE_Public_Controller extends WP_REST_Controller
             }
 
             $token = $request->get_param('registration_token');
-            $registration = $this->registrations_dao->get_registration($event_id, md5($token));
+            $registration = $this->registrations_dao->get_registration_from_token($event_id, md5($token));
             if ($registration === null) {
                 return new WP_Error('registration_not_found', __('Registration not found', 'wp-open-events'), ['status' => 400]);
             }
