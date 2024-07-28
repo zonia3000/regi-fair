@@ -31,10 +31,22 @@ const EditEvent = () => {
     const [error, setError] = useState('');
     const [valid, setValid] = useState(true);
 
+    /**
+     * Returns a string representing tomorrow date in format YYYY-MM-DD.
+     */
+    function getTomorrowDate() {
+        const now = new Date();
+        const nowWithoutTime = now.toISOString().substring(0, 10);
+        const tomorrow = new Date(nowWithoutTime);
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        return tomorrow.toISOString().substring(0, 10);
+    }
+
     useEffect(() => {
         if (eventId === 'new') {
             setLoading(true);
             setFound(true);
+            setDate(getTomorrowDate());
             const templateId = searchParams.get('template');
             if (templateId) {
                 apiFetch({ path: `/wpoe/v1/admin/templates/${templateId}` })
