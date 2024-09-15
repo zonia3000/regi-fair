@@ -18,7 +18,7 @@ const Pagination = (props: {
 
   useEffect(() => {
     const pageNumbers = [];
-    const numberOfPages = Math.round(props.total / props.pageSize);
+    const numberOfPages = Math.ceil(props.total / props.pageSize);
     if (props.page - maxVisibleNumbersPerSide <= 1) {
       for (let i = 1; i <= props.page; i++) {
         pageNumbers.push(i);

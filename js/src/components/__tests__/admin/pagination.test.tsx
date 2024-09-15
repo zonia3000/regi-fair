@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { expect, test, vi } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event';
 import Pagination from '../../admin/Pagination';
 
@@ -22,6 +22,20 @@ test('Pagination, first page', async () => {
 
   await user.click(screen.getByLabelText('Go to page 4'));
   expect(setPage).toHaveBeenCalledWith(4);
+});
+
+test('Pagination: 11th element creates second page', async () => {
+
+  const setPage = vi.fn();
+  const setPageSize = vi.fn();
+
+  render(<Pagination pageSize={10} setPageSize={setPageSize} setPage={setPage} page={1} total={11} />);
+
+  const user = userEvent.setup();
+
+  expect(screen.getAllByLabelText(/Go to page \d+/)).toHaveLength(2);
+  expect(screen.getByLabelText('Go to page 1')).toBeInTheDocument();
+  expect(screen.getByLabelText('Go to page 2')).toBeInTheDocument();
 });
 
 test('Pagination, page in the middle', async () => {
