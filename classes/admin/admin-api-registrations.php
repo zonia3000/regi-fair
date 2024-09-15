@@ -4,7 +4,7 @@ if (!defined('ABSPATH')) {
   exit;
 }
 
-require_once (WPOE_PLUGIN_DIR . 'classes/dao/dao-registrations.php');
+require_once(WPOE_PLUGIN_DIR . 'classes/dao/dao-registrations.php');
 
 class WPOE_Registrations_Admin_Controller extends WP_REST_Controller
 {
@@ -149,8 +149,12 @@ class WPOE_Registrations_Admin_Controller extends WP_REST_Controller
       }
 
       $values = map_input_to_values($event, $input);
-      $number_of_people = get_number_of_people($event, $values);
-      $this->registrations_dao->update_registration($registration_id, $values, $event_id, $number_of_people, $event->maxParticipants);
+      $number_of_people = get_number_of_people($event, $input);
+      $remaining_seats = $this->registrations_dao->update_registration($registration_id, $values, $event_id, $number_of_people, $event->maxParticipants);
+
+      if ($remaining_seats === false) {
+        return get_no_more_seats_error($event);
+      }
 
       $send_email = (boolean) $request->get_param('sendEmail');
       if ($send_email) {

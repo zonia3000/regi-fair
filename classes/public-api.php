@@ -107,7 +107,7 @@ class WPOE_Public_Controller extends WP_REST_Controller
 
             $remaining_seats = $this->registrations_dao->register_to_event($event_id, md5($registration_token), $values, $number_of_people, $event->maxParticipants);
             if ($remaining_seats === false) {
-                return $this->get_no_more_seats_error($event);
+                return get_no_more_seats_error($event);
             }
 
             if (count($user_email) > 0) {
@@ -162,7 +162,7 @@ class WPOE_Public_Controller extends WP_REST_Controller
 
             $remaining_seats = $this->registrations_dao->update_registration($registration['id'], $values, $event_id, $number_of_people, $event->maxParticipants);
             if ($remaining_seats === false) {
-                return $this->get_no_more_seats_error($event);
+                return get_no_more_seats_error($event);
             }
 
             if (count($user_email) > 0) {
@@ -178,27 +178,6 @@ class WPOE_Public_Controller extends WP_REST_Controller
         } catch (Exception $ex) {
             return generic_server_error($ex);
         }
-    }
-
-    private function get_no_more_seats_error(WPOE_Event $event): WP_Error|WP_REST_Response
-    {
-        foreach ($event->formFields as $index => $field) {
-            if ($field->fieldType === 'number' && $field->extra !== null && property_exists($field->extra, 'useAsNumberOfPeople') && $field->extra->useAsNumberOfPeople === true) {
-                // If there is a "number of people" input put the error there
-                return new WP_REST_Response([
-                    'code' => 'invalid_form_fields',
-                    'message' => __('Unable to register the specified number of people', 'wp-open-events'),
-                    'data' => [
-                        'status' => 400,
-                        'fieldsErrors' => (object) [
-                            $index => __('The number is greater than the available number of seats', 'wp-open-events')
-                        ]
-                    ]
-                ], 400);
-            }
-        }
-        // Otherwise just return a generic error message about the number of seats
-        return new WP_Error('no_more_seats', __('No more seats available', 'wp-open-events'), ['status' => 400]);
     }
 
     /**

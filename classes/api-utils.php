@@ -178,3 +178,24 @@ function map_input_to_values(WPOE_Event $event, array $input): array
   }
   return $values;
 }
+
+function get_no_more_seats_error(WPOE_Event $event): WP_Error|WP_REST_Response
+{
+  foreach ($event->formFields as $index => $field) {
+    if ($field->fieldType === 'number' && $field->extra !== null && property_exists($field->extra, 'useAsNumberOfPeople') && $field->extra->useAsNumberOfPeople === true) {
+      // If there is a "number of people" input put the error there
+      return new WP_REST_Response([
+        'code' => 'invalid_form_fields',
+        'message' => __('Unable to register the specified number of people', 'wp-open-events'),
+        'data' => [
+          'status' => 400,
+          'fieldsErrors' => (object) [
+            $index => __('The number is greater than the available number of seats', 'wp-open-events')
+          ]
+        ]
+      ], 400);
+    }
+  }
+  // Otherwise just return a generic error message about the number of seats
+  return new WP_Error('no_more_seats', __('No more seats available', 'wp-open-events'), ['status' => 400]);
+}

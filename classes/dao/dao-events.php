@@ -85,10 +85,10 @@ class WPOE_DAO_Events extends WPOE_Base_DAO
         $event->name = $event_results[0]['name'];
         $event->date = $event_results[0]['date'];
         if ($event_results[0]['max_participants']) {
-            $event->maxParticipants = $event_results[0]['max_participants'];
+            $event->maxParticipants = (int) $event_results[0]['max_participants'];
         }
         $event->autoremove = (bool) $event_results[0]['autoremove_submissions'];
-        $event->autoremovePeriod = $event_results[0]['autoremove_submissions_period'];
+        $event->autoremovePeriod = (int) $event_results[0]['autoremove_submissions_period'];
         $event->formFields = $this->load_form_fields($event_results);
         $event->hasResponses = $has_responses;
         $event->editableRegistrations = (bool) $event_results[0]['editable_registrations'];
