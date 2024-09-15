@@ -6,4 +6,5 @@ export type RegistrationsList = {
   }>
   body: string[][]
   total: number
+  totalParticipants: number
 }

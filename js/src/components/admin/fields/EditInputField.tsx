@@ -3,6 +3,7 @@ import { TextControl, CheckboxControl, Notice } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { EditInputFieldProps } from '../../classes/components-props';
 import '../../style.css';
+import { Field } from '../../classes/fields';
 
 const EditInputField = (props: EditInputFieldProps) => {
 

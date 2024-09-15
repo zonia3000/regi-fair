@@ -27,11 +27,16 @@ class WPOE_DAO_Registrations extends WPOE_Base_DAO
     $results = $wpdb->get_results($query, ARRAY_A);
     $this->check_results('retrieving the event registrations');
 
+    $query = $wpdb->prepare('SELECT COUNT(*) FROM ' . WPOE_DB::get_table_name('event_registration') . ' WHERE event_id = %d', $event_id);
+    $var = $wpdb->get_var($query);
+    $this->check_var($var, 'retrieving the event registration rows');
+    $total = (int) $var;
+
     $query = $wpdb->prepare('SELECT COALESCE(SUM(number_of_people), 0) AS number_of_people FROM ' . WPOE_DB::get_table_name('event_registration')
       . ' WHERE event_id = %d', $event_id);
     $var = $wpdb->get_var($query);
     $this->check_var($var, 'retrieving the event registrations count');
-    $total = (int) $var;
+    $total_participants = (int) $var;
 
     $head_map = [];
     $body_map = [];
@@ -82,7 +87,8 @@ class WPOE_DAO_Registrations extends WPOE_Base_DAO
     return [
       'head' => $head,
       'body' => $rows,
-      'total' => $total
+      'total' => $total,
+      'totalParticipants' => $total_participants
     ];
   }
 

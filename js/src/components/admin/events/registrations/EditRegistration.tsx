@@ -90,7 +90,7 @@ const EditRegistration = () => {
   }
 
   function back() {
-    navigate('/');
+    navigate(`/event/${eventId}/registrations`);
   }
 
   if (loading) {
@@ -106,6 +106,12 @@ const EditRegistration = () => {
       <h1 className='wp-heading-inline'>
         {sprintf(_x('Edit registration #%d', 'Id of the registration', 'wp-open-events'), registrationId)}
       </h1>
+
+      {availableSeats !== null &&
+        <Notice status='info' isDismissible={false} className="mt-2">
+          {sprintf(_x('There are still %d seats available', 'number of available seats', 'wp-open-events'), availableSeats)}
+        </Notice>
+      }
 
       <FormFields
         formFields={event.formFields}

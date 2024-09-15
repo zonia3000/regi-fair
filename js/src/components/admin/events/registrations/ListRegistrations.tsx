@@ -21,6 +21,7 @@ const ListRegistrations = () => {
   const [head, setHead] = useState([]);
   const [rows, setRows] = useState([]);
   const [total, setTotal] = useState(0);
+  const [totalParticipants, setTotalParticipants] = useState(0);
 
   useEffect(() => {
     loadPage();
@@ -35,6 +36,7 @@ const ListRegistrations = () => {
       setHead(result.head);
       setRows(result.body);
       setTotal(result.total);
+      setTotalParticipants(result.totalParticipants);
     } catch (err) {
       setError(extractError(err));
     } finally {
@@ -62,9 +64,13 @@ const ListRegistrations = () => {
           <h1 className='wp-heading-inline'>
             {sprintf(_x('Registrations for the event "%s"', 'Name of the event', 'wp-open-events'), eventName)}
           </h1>
+          <p>
+            <strong>{__('Total participants', 'wp-open-events')}</strong>: {totalParticipants}
+          </p>
           <table className='widefat mt'>
             <thead>
               <tr>
+                <td>#</td>
                 <td>{__('Date and time', 'wp-open-events')}</td>
                 {head.map(h =>
                   <th key={h.label}>
@@ -78,7 +84,6 @@ const ListRegistrations = () => {
               {rows.map((r, i) =>
                 <tr key={`row_${i}`}>
                   {r.map((c: string, j: number) => (
-                    j > 0 &&
                     <td key={`cell_${i}_${j}`}>{c}</td>
                   ))}
                   <td>
