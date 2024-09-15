@@ -2,12 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { FormProps } from './classes/components-props';
 import apiFetch from '@wordpress/api-fetch';
 import Loading from './Loading';
-import InputField from './fields/InputField';
 import { Button, Modal, Notice } from '@wordpress/components';
 import { __, _x, sprintf } from '@wordpress/i18n';
 import { extractError } from './utils';
 import './style.css';
-import RadioField from './fields/RadioField';
+import FormFields from './FormFields';
+import { EventConfiguration } from './classes/event';
 
 const Form = (props: FormProps) => {
     const [event, setEvent] = useState(null as EventConfiguration);
@@ -35,10 +35,6 @@ const Form = (props: FormProps) => {
             window.removeEventListener('hashchange', loadEventData);
         };
     }, []);
-
-    function setFieldValue(newValue: string, index: number) {
-        setFields(fields.map((oldValue: string, i: number) => (index === i) ? newValue : oldValue));
-    };
 
     async function loadEventData() {
         let eventConfig: EventConfiguration | null = null;
@@ -185,28 +181,12 @@ const Form = (props: FormProps) => {
             }
 
             {(editingExisting || availableSeats === null || availableSeats > 0) &&
-                event.formFields.map((field: Field, index: number) => {
-                    return (<div key={`field-${index}`} className={index.toString() in fieldsErrors ? 'form-error mt' : 'mt'}>
-                        {
-                            (field.fieldType === 'text' || field.fieldType === 'email' || field.fieldType === 'number')
-                            && <InputField
-                                required={field.required}
-                                label={field.label} disabled={props.disabled} type={field.fieldType}
-                                min={field.extra && 'min' in field.extra ? Number(field.extra.min) : undefined}
-                                max={field.extra && 'max' in field.extra ? Number(field.extra.max) : undefined}
-                                value={fields[index]} setValue={(v: string) => setFieldValue(v, index)} />
-                        }
-                        {
-                            field.fieldType === 'radio'
-                            && <RadioField
-                                required={field.required}
-                                label={field.label} disabled={props.disabled} options={(field.extra as any).options}
-                                value={fields[index]} setValue={(v: string) => setFieldValue(v, index)} />
-                        }
-                        {index.toString() in fieldsErrors &&
-                            <span className='error-text'>{(fieldsErrors as any)[index.toString()]}</span>}
-                    </div>);
-                })
+                <FormFields
+                    formFields={event.formFields}
+                    fieldsValues={fields}
+                    setFieldsValues={setFields}
+                    disabled={props.disabled}
+                    fieldsErrors={fieldsErrors} />
             }
 
             {error && <Notice status='error' className='mt-2 mb-2' isDismissible={false}>{error}</Notice>}

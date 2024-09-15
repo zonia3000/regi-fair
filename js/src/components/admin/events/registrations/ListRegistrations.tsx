@@ -46,6 +46,10 @@ const ListRegistrations = () => {
     navigate('/');
   }
 
+  function editRegistration(registrationId: string) {
+    navigate(`/event/${eventId}/registrations/${registrationId}`);
+  }
+
   if (loading) {
     return <Loading />;
   }
@@ -67,6 +71,7 @@ const ListRegistrations = () => {
                     {h.label}{h.deleted && <span>&nbsp; ({__('deleted', 'wp-open-events')})</span>}
                   </th>
                 )}
+                <th></th>
               </tr>
             </thead>
             <tbody>
@@ -76,6 +81,11 @@ const ListRegistrations = () => {
                     j > 0 &&
                     <td key={`cell_${i}_${j}`}>{c}</td>
                   ))}
+                  <td>
+                    <Button onClick={() => editRegistration(r[0])} variant='primary'>
+                      {__('Edit', 'wp-open-events')}
+                    </Button>
+                  </td>
                 </tr>
               )}
             </tbody>

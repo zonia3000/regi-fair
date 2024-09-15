@@ -119,6 +119,18 @@ test('Admin edit and delete registration with email notification', async ({ page
     expect(body.length).toEqual(0);
   });
 
+  await test.step('Attempt to load not existing registration', async () => {
+    const response = await request.get(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId}/registrations/${registrationId}`, {
+      headers: {
+        'Cookie': cookies,
+        'X-WP-Nonce': nonce
+      }
+    });
+    expect(response.status()).toEqual(404);
+    const { code } = await response.json();
+    expect(code).toEqual('registration_not_found');
+  });
+
   await test.step('Delete the event', async () => {
     const response = await request.delete(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId}`, {
       headers: {
@@ -127,5 +139,17 @@ test('Admin edit and delete registration with email notification', async ({ page
       }
     });
     expect(response.status()).toEqual(204);
+  });
+
+  await test.step('Attempt to load registration of not existing event', async () => {
+    const response = await request.get(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId}/registrations/${registrationId}`, {
+      headers: {
+        'Cookie': cookies,
+        'X-WP-Nonce': nonce
+      }
+    });
+    expect(response.status()).toEqual(404);
+    const { code } = await response.json();
+    expect(code).toEqual('event_not_found');
   });
 });

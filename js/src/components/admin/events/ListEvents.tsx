@@ -6,6 +6,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Button, Icon, Modal, Notice, SelectControl, Spinner } from '@wordpress/components';
 import { extractError } from '../../utils';
 import '../../style.css';
+import { EventConfiguration } from '../../classes/event';
 
 const ListEvents = () => {
     const navigate = useNavigate();

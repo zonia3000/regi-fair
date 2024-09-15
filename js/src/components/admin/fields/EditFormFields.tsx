@@ -3,6 +3,7 @@ import { __ } from '@wordpress/i18n';
 import { Button, Icon, Modal } from '@wordpress/components';
 import EditFieldModal from './EditFieldModal';
 import { EditFormFieldsProps } from '../../classes/components-props';
+import { Field } from '../../classes/fields';
 
 const EditFormFields = (props: EditFormFieldsProps) => {
 

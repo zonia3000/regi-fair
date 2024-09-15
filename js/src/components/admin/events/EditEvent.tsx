@@ -7,6 +7,7 @@ import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import EditFormFields from '../fields/EditFormFields';
 import { cleanupFields, extractError } from '../../utils';
 import { Settings } from '../../classes/settings';
+import { EventConfiguration } from '../../classes/event';
 
 const EditEvent = () => {
 

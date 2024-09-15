@@ -1,6 +1,6 @@
-type FieldType = 'text' | 'email' | 'number' | 'radio'
+export type FieldType = 'text' | 'email' | 'number' | 'radio'
 
-type Field = {
+export type Field = {
     id?: number
     label: string
     fieldType: FieldType
@@ -10,7 +10,7 @@ type Field = {
     validate: () => boolean
 }
 
-type RadioField = Field & {
+export type RadioField = Field & {
     fieldType: 'radio'
     extra: {
         options: string[]

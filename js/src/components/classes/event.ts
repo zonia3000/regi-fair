@@ -1,4 +1,6 @@
-type EventConfiguration = {
+import { Field } from "./fields";
+
+export type EventConfiguration = {
 
     id: number | null
     name: string

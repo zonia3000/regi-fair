@@ -1,3 +1,5 @@
+import { Field, RadioField } from "./fields"
+
 type LoadingComponent = {
     loading: boolean
     setLoading: (value: boolean) => void
@@ -7,6 +9,14 @@ export type FormProps = LoadingComponent & {
     eventId: number
     disabled: boolean
     admin: boolean
+}
+
+export type FormFieldsProps = {
+    formFields: Field[]
+    fieldsValues: string[]
+    setFieldsValues: (values: string[]) => void
+    fieldsErrors: {}
+    disabled: boolean
 }
 
 export type EditFormFieldsProps = {
