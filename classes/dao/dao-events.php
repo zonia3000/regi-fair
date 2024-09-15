@@ -77,7 +77,7 @@ class WPOE_DAO_Events extends WPOE_Base_DAO
             return null;
         }
 
-        $registrations_count = $registrations_count = $this->get_registrations_count($event_id);
+        $registrations_count = $this->get_registrations_count($event_id);
         $has_responses = $registrations_count > 0;
 
         $event = new WPOE_Event();
@@ -86,6 +86,7 @@ class WPOE_DAO_Events extends WPOE_Base_DAO
         $event->date = $event_results[0]['date'];
         if ($event_results[0]['max_participants']) {
             $event->maxParticipants = (int) $event_results[0]['max_participants'];
+            $event->availableSeats = $event->maxParticipants - $registrations_count;
         }
         $event->autoremove = (bool) $event_results[0]['autoremove_submissions'];
         $event->autoremovePeriod = (int) $event_results[0]['autoremove_submissions_period'];

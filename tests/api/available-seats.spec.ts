@@ -47,6 +47,18 @@ test('Available seats on event with number of people field', async ({ page, cont
     expect(body.availableSeats).toEqual(10);
   });
 
+  await test.step('Check available seats (admin side)', async () => {
+    const response = await request.get(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId}`, {
+      headers: {
+        'Cookie': cookies,
+        'X-WP-Nonce': nonce
+      }
+    });
+    expect(response.status()).toEqual(200);
+    const body = await response.json();
+    expect(body.availableSeats).toEqual(10);
+  });
+
   await test.step('Reject float number of people', async () => {
     const response = await request.post(`/index.php?rest_route=/wpoe/v1/events/${eventId}`, {
       data: ['1.5']
