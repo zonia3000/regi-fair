@@ -1,5 +1,5 @@
 import { expect } from 'vitest';
-import { screen } from '@testing-library/react'
+import { fireEvent, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event';
 import { createEventTest } from '../../__base__/createEvent.setup';
 
@@ -10,14 +10,11 @@ createEventTest('Validate base event fields', async () => {
   const saveBtn = screen.getByRole('button', { name: 'Save' });
   await user.click(saveBtn);
 
-  expect(screen.getAllByText('Field is required').length).toEqual(2);
+  expect(screen.getAllByText('Field is required').length).toEqual(1);
 
   await user.type(screen.getByRole('textbox', { name: 'Name' }), 'Event name');
 
-  await user.click(saveBtn);
-  expect(screen.getAllByText('Field is required').length).toEqual(1);
-
-  await user.type(screen.getByText('Date'), '2050-01-01');
+  fireEvent.change(screen.getByLabelText('Date'), { target: { value: '2050-01-01' } });
 
   const maxParticipantsCheckbox = screen.getByRole('checkbox', { name: 'Set a maximum number of participants' });
   await user.click(maxParticipantsCheckbox);

@@ -1,6 +1,6 @@
 import { createEventTest } from "../../__base__/createEvent.setup";
 import { expect } from 'vitest';
-import { screen } from '@testing-library/react'
+import { fireEvent, screen } from '@testing-library/react'
 import { within } from '@testing-library/dom';
 import userEvent from '@testing-library/user-event';
 
@@ -9,7 +9,7 @@ createEventTest('Create required text field with description', async () => {
   const user = userEvent.setup();
 
   await user.type(screen.getByRole('textbox', { name: 'Name' }), 'Event name');
-  await user.type(screen.getByText('Date'), '2050-01-01');
+  fireEvent.change(screen.getByLabelText('Date'), { target: { value: '2050-01-01' } });
 
   const addFormFieldBtn = screen.getByRole('button', { name: 'Add form field' });
   await user.click(addFormFieldBtn);
@@ -53,7 +53,7 @@ createEventTest('Create optional text field without description', async () => {
   const user = userEvent.setup();
 
   await user.type(screen.getByRole('textbox', { name: 'Name' }), 'Event name');
-  await user.type(screen.getByText('Date'), '2050-01-01');
+  fireEvent.change(screen.getByLabelText('Date'), { target: { value: '2050-01-01' } });
 
   const addFormFieldBtn = screen.getByRole('button', { name: 'Add form field' });
   await user.click(addFormFieldBtn);

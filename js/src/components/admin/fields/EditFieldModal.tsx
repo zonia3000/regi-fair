@@ -4,6 +4,7 @@ import { __ } from '@wordpress/i18n';
 import EditInputField from './EditInputField';
 import EditRadioField from './EditRadioField';
 import { EditFieldModalProps } from '../../classes/components-props';
+import { FieldType, RadioField } from '../../classes/fields';
 
 const EditFieldModal = (props: EditFieldModalProps) => {
 

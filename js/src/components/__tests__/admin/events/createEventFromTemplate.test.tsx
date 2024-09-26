@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { expect } from 'vitest';
-import { render, screen } from '@testing-library/react'
+import { fireEvent, render, screen } from '@testing-library/react'
 import { within } from '@testing-library/dom';
 import { server } from '../../__mocks__/api';
 import { HttpResponse, http } from "msw";
@@ -109,7 +109,7 @@ test('Create event from template', async () => {
   );
 
   await user.type(screen.getByRole('textbox', { name: 'Name' }), 'Event name');
-  await user.type(screen.getByText('Date'), '2050-01-01');
+  fireEvent.change(screen.getByLabelText('Date'), { target: { value: '2050-01-01' } });
 
   await user.click(screen.getByRole('button', { name: 'Save' }));
 
