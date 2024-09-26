@@ -46,6 +46,21 @@ class WPOE_Registrations_Admin_Controller extends WP_REST_Controller
 
     register_rest_route(
       $namespace,
+      '/admin/events/(?P<id>\d+)/registrations/download',
+      [
+        'args' => [
+          'id' => ['type' => 'integer', 'required' => true, 'minimum' => 1]
+        ],
+        [
+          'methods' => WP_REST_Server::READABLE,
+          'permission_callback' => 'is_events_admin',
+          'callback' => [$this, 'download_items']
+        ],
+      ]
+    );
+
+    register_rest_route(
+      $namespace,
       '/admin/events/(?P<eventId>\d+)/registrations/(?P<registrationId>\d+)',
       [
         'args' => [
@@ -96,6 +111,56 @@ class WPOE_Registrations_Admin_Controller extends WP_REST_Controller
           ['eventName' => $event->name]
         )
       );
+    } catch (Exception $ex) {
+      return generic_server_error($ex);
+    }
+  }
+
+  /**
+   * @param WP_REST_Request $request
+   * @return WP_Error|WP_REST_Response
+   */
+  public function download_items($request)
+  {
+    try {
+      $id = (int) $request->get_param('id');
+      $event = $this->events_dao->get_event($id);
+      if ($event === null) {
+        return new WP_Error('event_not_found', __('Event not found', 'wp-open-events'), ['status' => 404]);
+      }
+
+      $registrations = $this->registrations_dao->list_event_registrations($id, null, offset: null);
+
+      header('Content-Type: text/csv');
+      header('Content-Disposition: attachment; filename="' . __('registrations', 'wp-open-events') . '.csv"');
+      header('Expires: 0');
+      header('Cache-Control: must-revalidate');
+
+      $header = $registrations['head'];
+      echo '"#","' . __('date', 'wp-open-events') . '"';
+      foreach ($header as $index => $cell) {
+        if ($cell['deleted'] === false) {
+          echo ',';
+          echo '"' . str_replace('"', '""', $cell['label']) . '"';
+        }
+      }
+      echo "\n";
+
+      $body = $registrations['body'];
+      foreach ($body as $row) {
+        foreach ($row as $index => $cell) {
+          if ($index < 2 || $header[$index - 2]['deleted'] === false) {
+            if ($index > 0) {
+              echo ',';
+            }
+            echo '"' . str_replace('"', '""', $cell) . '"';
+          }
+        }
+        echo "\n";
+      }
+
+      // Terminate the script to prevent WordPress from adding additional output
+      exit;
     } catch (Exception $ex) {
       return generic_server_error($ex);
     }

@@ -15,6 +15,7 @@ const ListRegistrations = () => {
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [downloadError, setDownloadError] = useState('');
   const [eventName, setEventName] = useState('');
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
@@ -52,6 +53,31 @@ const ListRegistrations = () => {
     navigate(`/event/${eventId}/registrations/${registrationId}`);
   }
 
+  async function download() {
+    setLoading(true);
+    setDownloadError('');
+    try {
+      const response: Response = await apiFetch({
+        path: `/wpoe/v1/admin/events/${eventId}/registrations/download`,
+        parse: false
+      });
+      const data = await response.text();
+      const blob = new Blob([data], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'registrations.csv';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      setDownloadError(extractError(err));
+    } finally {
+      setLoading(false);
+    }
+  }
+
   if (loading) {
     return <Loading />;
   }
@@ -64,6 +90,14 @@ const ListRegistrations = () => {
           <h1 className='wp-heading-inline'>
             {sprintf(_x('Registrations for the event "%s"', 'Name of the event', 'wp-open-events'), eventName)}
           </h1>
+          <Button onClick={download} variant='primary'>
+            {__('Download CSV', 'wp-open-events')}
+          </Button>
+          {downloadError &&
+            <div className='mt'>
+              <Notice status='error' isDismissible={false}>{downloadError}</Notice>
+            </div>
+          }
           <p>
             <strong>{__('Total participants', 'wp-open-events')}</strong>: {totalParticipants}
           </p>

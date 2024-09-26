@@ -4,8 +4,8 @@ if (!defined('ABSPATH')) {
   exit;
 }
 
-require_once (WPOE_PLUGIN_DIR . 'classes/db.php');
-require_once (WPOE_PLUGIN_DIR . 'classes/dao/base-dao.php');
+require_once(WPOE_PLUGIN_DIR . 'classes/db.php');
+require_once(WPOE_PLUGIN_DIR . 'classes/dao/base-dao.php');
 
 class WPOE_DAO_Registrations extends WPOE_Base_DAO
 {
@@ -14,16 +14,24 @@ class WPOE_DAO_Registrations extends WPOE_Base_DAO
     parent::__construct();
   }
 
-  public function list_event_registrations(int $event_id, int $limit, int $offset): array
+  public function list_event_registrations(int $event_id, int|null $limit, int|null $offset): array
   {
     global $wpdb;
-    $query = $wpdb->prepare("SELECT r.id, r.inserted_at, f.label, f.deleted, rv.field_value
+    $sql = "SELECT r.id, r.inserted_at, f.label, f.deleted, rv.field_value
       FROM " . WPOE_DB::get_table_name('event_registration') . " r
       RIGHT JOIN " . WPOE_DB::get_table_name('event_form_field') . " f ON f.event_id = r.event_id
       LEFT JOIN " . WPOE_DB::get_table_name('event_registration_value') . " rv ON f.id = rv.field_id AND rv.registration_id = r.id
       JOIN (SELECT id FROM " . WPOE_DB::get_table_name('event_registration') . "
-      WHERE event_id = %d ORDER BY id DESC LIMIT %d OFFSET %d) AS rpage ON r.id = rpage.id
-      ORDER BY r.id DESC, f.deleted, f.position", $event_id, $limit, $offset);
+      WHERE event_id = %d ORDER BY id DESC";
+    if ($limit !== null && $offset !== null) {
+      $sql .= " LIMIT %d OFFSET %d";
+    }
+    $sql .= ") AS rpage ON r.id = rpage.id ORDER BY r.id DESC, f.deleted, f.position";
+    if ($limit !== null && $offset !== null) {
+      $query = $wpdb->prepare($sql, $event_id, $limit, $offset);
+    } else {
+      $query = $wpdb->prepare($sql, $event_id);
+    }
     $results = $wpdb->get_results($query, ARRAY_A);
     $this->check_results('retrieving the event registrations');
 
