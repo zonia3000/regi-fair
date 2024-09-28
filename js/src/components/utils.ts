@@ -20,3 +20,7 @@ export function cleanupFields(fields: Field[]): Field[] {
     extra: f.extra || undefined
   }));
 }
+
+export function isNumberOfPeopleField(field: Field): boolean {
+  return field.extra && 'useAsNumberOfPeople' in field.extra && field.extra.useAsNumberOfPeople == true;
+}

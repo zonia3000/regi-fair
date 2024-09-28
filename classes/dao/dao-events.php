@@ -4,8 +4,8 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-require_once (WPOE_PLUGIN_DIR . 'classes/db.php');
-require_once (WPOE_PLUGIN_DIR . 'classes/dao/base-dao.php');
+require_once(WPOE_PLUGIN_DIR . 'classes/db.php');
+require_once(WPOE_PLUGIN_DIR . 'classes/dao/base-dao.php');
 
 class WPOE_DAO_Events extends WPOE_Base_DAO
 {
@@ -262,7 +262,7 @@ class WPOE_DAO_Events extends WPOE_Base_DAO
             if (count($current_field_ids) > 0) {
                 $placeholders = array_fill(0, count($current_field_ids), '%d');
                 $query = $wpdb->prepare(
-                    'SELECT id FROM ' . WPOE_DB::get_table_name('event_form_field')
+                    'SELECT id, extra FROM ' . WPOE_DB::get_table_name('event_form_field')
                     . ' WHERE event_id = %d AND id NOT IN (' . join(',', $placeholders) . ')',
                     $event->id,
                     ...$current_field_ids
@@ -270,7 +270,7 @@ class WPOE_DAO_Events extends WPOE_Base_DAO
                 $results = $wpdb->get_results($query, ARRAY_A);
             } else {
                 $query = $wpdb->prepare(
-                    'SELECT id FROM ' . WPOE_DB::get_table_name('event_form_field') . ' WHERE event_id = %d',
+                    'SELECT id, extra FROM ' . WPOE_DB::get_table_name('event_form_field') . ' WHERE event_id = %d',
                     $event->id
                 );
                 $results = $wpdb->get_results($query, ARRAY_A);
@@ -278,9 +278,17 @@ class WPOE_DAO_Events extends WPOE_Base_DAO
             $this->check_results('retrieving form fields to delete');
 
             if (count($results) > 0) {
+                $number_of_people_field_id = null;
+
                 $field_ids_to_delete = [];
                 foreach ($results as $result) {
                     $field_id = (int) $result['id'];
+                    if ($result['extra'] !== null) {
+                        $extra = (array) json_decode($result['extra']);
+                        if (array_key_exists('useAsNumberOfPeople', $extra) && $extra['useAsNumberOfPeople'] === true) {
+                            $number_of_people_field_id = $field_id;
+                        }
+                    }
                     $field_ids_to_delete[] = $field_id;
                 }
 
@@ -302,6 +310,10 @@ class WPOE_DAO_Events extends WPOE_Base_DAO
                     $referenced_ids = [];
                     foreach ($results as $result) {
                         $field_id = (int) $result['field_id'];
+                        // Check special "number of people" field
+                        if ($field_id === $number_of_people_field_id) {
+                            throw new WPOE_Validation_Exception(__('It is not possible to remove referenced "number of people" field', 'wp-open-events'));
+                        }
                         $referenced_ids[] = $field_id;
                     }
 

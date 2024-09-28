@@ -4,6 +4,7 @@ import { Button, Icon, Modal } from '@wordpress/components';
 import EditFieldModal from './EditFieldModal';
 import { EditFormFieldsProps } from '../../classes/components-props';
 import { Field } from '../../classes/fields';
+import { isNumberOfPeopleField } from '../../utils';
 
 const EditFormFields = (props: EditFormFieldsProps) => {
 
@@ -83,6 +84,10 @@ const EditFormFields = (props: EditFormFieldsProps) => {
     props.setFormFields(newFields);
   }
 
+  function isFieldDeletable(field: Field) {
+    return isNaN(field.id) || !isNumberOfPeopleField(field);
+  }
+
   return (
     <>
       <h2>{__('Event form', 'wp-open-events')}</h2>
@@ -116,7 +121,10 @@ const EditFormFields = (props: EditFormFieldsProps) => {
                 <td>
                   <Button variant='primary' onClick={() => openEditFieldModal(index)}>Edit</Button>
                   &nbsp;
-                  <Button variant='primary' onClick={() => openDeleteFieldModal(index)}>Delete</Button>
+                  {
+                    isFieldDeletable(f) &&
+                    <Button variant='primary' onClick={() => openDeleteFieldModal(index)}>Delete</Button>
+                  }
                 </td>
               </tr>)
             })}
@@ -130,6 +138,7 @@ const EditFormFields = (props: EditFormFieldsProps) => {
       </Button>
 
       <EditFieldModal
+        allowNumberOfPeopleField={props.formFields.filter(f => isNumberOfPeopleField(f)).length === 0}
         showEditFieldModal={showEditFieldModal}
         setShowEditFieldModal={setShowEditFieldModal}
         fieldToEdit={fieldToEdit}

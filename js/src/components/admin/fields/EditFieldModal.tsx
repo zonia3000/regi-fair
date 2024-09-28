@@ -71,12 +71,15 @@ const EditFieldModal = (props: EditFieldModalProps) => {
                                 {__('Radio', 'wp-open-events')}
                             </Button>
                             &nbsp;
-                            <Button variant='primary' onClick={() => {
-                                setUseAsNumberOfPeople(true);
-                                setFieldType('number');
-                            }}>
-                                {__('Number of people', 'wp-open-events')}
-                            </Button>
+                            {
+                                props.allowNumberOfPeopleField &&
+                                <Button variant='primary' onClick={() => {
+                                    setUseAsNumberOfPeople(true);
+                                    setFieldType('number');
+                                }}>
+                                    {__('Number of people', 'wp-open-events')}
+                                </Button>
+                            }
                         </>
                     )}
                     {fieldType === 'text' && (

@@ -61,6 +61,7 @@ export type EditInputFieldProps = EditFieldProps<Field> & ({
 
 export type EditFieldModalProps = {
     showEditFieldModal: boolean
+    allowNumberOfPeopleField: boolean
     setShowEditFieldModal: (value: boolean) => void
     fieldToEdit: Field | null
     setFieldToEdit: (field: Field) => void

@@ -40,6 +40,19 @@ test('Available seats on event with number of people field', async ({ page, cont
     eventId = body.id;
   });
 
+  let fieldId;
+  await test.step('Retrieve field id', async () => {
+    const response = await request.get(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId}`, {
+      headers: {
+        'Cookie': cookies,
+        'X-WP-Nonce': nonce
+      }
+    });
+    expect(response.status()).toEqual(200);
+    const { formFields } = await response.json();
+    fieldId = formFields[0].id;
+  });
+
   await test.step('Check available seats', async () => {
     const response = await request.get(`/index.php?rest_route=/wpoe/v1/events/${eventId}`);
     expect(response.status()).toEqual(200);
@@ -104,6 +117,7 @@ test('Available seats on event with number of people field', async ({ page, cont
         editableRegistrations: true,
         maxParticipants: 10,
         formFields: [{
+          id: fieldId,
           label: 'number-of-people',
           fieldType: 'number',
           required: true,
@@ -141,6 +155,7 @@ test('Available seats on event with number of people field', async ({ page, cont
         editableRegistrations: true,
         maxParticipants: 10,
         formFields: [{
+          id: fieldId,
           label: 'number-of-people',
           fieldType: 'number',
           required: true,
