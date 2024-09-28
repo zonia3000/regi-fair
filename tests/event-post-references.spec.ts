@@ -106,16 +106,18 @@ test('Event referenced in posts', async ({ page, context, request }) => {
   await test.step('Add third event to one post and then unpublish the post', async () => {
     postId5 = await addEventToPost(postTitle5, eventName3);
     await page.reload();
-    await page.getByRole('button', { name: 'Switch to draft' }).click();
-    await page.getByRole('dialog').getByRole('button', { name: 'OK' }).click();
-    await page.getByText('Post reverted to draft').first().waitFor();
+    await page.getByLabel('Change post status: Published').click();
+    await page.getByLabel('DraftNot ready to publish.').check();
+    await page.getByRole('button', { name: 'Save', exact: true }).click();
+    await expect(page.getByText('Post reverted to draft').first()).toBeVisible();
   });
 
   await test.step('Add fourth event to one post and then delete the post', async () => {
     await addEventToPost(postTitle6, eventName4);
     await page.reload();
-    await page.getByRole('button', { name: 'Move to trash' }).click();
-    await page.getByRole('dialog').getByRole('button', { name: 'OK' }).click();
+    await page.getByLabel('Actions').click();
+    await page.getByRole('menuitem', { name: 'Move to Trash' }).click();
+    await page.getByRole('button', { name: 'Trash' }).click();
     await page.getByText('1 post moved to the Trash').first().waitFor();
     await page.goto('/wp-admin/edit.php?post_status=trash&post_type=post');
     const postRow = page.getByRole('row', { name: postTitle6 });
@@ -132,7 +134,7 @@ test('Event referenced in posts', async ({ page, context, request }) => {
     await page.getByPlaceholder('Search').fill('WP Open Events Form');
     await page.getByRole('option', { name: 'WP Open Events Form' }).click();
     await page.getByRole('combobox', { name: 'Select event' }).selectOption(eventName5);
-    await page.getByLabel('Add title').click();
+    await page.getByLabel('Block: WP Open Events Form').press('Enter');
     await page.getByLabel('Add block').click();
     await page.getByPlaceholder('Search').fill('WP Open Events Form');
     await page.getByRole('option', { name: 'WP Open Events Form' }).click();
