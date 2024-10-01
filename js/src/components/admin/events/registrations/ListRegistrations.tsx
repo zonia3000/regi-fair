@@ -5,7 +5,7 @@ import { RegistrationsList } from "../../../classes/registration";
 import { extractError } from "../../../utils";
 import { __, _x, sprintf } from "@wordpress/i18n";
 import Loading from "../../../Loading";
-import { Button, Notice } from "@wordpress/components";
+import { Button, CheckboxControl, Notice } from "@wordpress/components";
 import Pagination from "../../Pagination";
 
 const ListRegistrations = () => {
@@ -20,9 +20,11 @@ const ListRegistrations = () => {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
   const [head, setHead] = useState([]);
-  const [rows, setRows] = useState([]);
+  const [rows, setRows] = useState([] as string[][]);
   const [total, setTotal] = useState(0);
   const [totalParticipants, setTotalParticipants] = useState(0);
+  const [hasDeletedFields, setHasDeletedFields] = useState(false);
+  const [showDeletedFields, setShowDeletedFields] = useState(false);
 
   useEffect(() => {
     loadPage();
@@ -35,6 +37,7 @@ const ListRegistrations = () => {
         = await apiFetch({ path: `/wpoe/v1/admin/events/${eventId}/registrations?page=${page}&pageSize=${pageSize}` });
       setEventName(result.eventName);
       setHead(result.head);
+      setHasDeletedFields(result.head.find(h => h.deleted) !== undefined);
       setRows(result.body);
       setTotal(result.total);
       setTotalParticipants(result.totalParticipants);
@@ -101,12 +104,21 @@ const ListRegistrations = () => {
           <p>
             <strong>{__('Total participants', 'wp-open-events')}</strong>: {totalParticipants}
           </p>
+
+          {hasDeletedFields &&
+            <CheckboxControl
+              label={__('Show deleted fields', 'wp-open-events')}
+              checked={showDeletedFields}
+              onChange={setShowDeletedFields}
+            />
+          }
+
           <table className='widefat mt'>
             <thead>
               <tr>
                 <td>#</td>
                 <td>{__('Date and time', 'wp-open-events')}</td>
-                {head.map(h =>
+                {head.filter(h => showDeletedFields || !h.deleted).map(h =>
                   <th key={h.label}>
                     {h.label}{h.deleted && <span>&nbsp; ({__('deleted', 'wp-open-events')})</span>}
                   </th>
@@ -117,9 +129,10 @@ const ListRegistrations = () => {
             <tbody>
               {rows.map((r, i) =>
                 <tr key={`row_${i}`}>
-                  {r.map((c: string, j: number) => (
-                    <td key={`cell_${i}_${j}`}>{c}</td>
-                  ))}
+                  {r.filter((_: string, j: number) => j < 2 || showDeletedFields || !head[j - 2].deleted)
+                    .map((c: string, j: number) => (
+                      <td key={`cell_${i}_${j}`}>{c}</td>
+                    ))}
                   <td>
                     <Button onClick={() => editRegistration(r[0])} variant='primary'>
                       {__('Edit', 'wp-open-events')}
