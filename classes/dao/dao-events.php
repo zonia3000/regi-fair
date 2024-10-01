@@ -67,8 +67,9 @@ class WPOE_DAO_Events extends WPOE_Base_DAO
             e.editable_registrations, e.admin_email, e.extra_email_content, e.max_participants,
             f.id AS field_id, f.label, f.type, f.description, f.required, f.extra, f.position
             FROM " . WPOE_DB::get_table_name('event') . " e
-            LEFT JOIN " . WPOE_DB::get_table_name('event_form_field') . " f ON f.event_id = e.id
-            WHERE e.id = %d AND (f.deleted IS NULL OR NOT f.deleted) ORDER BY f.position", $event_id);
+            LEFT JOIN " . WPOE_DB::get_table_name('event_form_field') . " f
+            ON f.event_id = e.id AND (f.deleted IS NULL OR NOT f.deleted)
+            WHERE e.id = %d  ORDER BY f.position", $event_id);
 
         $event_results = $wpdb->get_results($query, ARRAY_A);
         $this->check_results('retrieving event');

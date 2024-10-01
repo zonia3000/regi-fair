@@ -171,4 +171,76 @@ test('Events Admin API', async ({ page, context, request }) => {
     });
     expect(deleteEventResponse.status()).toEqual(204);
   });
+
+  await test.step('List event having only deleted fields', async () => {
+    const eventName = Math.random().toString(36).substring(7);
+    const createEventResponse = await request.post('/index.php?rest_route=/wpoe/v1/admin/events', {
+      headers: {
+        'Cookie': cookies,
+        'X-WP-Nonce': nonce
+      },
+      data: {
+        name: eventName,
+        date: '2050-01-01T00:00:00.000Z',
+        autoremove: true,
+        autoremovePeriod: 30,
+        waitingList: false,
+        editableRegistrations: true,
+        formFields: [{ label: 'name', fieldType: 'text', required: true }]
+      }
+    });
+    expect(createEventResponse.status()).toEqual(201);
+    let body = await createEventResponse.json();
+    const eventId = body.id;
+
+    let getEventResponse = await request.get(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId}`, {
+      headers: {
+        'Cookie': cookies,
+        'X-WP-Nonce': nonce
+      }
+    });
+    expect(getEventResponse.status()).toEqual(200);
+    body = await getEventResponse.json();
+    expect(body.formFields).toHaveLength(1);
+
+    const registrationResponse = await request.post(`/index.php?rest_route=/wpoe/v1/events/${eventId}`, {
+      data: ['bob']
+    });
+    expect(registrationResponse.status()).toEqual(201);
+
+    const updateEventResponse = await request.put(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId}`, {
+      headers: {
+        'Cookie': cookies,
+        'X-WP-Nonce': nonce
+      },
+      data: {
+        name: eventName,
+        date: '2050-01-01T00:00:00.000Z',
+        autoremove: true,
+        autoremovePeriod: 30,
+        waitingList: false,
+        editableRegistrations: true,
+        formFields: []
+      }
+    });
+    expect(updateEventResponse.status()).toEqual(204);
+
+    getEventResponse = await request.get(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId}`, {
+      headers: {
+        'Cookie': cookies,
+        'X-WP-Nonce': nonce
+      }
+    });
+    expect(getEventResponse.status()).toEqual(200);
+    body = await getEventResponse.json();
+    expect(body.formFields).toHaveLength(0);
+
+    const deleteEventResponse = await request.delete(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId}`, {
+      headers: {
+        'Cookie': cookies,
+        'X-WP-Nonce': nonce
+      }
+    });
+    expect(deleteEventResponse.status()).toEqual(204);
+  });
 });
