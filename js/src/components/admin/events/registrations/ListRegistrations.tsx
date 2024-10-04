@@ -5,7 +5,7 @@ import { RegistrationsList } from "../../../classes/registration";
 import { extractError } from "../../../utils";
 import { __, _x, sprintf } from "@wordpress/i18n";
 import Loading from "../../../Loading";
-import { Button, CheckboxControl, Notice } from "@wordpress/components";
+import { Button, CheckboxControl, Modal, Notice } from "@wordpress/components";
 import Pagination from "../../Pagination";
 
 const ListRegistrations = () => {
@@ -25,6 +25,9 @@ const ListRegistrations = () => {
   const [totalParticipants, setTotalParticipants] = useState(0);
   const [hasDeletedFields, setHasDeletedFields] = useState(false);
   const [showDeletedFields, setShowDeletedFields] = useState(false);
+  const [showConfirmDeleteRegistrationModal, setShowConfirmDeleteRegistrationModal] = useState(false);
+  const [registrationToDelete, setRegistrationToDelete] = useState(null);
+  const [deletionError, setDeletionError] = useState('');
 
   useEffect(() => {
     loadPage();
@@ -81,80 +84,120 @@ const ListRegistrations = () => {
     }
   }
 
+  function openDeleteRegistrationModal(registrationId: string) {
+    setDeletionError('');
+    setRegistrationToDelete(registrationId);
+    setShowConfirmDeleteRegistrationModal(true);
+  }
+
+  async function deleteRegistration() {
+    setLoading(true);
+    try {
+      await apiFetch({
+        path: `/wpoe/v1/admin/events/${eventId}/registrations/${registrationToDelete}`,
+        method: 'DELETE'
+      });
+      setShowConfirmDeleteRegistrationModal(false);
+      await loadPage();
+    } catch (err) {
+      setDeletionError(extractError(err));
+    } finally {
+      setLoading(false);
+    }
+  }
+
   if (loading) {
     return <Loading />;
   }
 
+  if (error) {
+    return (
+      <div className='mb'><Notice status='error' isDismissible={false}>{error}</Notice></div>
+    );
+  }
+
   return (
     <div>
-      {error && <div className='mb'><Notice status='error' isDismissible={false}>{error}</Notice></div>}
-      {!error &&
-        <div>
-          <h1 className='wp-heading-inline'>
-            {sprintf(_x('Registrations for the event "%s"', 'Name of the event', 'wp-open-events'), eventName)}
-          </h1>
-          <Button onClick={download} variant='primary'>
-            {__('Download CSV', 'wp-open-events')}
-          </Button>
-          {downloadError &&
-            <div className='mt'>
-              <Notice status='error' isDismissible={false}>{downloadError}</Notice>
-            </div>
-          }
-          <p>
-            <strong>{__('Total participants', 'wp-open-events')}</strong>: {totalParticipants}
-          </p>
-
-          {hasDeletedFields &&
-            <CheckboxControl
-              label={__('Show deleted fields', 'wp-open-events')}
-              checked={showDeletedFields}
-              onChange={setShowDeletedFields}
-            />
-          }
-
-          <table className='widefat mt'>
-            <thead>
-              <tr>
-                <td>#</td>
-                <td>{__('Date and time', 'wp-open-events')}</td>
-                {head.filter(h => showDeletedFields || !h.deleted).map(h =>
-                  <th key={h.label}>
-                    {h.label}{h.deleted && <span>&nbsp; ({__('deleted', 'wp-open-events')})</span>}
-                  </th>
-                )}
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              {rows.map((r, i) =>
-                <tr key={`row_${i}`}>
-                  {r.filter((_: string, j: number) => j < 2 || showDeletedFields || !head[j - 2].deleted)
-                    .map((c: string, j: number) => (
-                      <td key={`cell_${i}_${j}`}>{c}</td>
-                    ))}
-                  <td>
-                    <Button onClick={() => editRegistration(r[0])} variant='primary'>
-                      {__('Edit', 'wp-open-events')}
-                    </Button>
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-
-          <Pagination
-            page={page}
-            setPage={setPage}
-            pageSize={pageSize}
-            setPageSize={setPageSize}
-            total={total}
-          />
-
-          <Button onClick={back} variant='secondary' className='mt'>
-            {__('Back', 'wp-open-events')}
-          </Button>
+      <h1 className='wp-heading-inline'>
+        {sprintf(_x('Registrations for the event "%s"', 'Name of the event', 'wp-open-events'), eventName)}
+      </h1>
+      <Button onClick={download} variant='primary'>
+        {__('Download CSV', 'wp-open-events')}
+      </Button>
+      {downloadError &&
+        <div className='mt'>
+          <Notice status='error' isDismissible={false}>{downloadError}</Notice>
         </div>
+      }
+      <p>
+        <strong>{__('Total participants', 'wp-open-events')}</strong>: {totalParticipants}
+      </p>
+
+      {hasDeletedFields &&
+        <CheckboxControl
+          label={__('Show deleted fields', 'wp-open-events')}
+          checked={showDeletedFields}
+          onChange={setShowDeletedFields}
+        />
+      }
+
+      <table className='widefat mt'>
+        <thead>
+          <tr>
+            <td>#</td>
+            <td>{__('Date and time', 'wp-open-events')}</td>
+            {head.filter(h => showDeletedFields || !h.deleted).map(h =>
+              <th key={h.label}>
+                {h.label}{h.deleted && <span>&nbsp; ({__('deleted', 'wp-open-events')})</span>}
+              </th>
+            )}
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((r, i) =>
+            <tr key={`row_${i}`}>
+              {r.filter((_: string, j: number) => j < 2 || showDeletedFields || !head[j - 2].deleted)
+                .map((c: string, j: number) => (
+                  <td key={`cell_${i}_${j}`}>{c}</td>
+                ))}
+              <td>
+                <Button onClick={() => editRegistration(r[0])} variant='primary'>
+                  {__('Edit', 'wp-open-events')}
+                </Button>
+                <Button onClick={() => openDeleteRegistrationModal(r[0])} variant='secondary' className='ml'>
+                  {__('Delete', 'wp-open-events')}
+                </Button>
+              </td>
+            </tr>
+          )}
+        </tbody>
+      </table>
+
+      <Pagination
+        page={page}
+        setPage={setPage}
+        pageSize={pageSize}
+        setPageSize={setPageSize}
+        total={total}
+      />
+
+      <Button onClick={back} variant='secondary' className='mt'>
+        {__('Back', 'wp-open-events')}
+      </Button>
+
+      {showConfirmDeleteRegistrationModal &&
+        <Modal title={__('Confirm registration deletion', 'wp-open-events')} onRequestClose={() => setShowConfirmDeleteRegistrationModal(false)}>
+          <p>{sprintf(_x('Do you really want to delete the registration #%d?', 'id of the registration', 'wp-open-events'), registrationToDelete)}</p>
+          {deletionError &&
+            <Notice status='error' className='mt-2 mb-2' isDismissible={false}>
+              {deletionError}
+            </Notice>
+          }
+          <Button variant='primary' onClick={deleteRegistration}>
+            {__('Confirm', 'wp-open-events')}
+          </Button>
+        </Modal>
       }
     </div>
   );

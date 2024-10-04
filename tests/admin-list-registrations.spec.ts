@@ -80,4 +80,19 @@ test('Admin list and download registrations', async ({ page, context, request })
     expect(lines[2].split(',')[2]).toEqual(`"paola"`);
     expect(lines[3].split(',')[2]).toEqual(`"mario"`);
   });
+
+  await test.step('Edit first registration', async () => {
+    await page.getByRole('button', { name: 'Edit' }).first().click();
+    await expect(page.getByText(/Edit registration #/)).toBeVisible();
+    await page.getByRole('textbox').fill('xxx');
+    await page.getByRole('button', { name: 'Update' }).click();
+    await expect(page.getByRole('row', { name: 'xxx' })).toBeVisible();
+  });
+
+  await test.step('Delete first registration', async () => {
+    await expect(page.getByRole('row')).toHaveCount(4);
+    await page.getByRole('button', { name: 'Delete' }).first().click();
+    await page.getByRole('dialog').getByRole('button', { name: 'Confirm' }).click();
+    await expect(page.getByRole('row')).toHaveCount(3);
+  });
 });
