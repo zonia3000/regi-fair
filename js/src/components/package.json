@@ -19,7 +19,7 @@
     "@testing-library/user-event": "^14.5.2",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
-    "@vitest/coverage-v8": "^1.6.0",
+    "@vitest/coverage-v8": "^2.1.2",
     "@wordpress/api-fetch": "^7.1.0",
     "@wordpress/components": "^28.1.0",
     "@wordpress/i18n": "^5.1.0",
@@ -28,7 +28,7 @@
     "css-loader": "^7.1.1",
     "msw": "^2.3.1",
     "style-loader": "^4.0.0",
-    "vitest": "^1.6.0",
+    "vitest": "^2.1.2",
     "webpack": "^5.91.0",
     "webpack-cli": "^5.1.4"
   },
