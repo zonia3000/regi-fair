@@ -10,6 +10,7 @@ test('Admin edit and delete registration with email notification', async ({ page
   const eventName = Math.random().toString(36).substring(7);
 
   let eventId: number;
+  let fieldId: number;
 
   await test.step('Create event', async () => {
     const response = await request.post('/index.php?rest_route=/wpoe/v1/admin/events', {
@@ -37,11 +38,12 @@ test('Admin edit and delete registration with email notification', async ({ page
     expect(response.status()).toEqual(201);
     const body = await response.json();
     eventId = body.id;
+    fieldId = body.formFields[0].id;
   });
 
   await test.step('Create a registration to the event', async () => {
     let response = await request.post(`/index.php?rest_route=/wpoe/v1/events/${eventId}`, {
-      data: ['test@example.com']
+      data: { [fieldId]: 'test@example.com' }
     });
     expect(response.status()).toEqual(201);
   });
@@ -66,7 +68,7 @@ test('Admin edit and delete registration with email notification', async ({ page
         'Cookie': cookies,
         'X-WP-Nonce': nonce
       },
-      data: ['foo']
+      data: { [fieldId]: 'foo' }
     });
     expect(response.status()).toEqual(400);
     const body = await response.json();
@@ -80,7 +82,7 @@ test('Admin edit and delete registration with email notification', async ({ page
         'Cookie': cookies,
         'X-WP-Nonce': nonce
       },
-      data: ['test2@example.com']
+      data: { [fieldId]: 'test2@example.com' }
     });
     expect(response.status()).toEqual(204);
   });
@@ -94,7 +96,7 @@ test('Admin edit and delete registration with email notification', async ({ page
     });
     expect(response.status()).toEqual(200);
     const { values } = await response.json();
-    expect(values[0]).toEqual('test2@example.com');
+    expect(values[fieldId]).toEqual('test2@example.com');
   });
 
   await test.step('Delete the registration', async () => {

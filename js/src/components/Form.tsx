@@ -12,7 +12,7 @@ import { EventConfiguration } from './classes/event';
 const Form = (props: FormProps) => {
     const [event, setEvent] = useState(null as EventConfiguration);
     const [found, setFound] = useState(false);
-    const [fields, setFields] = useState([] as string[]);
+    const [fields, setFields] = useState({} as Record<number, string>);
     const [error, setError] = useState('');
     const [submitted, setSubmitted] = useState(false);
     const [fieldsErrors, setFieldsErrors] = useState({});
@@ -42,7 +42,7 @@ const Form = (props: FormProps) => {
             eventConfig = await apiFetch({ path: `/wpoe/v1/events/${props.eventId}` });
             setFound(true);
             setEvent(eventConfig);
-            setFields(eventConfig.formFields.map(_ => ''));
+            setFields(Object.fromEntries(eventConfig.formFields.map(f => [f.id, ''])));
             if (!isNaN(eventConfig.availableSeats)) {
                 setAvailableSeats(eventConfig.availableSeats);
             }
@@ -67,7 +67,7 @@ const Form = (props: FormProps) => {
         }
         const token = match[1];
         try {
-            const registration: string[] = await apiFetch({ path: `/wpoe/v1/events/${props.eventId}/${token}` });
+            const registration: Record<number, string> = await apiFetch({ path: `/wpoe/v1/events/${props.eventId}/${token}` });
             setRegistrationToken(token);
             setFields(registration);
             setEditingExisting(true);
@@ -97,7 +97,7 @@ const Form = (props: FormProps) => {
                     data: fields
                 });
                 // reset field values
-                setFields(fields.map(_ => ''));
+                setFields(Object.fromEntries(Object.entries(fields).map(f => [f[0], ''])));
             }
             if (result.remaining !== null) {
                 setAvailableSeats(result.remaining);
@@ -128,7 +128,7 @@ const Form = (props: FormProps) => {
             // reset registration token on URL
             window.location.hash = '';
             // reset field values
-            setFields(fields.map(_ => ''));
+            setFields(Object.fromEntries(Object.entries(fields).map(f => [f[0], ''])));
             setDeleted(true);
             setShowConfirmDeleteRegistrationModal(false);
             setEditingExisting(false);

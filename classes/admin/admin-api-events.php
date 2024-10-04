@@ -4,10 +4,10 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-require_once (WPOE_PLUGIN_DIR . 'classes/model/event.php');
-require_once (WPOE_PLUGIN_DIR . 'classes/model/form-field.php');
-require_once (WPOE_PLUGIN_DIR . 'classes/dao/dao-events.php');
-require_once (WPOE_PLUGIN_DIR . 'classes/api-utils.php');
+require_once(WPOE_PLUGIN_DIR . 'classes/model/event.php');
+require_once(WPOE_PLUGIN_DIR . 'classes/model/form-field.php');
+require_once(WPOE_PLUGIN_DIR . 'classes/dao/dao-events.php');
+require_once(WPOE_PLUGIN_DIR . 'classes/api-utils.php');
 
 class WPOE_Events_Admin_Controller extends WP_REST_Controller
 {
@@ -144,7 +144,8 @@ class WPOE_Events_Admin_Controller extends WP_REST_Controller
         try {
             $event = $this->get_event_from_request($request);
             $event_id = $this->dao->create_event($event);
-            return new WP_REST_Response(['id' => $event_id], 201);
+            $event = $this->dao->get_event($event_id);
+            return new WP_REST_Response($event, 201);
         } catch (WPOE_Validation_Exception $ex) {
             return new WP_Error('invalid_payload', $ex->getMessage(), ['status' => 400]);
         } catch (Exception $ex) {

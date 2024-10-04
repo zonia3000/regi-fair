@@ -28,6 +28,7 @@ test('Validate registration payload', async ({ page, context, request }) => {
   }
 
   let eventId1: number;
+  let fieldId1Event1: number, fieldId2Event1: number;
   await test.step('Create first test event', async () => {
     const response = await request.post('/index.php?rest_route=/wpoe/v1/admin/events', {
       headers: {
@@ -42,9 +43,12 @@ test('Validate registration payload', async ({ page, context, request }) => {
     expect(response.status()).toEqual(201);
     const body = await response.json();
     eventId1 = body.id;
+    fieldId1Event1 = body.formFields[0].id;
+    fieldId2Event1 = body.formFields[1].id;
   });
 
   let eventId2: number;
+  let fieldId1Event2: number, fieldId2Event2: number;
   await test.step('Create second test event', async () => {
     const response = await request.post('/index.php?rest_route=/wpoe/v1/admin/events', {
       headers: {
@@ -59,11 +63,13 @@ test('Validate registration payload', async ({ page, context, request }) => {
     expect(response.status()).toEqual(201);
     const body = await response.json();
     eventId2 = body.id;
+    fieldId1Event2 = body.formFields[0].id;
+    fieldId2Event2 = body.formFields[1].id;
   });
 
   await test.step('Detect invalid payload structure', async () => {
     let response = await request.post(`/index.php?rest_route=/wpoe/v1/events/${eventId1}`, {
-      data: { 'foo': 'bar' }
+      data: 'foo'
     });
     expect(response.status()).toEqual(400);
     let body = await response.json();
@@ -73,7 +79,7 @@ test('Validate registration payload', async ({ page, context, request }) => {
 
   await test.step('Detect invalid number of fields', async () => {
     let response = await request.post(`/index.php?rest_route=/wpoe/v1/events/${eventId1}`, {
-      data: ['foo', 'bar', 'baz']
+      data: { [fieldId1Event1]: 'foo', [fieldId2Event1]: 'bar', [fieldId1Event2]: 'baz' }
     });
     expect(response.status()).toEqual(400);
     let body = await response.json();
@@ -81,10 +87,20 @@ test('Validate registration payload', async ({ page, context, request }) => {
     expect(body.message).toEqual('Invalid number of fields');
   });
 
+  await test.step('Detect missing keys', async () => {
+    let response = await request.post(`/index.php?rest_route=/wpoe/v1/events/${eventId1}`, {
+      data: { [fieldId1Event2]: 'foo', [fieldId2Event2]: 'bar' }
+    });
+    expect(response.status()).toEqual(400);
+    let body = await response.json();
+    expect(body.code).toEqual('invalid_form_fields');
+    expect(body.message).toEqual(`Missing field ${fieldId1Event1}`);
+  });
+
   let registrationToken: string;
   await test.step('Create a valid registration to the first event', async () => {
     let response = await request.post(`/index.php?rest_route=/wpoe/v1/events/${eventId1}`, {
-      data: ['foo', 'test@example.com']
+      data: { [fieldId1Event1]: 'foo', [fieldId2Event1]: 'test@example.com' }
     });
     expect(response.status()).toEqual(201);
     let body = await response.json();
@@ -93,7 +109,7 @@ test('Validate registration payload', async ({ page, context, request }) => {
 
   await test.step('Update registration detects event id mismatch', async () => {
     const response = await request.put(`/index.php?rest_route=/wpoe/v1/events/${eventId2}/${registrationToken}`, {
-      data: ['foo2', 'test2@example.com']
+      data: { [fieldId1Event2]: 'foo2', [fieldId2Event2]: 'test2@example.com' }
     });
     expect(response.status()).toEqual(400);
     let body = await response.json();
@@ -126,7 +142,7 @@ test('Validate registration payload', async ({ page, context, request }) => {
 
   await test.step('Attempt to update a registration that is not editable', async () => {
     const response = await request.put(`/index.php?rest_route=/wpoe/v1/events/${eventId1}/${registrationToken}`, {
-      data: ['foo2', 'test2@example.com']
+      data: { [fieldId1Event1]: 'foo2', [fieldId2Event1]: 'test2@example.com' }
     });
     expect(response.status()).toEqual(403);
     let body = await response.json();

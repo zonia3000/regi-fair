@@ -10,6 +10,7 @@ test('Admin edit registration with max participants', async ({ page, context, re
   const eventName = Math.random().toString(36).substring(7);
 
   let eventId: number;
+  let fieldId: number;
 
   await test.step('Create event', async () => {
     const response = await request.post('/index.php?rest_route=/wpoe/v1/admin/events', {
@@ -38,11 +39,12 @@ test('Admin edit registration with max participants', async ({ page, context, re
     expect(response.status()).toEqual(201);
     const body = await response.json();
     eventId = body.id;
+    fieldId = body.formFields[0].id;
   });
 
   await test.step('Create a registration to the event', async () => {
     let response = await request.post(`/index.php?rest_route=/wpoe/v1/events/${eventId}`, {
-      data: [1]
+      data: { [fieldId]: 1 }
     });
     expect(response.status()).toEqual(201);
   });
@@ -67,7 +69,7 @@ test('Admin edit registration with max participants', async ({ page, context, re
         'Cookie': cookies,
         'X-WP-Nonce': nonce
       },
-      data: [3]
+      data: { [fieldId]: 3 }
     });
     expect(response.status()).toEqual(400);
     const body = await response.json();

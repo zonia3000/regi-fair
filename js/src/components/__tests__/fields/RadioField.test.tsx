@@ -40,8 +40,7 @@ test('Render required radio field', async () => {
 
   await user.click(screen.getByRole('button', { name: 'Register to the event' }));
 
-  expect(requestBody.length).toEqual(1);
-  expect(requestBody[0]).toEqual('option2');
+  expect(requestBody['1']).toEqual('option2');
 
   server.restoreHandlers();
 });

@@ -81,7 +81,7 @@ test('Update registration without email field', async () => {
 
   server.use(
     http.get('/wpoe/v1/admin/events/1/registrations/1', async () => {
-      return HttpResponse.json({ values: ['foo'] });
+      return HttpResponse.json({ values: { 1: 'foo' } });
     })
   );
 
@@ -109,8 +109,7 @@ test('Update registration without email field', async () => {
   await user.type(screen.getByRole('textbox'), 'bar');
   await user.click(screen.getByRole('button', { name: 'Update' }));
 
-  expect(requestBody).toHaveLength(1);
-  expect(requestBody[0]).toEqual('foobar');
+  expect(requestBody['1']).toEqual('foobar');
 });
 
 test('Update registration with email field', async () => {
@@ -127,7 +126,7 @@ test('Update registration with email field', async () => {
 
   server.use(
     http.get('/wpoe/v1/admin/events/1/registrations/1', async () => {
-      return HttpResponse.json({ values: ['foo@example.com'] });
+      return HttpResponse.json({ values: { 1: 'foo@example.com' } });
     })
   );
 
@@ -157,8 +156,7 @@ test('Update registration with email field', async () => {
   await user.type(screen.getByRole('textbox'), 'bar@example.com');
   await user.click(screen.getByRole('button', { name: 'Update' }));
 
-  expect(requestBody).toHaveLength(1);
-  expect(requestBody[0]).toEqual('bar@example.com');
+  expect(requestBody['1']).toEqual('bar@example.com');
 });
 
 test('Update registration failing validation', async () => {
@@ -176,7 +174,7 @@ test('Update registration failing validation', async () => {
 
   server.use(
     http.get('/wpoe/v1/admin/events/1/registrations/1', async () => {
-      return HttpResponse.json({ values: ['foo@example.com'] });
+      return HttpResponse.json({ values: { 1: 'foo@example.com' } });
     })
   );
 
@@ -186,7 +184,7 @@ test('Update registration failing validation', async () => {
       requestBody = await request.json();
       return HttpResponse.json({
         code: 'invalid_form_fields',
-        data: { fieldsErrors: { "0": "Field is required" } }
+        data: { fieldsErrors: { 1: "Field is required" } }
       }, { status: 400 });
     })
   );
@@ -210,8 +208,7 @@ test('Update registration failing validation', async () => {
   await user.clear(screen.getByRole('textbox'));
   await user.click(screen.getByRole('button', { name: 'Update' }));
 
-  expect(requestBody).toHaveLength(1);
-  expect(requestBody[0]).toEqual('');
+  expect(requestBody['1']).toEqual('');
 
   expect(await screen.findByText('Field is required')).toBeInTheDocument();
 });

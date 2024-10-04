@@ -40,7 +40,7 @@ test('Available seats on event with number of people field', async ({ page, cont
     eventId = body.id;
   });
 
-  let fieldId;
+  let fieldId: number;
   await test.step('Retrieve field id', async () => {
     const response = await request.get(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId}`, {
       headers: {
@@ -74,27 +74,27 @@ test('Available seats on event with number of people field', async ({ page, cont
 
   await test.step('Reject float number of people', async () => {
     const response = await request.post(`/index.php?rest_route=/wpoe/v1/events/${eventId}`, {
-      data: ['1.5']
+      data: { [fieldId]: '1.5' }
     });
     expect(response.status()).toEqual(400);
     const body = await response.json();
-    expect(body.data.fieldsErrors[0]).toEqual('Number must be an integer');
+    expect(body.data.fieldsErrors[fieldId]).toEqual('Number must be an integer');
   });
 
   await test.step('Reject number of people lower than 1', async () => {
     const response = await request.post(`/index.php?rest_route=/wpoe/v1/events/${eventId}`, {
-      data: ['0']
+      data: { [fieldId]: '0' }
     });
     expect(response.status()).toEqual(400);
     const body = await response.json();
-    expect(body.data.fieldsErrors[0]).toEqual('You have to register at least one person');
+    expect(body.data.fieldsErrors[fieldId]).toEqual('You have to register at least one person');
   });
 
   let registrationToken: string;
 
   await test.step('Register 2 people', async () => {
     const response = await request.post(`/index.php?rest_route=/wpoe/v1/events/${eventId}`, {
-      data: ['2']
+      data: { [fieldId]: '2' }
     });
     expect(response.status()).toEqual(201);
     const body = await response.json();
@@ -133,11 +133,11 @@ test('Available seats on event with number of people field', async ({ page, cont
 
   await test.step('Attempt to register a number of people greater than the limit', async () => {
     const response = await request.post(`/index.php?rest_route=/wpoe/v1/events/${eventId}`, {
-      data: ['4']
+      data: { [fieldId]: '4' }
     });
     expect(response.status()).toEqual(400);
     const body = await response.json();
-    expect(body.data.fieldsErrors[0]).toEqual('It is not possible to add more than 3 people in the same registration');
+    expect(body.data.fieldsErrors[fieldId]).toEqual('It is not possible to add more than 3 people in the same registration');
   });
 
   await test.step('Remove max to number of people field', async () => {
@@ -170,7 +170,7 @@ test('Available seats on event with number of people field', async ({ page, cont
 
   await test.step('Register other 4 people', async () => {
     const response = await request.post(`/index.php?rest_route=/wpoe/v1/events/${eventId}`, {
-      data: ['4']
+      data: { [fieldId]: '4' }
     });
     expect(response.status()).toEqual(201);
     const body = await response.json();
@@ -179,25 +179,25 @@ test('Available seats on event with number of people field', async ({ page, cont
 
   await test.step('Attempt to register more than available seats', async () => {
     const response = await request.post(`/index.php?rest_route=/wpoe/v1/events/${eventId}`, {
-      data: ['5']
+      data: { [fieldId]: '5' }
     });
     expect(response.status()).toEqual(400);
     const body = await response.json();
-    expect(body.data.fieldsErrors[0]).toEqual('The number is greater than the available number of seats');
+    expect(body.data.fieldsErrors[fieldId]).toEqual('The number is greater than the available number of seats');
   });
 
   await test.step('Update the first registration attempting to register more than available seats', async () => {
     const response = await request.put(`/index.php?rest_route=/wpoe/v1/events/${eventId}/${registrationToken}`, {
-      data: ['7']
+      data: { [fieldId]: '7' }
     });
     expect(response.status()).toEqual(400);
     const body = await response.json();
-    expect(body.data.fieldsErrors[0]).toEqual('The number is greater than the available number of seats');
+    expect(body.data.fieldsErrors[fieldId]).toEqual('The number is greater than the available number of seats');
   });
 
   await test.step('Update the first registration adding one person', async () => {
     const response = await request.put(`/index.php?rest_route=/wpoe/v1/events/${eventId}/${registrationToken}`, {
-      data: ['3']
+      data: { [fieldId]: '3' }
     });
     expect(response.status()).toEqual(200);
     const body = await response.json();
@@ -206,7 +206,7 @@ test('Available seats on event with number of people field', async ({ page, cont
 
   await test.step('Update the first registration removing one person', async () => {
     const response = await request.put(`/index.php?rest_route=/wpoe/v1/events/${eventId}/${registrationToken}`, {
-      data: ['2']
+      data: { [fieldId]: '2' }
     });
     expect(response.status()).toEqual(200);
     const body = await response.json();
@@ -238,6 +238,7 @@ test('Available seats on event without number of people field', async ({ page, c
   const eventName = Math.random().toString(36).substring(7);
 
   let eventId: number;
+  let fieldId: number;
 
   await test.step('Create event with max participants and without number of people field', async () => {
     const response = await request.post(`/index.php?rest_route=/wpoe/v1/admin/events`, {
@@ -263,13 +264,14 @@ test('Available seats on event without number of people field', async ({ page, c
     expect(response.status()).toEqual(201);
     const body = await response.json();
     eventId = body.id;
+    fieldId = body.formFields[0].id;
   });
 
   let registrationToken: string;
 
   await test.step('Register one person', async () => {
     const response = await request.post(`/index.php?rest_route=/wpoe/v1/events/${eventId}`, {
-      data: ['Mario']
+      data: { [fieldId]: 'Mario' }
     });
     expect(response.status()).toEqual(201);
     const body = await response.json();
@@ -279,7 +281,7 @@ test('Available seats on event without number of people field', async ({ page, c
 
   await test.step('Register another person', async () => {
     const response = await request.post(`/index.php?rest_route=/wpoe/v1/events/${eventId}`, {
-      data: ['Jenny']
+      data: { [fieldId]: 'Jenny' }
     });
     expect(response.status()).toEqual(201);
     const body = await response.json();
@@ -288,7 +290,7 @@ test('Available seats on event without number of people field', async ({ page, c
 
   await test.step('The third registration is rejected', async () => {
     const response = await request.post(`/index.php?rest_route=/wpoe/v1/events/${eventId}`, {
-      data: ['Paul']
+      data: { [fieldId]: 'Paul' }
     });
     expect(response.status()).toEqual(400);
     const body = await response.json();
@@ -298,7 +300,7 @@ test('Available seats on event without number of people field', async ({ page, c
 
   await test.step('It is still possible to modify the first registration', async () => {
     const response = await request.put(`/index.php?rest_route=/wpoe/v1/events/${eventId}/${registrationToken}`, {
-      data: ['Maria']
+      data: { [fieldId]: 'Maria' }
     });
     expect(response.status()).toEqual(200);
     const body = await response.json();
@@ -374,6 +376,7 @@ test('Event with optional "number of people" field', async ({ page, context, req
   const eventName = Math.random().toString(36).substring(7);
 
   let eventId: number;
+  let fieldId: number;
   await test.step('Create event', async () => {
     const response = await request.post(`/index.php?rest_route=/wpoe/v1/admin/events`, {
       headers: {
@@ -402,11 +405,12 @@ test('Event with optional "number of people" field', async ({ page, context, req
     });
     const body = await response.json();
     eventId = body.id;
+    fieldId = body.formFields[0].id;
   });
 
   await test.step('Register to test event without filling the number of people field', async () => {
     const response = await request.post(`/index.php?rest_route=/wpoe/v1/events/${eventId}`, {
-      data: ['']
+      data: { [fieldId]: '' }
     });
     expect(response.status()).toEqual(201);
     const body = await response.json();
@@ -415,7 +419,7 @@ test('Event with optional "number of people" field', async ({ page, context, req
 
   await test.step('Register to test event specifying the number of people', async () => {
     const response = await request.post(`/index.php?rest_route=/wpoe/v1/events/${eventId}`, {
-      data: ['2']
+      data: { [fieldId]: '2' }
     });
     expect(response.status()).toEqual(201);
     const body = await response.json();

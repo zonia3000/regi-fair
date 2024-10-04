@@ -26,7 +26,7 @@ describe('Event registration', () => {
         });
       }),
       http.get('/wpoe/v1/events/1/1234', async () => {
-        return HttpResponse.json(['myvalue']);
+        return HttpResponse.json({ 1: 'myvalue' });
       }),
       http.post('/wpoe/v1/events/1/1234', async ({ request }) => {
         requestBody = await request.json();
@@ -46,8 +46,7 @@ describe('Event registration', () => {
     await user.type(field1, '-updated');
     await user.click(screen.getByRole('button', { name: 'Update the registration' }));
 
-    expect(requestBody.length).toEqual(1);
-    expect(requestBody[0]).toEqual('myvalue-updated');
+    expect(requestBody['1']).toEqual('myvalue-updated');
 
     const msg2 = screen.getAllByText(/Your registration has been updated/);
     expect(msg2.length).toBeGreaterThan(1);
@@ -69,7 +68,7 @@ describe('Event registration', () => {
         });
       }),
       http.get('/wpoe/v1/events/1/1234', async () => {
-        return HttpResponse.json(['myvalue']);
+        return HttpResponse.json({ 1 : 'myvalue' });
       }),
       http.post('/wpoe/v1/events/1/1234', async () => {
         return HttpResponse.json({ remaining: 3 });
@@ -112,7 +111,7 @@ describe('Event registration', () => {
         });
       }),
       http.get('/wpoe/v1/events/1/1234', async () => {
-        return HttpResponse.json(['myvalue']);
+        return HttpResponse.json({ 1: 'myvalue' });
       })
     );
 
@@ -203,8 +202,7 @@ describe('Event registration', () => {
     await user.type(field, 'foo');
     await user.click(screen.getByRole('button', { name: 'Register to the event' }));
 
-    expect(requestBody.length).toEqual(1);
-    expect(requestBody[0]).toEqual('foo');
+    expect(requestBody['1']).toEqual('foo');
 
     const msg2 = await screen.findAllByText(/You took the last seat available/)
     expect(msg2.length).toBeGreaterThan(0);

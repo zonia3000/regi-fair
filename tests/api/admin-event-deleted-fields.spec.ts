@@ -113,7 +113,7 @@ test('Delete published event fields', async ({ page, context, request }) => {
     expect(response.status()).toEqual(204);
   });
 
-  let nameFieldId, numberOfPeopleFieldId;
+  let nameFieldId: number, surnameFieldId: number, numberOfPeopleFieldId: number;
   await test.step('Retrieve fields ids', async () => {
     const response = await request.get(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId}`, {
       headers: {
@@ -123,17 +123,18 @@ test('Delete published event fields', async ({ page, context, request }) => {
     });
     expect(response.status()).toEqual(200);
     const { formFields } = await response.json();
-    nameFieldId = formFields.filter(f => f.label === 'name')[0].id;
-    numberOfPeopleFieldId = formFields.filter(f => f.label === 'number-of-people')[0].id;
+    nameFieldId = formFields[0].id;
+    surnameFieldId = formFields[1].id;
+    numberOfPeopleFieldId = formFields[2].id;
   });
 
   await test.step('Insert some registrations', async () => {
     let response = await request.post(`/index.php?rest_route=/wpoe/v1/events/${eventId}`, {
-      data: ['mario', 'rossi', 2]
+      data: { [nameFieldId]: 'mario', [surnameFieldId]: 'rossi', [numberOfPeopleFieldId]: 2 }
     });
     expect(response.status()).toEqual(201);
     response = await request.post(`/index.php?rest_route=/wpoe/v1/events/${eventId}`, {
-      data: ['anna', 'bianchi', 4]
+      data: { [nameFieldId]: 'anna', [surnameFieldId]: 'bianchi', [numberOfPeopleFieldId]: 4 }
     });
     expect(response.status()).toEqual(201);
   });

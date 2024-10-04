@@ -13,6 +13,7 @@ test('Admin list and download registrations', async ({ page, context, request })
   const eventName = Math.random().toString(36).substring(7);
 
   let eventId: number;
+  let fieldId: number;
 
   await test.step('Create event', async () => {
     const response = await request.post('/index.php?rest_route=/wpoe/v1/admin/events', {
@@ -37,19 +38,20 @@ test('Admin list and download registrations', async ({ page, context, request })
     expect(response.status()).toEqual(201);
     const body = await response.json();
     eventId = body.id;
+    fieldId = body.formFields[0].id;
   });
 
   await test.step('Create some registrations to the event', async () => {
     let response = await request.post(`/index.php?rest_route=/wpoe/v1/events/${eventId}`, {
-      data: ['mario']
+      data: { [fieldId]: 'mario' }
     });
     expect(response.status()).toEqual(201);
     response = await request.post(`/index.php?rest_route=/wpoe/v1/events/${eventId}`, {
-      data: ['paola']
+      data: { [fieldId]: 'paola' }
     });
     expect(response.status()).toEqual(201);
     response = await request.post(`/index.php?rest_route=/wpoe/v1/events/${eventId}`, {
-      data: ['giovanna']
+      data: { [fieldId]: 'giovanna' }
     });
     expect(response.status()).toEqual(201);
   });

@@ -93,28 +93,27 @@ class WPOE_Public_Controller extends WP_REST_Controller
                 return new WP_Error('event_not_found', __('Event not found', 'wp-open-events'), ['status' => 400]);
             }
 
-            $input = json_decode($request->get_body());
+            $input = json_decode($request->get_body(), true);
             $error = validate_event_request($event, $input);
             if ($error !== null) {
                 return $error;
             }
 
-            $values = map_input_to_values($event, $input);
             $user_email = get_user_email($event, $input);
             $number_of_people = get_number_of_people($event, $input);
 
             $registration_token = bin2hex(openssl_random_pseudo_bytes(16));
 
-            $remaining_seats = $this->registrations_dao->register_to_event($event_id, md5($registration_token), $values, $number_of_people, $event->maxParticipants);
+            $remaining_seats = $this->registrations_dao->register_to_event($event_id, md5($registration_token), $input, $number_of_people, $event->maxParticipants);
             if ($remaining_seats === false) {
                 return get_no_more_seats_error($event);
             }
 
             if (count($user_email) > 0) {
-                WPOE_Mail_Sender::send_registration_confirmation($event, $user_email, $registration_token, $values);
+                WPOE_Mail_Sender::send_registration_confirmation($event, $user_email, $registration_token, $input);
             }
             if ($event->adminEmail !== null) {
-                WPOE_Mail_Sender::send_new_registration_to_admin($event, $values);
+                WPOE_Mail_Sender::send_new_registration_to_admin($event, $input);
             }
 
             return new WP_REST_Response([
@@ -150,26 +149,25 @@ class WPOE_Public_Controller extends WP_REST_Controller
                 return new WP_Error('registration_not_found', __('Registration not found', 'wp-open-events'), ['status' => 400]);
             }
 
-            $input = json_decode($request->get_body());
+            $input = json_decode($request->get_body(), true);
             $error = validate_event_request($event, $input);
             if ($error !== null) {
                 return $error;
             }
 
-            $values = map_input_to_values($event, $input);
             $user_email = get_user_email($event, $input);
             $number_of_people = get_number_of_people($event, $input);
 
-            $remaining_seats = $this->registrations_dao->update_registration($registration['id'], $values, $event_id, $number_of_people, $event->maxParticipants);
+            $remaining_seats = $this->registrations_dao->update_registration($registration['id'], $input, $event_id, $number_of_people, $event->maxParticipants);
             if ($remaining_seats === false) {
                 return get_no_more_seats_error($event);
             }
 
             if (count($user_email) > 0) {
-                WPOE_Mail_Sender::send_registration_updated_confirmation($event, $user_email, $token, $values);
+                WPOE_Mail_Sender::send_registration_updated_confirmation($event, $user_email, $token, $input);
             }
             if ($event->adminEmail !== null) {
-                WPOE_Mail_Sender::send_registration_updated_to_admin($event, $values);
+                WPOE_Mail_Sender::send_registration_updated_to_admin($event, $input);
             }
 
             return new WP_REST_Response([

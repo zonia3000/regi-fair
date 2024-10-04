@@ -202,9 +202,10 @@ test('Events Admin API', async ({ page, context, request }) => {
     expect(getEventResponse.status()).toEqual(200);
     body = await getEventResponse.json();
     expect(body.formFields).toHaveLength(1);
+    const fieldId = body.formFields[0].id;
 
     const registrationResponse = await request.post(`/index.php?rest_route=/wpoe/v1/events/${eventId}`, {
-      data: ['bob']
+      data: { [fieldId]: 'bob' }
     });
     expect(registrationResponse.status()).toEqual(201);
 

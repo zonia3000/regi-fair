@@ -8,13 +8,15 @@ import RadioField from './fields/RadioField';
 
 const FormFields = (props: FormFieldsProps) => {
 
-  function setFieldValue(newValue: string, index: number) {
-    props.setFieldsValues(props.fieldsValues.map((oldValue: string, i: number) => (index === i) ? newValue : oldValue));
+  function setFieldValue(key: number, newValue: string) {
+    props.setFieldsValues(Object.fromEntries(
+      Object.entries(props.fieldsValues).map(e => e[0] === key.toString() ? [e[0], newValue] : e))
+    );
   }
 
   return (
-    props.formFields.map((field: Field, index: number) => {
-      return (<div key={`field-${index}`} className={index.toString() in props.fieldsErrors ? 'form-error mt' : 'mt'}>
+    props.formFields.map((field: Field) => {
+      return (<div key={`field-${field.id}`} className={field.id in props.fieldsErrors ? 'form-error mt' : 'mt'}>
         {
           (field.fieldType === 'text' || field.fieldType === 'email' || field.fieldType === 'number')
           && <InputField
@@ -22,17 +24,18 @@ const FormFields = (props: FormFieldsProps) => {
             label={field.label} disabled={props.disabled} type={field.fieldType}
             min={field.extra && 'min' in field.extra ? Number(field.extra.min) : undefined}
             max={field.extra && 'max' in field.extra ? Number(field.extra.max) : undefined}
-            value={props.fieldsValues[index]} setValue={(v: string) => setFieldValue(v, index)} />
+            value={props.fieldsValues[field.id]} setValue={(v: string) => setFieldValue(field.id, v)} />
         }
         {
           field.fieldType === 'radio'
           && <RadioField
             required={field.required}
             label={field.label} disabled={props.disabled} options={(field.extra as any).options}
-            value={props.fieldsValues[index]} setValue={(v: string) => setFieldValue(v, index)} />
+            value={props.fieldsValues[field.id]} setValue={(v: string) => setFieldValue(field.id, v)} />
         }
-        {index.toString() in props.fieldsErrors &&
-          <span className='error-text'>{(props.fieldsErrors as any)[index.toString()]}</span>}
+        {field.id.toString() in props.fieldsErrors &&
+          <span className='error-text'>{(props.fieldsErrors as any)[field.id.toString()]}</span>
+        }
       </div>);
     })
   );

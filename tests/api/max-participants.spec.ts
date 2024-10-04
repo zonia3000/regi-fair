@@ -9,6 +9,7 @@ test('Reach the maximum number of seats', async ({ page, context, request }) => 
 
   const eventName = Math.random().toString(36).substring(7);
   let eventId: number;
+  let fieldId: number;
 
   await test.step('Create event with maximum number of participants', async () => {
     const response = await request.post('/index.php?rest_route=/wpoe/v1/admin/events', {
@@ -36,32 +37,33 @@ test('Reach the maximum number of seats', async ({ page, context, request }) => 
     expect(response.status()).toEqual(201);
     const body = await response.json();
     eventId = body.id;
+    fieldId = body.formFields[0].id;
   });
 
   await test.step('Add registrations until the limit is reached', async () => {
     let response = await request.post(`/index.php?rest_route=/wpoe/v1/events/${eventId}`, {
-      data: ['value1']
+      data: { [fieldId]: 'value1' }
     });
     expect(response.status()).toEqual(201);
     let body = await response.json();
     expect(body.remaining).toEqual(2);
 
     response = await request.post(`/index.php?rest_route=/wpoe/v1/events/${eventId}`, {
-      data: ['value2']
+      data: { [fieldId]: 'value2' }
     });
     expect(response.status()).toEqual(201);
     body = await response.json();
     expect(body.remaining).toEqual(1);
 
     response = await request.post(`/index.php?rest_route=/wpoe/v1/events/${eventId}`, {
-      data: ['value3']
+      data: { [fieldId]: 'value3' }
     });
     expect(response.status()).toEqual(201);
     body = await response.json();
     expect(body.remaining).toEqual(0);
 
     response = await request.post(`/index.php?rest_route=/wpoe/v1/events/${eventId}`, {
-      data: ['value4']
+      data: { [fieldId]: 'value4' }
     });
     expect(response.status()).toEqual(400);
     body = await response.json();

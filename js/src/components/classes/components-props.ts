@@ -13,8 +13,8 @@ export type FormProps = LoadingComponent & {
 
 export type FormFieldsProps = {
     formFields: Field[]
-    fieldsValues: string[]
-    setFieldsValues: (values: string[]) => void
+    fieldsValues: Record<number, string>
+    setFieldsValues: (values: Record<number, string>) => void
     fieldsErrors: {}
     disabled: boolean
 }

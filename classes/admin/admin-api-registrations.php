@@ -207,15 +207,14 @@ class WPOE_Registrations_Admin_Controller extends WP_REST_Controller
 
       $registration_id = (int) $request->get_param('registrationId');
 
-      $input = json_decode($request->get_body());
+      $input = json_decode($request->get_body(), true);
       $error = validate_event_request($event, $input);
       if ($error !== null) {
         return $error;
       }
 
-      $values = map_input_to_values($event, $input);
       $number_of_people = get_number_of_people($event, $input);
-      $remaining_seats = $this->registrations_dao->update_registration($registration_id, $values, $event_id, $number_of_people, $event->maxParticipants);
+      $remaining_seats = $this->registrations_dao->update_registration($registration_id, $input, $event_id, $number_of_people, $event->maxParticipants);
 
       if ($remaining_seats === false) {
         return get_no_more_seats_error($event);
@@ -225,7 +224,7 @@ class WPOE_Registrations_Admin_Controller extends WP_REST_Controller
       if ($send_email) {
         $user_email = get_user_email($event, $input);
         if (count($user_email) > 0) {
-          WPOE_Mail_Sender::send_registration_updated_by_admin($event, $user_email, $values);
+          WPOE_Mail_Sender::send_registration_updated_by_admin($event, $user_email, $input);
         }
       }
 

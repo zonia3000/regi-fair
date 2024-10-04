@@ -221,7 +221,7 @@ class WPOE_DAO_Registrations extends WPOE_Base_DAO
   {
     global $wpdb;
 
-    $query = $wpdb->prepare("SELECT f.label, rv.field_value
+    $query = $wpdb->prepare("SELECT f.label, rv.field_id, rv.field_value
       FROM " . WPOE_DB::get_table_name('event_registration') . " r
       RIGHT JOIN " . WPOE_DB::get_table_name('event_form_field') . " f ON f.event_id = r.event_id
       LEFT JOIN " . WPOE_DB::get_table_name('event_registration_value') . " rv ON f.id = rv.field_id AND rv.registration_id = r.id
@@ -232,7 +232,7 @@ class WPOE_DAO_Registrations extends WPOE_Base_DAO
 
     $values = [];
     foreach ($results as $row) {
-      array_push($values, $row['field_value']);
+      $values[$row['field_id']] = $row['field_value'];
     }
 
     return $values;
