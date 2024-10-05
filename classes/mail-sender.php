@@ -19,11 +19,58 @@ class WPOE_Mail_Sender
     wp_mail($to, $subject, $body, $headers);
   }
 
+  /**
+   * @param string|string[] $to
+   */
+  public static function send_waiting_list_confirmation(WPOE_Event $event, $to, string $registration_token, array $values)
+  {
+    $subject = sprintf(__('Registration to the waiting list of the event "%s" is confirmed', 'wp-open-events'), $event->name);
+    $body = '<p>' . __('Dear user,') . '<br/>'
+      . sprintf(__('your registration to the waiting list of the event "%s" is confirmed.'), $event->name) . '</p>'
+      . '<p>' . __('If some seats will be available you will be automatically registered and notified by e-mail.') . '</p>'
+      . '<p>' . __('You inserted the following data:') . '</p>';
+
+    $body .= WPOE_Mail_Sender::get_registration_fields_content($event, $values);
+    $body .= WPOE_Mail_Sender::get_registration_link_content($event, $registration_token);
+
+    $headers = array('Content-Type: text/html; charset=UTF-8');
+    wp_mail($to, $subject, $body, $headers);
+  }
+
+  /**
+   * @param string|string[] $to
+   */
+  public static function send_picked_from_waiting_list_confirmation(WPOE_Event $event, $to, array $values)
+  {
+    $subject = sprintf(__('New seats available for the event "%s"', 'wp-open-events'), $event->name);
+    $body = '<p>' . __('Dear user,') . '<br/>'
+      . sprintf(__('new seats have become available for the event "%s", and you have been automatically selected from the waiting list. Your registration is confirmed.'), $event->name) . '</p>'
+      . '<p>' . __('You inserted the following data:') . '</p>';
+
+    $body .= WPOE_Mail_Sender::get_registration_fields_content($event, $values);
+
+    $headers = array('Content-Type: text/html; charset=UTF-8');
+    wp_mail($to, $subject, $body, $headers);
+  }
+
   public static function send_new_registration_to_admin(WPOE_Event $event, array $values)
   {
     $subject = sprintf(__('New registration for the event "%s"', 'wp-open-events'), $event->name);
     $body = '<p>' . __('Dear admin,') . '<br/>'
       . sprintf(__('a new registration to the event "%s" has been added.'), $event->name) . '</p>'
+      . '<p>' . __('The user inserted the following data:') . '</p>';
+
+    $body .= WPOE_Mail_Sender::get_registration_fields_content($event, $values);
+
+    $headers = array('Content-Type: text/html; charset=UTF-8');
+    wp_mail($event->adminEmail, $subject, $body, $headers);
+  }
+
+  public static function send_new_waiting_list_registration_to_admin(WPOE_Event $event, array $values)
+  {
+    $subject = sprintf(__('New registration for the waiting list of event "%s"', 'wp-open-events'), $event->name);
+    $body = '<p>' . __('Dear admin,') . '<br/>'
+      . sprintf(__('a new registration to the waiting list of event "%s" has been added.'), $event->name) . '</p>'
       . '<p>' . __('The user inserted the following data:') . '</p>';
 
     $body .= WPOE_Mail_Sender::get_registration_fields_content($event, $values);
@@ -106,6 +153,18 @@ class WPOE_Mail_Sender
     $subject = sprintf(__('Registration deleted for the event "%s"', 'wp-open-events'), $event->name);
     $body = '<p>' . __('Dear admin,') . '<br/>'
       . sprintf(__('a user deleted their registration to the event "%s".'), $event->name) . '</p>';
+
+    $headers = array('Content-Type: text/html; charset=UTF-8');
+    wp_mail($event->adminEmail, $subject, $body, $headers);
+  }
+
+  public static function send_registrations_picked_from_waiting_list_to_admin(WPOE_Event $event, array $registrations)
+  {
+    $subject = sprintf(__('Registrations picked from the waiting list of event "%s"', 'wp-open-events'), $event->name);
+    $body = '<p>' . __('Dear admin,') . '<br/>'
+      . sprintf(__('the following registration identifiers for the event "%s" were moved from waiting list to confirmed:'), $event->name)
+      . ' ' . implode(', ', $registrations)
+      . '</p>';
 
     $headers = array('Content-Type: text/html; charset=UTF-8');
     wp_mail($event->adminEmail, $subject, $body, $headers);

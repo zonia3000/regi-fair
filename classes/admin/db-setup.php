@@ -81,6 +81,7 @@ class WPOE_DB_Setup
           inserted_at timestamp DEFAULT CURRENT_TIMESTAMP,
           updated_at timestamp DEFAULT CURRENT_TIMESTAMP,
           number_of_people integer NOT NULL DEFAULT 1,
+          waiting_list bit DEFAULT 0,
           PRIMARY KEY  (id),
           FOREIGN KEY (event_id) REFERENCES $event_table (id),
           UNIQUE (registration_token)

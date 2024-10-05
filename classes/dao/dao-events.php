@@ -64,7 +64,7 @@ class WPOE_DAO_Events extends WPOE_Base_DAO
         global $wpdb;
 
         $query = $wpdb->prepare("SELECT e.id, e.name, e.date, e.autoremove_submissions, e.autoremove_submissions_period,
-            e.editable_registrations, e.admin_email, e.extra_email_content, e.max_participants,
+            e.editable_registrations, e.admin_email, e.extra_email_content, e.max_participants, e.waiting_list,
             f.id AS field_id, f.label, f.type, f.description, f.required, f.extra, f.position
             FROM " . WPOE_DB::get_table_name('event') . " e
             LEFT JOIN " . WPOE_DB::get_table_name('event_form_field') . " f
@@ -88,6 +88,7 @@ class WPOE_DAO_Events extends WPOE_Base_DAO
         if ($event_results[0]['max_participants']) {
             $event->maxParticipants = (int) $event_results[0]['max_participants'];
             $event->availableSeats = $event->maxParticipants - $registrations_count;
+            $event->waitingList = (bool) $event_results[0]['waiting_list'];
         }
         $event->autoremove = (bool) $event_results[0]['autoremove_submissions'];
         $event->autoremovePeriod = (int) $event_results[0]['autoremove_submissions_period'];
