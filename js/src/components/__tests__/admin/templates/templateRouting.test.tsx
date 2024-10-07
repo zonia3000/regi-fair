@@ -48,4 +48,6 @@ test('Navigate template pages', async () => {
 
   await user.click(screen.getByText('template1'));
   expect(await screen.findByText('Edit template')).toBeInTheDocument();
+
+  server.restoreHandlers();
 });

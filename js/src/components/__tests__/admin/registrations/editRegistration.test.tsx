@@ -89,7 +89,7 @@ test('Update registration without email field', async () => {
   server.use(
     http.post('/wpoe/v1/admin/events/1/registrations/1&sendEmail=false', async ({ request }) => {
       requestBody = await request.json();
-      return HttpResponse.json({}, { status: 204 });
+      return new Response(null, { status: 204 });
     })
   );
 
@@ -110,6 +110,8 @@ test('Update registration without email field', async () => {
   await user.click(screen.getByRole('button', { name: 'Update' }));
 
   expect(requestBody['1']).toEqual('foobar');
+
+  server.restoreHandlers();
 });
 
 test('Update registration with email field', async () => {
@@ -134,7 +136,7 @@ test('Update registration with email field', async () => {
   server.use(
     http.post('/wpoe/v1/admin/events/1/registrations/1&sendEmail=true', async ({ request }) => {
       requestBody = await request.json();
-      return HttpResponse.json({}, { status: 204 });
+      return new Response(null, { status: 204 });
     })
   );
 
@@ -157,6 +159,8 @@ test('Update registration with email field', async () => {
   await user.click(screen.getByRole('button', { name: 'Update' }));
 
   expect(requestBody['1']).toEqual('bar@example.com');
+
+  server.restoreHandlers();
 });
 
 test('Update registration failing validation', async () => {
@@ -211,4 +215,82 @@ test('Update registration failing validation', async () => {
   expect(requestBody['1']).toEqual('');
 
   expect(await screen.findByText('Field is required')).toBeInTheDocument();
+
+  server.restoreHandlers();
+});
+
+test('Display confirmed registration', async () => {
+  server.use(
+    http.get('/wpoe/v1/admin/events/1', async () => {
+      return HttpResponse.json({
+        id: 1,
+        name: 'test',
+        availableSeats: 3,
+        formFields: [{ id: 1, fieldType: 'text', label: 'name', required: true }]
+      });
+    })
+  );
+
+  server.use(
+    http.get('/wpoe/v1/admin/events/1/registrations/1', async () => {
+      return HttpResponse.json({ values: { 1: 'foo' }, waitingList: false });
+    })
+  );
+
+  const user = userEvent.setup();
+
+  render(
+    <MemoryRouter initialEntries={["/event/1/registrations/1"]}>
+      <Routes>
+        <Route path="/" element={<div></div>} />
+        <Route path="/event/:eventId/registrations" element={<div>BACK</div>} />
+        <Route path="/event/:eventId/registrations/:registrationId" element={<EditRegistration />} />
+      </Routes>
+    </MemoryRouter>
+  );
+
+  expect((await screen.findAllByText(/There are still 3 seats available/))[0]).toBeInTheDocument();
+
+  await user.click(screen.getByRole('button', { name: 'Back' }));
+  expect(await screen.findByText(/BACK/)).toBeInTheDocument();
+
+  server.restoreHandlers();
+});
+
+test('Display registration in waiting list', async () => {
+  server.use(
+    http.get('/wpoe/v1/admin/events/1', async () => {
+      return HttpResponse.json({
+        id: 1,
+        name: 'test',
+        availableSeats: 0,
+        formFields: [{ id: 1, fieldType: 'text', label: 'name', required: true }]
+      });
+    })
+  );
+
+  server.use(
+    http.get('/wpoe/v1/admin/events/1/registrations/1', async () => {
+      return HttpResponse.json({ values: { 1: 'foo' }, waitingList: true });
+    })
+  );
+
+  const user = userEvent.setup();
+
+  render(
+    <MemoryRouter initialEntries={["/event/1/registrations/1"]}>
+      <Routes>
+        <Route path="/" element={<div></div>} />
+        <Route path="/event/:eventId/registrations/waiting" element={<div>BACK</div>} />
+        <Route path="/event/:eventId/registrations/:registrationId" element={<EditRegistration />} />
+      </Routes>
+    </MemoryRouter>
+  );
+
+  expect(await screen.findByText(/This registration is in the waiting list/)).toBeInTheDocument();
+
+  await user.click(screen.getByRole('button', { name: 'Back' }));
+  expect(await screen.findByText(/BACK/)).toBeInTheDocument();
+
+  server.restoreHandlers();
 });

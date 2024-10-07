@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { expect, test } from 'vitest';
-import { render, screen } from '@testing-library/react'
+import { act, render, screen, waitFor } from '@testing-library/react'
 import { Route, Routes, MemoryRouter } from 'react-router-dom';
 import { HttpResponse, http } from 'msw';
 import { server } from '../../__mocks__/api';
@@ -22,7 +22,7 @@ test('Event not found', async () => {
     <MemoryRouter initialEntries={["/event/1/registrations"]}>
       <Routes>
         <Route path="/" element={<div></div>} />
-        <Route path="/event/:eventId/registrations" element={<ListRegistrations />} />
+        <Route path="/event/:eventId/registrations" element={<ListRegistrations waiting={false} />} />
       </Routes>
     </MemoryRouter>
   );
@@ -52,7 +52,7 @@ test('List registrations', async () => {
     <MemoryRouter initialEntries={["/event/1/registrations"]}>
       <Routes>
         <Route path="/" element={<div></div>} />
-        <Route path="/event/:eventId/registrations" element={<ListRegistrations />} />
+        <Route path="/event/:eventId/registrations" element={<ListRegistrations waiting={false} />} />
       </Routes>
     </MemoryRouter>
   );
@@ -86,7 +86,7 @@ test('List registrations with deleted records', async () => {
     <MemoryRouter initialEntries={["/event/1/registrations"]}>
       <Routes>
         <Route path="/" element={<div></div>} />
-        <Route path="/event/:eventId/registrations" element={<ListRegistrations />} />
+        <Route path="/event/:eventId/registrations" element={<ListRegistrations waiting={false} />} />
       </Routes>
     </MemoryRouter>
   );
@@ -104,6 +104,73 @@ test('List registrations with deleted records', async () => {
 
   expect(screen.queryByText('email (deleted)')).toBeDefined();
   expect(screen.queryByText('mario@example.com')).toBeDefined();
+
+  server.restoreHandlers();
+});
+
+test('List registrations with waiting list', async () => {
+
+  const user = userEvent.setup();
+
+  server.use(
+    http.get('/wpoe/v1/admin/events/1/registrations', async ({ request }) => {
+      const url = new URL(request.url);
+      const waitingList = url.searchParams.get('waitingList');
+      if (waitingList === 'true') {
+        return HttpResponse.json({
+          eventName: 'test',
+          head: [{ label: 'name', 'deleted': false }],
+          body: [
+            [3, '2024-09-15 20:27:03', 'gianna']
+          ],
+          total: 1,
+          totalParticipants: 2,
+          totalWaiting: 1
+        });
+      }
+      return HttpResponse.json({
+        eventName: 'test',
+        head: [{ label: 'name', 'deleted': false }],
+        body: [
+          [1, '2024-09-15 20:27:03', 'mario'],
+          [2, '2024-09-15 22:30:00', 'paola']
+        ],
+        total: 2,
+        totalParticipants: 2,
+        totalWaiting: 1
+      });
+    })
+  );
+
+  render(
+    <MemoryRouter initialEntries={["/event/1/registrations"]}>
+      <Routes>
+        <Route path="/" element={<div></div>} />
+        <Route path="/event/:eventId/registrations" element={<ListRegistrations waiting={false} />} />
+        <Route path="/event/:eventId/registrations/waiting" element={<ListRegistrations waiting={true} />} />
+      </Routes>
+    </MemoryRouter>
+  );
+
+  expect((await screen.findByText('Registrations for the event "test"'))).toBeInTheDocument();
+  expect(await screen.findAllByRole('row')).toHaveLength(3);
+
+  await act(async () => {
+    const waitingListLink = screen.getByRole('button', { name: '1' });
+    await user.click(waitingListLink);
+  });
+
+  await waitFor(() => screen.queryByText(/Waiting list for the event "test"/));
+
+  expect(await screen.findAllByRole('row')).toHaveLength(2);
+
+  await act(async () => {
+    const confirmedRegistrationsLink = screen.getByRole('button', { name: '2' });
+    await user.click(confirmedRegistrationsLink);
+  });
+
+  await waitFor(() => screen.queryByText(/Registrations for the event "test"/));
+  expect(await screen.findAllByRole('row')).toHaveLength(3);
 
   server.restoreHandlers();
 });

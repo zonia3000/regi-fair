@@ -8,6 +8,7 @@ import { extractError } from './utils';
 import './style.css';
 import FormFields from './FormFields';
 import { EventConfiguration } from './classes/event';
+import { Registration } from './classes/registration';
 
 const Form = (props: FormProps) => {
     const [event, setEvent] = useState(null as EventConfiguration);
@@ -22,6 +23,7 @@ const Form = (props: FormProps) => {
     const [deletionError, setDeletionError] = useState('');
     const [deleted, setDeleted] = useState(false);
     const [availableSeats, setAvailableSeats] = useState(null);
+    const [waitingList, setWaitingList] = useState(false);
     const [lastSeatTaken, setLastSeatTaken] = useState(false);
 
     useEffect(() => {
@@ -67,9 +69,10 @@ const Form = (props: FormProps) => {
         }
         const token = match[1];
         try {
-            const registration: Record<number, string> = await apiFetch({ path: `/wpoe/v1/events/${props.eventId}/${token}` });
+            const registration: Registration = await apiFetch({ path: `/wpoe/v1/events/${props.eventId}/${token}` });
             setRegistrationToken(token);
-            setFields(registration);
+            setFields(registration.values);
+            setWaitingList(registration.waitingList);
             setEditingExisting(true);
         } catch (err) {
             console.warn('Unable to retrieve registration');
@@ -91,8 +94,9 @@ const Form = (props: FormProps) => {
                     data: fields
                 });
             } else {
+                const waiting = waitingList || (availableSeats !== null && availableSeats <= 0 && event.waitingList);
                 result = await apiFetch({
-                    path: `/wpoe/v1/events/${props.eventId}`,
+                    path: `/wpoe/v1/events/${props.eventId}?waitingList=${waiting}`,
                     method: 'POST',
                     data: fields
                 });
@@ -101,7 +105,7 @@ const Form = (props: FormProps) => {
             }
             if (result.remaining !== null) {
                 setAvailableSeats(result.remaining);
-                if (result.remaining === 0) {
+                if (result.remaining <= 0) {
                     setLastSeatTaken(true);
                 }
             }
@@ -157,30 +161,32 @@ const Form = (props: FormProps) => {
         <>
             {editingExisting &&
                 <Notice status='info' className='mb-2' isDismissible={false}>
-                    {__('Welcome back. You are editing an existing registration', 'wp-open-events')}
+                    {__('Welcome back. You are editing an existing registration.', 'wp-open-events')}
                 </Notice>
             }
 
             {availableSeats !== null && availableSeats > 0 &&
                 <Notice status='info' isDismissible={false}>
-                    {sprintf(_x('There are still %d seats available', 'number of available seats', 'wp-open-events'), availableSeats)}
+                    {sprintf(_x('There are still %d seats available.', 'number of available seats', 'wp-open-events'), availableSeats)}
                 </Notice>
             }
 
-            {availableSeats !== null && availableSeats === 0 && editingExisting &&
+            {availableSeats !== null && availableSeats <= 0 && editingExisting &&
                 <Notice status='info' isDismissible={false}>
-                    {__('There are no more seats available', 'wp-open-events')}
+                    {__('There are no more seats available.', 'wp-open-events')}
+                    {waitingList && (' ' + __('This registration is in the waiting list.', 'wp-open-events'))}
                 </Notice>
             }
 
-            {availableSeats !== null && availableSeats === 0 && !editingExisting &&
+            {availableSeats !== null && availableSeats <= 0 && !editingExisting &&
                 <Notice status='info' isDismissible={false}>
-                    {lastSeatTaken ? __('Congratulation! You took the last seat available!', 'wp-open-events')
-                        : __('We are sorry. You can\'t register because there are no more seats available', 'wp-open-events')}
+                    {event.waitingList ? __('There are no more seats available. You can only join the waiting list. You will be notified when new seats will be available.', 'wp-open-events')
+                        : lastSeatTaken ? __('Congratulation! You took the last seat available!', 'wp-open-events')
+                            : __('We are sorry. You can\'t register because there are no more seats available.', 'wp-open-events')}
                 </Notice>
             }
 
-            {(editingExisting || availableSeats === null || availableSeats > 0) &&
+            {(editingExisting || availableSeats === null || availableSeats > 0 || event.waitingList) &&
                 <FormFields
                     formFields={event.formFields}
                     fieldsValues={fields}
@@ -192,7 +198,7 @@ const Form = (props: FormProps) => {
             {error && <Notice status='error' className='mt-2 mb-2' isDismissible={false}>{error}</Notice>}
 
 
-            {(editingExisting || availableSeats === null || availableSeats > 0) &&
+            {(editingExisting || availableSeats === null || availableSeats > 0 || event.waitingList) &&
                 <>
                     {submitted &&
                         <Notice status='success' className='mt-2 mb-2' isDismissible={false}>
@@ -208,7 +214,11 @@ const Form = (props: FormProps) => {
                     }
 
                     <Button variant='primary' className='mt' onClick={submitForm} disabled={props.disabled}>
-                        {editingExisting ? __('Update the registration', 'wp-open-events') : __('Register to the event', 'wp-open-events')}
+                        {editingExisting ? __('Update the registration', 'wp-open-events')
+                            : (availableSeats === null || availableSeats > 0) ?
+                                __('Register to the event', 'wp-open-events')
+                                : __('Join the waiting list', 'wp-open-events')
+                        }
                     </Button>
 
                     {editingExisting &&

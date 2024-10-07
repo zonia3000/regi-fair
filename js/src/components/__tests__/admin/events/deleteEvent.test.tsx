@@ -39,4 +39,6 @@ test('Delete event', async () => {
   user.click(within(dialog).getByRole('button', { name: 'Confirm' }));
 
   expect(await screen.findByText('No events found')).toBeInTheDocument();
+
+  server.restoreHandlers();
 });

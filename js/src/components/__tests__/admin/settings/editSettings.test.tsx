@@ -48,4 +48,6 @@ test('Edit settings', async () => {
   expect(body.defaultAutoremovePeriod).toEqual(10);
   expect(body.defaultExtraEmailContent).toEqual('foobar');
   expect(body.defaultTrackIpAddresses).toEqual(true);
+
+  server.restoreHandlers();
 });

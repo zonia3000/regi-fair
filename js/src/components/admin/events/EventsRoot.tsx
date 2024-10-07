@@ -13,7 +13,8 @@ const EventsRoot = () => {
                 <Routes>
                     <Route path="/" element={<ListEvents />} />
                     <Route path="/event/:eventId" element={<EditEvent />} />
-                    <Route path="/event/:eventId/registrations" element={<ListRegistrations />} />
+                    <Route path="/event/:eventId/registrations" element={<ListRegistrations waiting={false} />} />
+                    <Route path="/event/:eventId/registrations/waiting" element={<ListRegistrations waiting={true} />} />
                     <Route path="/event/:eventId/registrations/:registrationId" element={<EditRegistration />} />
                 </Routes>
             </Router>

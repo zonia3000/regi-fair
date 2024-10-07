@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { expect, test } from 'vitest';
-import { render, screen } from '@testing-library/react'
+import { act, render, screen, waitForElementToBeRemoved, within } from '@testing-library/react'
 import { Route, Routes, MemoryRouter } from 'react-router-dom';
 import { HttpResponse, http } from 'msw';
 import { server } from '../../__mocks__/api';
@@ -25,7 +25,7 @@ test('Delete registration', async () => {
   server.use(
     http.post('/wpoe/v1/admin/events/1/registrations/1', async () => {
       registrations = [];
-      return HttpResponse.json({}, { status: 204 });
+      return new Response(null, { status: 204 });
     })
   );
 
@@ -33,7 +33,7 @@ test('Delete registration', async () => {
     <MemoryRouter initialEntries={["/event/1/registrations"]}>
       <Routes>
         <Route path="/" element={<div></div>} />
-        <Route path="/event/:eventId/registrations" element={<ListRegistrations />} />
+        <Route path="/event/:eventId/registrations" element={<ListRegistrations waiting={false} />} />
       </Routes>
     </MemoryRouter>
   );
@@ -42,8 +42,9 @@ test('Delete registration', async () => {
 
   const user = userEvent.setup();
   expect(screen.getAllByRole('row')).toHaveLength(2);
+
   await user.click(screen.getByRole('button', { name: 'Delete' }));
-  await user.click(screen.getByRole('button', { name: 'Confirm' }));
+  await user.click(within(await screen.findByRole('dialog')).getByRole('button', { name: 'Confirm' }));
 
   expect(registrations).toHaveLength(0);
   expect.poll(() => screen.getAllByRole('row')).toHaveLength(1);
@@ -70,21 +71,22 @@ test('Error happens while deleting a registration', async () => {
     })
   );
 
+  const user = userEvent.setup();
+
   render(
     <MemoryRouter initialEntries={["/event/1/registrations"]}>
       <Routes>
         <Route path="/" element={<div></div>} />
-        <Route path="/event/:eventId/registrations" element={<ListRegistrations />} />
+        <Route path="/event/:eventId/registrations" element={<ListRegistrations waiting={false} />} />
       </Routes>
     </MemoryRouter>
   );
 
   expect(await screen.findByText(/Registrations for the event/)).toBeInTheDocument();
 
-  const user = userEvent.setup();
-  expect(screen.getAllByRole('row')).toHaveLength(2);
+  expect(await screen.findAllByRole('row')).toHaveLength(2);
   await user.click(screen.getByRole('button', { name: 'Delete' }));
-  await user.click(screen.getByRole('button', { name: 'Confirm' }));
+  await user.click(within(await screen.findByRole('dialog')).getByRole('button', { name: 'Confirm' }));
 
   const errors = await screen.findAllByText(/A critical error happened/);
   expect(errors[0]).toBeInTheDocument();

@@ -7,6 +7,7 @@ import Loading from "../../../Loading";
 import { Button, CheckboxControl, Notice } from "@wordpress/components";
 import FormFields from "../../../FormFields";
 import { EventConfiguration } from "../../../classes/event";
+import { Registration } from "../../../classes/registration";
 
 const EditRegistration = () => {
   const { eventId, registrationId } = useParams();
@@ -15,7 +16,8 @@ const EditRegistration = () => {
   const [loading, setLoading] = useState(true);
   const [found, setFound] = useState(false);
   const [event, setEvent] = useState(null as EventConfiguration);
-  const [fields, setFields] = useState([] as string[]);
+  const [fields, setFields] = useState({} as Record<number, string>);
+  const [waitingList, setWaitingList] = useState(false);
   const [availableSeats, setAvailableSeats] = useState(null);
   const [fieldsErrors, setFieldsErrors] = useState({});
   const [error, setError] = useState('');
@@ -45,8 +47,9 @@ const EditRegistration = () => {
       return;
     }
     try {
-      const { values }: { values: string[] } = await apiFetch({ path: `/wpoe/v1/admin/events/${eventId}/registrations/${registrationId}` });
-      setFields(values);
+      const registration: Registration = await apiFetch({ path: `/wpoe/v1/admin/events/${eventId}/registrations/${registrationId}` });
+      setFields(registration.values);
+      setWaitingList(registration.waitingList);
       const hasConfirmationAddressFields =
         eventConfig.formFields.filter(
           f => f.fieldType === 'email'
@@ -90,7 +93,11 @@ const EditRegistration = () => {
   }
 
   function back() {
-    navigate(`/event/${eventId}/registrations`);
+    if (waitingList) {
+      navigate(`/event/${eventId}/registrations/waiting`);
+    } else {
+      navigate(`/event/${eventId}/registrations`);
+    }
   }
 
   if (loading) {
@@ -103,13 +110,19 @@ const EditRegistration = () => {
 
   return (
     <div>
-      <h1 className='wp-heading-inline'>
+      <h1 className='wp-heading-inline mb-2'>
         {sprintf(_x('Edit registration #%d', 'Id of the registration', 'wp-open-events'), registrationId)}
       </h1>
 
+      {waitingList &&
+        <Notice status='info' isDismissible={false} className="mt">
+          {__('This registration is in the waiting list.', 'wp-open-events')}
+        </Notice>
+      }
+
       {availableSeats !== null &&
-        <Notice status='info' isDismissible={false} className="mt-2">
-          {sprintf(_x('There are still %d seats available', 'number of available seats', 'wp-open-events'), availableSeats)}
+        <Notice status='info' isDismissible={false} className="mt">
+          {sprintf(_x('There are still %d seats available.', 'number of available seats', 'wp-open-events'), availableSeats)}
         </Notice>
       }
 

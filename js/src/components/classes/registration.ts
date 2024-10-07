@@ -1,3 +1,9 @@
+export type Registration = {
+  id: number | null
+  values: Record<number, string>
+  waitingList: boolean
+}
+
 export type RegistrationsList = {
   eventName: string
   head: Array<{
@@ -7,4 +13,5 @@ export type RegistrationsList = {
   body: string[][]
   total: number
   totalParticipants: number
+  totalWaiting: number
 }

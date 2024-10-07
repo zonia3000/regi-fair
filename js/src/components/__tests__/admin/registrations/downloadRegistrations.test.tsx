@@ -32,7 +32,7 @@ test('Download registrations', async () => {
     <MemoryRouter initialEntries={["/event/1/registrations"]}>
       <Routes>
         <Route path="/" element={<div></div>} />
-        <Route path="/event/:eventId/registrations" element={<ListRegistrations />} />
+        <Route path="/event/:eventId/registrations" element={<ListRegistrations waiting={false} />} />
       </Routes>
     </MemoryRouter>
   );

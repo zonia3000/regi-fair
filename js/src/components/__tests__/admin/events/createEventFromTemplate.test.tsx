@@ -75,8 +75,8 @@ test('Create event from template', async () => {
   const user = userEvent.setup();
 
   await user.click(screen.getByText('Add event'));
-  await user.click(within(screen.getByRole('dialog')).getByLabelText('Close'));
-  await user.click(screen.getByText('Add event'));
+  await user.click(within(await screen.findByRole('dialog')).getByLabelText('Close'));
+  await user.click(await screen.findByText('Add event'));
   await user.click(screen.getByText('From template'));
 
   await user.selectOptions(screen.getByRole('combobox', { name: 'Select template' }), 'template1');

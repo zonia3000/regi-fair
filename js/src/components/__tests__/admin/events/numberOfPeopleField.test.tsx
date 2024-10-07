@@ -57,6 +57,8 @@ test('Deleting saved "number of people" field is forbidden', async () => {
   expect(cells2[0]).toHaveTextContent('Number of people');
   expect(within(rows[1]).queryByRole('button', { name: 'Delete' })).toBeDefined();
   expect(within(rows[2]).queryByRole('button', { name: 'Delete' })).toBeNull();
+
+  server.restoreHandlers();
 });
 
 test('It is possible to delete not already saved "number of people" field', async () => {
@@ -87,7 +89,9 @@ test('It is possible to delete not already saved "number of people" field', asyn
   expect(within(screen.getByRole('dialog')).queryByRole('button', { name: 'Number of people' })).toBeNull();
   await user.click(within(screen.getByRole('dialog')).getByLabelText('Close'));
 
-  await user.click(within(rows[1]).getByRole('button', { name: 'Delete' }));
+  const deleteBtn = await within(rows[1]).findByRole('button', { name: 'Delete' });
+
+  await user.click(deleteBtn);
   await user.click(within(screen.getByRole('dialog')).getByRole('button', { name: 'Confirm' }));
 
   await user.click(screen.getByRole('button', { name: 'Add form field' }));

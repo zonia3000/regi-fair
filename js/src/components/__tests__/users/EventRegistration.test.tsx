@@ -26,7 +26,7 @@ describe('Event registration', () => {
         });
       }),
       http.get('/wpoe/v1/events/1/1234', async () => {
-        return HttpResponse.json({ 1: 'myvalue' });
+        return HttpResponse.json({ values: { 1: 'myvalue' } });
       }),
       http.post('/wpoe/v1/events/1/1234', async ({ request }) => {
         requestBody = await request.json();
@@ -68,7 +68,7 @@ describe('Event registration', () => {
         });
       }),
       http.get('/wpoe/v1/events/1/1234', async () => {
-        return HttpResponse.json({ 1 : 'myvalue' });
+        return HttpResponse.json({ values: { 1: 'myvalue' } });
       }),
       http.post('/wpoe/v1/events/1/1234', async () => {
         return HttpResponse.json({ remaining: 3 });
@@ -111,7 +111,7 @@ describe('Event registration', () => {
         });
       }),
       http.get('/wpoe/v1/events/1/1234', async () => {
-        return HttpResponse.json({ 1: 'myvalue' });
+        return HttpResponse.json({ values: { 1: 'myvalue' } });
       })
     );
 
@@ -205,6 +205,77 @@ describe('Event registration', () => {
     expect(requestBody['1']).toEqual('foo');
 
     const msg2 = await screen.findAllByText(/You took the last seat available/)
+    expect(msg2.length).toBeGreaterThan(0);
+
+    server.restoreHandlers();
+  });
+
+  test('Join the waiting list', async () => {
+    let requestBody: any;
+    let requestUrl: string
+    server.use(
+      http.get('/wpoe/v1/events/1', async () => {
+        return HttpResponse.json({
+          availableSeats: 0,
+          waitingList: true,
+          formFields: [
+            { id: 1, fieldType: 'text', label: 'myfield', required: true }
+          ]
+        });
+      }),
+      http.post('/wpoe/v1/events/1', async ({ request }) => {
+        requestUrl = request.url;
+        requestBody = await request.json();
+        return HttpResponse.json({ remaining: 0 });
+      })
+    );
+
+    render(<EventRegistration eventId={1} />);
+
+    const msg1 = await screen.findAllByText(/You can only join the waiting list/)
+    expect(msg1.length).toBeGreaterThan(0);
+
+    const field = await screen.findByRole('textbox', { name: 'myfield' });
+
+    const user = userEvent.setup();
+    await user.type(field, 'foo');
+    await user.click(screen.getByRole('button', { name: 'Join the waiting list' }));
+
+    expect(requestBody['1']).toEqual('foo');
+    expect(requestUrl).toContain('waitingList=true');
+
+    const msg2 = await screen.findAllByText(/Your registration has been submitted/)
+    expect(msg2.length).toBeGreaterThan(0);
+
+    server.restoreHandlers();
+  });
+
+  test('Editing event in waiting list', async () => {
+    window.location.hash = '#registration=5555';
+
+    server.use(
+      http.get('/wpoe/v1/events/1', async () => {
+        return HttpResponse.json({
+          editableRegistrations: true,
+          availableSeats: 0,
+          formFields: [
+            { id: 1, fieldType: 'text', label: 'myfield', required: true }
+          ]
+        });
+      }),
+      http.get('/wpoe/v1/events/1/5555', async () => {
+        return HttpResponse.json({ values: { 1: 'myvalue' }, waitingList: true });
+      })
+    );
+
+    render(<EventRegistration eventId={1} />);
+
+    const field1 = await screen.findByRole('textbox', { name: 'myfield' });
+    expect(field1).toHaveValue('myvalue');
+
+    const msg1 = screen.getAllByText(/You are editing an existing registration/)
+    expect(msg1.length).toBeGreaterThan(0);
+    const msg2 = screen.getAllByText(/This registration is in the waiting list/)
     expect(msg2.length).toBeGreaterThan(0);
 
     server.restoreHandlers();

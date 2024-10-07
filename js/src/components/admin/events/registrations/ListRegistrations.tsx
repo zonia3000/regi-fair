@@ -8,7 +8,7 @@ import Loading from "../../../Loading";
 import { Button, CheckboxControl, Modal, Notice } from "@wordpress/components";
 import Pagination from "../../Pagination";
 
-const ListRegistrations = () => {
+const ListRegistrations = (props: { waiting: boolean }) => {
   const { eventId } = useParams();
 
   const navigate = useNavigate();
@@ -23,6 +23,7 @@ const ListRegistrations = () => {
   const [rows, setRows] = useState([] as string[][]);
   const [total, setTotal] = useState(0);
   const [totalParticipants, setTotalParticipants] = useState(0);
+  const [totalWaiting, setTotalWaiting] = useState(0);
   const [hasDeletedFields, setHasDeletedFields] = useState(false);
   const [showDeletedFields, setShowDeletedFields] = useState(false);
   const [showConfirmDeleteRegistrationModal, setShowConfirmDeleteRegistrationModal] = useState(false);
@@ -31,19 +32,20 @@ const ListRegistrations = () => {
 
   useEffect(() => {
     loadPage();
-  }, [page, pageSize]);
+  }, [page, pageSize, props.waiting]);
 
   async function loadPage() {
     setLoading(true);
     try {
       const result: RegistrationsList
-        = await apiFetch({ path: `/wpoe/v1/admin/events/${eventId}/registrations?page=${page}&pageSize=${pageSize}` });
+        = await apiFetch({ path: `/wpoe/v1/admin/events/${eventId}/registrations?waitingList=${props.waiting}&page=${page}&pageSize=${pageSize}` });
       setEventName(result.eventName);
       setHead(result.head);
       setHasDeletedFields(result.head.find(h => h.deleted) !== undefined);
       setRows(result.body);
       setTotal(result.total);
       setTotalParticipants(result.totalParticipants);
+      setTotalWaiting(result.totalWaiting);
     } catch (err) {
       setError(extractError(err));
     } finally {
@@ -59,12 +61,20 @@ const ListRegistrations = () => {
     navigate(`/event/${eventId}/registrations/${registrationId}`);
   }
 
+  function showConfirmedRegistrations() {
+    navigate(`/event/${eventId}/registrations`);
+  }
+
+  function showWaitingList() {
+    navigate(`/event/${eventId}/registrations/waiting`);
+  }
+
   async function download() {
     setLoading(true);
     setDownloadError('');
     try {
       const response: Response = await apiFetch({
-        path: `/wpoe/v1/admin/events/${eventId}/registrations/download`,
+        path: `/wpoe/v1/admin/events/${eventId}/registrations/download?waitingList=${props.waiting}`,
         parse: false
       });
       const data = await response.text();
@@ -119,7 +129,8 @@ const ListRegistrations = () => {
   return (
     <div>
       <h1 className='wp-heading-inline'>
-        {sprintf(_x('Registrations for the event "%s"', 'Name of the event', 'wp-open-events'), eventName)}
+        {!props.waiting && sprintf(_x('Registrations for the event "%s"', 'Name of the event', 'wp-open-events'), eventName)}
+        {props.waiting && sprintf(_x('Waiting list for the event "%s"', 'Name of the event', 'wp-open-events'), eventName)}
       </h1>
       <Button onClick={download} variant='primary'>
         {__('Download CSV', 'wp-open-events')}
@@ -130,7 +141,20 @@ const ListRegistrations = () => {
         </div>
       }
       <p>
-        <strong>{__('Total participants', 'wp-open-events')}</strong>: {totalParticipants}
+        <strong>{__('Confirmed participants', 'wp-open-events')}</strong>: &nbsp;
+        {
+          props.waiting ?
+            <Button variant="link" onClick={showConfirmedRegistrations}>{totalParticipants}</Button>
+            : totalParticipants
+        }
+        {
+          totalWaiting > 0 &&
+          <span className="ml-2">
+            <strong>{__('Waiting list', 'wp-open-events')}</strong>: &nbsp;
+            {props.waiting ? totalWaiting :
+              <Button variant="link" onClick={showWaitingList}>{totalWaiting}</Button>}
+          </span>
+        }
       </p>
 
       {hasDeletedFields &&

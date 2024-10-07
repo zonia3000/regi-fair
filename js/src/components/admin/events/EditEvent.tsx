@@ -24,6 +24,7 @@ const EditEvent = () => {
     const [hasResponses, setHasResponses] = useState(false);
     const [hasMaxParticipants, setHasMaxParticipants] = useState(false);
     const [maxParticipants, setMaxParticipants] = useState('');
+    const [hasWaitingList, setHasWaitingList] = useState(false);
     const [notifyAdmin, setNotifyAdmin] = useState(false);
     const [adminEmail, setAdminEmail] = useState('');
     const [editableRegistrations, setEditableRegistrations] = useState(true);
@@ -106,6 +107,7 @@ const EditEvent = () => {
                     if (event.maxParticipants) {
                         setHasMaxParticipants(true);
                         setMaxParticipants(event.maxParticipants.toString());
+                        setHasWaitingList(event.waitingList);
                     }
                     if (event.adminEmail) {
                         setNotifyAdmin(true);
@@ -146,7 +148,7 @@ const EditEvent = () => {
             autoremove: autoremove,
             autoremovePeriod: 30,
             maxParticipants: hasMaxParticipants ? Number(maxParticipants) : null,
-            waitingList: false,
+            waitingList: hasMaxParticipants ? hasWaitingList : false,
             extraEmailContent: customizeEmailContent ? emailExtraContent.trim() : null
         };
         setLoading(true);
@@ -271,6 +273,11 @@ const EditEvent = () => {
                     {!valid && !maxParticipants &&
                         <span className='error-text'>{__('Field is required', 'wp-open-events')}</span>
                     }
+                    <CheckboxControl
+                        label={__('Enable waiting list when maximum number of participants has been reached', 'wp-open-events')}
+                        checked={hasWaitingList}
+                        onChange={setHasWaitingList}
+                    />
                 </div>
             }
 
