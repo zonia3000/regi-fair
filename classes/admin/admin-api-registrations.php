@@ -223,12 +223,13 @@ class WPOE_Registrations_Admin_Controller extends WP_REST_Controller
         return $error;
       }
 
-      $data = new WPOE_Registration_Request();
-      $data->number_of_people = get_number_of_people($event, $input);
+      $data = new WPOE_Registration();
+      $data->id = $registration_id;
+      $data->numberOfPeople = get_number_of_people($event, $input);
       $data->values = $input;
-      $data->waiting_list = $waiting_list;
+      $data->waitingList = $waiting_list;
 
-      $update_result = $this->registrations_dao->update_registration($event, $registration_id, $data);
+      $update_result = $this->registrations_dao->update_registration($event, $data);
 
       if ($update_result === false) {
         return get_no_more_seats_error($event);
@@ -248,9 +249,9 @@ class WPOE_Registrations_Admin_Controller extends WP_REST_Controller
         foreach ($waiting_picked as $registration_id) {
           $waiting_registration = $this->registrations_dao->get_registration_by_id($event->id, $registration_id);
           if ($waiting_registration !== null) {
-            $user_email = get_user_email($event, $waiting_registration);
+            $user_email = get_user_email($event, $waiting_registration->values);
             if (count($user_email) > 0) {
-              WPOE_Mail_Sender::send_picked_from_waiting_list_confirmation($event, $user_email, $waiting_registration);
+              WPOE_Mail_Sender::send_picked_from_waiting_list_confirmation($event, $user_email, $waiting_registration->values);
             }
           }
         }

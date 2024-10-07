@@ -4,7 +4,7 @@ if (!defined('ABSPATH')) {
     die();
 }
 
-require_once(WPOE_PLUGIN_DIR . 'classes/model/registration-request.php');
+require_once(WPOE_PLUGIN_DIR . 'classes/model/registration.php');
 
 class WPOE_Public_Controller extends WP_REST_Controller
 {
@@ -31,6 +31,10 @@ class WPOE_Public_Controller extends WP_REST_Controller
             $namespace,
             '/events/(?P<id>\d+)',
             [
+                'args' => [
+                    'id' => ['type' => 'integer', 'required' => true, 'minimum' => 1],
+                    'waitingList' => ['type' => 'boolean', 'required' => false]
+                ],
                 [
                     'methods' => WP_REST_Server::READABLE,
                     'callback' => [$this, 'get_item'],
@@ -48,6 +52,11 @@ class WPOE_Public_Controller extends WP_REST_Controller
             $namespace,
             '/events/(?P<id>\d+)/(?P<registration_token>\w+)',
             [
+                'args' => [
+                    'id' => ['type' => 'integer', 'required' => true, 'minimum' => 1],
+                    'registration_token' => ['type' => 'string', 'required' => true],
+                    'waitingList' => ['type' => 'boolean', 'required' => false]
+                ],
                 [
                     'methods' => WP_REST_Server::READABLE,
                     'callback' => [$this, 'get_registration'],
@@ -108,10 +117,10 @@ class WPOE_Public_Controller extends WP_REST_Controller
 
             $user_email = get_user_email($event, $input);
 
-            $data = new WPOE_Registration_Request();
-            $data->number_of_people = get_number_of_people($event, $input);
+            $data = new WPOE_Registration();
+            $data->numberOfPeople = get_number_of_people($event, $input);
             $data->values = $input;
-            $data->waiting_list = $waiting_list;
+            $data->waitingList = $waiting_list;
 
             $registration_token = bin2hex(openssl_random_pseudo_bytes(16));
 
@@ -181,12 +190,13 @@ class WPOE_Public_Controller extends WP_REST_Controller
 
             $user_email = get_user_email($event, $input);
 
-            $data = new WPOE_Registration_Request();
-            $data->number_of_people = get_number_of_people($event, $input);
+            $data = new WPOE_Registration();
+            $data->id = $registration->id;
+            $data->numberOfPeople = get_number_of_people($event, $input);
             $data->values = $input;
-            $data->waiting_list = $waiting_list;
+            $data->waitingList = $registration->waitingList || $waiting_list;
 
-            $update_result = $this->registrations_dao->update_registration($event, $registration['id'], $data);
+            $update_result = $this->registrations_dao->update_registration($event, $data);
             if ($update_result === false) {
                 return get_no_more_seats_error($event);
             }
@@ -205,9 +215,9 @@ class WPOE_Public_Controller extends WP_REST_Controller
                 foreach ($waiting_picked as $registration_id) {
                     $waiting_registration = $this->registrations_dao->get_registration_by_id($event->id, $registration_id);
                     if ($waiting_registration !== null) {
-                        $user_email = get_user_email($event, $waiting_registration);
+                        $user_email = get_user_email($event, $waiting_registration->values);
                         if (count($user_email) > 0) {
-                            WPOE_Mail_Sender::send_picked_from_waiting_list_confirmation($event, $user_email, $waiting_registration);
+                            WPOE_Mail_Sender::send_picked_from_waiting_list_confirmation($event, $user_email, $waiting_registration->values);
                         }
                     }
                 }
@@ -247,7 +257,7 @@ class WPOE_Public_Controller extends WP_REST_Controller
             if ($registration === null) {
                 return new WP_Error('registration_not_found', __('Registration not found', 'wp-open-events'), ['status' => 404]);
             }
-            return new WP_REST_Response($registration['values']);
+            return new WP_REST_Response($registration);
         } catch (Exception $ex) {
             return generic_server_error($ex);
         }
@@ -277,12 +287,12 @@ class WPOE_Public_Controller extends WP_REST_Controller
                 return new WP_Error('registration_not_found', __('Registration not found', 'wp-open-events'), ['status' => 400]);
             }
 
-            $deletion_result = $this->registrations_dao->delete_registration($event, $registration['id']);
+            $deletion_result = $this->registrations_dao->delete_registration($event, $registration->id);
 
             $remaining = $deletion_result['remaining'];
             $waiting_picked = $deletion_result['waiting_picked'];
 
-            $user_email = get_user_email($event, $registration['values']);
+            $user_email = get_user_email($event, $registration->values);
 
             if (count($user_email) > 0) {
                 WPOE_Mail_Sender::send_registration_deleted_confirmation($event, $user_email);
@@ -294,9 +304,9 @@ class WPOE_Public_Controller extends WP_REST_Controller
                 foreach ($waiting_picked as $registration_id) {
                     $waiting_registration = $this->registrations_dao->get_registration_by_id($event->id, $registration_id);
                     if ($waiting_registration !== null) {
-                        $user_email = get_user_email($event, $waiting_registration);
+                        $user_email = get_user_email($event, $waiting_registration->values);
                         if (count($user_email) > 0) {
-                            WPOE_Mail_Sender::send_picked_from_waiting_list_confirmation($event, $user_email, $waiting_registration);
+                            WPOE_Mail_Sender::send_picked_from_waiting_list_confirmation($event, $user_email, $waiting_registration->values);
                         }
                     }
                 }

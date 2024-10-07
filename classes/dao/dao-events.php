@@ -6,12 +6,19 @@ if (!defined('ABSPATH')) {
 
 require_once(WPOE_PLUGIN_DIR . 'classes/db.php');
 require_once(WPOE_PLUGIN_DIR . 'classes/dao/base-dao.php');
+require_once(WPOE_PLUGIN_DIR . 'classes/dao/dao-registrations.php');
 
 class WPOE_DAO_Events extends WPOE_Base_DAO
 {
+    /**
+     * @var WPOE_DAO_Registrations
+     */
+    private $registrations_dao;
+
     public function __construct()
     {
         parent::__construct();
+        $this->registrations_dao = new WPOE_DAO_Registrations();
     }
 
     public function list_events(): array
@@ -106,7 +113,7 @@ class WPOE_DAO_Events extends WPOE_Base_DAO
     {
         global $wpdb;
 
-        $query = $wpdb->prepare("SELECT e.id, e.name, e.editable_registrations, e.date, e.max_participants,
+        $query = $wpdb->prepare("SELECT e.id, e.name, e.editable_registrations, e.date, e.max_participants, e.waiting_list,
             f.id AS field_id, f.label, f.type, f.description, f.required, f.extra, f.position
             FROM " . WPOE_DB::get_table_name('event') . " e
             LEFT JOIN " . WPOE_DB::get_table_name('event_form_field') . " f ON f.event_id = e.id
@@ -124,6 +131,7 @@ class WPOE_DAO_Events extends WPOE_Base_DAO
         $event->name = $results[0]['name'];
         $event->date = $results[0]['date'];
         $event->editableRegistrations = (bool) $results[0]['editable_registrations'];
+        $event->waitingList = (bool) $results[0]['waiting_list'];
         $event->formFields = $this->load_form_fields($results);
 
         if ($results[0]['max_participants']) {
@@ -138,7 +146,9 @@ class WPOE_DAO_Events extends WPOE_Base_DAO
     private function get_registrations_count(int $event_id): int
     {
         global $wpdb;
-        $query = $wpdb->prepare("SELECT COALESCE(SUM(number_of_people), 0) AS number_of_people FROM " . WPOE_DB::get_table_name('event_registration') . " WHERE event_id = %d", $event_id);
+        $query = $wpdb->prepare("SELECT COALESCE(SUM(number_of_people), 0) AS number_of_people FROM "
+            . WPOE_DB::get_table_name('event_registration')
+            . " WHERE event_id = %d AND NOT waiting_list", $event_id);
         $var = $wpdb->get_var($query);
         $this->check_var($var, 'retrieving event registrations count');
         return (int) $var;
@@ -232,7 +242,16 @@ class WPOE_DAO_Events extends WPOE_Base_DAO
         $this->check_result($result, 'starting transaction');
 
         try {
-            // Update the template
+            if ($event->maxParticipants !== null) {
+                $registrations = $this->registrations_dao->get_registrations_count($event->id);
+                if ($event->maxParticipants < $registrations) {
+                    throw new WPOE_Validation_Exception(__("The number of available seats can't be lower than the current confirmed registered people", 'wp-open-events'));
+                }
+                if (!$event->waitingList && $this->registrations_dao->get_waiting_list_count($event->id) > 0) {
+                    throw new WPOE_Validation_Exception(__("It is not possible to remove the waiting list because there are some people in it", 'wp-open-events'));
+                }
+            }
+            // Update the event
             $result = $wpdb->update(
                 WPOE_DB::get_table_name('event'),
                 [
