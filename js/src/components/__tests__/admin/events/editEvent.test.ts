@@ -2,6 +2,7 @@ import { editEventTest } from "../../__base__/editEvent.setup";
 import { expect } from 'vitest';
 import { screen } from '@testing-library/react'
 import { within } from '@testing-library/dom';
+import { EventConfiguration } from "../../../classes/event";
 
 editEventTest('Open existing event for editing', {
   "name": "test",
@@ -34,7 +35,7 @@ editEventTest('Open existing event for editing', {
   expect(screen.getByRole('checkbox', { name: 'Add custom message to confirmation e-mail' })).toBeChecked();
   expect(screen.getByRole('textbox', { name: 'Custom confirmation e-mail content' })).toHaveValue('extra content');
 
-}, (requestBody: any) => {
+}, (requestBody: EventConfiguration) => {
   expect(requestBody.name).toEqual('test');
   expect(requestBody.date).toEqual('2050-01-01T00:00:00.000Z');
   expect(requestBody.maxParticipants).toEqual(100);

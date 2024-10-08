@@ -6,11 +6,12 @@ import { Route, Routes, MemoryRouter } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
 import { server } from '../__mocks__/api';
 import { HttpResponse, http } from 'msw';
+import { EventConfiguration } from '../../classes/event';
 
 /**
  * Base test function starting on "Edit event" page opened
  */
-export const editEventTest = (testDescription: string, eventToEdit: any, editEvent: () => Promise<void>, verifyRequestPayload: (body: any) => void) => {
+export const editEventTest = (testDescription: string, eventToEdit: EventConfiguration, editEvent: () => Promise<void>, verifyRequestPayload: (body: unknown) => void) => {
 
   test(testDescription, async () => {
     server.use(
@@ -30,7 +31,7 @@ export const editEventTest = (testDescription: string, eventToEdit: any, editEve
 
     await screen.findByText('Edit event');
 
-    let body: any;
+    let body: unknown;
     server.use(
       http.post('/wpoe/v1/admin/events/1', async ({ request }) => {
         body = await request.json();

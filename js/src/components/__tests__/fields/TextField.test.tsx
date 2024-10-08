@@ -59,7 +59,7 @@ test('Edit text field', async () => {
   let loading = false;
   const setLoading = (l: boolean) => (loading = l);
 
-  let requestBody: any;
+  let requestBody: Record<string, string>;
   server.use(
     http.get('/wpoe/v1/events/1', async () => {
       return HttpResponse.json({
@@ -69,7 +69,7 @@ test('Edit text field', async () => {
       });
     }),
     http.post('/wpoe/v1/events/1', async ({ request }) => {
-      requestBody = await request.json();
+      requestBody = await request.json() as Record<string, string>;
       return HttpResponse.json({ remaining: null });
     })
   );

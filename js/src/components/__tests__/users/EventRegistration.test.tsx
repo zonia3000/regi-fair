@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { beforeEach, describe, expect, test, vi } from 'vitest';
+import { beforeEach, describe, expect, test } from 'vitest';
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event';
 import { server } from '../__mocks__/api';
@@ -15,7 +15,7 @@ describe('Event registration', () => {
   test('Edit existing registration', async () => {
     window.location.hash = '#registration=1234';
 
-    let requestBody: any;
+    let requestBody: Record<string, string>;
     server.use(
       http.get('/wpoe/v1/events/1', async () => {
         return HttpResponse.json({
@@ -29,7 +29,7 @@ describe('Event registration', () => {
         return HttpResponse.json({ values: { 1: 'myvalue' } });
       }),
       http.post('/wpoe/v1/events/1/1234', async ({ request }) => {
-        requestBody = await request.json();
+        requestBody = await request.json() as Record<string, string>;
         return HttpResponse.json({ remaining: null });
       })
     );
@@ -175,7 +175,7 @@ describe('Event registration', () => {
   });
 
   test('Register the last seat', async () => {
-    let requestBody: any;
+    let requestBody: Record<string, string>;
     server.use(
       http.get('/wpoe/v1/events/1', async () => {
         return HttpResponse.json({
@@ -186,7 +186,7 @@ describe('Event registration', () => {
         });
       }),
       http.post('/wpoe/v1/events/1', async ({ request }) => {
-        requestBody = await request.json();
+        requestBody = await request.json() as Record<string, string>;
         return HttpResponse.json({ remaining: 0 });
       })
     );
@@ -211,7 +211,7 @@ describe('Event registration', () => {
   });
 
   test('Join the waiting list', async () => {
-    let requestBody: any;
+    let requestBody: Record<string, string>;
     let requestUrl: string
     server.use(
       http.get('/wpoe/v1/events/1', async () => {
@@ -225,7 +225,7 @@ describe('Event registration', () => {
       }),
       http.post('/wpoe/v1/events/1', async ({ request }) => {
         requestUrl = request.url;
-        requestBody = await request.json();
+        requestBody = await request.json() as Record<string, string>;
         return HttpResponse.json({ remaining: 0 });
       })
     );

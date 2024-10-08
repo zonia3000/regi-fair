@@ -7,6 +7,7 @@ import { HttpResponse, http } from "msw";
 import { test } from 'vitest';
 import userEvent from '@testing-library/user-event';
 import EventsRoot from '../../../admin/events/EventsRoot';
+import { EventConfiguration } from '../../../classes/event';
 
 test('Create first template', async () => {
 
@@ -100,10 +101,10 @@ test('Create event from template', async () => {
   expect(screen.getByRole('checkbox', { name: 'Add custom message to confirmation e-mail' })).toBeChecked();
   expect(screen.getByRole('textbox', { name: 'Custom confirmation e-mail content' })).toHaveValue('template email content');
 
-  let requestBody: any;
+  let requestBody: EventConfiguration;
   server.use(
     http.post('/wpoe/v1/admin/events', async ({ request }) => {
-      requestBody = await request.json();
+      requestBody = await request.json() as EventConfiguration;
       return HttpResponse.json({ id: 1 });
     })
   );

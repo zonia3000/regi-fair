@@ -1,4 +1,6 @@
-type TemplateConfiguration = {
+import { Field } from "./fields";
+
+export type TemplateConfiguration = {
 
   id: number | null
   name: string,

@@ -5,13 +5,14 @@ import userEvent from '@testing-library/user-event';
 import { HttpResponse, http } from 'msw';
 import Settings from '../../../admin/settings/Settings';
 import { server } from '../../__mocks__/api';
+import { Settings as SettingsType } from '../../../classes/settings';
 
 test('Edit settings', async () => {
 
-  let body: any;
+  let body: SettingsType;
   server.use(
     http.post('/wpoe/v1/admin/settings', async ({ request }) => {
-      body = await request.json();
+      body = await request.json() as SettingsType;
       return HttpResponse.json({ defaultExtraEmailContent: '' });
     })
   );

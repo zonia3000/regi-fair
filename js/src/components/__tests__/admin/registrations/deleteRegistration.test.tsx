@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { expect, test } from 'vitest';
-import { act, render, screen, waitForElementToBeRemoved, within } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
 import { Route, Routes, MemoryRouter } from 'react-router-dom';
 import { HttpResponse, http } from 'msw';
 import { server } from '../../__mocks__/api';

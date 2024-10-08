@@ -10,7 +10,7 @@ import { HttpResponse, http } from 'msw';
 /**
  * Base test function starting on "Create event" page opened
  */
-export const createEventTest = (testDescription: string, editEvent: () => Promise<void>, verifyRequestPayload: (body: any) => void) => {
+export const createEventTest = (testDescription: string, editEvent: () => Promise<void>, verifyRequestPayload: (body: unknown) => void) => {
 
   test(testDescription, async () => {
 
@@ -25,7 +25,7 @@ export const createEventTest = (testDescription: string, editEvent: () => Promis
 
     await screen.findByText('Create event');
 
-    let body: any;
+    let body: unknown;
     server.use(
       http.post('/wpoe/v1/admin/events', async ({ request }) => {
         body = await request.json();

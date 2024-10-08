@@ -1,8 +1,7 @@
 import React, { } from 'react';
-import { Field } from './classes/fields';
+import { Field, RadioField as RadioFieldType } from './classes/fields';
 import { FormFieldsProps } from './classes/components-props';
 import InputField from './fields/InputField';
-import { __, _x } from '@wordpress/i18n';
 import './style.css';
 import RadioField from './fields/RadioField';
 
@@ -30,11 +29,11 @@ const FormFields = (props: FormFieldsProps) => {
           field.fieldType === 'radio'
           && <RadioField
             required={field.required}
-            label={field.label} disabled={props.disabled} options={(field.extra as any).options}
+            label={field.label} disabled={props.disabled} options={(field as RadioFieldType).extra.options}
             value={props.fieldsValues[field.id]} setValue={(v: string) => setFieldValue(field.id, v)} />
         }
         {field.id.toString() in props.fieldsErrors &&
-          <span className='error-text'>{(props.fieldsErrors as any)[field.id.toString()]}</span>
+          <span className='error-text'>{props.fieldsErrors[field.id]}</span>
         }
       </div>);
     })

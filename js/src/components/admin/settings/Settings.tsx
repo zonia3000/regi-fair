@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { __ } from '@wordpress/i18n';
-import { Settings as SettingsOptions } from '../../classes/settings';
+import { type Settings as SettingsType } from '../../classes/settings';
 import apiFetch from '@wordpress/api-fetch';
 import { extractError } from '../../utils';
 import Loading from '../../Loading';
@@ -23,7 +23,7 @@ const Settings = function () {
         setError('');
         apiFetch({ path: `/wpoe/v1/admin/settings` })
             .then((result) => {
-                const settings = result as SettingsOptions;
+                const settings = result as SettingsType;
                 setDefaultAdminEmail(settings.defaultAdminEmail);
                 setDefaultAutoremovePeriod(settings.defaultAutoremovePeriod.toString());
                 setDefaultExtraEmailContent(settings.defaultExtraEmailContent);
@@ -55,7 +55,7 @@ const Settings = function () {
                     defaultTrackIpAddresses
                 })
             });
-            setDefaultExtraEmailContent((response as any).defaultExtraEmailContent);
+            setDefaultExtraEmailContent((response as SettingsType).defaultExtraEmailContent);
             setUpdated(true);
         } catch (err) {
             setError(extractError(err));

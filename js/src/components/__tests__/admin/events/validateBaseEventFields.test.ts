@@ -2,6 +2,7 @@ import { expect } from 'vitest';
 import { fireEvent, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event';
 import { createEventTest } from '../../__base__/createEvent.setup';
+import { EventConfiguration } from '../../../classes/event';
 
 createEventTest('Validate base event fields', async () => {
 
@@ -37,7 +38,7 @@ createEventTest('Validate base event fields', async () => {
 
   await user.type(adminEmailInput, 'admin@example.com');
 
-}, (requestBody: any) => {
+}, (requestBody: EventConfiguration) => {
   expect(requestBody.name).toEqual('Event name');
   expect(requestBody.date).toEqual('2050-01-01T00:00:00.000Z');
   expect(requestBody.adminEmail).toEqual('admin@example.com');

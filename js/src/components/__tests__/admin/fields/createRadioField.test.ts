@@ -3,6 +3,8 @@ import { expect } from 'vitest';
 import { fireEvent, screen } from '@testing-library/react'
 import { within } from '@testing-library/dom';
 import userEvent from '@testing-library/user-event';
+import { EventConfiguration } from "../../../classes/event";
+import { RadioField } from "../../../classes/fields";
 
 createEventTest('Create required radio field with description', async () => {
 
@@ -43,14 +45,14 @@ createEventTest('Create required radio field with description', async () => {
   expect((screen.getByRole('textbox', { name: 'Option 2' }) as HTMLInputElement).value).toEqual('option2');
   await user.click(screen.getByRole('button', { name: 'Save' }));
 
-}, (requestBody: any) => {
+}, (requestBody: EventConfiguration) => {
   expect(requestBody.formFields.length).toEqual(1);
   expect(requestBody.formFields[0].fieldType).toEqual('radio');
   expect(requestBody.formFields[0].label).toEqual('Radio field');
   expect(requestBody.formFields[0].description).toEqual('Radio field description');
-  expect(requestBody.formFields[0].extra.options.length).toEqual(2);
-  expect(requestBody.formFields[0].extra.options[0]).toEqual('option1');
-  expect(requestBody.formFields[0].extra.options[1]).toEqual('option2');
+  expect((requestBody.formFields[0] as RadioField).extra.options.length).toEqual(2);
+  expect((requestBody.formFields[0] as RadioField).extra.options[0]).toEqual('option1');
+  expect((requestBody.formFields[0] as RadioField).extra.options[1]).toEqual('option2');
   expect(requestBody.formFields[0].required).toEqual(true);
 });
 
@@ -99,14 +101,14 @@ createEventTest('Create optional radio field without description and 3 options',
   expect((screen.getByRole('textbox', { name: 'Option 3' }) as HTMLInputElement).value).toEqual('option3');
   await user.click(screen.getByRole('button', { name: 'Save' }));
 
-}, (requestBody: any) => {
+}, (requestBody: EventConfiguration) => {
   expect(requestBody.formFields.length).toEqual(1);
   expect(requestBody.formFields[0].fieldType).toEqual('radio');
   expect(requestBody.formFields[0].label).toEqual('Radio field');
   expect(requestBody.formFields[0].description).toEqual(undefined);
-  expect(requestBody.formFields[0].extra.options.length).toEqual(3);
-  expect(requestBody.formFields[0].extra.options[0]).toEqual('option1');
-  expect(requestBody.formFields[0].extra.options[1]).toEqual('option2');
-  expect(requestBody.formFields[0].extra.options[2]).toEqual('option3');
+  expect((requestBody.formFields[0] as RadioField).extra.options.length).toEqual(3);
+  expect((requestBody.formFields[0] as RadioField).extra.options[0]).toEqual('option1');
+  expect((requestBody.formFields[0] as RadioField).extra.options[1]).toEqual('option2');
+  expect((requestBody.formFields[0] as RadioField).extra.options[2]).toEqual('option3');
   expect(requestBody.formFields[0].required).toEqual(false);
 });

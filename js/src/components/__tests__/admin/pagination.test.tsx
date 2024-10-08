@@ -31,8 +31,6 @@ test('Pagination: 11th element creates second page', async () => {
 
   render(<Pagination pageSize={10} setPageSize={setPageSize} setPage={setPage} page={1} total={11} />);
 
-  const user = userEvent.setup();
-
   expect(screen.getAllByLabelText(/Go to page \d+/)).toHaveLength(2);
   expect(screen.getByLabelText('Go to page 1')).toBeInTheDocument();
   expect(screen.getByLabelText('Go to page 2')).toBeInTheDocument();

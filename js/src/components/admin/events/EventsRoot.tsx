@@ -1,5 +1,4 @@
 import React from 'react';
-import { __ } from '@wordpress/i18n';
 import EditEvent from './EditEvent';
 import ListEvents from './ListEvents';
 import { Routes, Route, HashRouter as Router } from 'react-router-dom';

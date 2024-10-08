@@ -3,6 +3,7 @@ import { expect } from 'vitest';
 import { screen } from '@testing-library/react'
 import { within } from '@testing-library/dom';
 import userEvent from '@testing-library/user-event';
+import { EventConfiguration } from "../../../classes/event";
 
 editEventTest('Change field position', {
   "name": "test",
@@ -35,7 +36,7 @@ editEventTest('Change field position', {
   await user.click(within(rows[1]).getByLabelText('Move field down'));
   await user.click(within(rows[3]).getByLabelText('Move field up'));
 
-}, (requestBody: any) => {
+}, (requestBody: EventConfiguration) => {
   expect(requestBody.formFields.length).toEqual(3);
   expect(requestBody.formFields[0].fieldType).toEqual('email');
   expect(requestBody.formFields[1].fieldType).toEqual('number');

@@ -6,6 +6,7 @@ import userEvent from '@testing-library/user-event';
 import { HttpResponse, http } from 'msw';
 import EditTemplate from '../../../admin/templates/EditTemplate';
 import { server } from '../../__mocks__/api';
+import { TemplateConfiguration } from '../../../classes/template';
 
 test('Edit template', async () => {
 
@@ -38,10 +39,10 @@ test('Edit template', async () => {
 
   await screen.findByText('Edit template');
 
-  let requestBody: any;
+  let requestBody: TemplateConfiguration;
   server.use(
     http.post('/wpoe/v1/admin/templates/1', async ({ request }) => {
-      requestBody = await request.json();
+      requestBody = await request.json() as TemplateConfiguration;
       return HttpResponse.json({});
     })
   );

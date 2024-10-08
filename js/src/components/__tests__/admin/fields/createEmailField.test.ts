@@ -3,6 +3,8 @@ import { expect } from 'vitest';
 import { fireEvent, screen } from '@testing-library/react'
 import { within } from '@testing-library/dom';
 import userEvent from '@testing-library/user-event';
+import { EventConfiguration } from "../../../classes/event";
+import { EmailField } from "../../../classes/fields";
 
 createEventTest('Create required email field with description', async () => {
 
@@ -35,12 +37,12 @@ createEventTest('Create required email field with description', async () => {
   expect((screen.getByRole('checkbox', { name: 'Required' }) as HTMLInputElement).checked).toEqual(true);
   await user.click(screen.getByRole('button', { name: 'Save' }));
 
-}, (requestBody: any) => {
+}, (requestBody: EventConfiguration) => {
   expect(requestBody.formFields.length).toEqual(1);
   expect(requestBody.formFields[0].fieldType).toEqual('email');
   expect(requestBody.formFields[0].label).toEqual('Email field');
   expect(requestBody.formFields[0].description).toEqual('Email field description');
-  expect(requestBody.formFields[0].extra.confirmationAddress).toEqual(true);
+  expect((requestBody.formFields[0] as EmailField).extra.confirmationAddress).toEqual(true);
   expect(requestBody.formFields[0].required).toEqual(true);
 });
 
@@ -73,11 +75,11 @@ createEventTest('Create optional email field without description', async () => {
   expect((screen.getByRole('checkbox', { name: 'Use this address to send confirmation e-mail when the user register to the event' }) as HTMLInputElement).checked).toEqual(false);
   await user.click(screen.getByRole('button', { name: 'Save' }));
 
-}, (requestBody: any) => {
+}, (requestBody: EventConfiguration) => {
   expect(requestBody.formFields.length).toEqual(1);
   expect(requestBody.formFields[0].fieldType).toEqual('email');
   expect(requestBody.formFields[0].label).toEqual('Email field');
   expect(requestBody.formFields[0].description).toEqual(undefined);
-  expect(requestBody.formFields[0].extra.confirmationAddress).toEqual(false);
+  expect((requestBody.formFields[0] as EmailField).extra.confirmationAddress).toEqual(false);
   expect(requestBody.formFields[0].required).toEqual(false);
 });

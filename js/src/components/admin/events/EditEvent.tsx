@@ -12,7 +12,7 @@ import { EventConfiguration } from '../../classes/event';
 const EditEvent = () => {
 
     const { eventId } = useParams();
-    let [searchParams,] = useSearchParams();
+    const [searchParams,] = useSearchParams();
     const navigate = useNavigate();
 
     const [loading, setLoading] = useState(true);

@@ -3,6 +3,8 @@ import { expect } from 'vitest';
 import { fireEvent, screen } from '@testing-library/react'
 import { within } from '@testing-library/dom';
 import userEvent from '@testing-library/user-event';
+import { EventConfiguration } from "../../../classes/event";
+import { NumberField } from "../../../classes/fields";
 
 createEventTest('Create required number field with description', async () => {
 
@@ -34,7 +36,7 @@ createEventTest('Create required number field with description', async () => {
   expect((screen.getByRole('checkbox', { name: 'Required' }) as HTMLInputElement).checked).toEqual(true);
   await user.click(screen.getByRole('button', { name: 'Save' }));
 
-}, (requestBody: any) => {
+}, (requestBody: EventConfiguration) => {
   expect(requestBody.formFields.length).toEqual(1);
   expect(requestBody.formFields[0].fieldType).toEqual('number');
   expect(requestBody.formFields[0].label).toEqual('Number field');
@@ -75,12 +77,12 @@ createEventTest('Create optional number field without description and with min/m
   expect((screen.getByRole('spinbutton', { name: 'Maximum value (optional)' }) as HTMLInputElement).value).toEqual('10');
   await user.click(screen.getByRole('button', { name: 'Save' }));
 
-}, (requestBody: any) => {
+}, (requestBody: EventConfiguration) => {
   expect(requestBody.formFields.length).toEqual(1);
   expect(requestBody.formFields[0].fieldType).toEqual('number');
   expect(requestBody.formFields[0].label).toEqual('Number field');
   expect(requestBody.formFields[0].description).toEqual(undefined);
-  expect(requestBody.formFields[0].extra.min).toEqual(5);
-  expect(requestBody.formFields[0].extra.max).toEqual(10);
+  expect((requestBody.formFields[0] as NumberField).extra.min).toEqual(5);
+  expect((requestBody.formFields[0] as NumberField).extra.max).toEqual(10);
   expect(requestBody.formFields[0].required).toEqual(false);
 });

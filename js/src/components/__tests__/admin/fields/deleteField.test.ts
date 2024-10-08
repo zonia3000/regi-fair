@@ -3,6 +3,7 @@ import { expect } from 'vitest';
 import { screen } from '@testing-library/react'
 import { within } from '@testing-library/dom';
 import userEvent from '@testing-library/user-event';
+import { EventConfiguration } from "../../../classes/event";
 
 editEventTest('Delete field', {
   "name": "test",
@@ -32,7 +33,7 @@ editEventTest('Delete field', {
   await user.click(within(rows[2]).getByRole('button', { name: 'Delete' }));
   await user.click(screen.getByRole('button', { name: 'Confirm' }));
 
-}, (requestBody: any) => {
+}, (requestBody: EventConfiguration) => {
   expect(requestBody.formFields.length).toEqual(1);
   expect(requestBody.formFields[0].fieldType).toEqual('text');
 });

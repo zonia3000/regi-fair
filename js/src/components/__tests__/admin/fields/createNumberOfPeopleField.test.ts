@@ -3,6 +3,8 @@ import { expect } from 'vitest';
 import { fireEvent, screen } from '@testing-library/react'
 import { within } from '@testing-library/dom';
 import userEvent from '@testing-library/user-event';
+import { EventConfiguration } from "../../../classes/event";
+import { NumberField } from "../../../classes/fields";
 
 createEventTest('Create required number of people field with description', async () => {
 
@@ -34,13 +36,13 @@ createEventTest('Create required number of people field with description', async
   expect((screen.getByRole('checkbox', { name: 'Required' }) as HTMLInputElement).checked).toEqual(true);
   await user.click(screen.getByRole('button', { name: 'Save' }));
 
-}, (requestBody: any) => {
+}, (requestBody: EventConfiguration) => {
   expect(requestBody.formFields.length).toEqual(1);
   expect(requestBody.formFields[0].fieldType).toEqual('number');
   expect(requestBody.formFields[0].label).toEqual('Number of people field');
   expect(requestBody.formFields[0].description).toEqual('Number of people field description');
-  expect(requestBody.formFields[0].extra.useAsNumberOfPeople).toEqual(true);
-  expect(requestBody.formFields[0].extra.max).toEqual(undefined);
+  expect((requestBody.formFields[0] as NumberField).extra.useAsNumberOfPeople).toEqual(true);
+  expect((requestBody.formFields[0] as NumberField).extra.max).toEqual(undefined);
   expect(requestBody.formFields[0].required).toEqual(true);
 });
 
@@ -73,13 +75,13 @@ createEventTest('Create optional number of people field with max value and witho
   expect((screen.getByRole('checkbox', { name: 'Required' }) as HTMLInputElement).checked).toEqual(false);
   await user.click(screen.getByRole('button', { name: 'Save' }));
 
-}, (requestBody: any) => {
+}, (requestBody: EventConfiguration) => {
   expect(requestBody.formFields.length).toEqual(1);
   expect(requestBody.formFields[0].fieldType).toEqual('number');
   expect(requestBody.formFields[0].label).toEqual('Number of people field');
   expect(requestBody.formFields[0].description).toEqual(undefined);
-  expect(requestBody.formFields[0].extra.useAsNumberOfPeople).toEqual(true);
-  expect(requestBody.formFields[0].extra.max).toEqual(3);
+  expect((requestBody.formFields[0] as NumberField).extra.useAsNumberOfPeople).toEqual(true);
+  expect((requestBody.formFields[0] as NumberField).extra.max).toEqual(3);
   expect(requestBody.formFields[0].required).toEqual(false);
 });
 
@@ -102,7 +104,7 @@ createEventTest('Unsetting selected number of people field reset field type', as
   const rows = screen.getAllByRole('row');
   expect(rows.length).toEqual(2);
 
-}, (requestBody: any) => {
+}, (requestBody: EventConfiguration) => {
   expect(requestBody.formFields.length).toEqual(1);
   expect(requestBody.formFields[0].fieldType).toEqual('number');
   expect(requestBody.formFields[0].label).toEqual('Number field');

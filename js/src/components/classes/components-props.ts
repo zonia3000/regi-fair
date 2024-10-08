@@ -15,7 +15,7 @@ export type FormFieldsProps = {
     formFields: Field[]
     fieldsValues: Record<number, string>
     setFieldsValues: (values: Record<number, string>) => void
-    fieldsErrors: {}
+    fieldsErrors: Record<number, string>
     disabled: boolean
 }
 

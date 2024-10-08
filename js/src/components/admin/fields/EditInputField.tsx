@@ -137,7 +137,7 @@ const EditInputField = (props: EditInputFieldProps) => {
         })
     }
 
-    function mergeExtra(field: Field, extra: any) {
+    function mergeExtra(field: Field, extra: object) {
         if (extra === undefined) {
             return field.extra;
         }

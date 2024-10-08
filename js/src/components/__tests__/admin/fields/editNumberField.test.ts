@@ -3,6 +3,7 @@ import { expect } from 'vitest';
 import { screen } from '@testing-library/react'
 import { within } from '@testing-library/dom';
 import userEvent from '@testing-library/user-event';
+import { EventConfiguration } from "../../../classes/event";
 
 editEventTest('Unset number field min and max', {
   "name": "test",
@@ -38,7 +39,7 @@ editEventTest('Unset number field min and max', {
 
   await user.click(screen.getByRole('button', { name: 'Save' }));
 
-}, (requestBody: any) => {
+}, (requestBody: EventConfiguration) => {
   expect(requestBody.formFields.length).toEqual(1);
   expect(requestBody.formFields[0].fieldType).toEqual('number');
   expect(requestBody.formFields[0].label).toEqual('Number field');

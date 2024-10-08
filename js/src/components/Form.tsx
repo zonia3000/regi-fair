@@ -74,7 +74,7 @@ const Form = (props: FormProps) => {
             setFields(registration.values);
             setWaitingList(registration.waitingList);
             setEditingExisting(true);
-        } catch (err) {
+        } catch {
             console.warn('Unable to retrieve registration');
         }
     }

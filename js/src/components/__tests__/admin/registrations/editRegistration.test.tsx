@@ -85,10 +85,10 @@ test('Update registration without email field', async () => {
     })
   );
 
-  let requestBody: any;
+  let requestBody: Record<string, string>;
   server.use(
     http.post('/wpoe/v1/admin/events/1/registrations/1&sendEmail=false', async ({ request }) => {
-      requestBody = await request.json();
+      requestBody = await request.json() as Record<string, string>;
       return new Response(null, { status: 204 });
     })
   );
@@ -134,10 +134,10 @@ test('Update registration with email field', async () => {
     })
   );
 
-  let requestBody: any;
+  let requestBody: Record<string, string>;
   server.use(
     http.post('/wpoe/v1/admin/events/1/registrations/1&sendEmail=true', async ({ request }) => {
-      requestBody = await request.json();
+      requestBody = await request.json() as Record<string, string>;
       return new Response(null, { status: 204 });
     })
   );
@@ -186,10 +186,10 @@ test('Update registration failing validation', async () => {
     })
   );
 
-  let requestBody: any;
+  let requestBody: Record<string, string>;
   server.use(
     http.post('/wpoe/v1/admin/events/1/registrations/1&sendEmail=false', async ({ request }) => {
-      requestBody = await request.json();
+      requestBody = await request.json() as Record<string, string>;
       return HttpResponse.json({
         code: 'invalid_form_fields',
         data: { fieldsErrors: { 1: "Field is required" } }

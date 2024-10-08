@@ -1,5 +1,4 @@
 import React from 'react';
-import { __ } from '@wordpress/i18n';
 import { Routes, Route, HashRouter as Router } from 'react-router-dom';
 import EditTemplate from './EditTemplate';
 import ListTemplates from './ListTemplates';
