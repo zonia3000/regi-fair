@@ -1,13 +1,19 @@
-import React, { useState, useEffect } from 'react';
-import { __ } from '@wordpress/i18n';
-import apiFetch from '@wordpress/api-fetch';
-import Loading from '../../Loading';
-import { useNavigate, useParams } from 'react-router-dom';
-import EditFormFields from '../fields/EditFormFields';
-import { Button, CheckboxControl, Notice, TextControl, TextareaControl } from '@wordpress/components';
-import { cleanupFields, extractError } from '../../utils';
-import '../../style.css';
-import { Settings } from '../../classes/settings';
+import React, { useState, useEffect } from "react";
+import { __ } from "@wordpress/i18n";
+import apiFetch from "@wordpress/api-fetch";
+import Loading from "../../Loading";
+import { useNavigate, useParams } from "react-router-dom";
+import EditFormFields from "../fields/EditFormFields";
+import {
+  Button,
+  CheckboxControl,
+  Notice,
+  TextControl,
+  TextareaControl,
+} from "@wordpress/components";
+import { cleanupFields, extractError } from "../../utils";
+import "../../style.css";
+import { Settings } from "../../classes/settings";
 
 const EditTemplate = () => {
   const { templateId } = useParams();
@@ -15,20 +21,20 @@ const EditTemplate = () => {
 
   const [loading, setLoading] = useState(true);
   const [found, setFound] = useState(false);
-  const [templateName, setTemplateName] = useState('');
+  const [templateName, setTemplateName] = useState("");
   const [autoremove, setAutoremove] = useState(true);
   const [formFields, setFormFields] = useState([]);
   const [notifyAdmin, setNotifyAdmin] = useState(false);
-  const [adminEmail, setAdminEmail] = useState('');
+  const [adminEmail, setAdminEmail] = useState("");
   const [editableRegistrations, setEditableRegistrations] = useState(true);
   const [customizeEmailContent, setCustomizeEmailContent] = useState(false);
-  const [emailExtraContent, setEmailExtraContent] = useState('');
-  const [error, setError] = useState('');
+  const [emailExtraContent, setEmailExtraContent] = useState("");
+  const [error, setError] = useState("");
   const [valid, setValid] = useState(true);
 
   useEffect(() => {
     setLoading(true);
-    if (templateId === 'new') {
+    if (templateId === "new") {
       setFound(true);
       apiFetch({ path: `/wpoe/v1/admin/settings` })
         .then((result) => {
@@ -42,7 +48,7 @@ const EditTemplate = () => {
             setEmailExtraContent(settings.defaultExtraEmailContent);
           }
         })
-        .catch(err => {
+        .catch((err) => {
           setError(extractError(err));
         })
         .finally(() => {
@@ -66,8 +72,8 @@ const EditTemplate = () => {
             setEmailExtraContent(template.extraEmailContent);
           }
         })
-        .catch(err => {
-          if (err.code === 'template_not_found') {
+        .catch((err) => {
+          if (err.code === "template_not_found") {
             setFound(false);
           } else {
             setError(extractError(err));
@@ -86,7 +92,7 @@ const EditTemplate = () => {
       return;
     }
     const template: TemplateConfiguration = {
-      id: templateId === 'new' ? null : Number(templateId),
+      id: templateId === "new" ? null : Number(templateId),
       name: templateName,
       formFields,
       autoremove: autoremove,
@@ -94,33 +100,35 @@ const EditTemplate = () => {
       waitingList: false,
       adminEmail: notifyAdmin ? adminEmail.trim() : null,
       editableRegistrations,
-      extraEmailContent: customizeEmailContent ? emailExtraContent.trim() : null
+      extraEmailContent: customizeEmailContent
+        ? emailExtraContent.trim()
+        : null,
     };
     setLoading(true);
     try {
-      if (templateId === 'new') {
+      if (templateId === "new") {
         await apiFetch({
-          path: '/wpoe/v1/admin/templates',
-          method: 'POST',
+          path: "/wpoe/v1/admin/templates",
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
           body: JSON.stringify({
             ...template,
-            formFields: cleanupFields(template.formFields)
+            formFields: cleanupFields(template.formFields),
           }),
         });
       } else {
         await apiFetch({
           path: `/wpoe/v1/admin/templates/${templateId}`,
-          method: 'PUT',
+          method: "PUT",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
           body: JSON.stringify({
             ...template,
-            formFields: cleanupFields(template.formFields)
-          })
+            formFields: cleanupFields(template.formFields),
+          }),
         });
       }
       back();
@@ -142,7 +150,7 @@ const EditTemplate = () => {
   }
 
   function back() {
-    navigate('/');
+    navigate("/");
   }
 
   if (loading) {
@@ -151,97 +159,126 @@ const EditTemplate = () => {
 
   if (!found) {
     if (error) {
-      return (<div className='mb'><Notice status='error' isDismissible={false}>{error}</Notice></div>);
+      return (
+        <div className="mb">
+          <Notice status="error" isDismissible={false}>
+            {error}
+          </Notice>
+        </div>
+      );
     } else {
-      return (<p>{__('Template not found', 'wp-open-events')}</p>);
+      return <p>{__("Template not found", "wp-open-events")}</p>;
     }
   }
 
   return (
     <div>
-      <h1>{templateId === 'new' ? __('Create template', 'wp-open-events') : __('Edit template', 'wp-open-events')}</h1>
-      <div className={!valid && !templateName.trim() ? 'form-error' : ''}>
+      <h1>
+        {templateId === "new"
+          ? __("Create template", "wp-open-events")
+          : __("Edit template", "wp-open-events")}
+      </h1>
+      <div className={!valid && !templateName.trim() ? "form-error" : ""}>
         <TextControl
-          label={__('Name', 'wp-open-events')}
+          label={__("Name", "wp-open-events")}
           onChange={setTemplateName}
           value={templateName}
           required
-          className='mb'
+          className="mb"
           __nextHasNoMarginBottom={true}
         />
-        {!valid && !templateName.trim() &&
-          <span className='error-text'>{__('Field is required', 'wp-open-events')}</span>
-        }
+        {!valid && !templateName.trim() && (
+          <span className="error-text">
+            {__("Field is required", "wp-open-events")}
+          </span>
+        )}
       </div>
       <CheckboxControl
-        label={__('Autoremove user data after the event', 'wp-open-events')}
+        label={__("Autoremove user data after the event", "wp-open-events")}
         checked={autoremove}
         onChange={setAutoremove}
-        className='mb'
+        className="mb"
         __nextHasNoMarginBottom={true}
       />
       <CheckboxControl
-        label={__('Allow the users to edit or delete their registrations', 'wp-open-events')}
+        label={__(
+          "Allow the users to edit or delete their registrations",
+          "wp-open-events",
+        )}
         checked={editableRegistrations}
         onChange={setEditableRegistrations}
-        className='mb'
+        className="mb"
         __nextHasNoMarginBottom={true}
       />
       <CheckboxControl
-        label={__('Notify an administrator by e-mail when a new registration is created', 'wp-open-events')}
+        label={__(
+          "Notify an administrator by e-mail when a new registration is created",
+          "wp-open-events",
+        )}
         checked={notifyAdmin}
         onChange={setNotifyAdmin}
-        className='mb'
+        className="mb"
         __nextHasNoMarginBottom={true}
       />
-      {notifyAdmin &&
-        <div className={!valid && !adminEmail.trim() ? 'form-error' : ''}>
+      {notifyAdmin && (
+        <div className={!valid && !adminEmail.trim() ? "form-error" : ""}>
           <TextControl
-            label={__('Administrator e-mail address', 'wp-open-events')}
+            label={__("Administrator e-mail address", "wp-open-events")}
             onChange={setAdminEmail}
             value={adminEmail}
             required
-            className='mb'
+            className="mb"
             __nextHasNoMarginBottom={true}
           />
-          {!valid && !adminEmail.trim() &&
-            <span className='error-text'>{__('Field is required', 'wp-open-events')}</span>
-          }
+          {!valid && !adminEmail.trim() && (
+            <span className="error-text">
+              {__("Field is required", "wp-open-events")}
+            </span>
+          )}
         </div>
-      }
+      )}
       <CheckboxControl
-        label={__('Add custom message to confirmation e-mail', 'wp-open-events')}
+        label={__(
+          "Add custom message to confirmation e-mail",
+          "wp-open-events",
+        )}
         checked={customizeEmailContent}
         onChange={setCustomizeEmailContent}
-        className='mb'
+        className="mb"
         __nextHasNoMarginBottom={true}
       />
-      {customizeEmailContent &&
+      {customizeEmailContent && (
         <TextareaControl
-          label={__('Custom confirmation e-mail content', 'wp-open-events')}
+          label={__("Custom confirmation e-mail content", "wp-open-events")}
           onChange={setEmailExtraContent}
           value={emailExtraContent}
-          help={__('This content will be added at the end of the confirmation e-mail messages. Allowed HTML tags: <b>, <i>, <a>, <hr>, <p>, <br>', 'wp-open-events')}
-          className='mb'
+          help={__(
+            "This content will be added at the end of the confirmation e-mail messages. Allowed HTML tags: <b>, <i>, <a>, <hr>, <p>, <br>",
+            "wp-open-events",
+          )}
+          className="mb"
           __nextHasNoMarginBottom={true}
         />
-      }
-
+      )}
       <EditFormFields formFields={formFields} setFormFields={setFormFields} />
-
-      <br /><hr />
-
-      {error && <div className='mb'><Notice status='error' isDismissible={false}>{error}</Notice></div>}
-
-      <Button onClick={save} variant='primary'>
-        {__('Save', 'wp-open-events')}
+      <br />
+      <hr />
+      {error && (
+        <div className="mb">
+          <Notice status="error" isDismissible={false}>
+            {error}
+          </Notice>
+        </div>
+      )}
+      <Button onClick={save} variant="primary">
+        {__("Save", "wp-open-events")}
       </Button>
       &nbsp;
-      <Button onClick={back} variant='secondary'>
-        {__('Back', 'wp-open-events')}
+      <Button onClick={back} variant="secondary">
+        {__("Back", "wp-open-events")}
       </Button>
     </div>
   );
-}
+};
 
 export default EditTemplate;

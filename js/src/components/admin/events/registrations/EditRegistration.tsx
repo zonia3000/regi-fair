@@ -20,7 +20,7 @@ const EditRegistration = () => {
   const [waitingList, setWaitingList] = useState(false);
   const [availableSeats, setAvailableSeats] = useState(null);
   const [fieldsErrors, setFieldsErrors] = useState({});
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [showEmailCheckbox, setShowEmailCheckbox] = useState(false);
   const [notifyUserByEmail, setNotifyUserByEmail] = useState(false);
 
@@ -31,14 +31,16 @@ const EditRegistration = () => {
   async function loadEventData() {
     let eventConfig: EventConfiguration | null = null;
     try {
-      eventConfig = await apiFetch({ path: `/wpoe/v1/admin/events/${eventId}` });
+      eventConfig = await apiFetch({
+        path: `/wpoe/v1/admin/events/${eventId}`,
+      });
       setFound(true);
       setEvent(eventConfig);
       if (!isNaN(eventConfig.availableSeats)) {
         setAvailableSeats(eventConfig.availableSeats);
       }
     } catch (err) {
-      if (err.code === 'event_not_found') {
+      if (err.code === "event_not_found") {
         setFound(false);
       } else {
         setError(extractError(err));
@@ -47,20 +49,25 @@ const EditRegistration = () => {
       return;
     }
     try {
-      const registration: Registration = await apiFetch({ path: `/wpoe/v1/admin/events/${eventId}/registrations/${registrationId}` });
+      const registration: Registration = await apiFetch({
+        path: `/wpoe/v1/admin/events/${eventId}/registrations/${registrationId}`,
+      });
       setFields(registration.values);
       setWaitingList(registration.waitingList);
       const hasConfirmationAddressFields =
         eventConfig.formFields.filter(
-          f => f.fieldType === 'email'
-            && f.extra && 'confirmationAddress' in f.extra && f.extra.confirmationAddress === true
+          (f) =>
+            f.fieldType === "email" &&
+            f.extra &&
+            "confirmationAddress" in f.extra &&
+            f.extra.confirmationAddress === true,
         ).length > 0;
       if (hasConfirmationAddressFields) {
         setShowEmailCheckbox(true);
         setNotifyUserByEmail(true);
       }
     } catch (err) {
-      if (err.code === 'registration_not_found') {
+      if (err.code === "registration_not_found") {
         setFound(false);
       } else {
         setError(extractError(err));
@@ -75,15 +82,15 @@ const EditRegistration = () => {
     try {
       await apiFetch({
         path: `/wpoe/v1/admin/events/${eventId}/registrations/${registrationId}&sendEmail=${notifyUserByEmail}`,
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify(fields)
+        body: JSON.stringify(fields),
       });
       back();
     } catch (err) {
-      if (err.code === 'invalid_form_fields') {
+      if (err.code === "invalid_form_fields") {
         setFieldsErrors(err.data.fieldsErrors);
       }
       setError(extractError(err));
@@ -101,60 +108,74 @@ const EditRegistration = () => {
   }
 
   if (loading) {
-    return <Loading />
+    return <Loading />;
   }
 
   if (!found) {
-    return <p>{__('Registration not found', 'wp-open-events')}</p>
+    return <p>{__("Registration not found", "wp-open-events")}</p>;
   }
 
   return (
     <div>
-      <h1 className='wp-heading-inline mb-2'>
-        {sprintf(_x('Edit registration #%d', 'Id of the registration', 'wp-open-events'), registrationId)}
+      <h1 className="wp-heading-inline mb-2">
+        {sprintf(
+          _x(
+            "Edit registration #%d",
+            "Id of the registration",
+            "wp-open-events",
+          ),
+          registrationId,
+        )}
       </h1>
-
-      {waitingList &&
-        <Notice status='info' isDismissible={false} className="mt">
-          {__('This registration is in the waiting list.', 'wp-open-events')}
+      {waitingList && (
+        <Notice status="info" isDismissible={false} className="mt">
+          {__("This registration is in the waiting list.", "wp-open-events")}
         </Notice>
-      }
-
-      {availableSeats !== null &&
-        <Notice status='info' isDismissible={false} className="mt">
-          {sprintf(_x('There are still %d seats available.', 'number of available seats', 'wp-open-events'), availableSeats)}
+      )}
+      {availableSeats !== null && (
+        <Notice status="info" isDismissible={false} className="mt">
+          {sprintf(
+            _x(
+              "There are still %d seats available.",
+              "number of available seats",
+              "wp-open-events",
+            ),
+            availableSeats,
+          )}
         </Notice>
-      }
-
+      )}
       <FormFields
         formFields={event.formFields}
         fieldsValues={fields}
         setFieldsValues={setFields}
         disabled={false}
-        fieldsErrors={fieldsErrors} />
-
-      {
-        showEmailCheckbox &&
+        fieldsErrors={fieldsErrors}
+      />
+      {showEmailCheckbox && (
         <CheckboxControl
-          label={__('Notify user by e-mail', 'wp-open-events')}
+          label={__("Notify user by e-mail", "wp-open-events")}
           checked={notifyUserByEmail}
           onChange={setNotifyUserByEmail}
-          className='mt-2 mb'
+          className="mt-2 mb"
           __nextHasNoMarginBottom={true}
         />
-      }
-
-      {error && <div className='mt-2 mb'><Notice status='error' isDismissible={false}>{error}</Notice></div>}
-
-      <Button variant='primary' className='mt-2' onClick={updateRegistration}>
-        {__('Update', 'wp-open-events')}
+      )}
+      {error && (
+        <div className="mt-2 mb">
+          <Notice status="error" isDismissible={false}>
+            {error}
+          </Notice>
+        </div>
+      )}
+      <Button variant="primary" className="mt-2" onClick={updateRegistration}>
+        {__("Update", "wp-open-events")}
       </Button>
       &nbsp;
-      <Button onClick={back} className='mt-2' variant='secondary'>
-        {__('Back', 'wp-open-events')}
+      <Button onClick={back} className="mt-2" variant="secondary">
+        {__("Back", "wp-open-events")}
       </Button>
     </div>
   );
-}
+};
 
 export default EditRegistration;

@@ -1,17 +1,16 @@
-import * as React from 'react';
-import { expect, test } from 'vitest';
-import { render, screen } from '@testing-library/react'
-import { Route, Routes, MemoryRouter } from 'react-router-dom';
-import { HttpResponse, http } from 'msw';
-import EditTemplate from '../../../admin/templates/EditTemplate';
-import { server } from '../../__mocks__/api';
+import * as React from "react";
+import { expect, test } from "vitest";
+import { render, screen } from "@testing-library/react";
+import { Route, Routes, MemoryRouter } from "react-router-dom";
+import { HttpResponse, http } from "msw";
+import EditTemplate from "../../../admin/templates/EditTemplate";
+import { server } from "../../__mocks__/api";
 
-test('Template not found', async () => {
-
+test("Template not found", async () => {
   server.use(
-    http.get('/wpoe/v1/admin/templates/1', async () => {
-      return HttpResponse.json({ 'code': 'template_not_found' }, { status: 404 });
-    })
+    http.get("/wpoe/v1/admin/templates/1", async () => {
+      return HttpResponse.json({ code: "template_not_found" }, { status: 404 });
+    }),
   );
 
   render(
@@ -20,20 +19,22 @@ test('Template not found', async () => {
         <Route path="/" element={<div></div>} />
         <Route path="/template/:templateId" element={<EditTemplate />} />
       </Routes>
-    </MemoryRouter>
+    </MemoryRouter>,
   );
 
-  expect(await screen.findByText('Template not found')).toBeInTheDocument();
+  expect(await screen.findByText("Template not found")).toBeInTheDocument();
 
   server.restoreHandlers();
 });
 
-test('Generic error when loading template', async () => {
-
+test("Generic error when loading template", async () => {
   server.use(
-    http.get('/wpoe/v1/admin/templates/2', async () => {
-      return HttpResponse.json({ 'code': 'generic_server_error', message: 'A critical error happened' }, { status: 500 });
-    })
+    http.get("/wpoe/v1/admin/templates/2", async () => {
+      return HttpResponse.json(
+        { code: "generic_server_error", message: "A critical error happened" },
+        { status: 500 },
+      );
+    }),
   );
 
   render(
@@ -42,7 +43,7 @@ test('Generic error when loading template', async () => {
         <Route path="/" element={<div></div>} />
         <Route path="/template/:templateId" element={<EditTemplate />} />
       </Routes>
-    </MemoryRouter>
+    </MemoryRouter>,
   );
 
   const errors = await screen.findAllByText(/A critical error happened/);

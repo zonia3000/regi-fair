@@ -1,10 +1,10 @@
 import { Field } from "./classes/fields";
 
 export function extractError(err: unknown): string {
-  if (typeof err === 'object' && 'message' in err) {
+  if (typeof err === "object" && "message" in err) {
     return err.message as string;
   }
-  return 'Unexpected error';
+  return "Unexpected error";
 }
 
 /**
@@ -12,15 +12,19 @@ export function extractError(err: unknown): string {
  * removing all the invalid or read-only properties.
  */
 export function cleanupFields(fields: Field[]): Field[] {
-  return fields.map(f => ({
+  return fields.map((f) => ({
     ...f,
     description: f.description || undefined,
     position: undefined,
     validators: undefined,
-    extra: f.extra || undefined
+    extra: f.extra || undefined,
   }));
 }
 
 export function isNumberOfPeopleField(field: Field): boolean {
-  return field.extra && 'useAsNumberOfPeople' in field.extra && field.extra.useAsNumberOfPeople == true;
+  return (
+    field.extra &&
+    "useAsNumberOfPeople" in field.extra &&
+    field.extra.useAsNumberOfPeople == true
+  );
 }

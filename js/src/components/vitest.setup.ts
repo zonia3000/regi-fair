@@ -1,11 +1,11 @@
-import { afterAll, afterEach, beforeAll, vi } from 'vitest';
-import { server } from './__tests__/__mocks__/api';
-import '@testing-library/jest-dom/vitest';
+import { afterAll, afterEach, beforeAll, vi } from "vitest";
+import { server } from "./__tests__/__mocks__/api";
+import "@testing-library/jest-dom/vitest";
 
 // Fixes "TypeError: window.matchMedia is not a function"
-Object.defineProperty(window, 'matchMedia', {
+Object.defineProperty(window, "matchMedia", {
   writable: true,
-  value: vi.fn().mockImplementation(query => ({
+  value: vi.fn().mockImplementation((query) => ({
     matches: false,
     media: query,
     onchange: null,

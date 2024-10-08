@@ -1,17 +1,17 @@
 export type Registration = {
-  id: number | null
-  values: Record<number, string>
-  waitingList: boolean
-}
+  id: number | null;
+  values: Record<number, string>;
+  waitingList: boolean;
+};
 
 export type RegistrationsList = {
-  eventName: string
+  eventName: string;
   head: Array<{
-    label: string
-    deleted: boolean
-  }>
-  body: string[][]
-  total: number
-  totalParticipants: number
-  totalWaiting: number
-}
+    label: string;
+    deleted: boolean;
+  }>;
+  body: string[][];
+  total: number;
+  totalParticipants: number;
+  totalWaiting: number;
+};

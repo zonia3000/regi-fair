@@ -1,17 +1,16 @@
-import * as React from 'react';
-import { expect, test } from 'vitest';
-import { render, screen } from '@testing-library/react'
-import { Route, Routes, MemoryRouter } from 'react-router-dom';
-import { HttpResponse, http } from 'msw';
-import { server } from '../../__mocks__/api';
-import EditEvent from '../../../admin/events/EditEvent';
+import * as React from "react";
+import { expect, test } from "vitest";
+import { render, screen } from "@testing-library/react";
+import { Route, Routes, MemoryRouter } from "react-router-dom";
+import { HttpResponse, http } from "msw";
+import { server } from "../../__mocks__/api";
+import EditEvent from "../../../admin/events/EditEvent";
 
-test('Event not found', async () => {
-
+test("Event not found", async () => {
   server.use(
-    http.get('/wpoe/v1/admin/events/1', async () => {
-      return HttpResponse.json({ 'code': 'event_not_found' }, { status: 404 });
-    })
+    http.get("/wpoe/v1/admin/events/1", async () => {
+      return HttpResponse.json({ code: "event_not_found" }, { status: 404 });
+    }),
   );
 
   render(
@@ -20,20 +19,22 @@ test('Event not found', async () => {
         <Route path="/" element={<div></div>} />
         <Route path="/event/:eventId" element={<EditEvent />} />
       </Routes>
-    </MemoryRouter>
+    </MemoryRouter>,
   );
 
-  expect(await screen.findByText('Event not found')).toBeInTheDocument();
+  expect(await screen.findByText("Event not found")).toBeInTheDocument();
 
   server.restoreHandlers();
 });
 
-test('Generic error when loading event', async () => {
-
+test("Generic error when loading event", async () => {
   server.use(
-    http.get('/wpoe/v1/admin/events/2', async () => {
-      return HttpResponse.json({ 'code': 'generic_server_error', message: 'A critical error happened' }, { status: 500 });
-    })
+    http.get("/wpoe/v1/admin/events/2", async () => {
+      return HttpResponse.json(
+        { code: "generic_server_error", message: "A critical error happened" },
+        { status: 500 },
+      );
+    }),
   );
 
   render(
@@ -42,7 +43,7 @@ test('Generic error when loading event', async () => {
         <Route path="/" element={<div></div>} />
         <Route path="/event/:eventId" element={<EditEvent />} />
       </Routes>
-    </MemoryRouter>
+    </MemoryRouter>,
   );
 
   const errors = await screen.findAllByText(/A critical error happened/);

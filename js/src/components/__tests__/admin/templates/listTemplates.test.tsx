@@ -1,17 +1,16 @@
-import * as React from 'react';
-import { expect, test } from 'vitest';
-import { render, screen } from '@testing-library/react';
-import { HttpResponse, http } from 'msw';
-import { server } from '../../__mocks__/api';
-import ListTemplates from '../../../admin/templates/ListTemplates';
-import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import * as React from "react";
+import { expect, test } from "vitest";
+import { render, screen } from "@testing-library/react";
+import { HttpResponse, http } from "msw";
+import { server } from "../../__mocks__/api";
+import ListTemplates from "../../../admin/templates/ListTemplates";
+import { MemoryRouter, Route, Routes } from "react-router-dom";
 
 test('Handles "No event templates found"', async () => {
-
   server.use(
-    http.get('/wpoe/v1/admin/templates', async () => {
+    http.get("/wpoe/v1/admin/templates", async () => {
       return HttpResponse.json([]);
-    })
+    }),
   );
 
   render(
@@ -19,10 +18,12 @@ test('Handles "No event templates found"', async () => {
       <Routes>
         <Route path="/" element={<ListTemplates />} />
       </Routes>
-    </MemoryRouter>
+    </MemoryRouter>,
   );
 
-  expect(await screen.findByText(/No event templates found/)).toBeInTheDocument();
+  expect(
+    await screen.findByText(/No event templates found/),
+  ).toBeInTheDocument();
 
   server.restoreHandlers();
 });

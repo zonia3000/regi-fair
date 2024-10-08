@@ -1,28 +1,28 @@
-import React, { useEffect, useState } from 'react';
-import { sprintf, __, _x } from '@wordpress/i18n';
-import { Link, useNavigate } from 'react-router-dom';
-import apiFetch from '@wordpress/api-fetch';
-import Loading from '../../Loading';
-import { Button, Modal, Notice, Spinner } from '@wordpress/components';
-import { extractError } from '../../utils';
-import '../../style.css';
+import React, { useEffect, useState } from "react";
+import { sprintf, __, _x } from "@wordpress/i18n";
+import { Link, useNavigate } from "react-router-dom";
+import apiFetch from "@wordpress/api-fetch";
+import Loading from "../../Loading";
+import { Button, Modal, Notice, Spinner } from "@wordpress/components";
+import { extractError } from "../../utils";
+import "../../style.css";
 
 const ListTemplates = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [templates, setTemplates] = useState([] as TemplateConfiguration[]);
   const [templateToDelete, setTemplateToDelete] = useState(null);
-  const [error, setError] = useState('');
-  const [deleteError, setDeleteError] = useState('');
+  const [error, setError] = useState("");
+  const [deleteError, setDeleteError] = useState("");
   const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     setLoading(true);
-    apiFetch({ path: '/wpoe/v1/admin/templates' })
+    apiFetch({ path: "/wpoe/v1/admin/templates" })
       .then((result) => {
         setTemplates(result as TemplateConfiguration[]);
       })
-      .catch(err => {
+      .catch((err) => {
         setError(extractError(err));
       })
       .finally(() => {
@@ -31,7 +31,7 @@ const ListTemplates = () => {
   }, []);
 
   function newTemplate() {
-    navigate('/template/new');
+    navigate("/template/new");
   }
 
   function openDeleteTemplateModal(template: TemplateConfiguration) {
@@ -47,9 +47,9 @@ const ListTemplates = () => {
     try {
       await apiFetch({
         path: `/wpoe/v1/admin/templates/${templateToDelete.id}`,
-        method: 'DELETE'
+        method: "DELETE",
       });
-      setTemplates(templates.filter(t => t.id !== templateToDelete.id));
+      setTemplates(templates.filter((t) => t.id !== templateToDelete.id));
       setTemplateToDelete(null);
     } catch (err) {
       setDeleteError(extractError(err));
@@ -64,54 +64,94 @@ const ListTemplates = () => {
 
   return (
     <div>
-      <h1 className='wp-heading-inline'>{__('Event templates', 'wp-open-events')} &nbsp;</h1>
-      <Button onClick={newTemplate} variant='primary'>
-        {__('Add event template', 'wp-open-events')}
+      <h1 className="wp-heading-inline">
+        {__("Event templates", "wp-open-events")} &nbsp;
+      </h1>
+      <Button onClick={newTemplate} variant="primary">
+        {__("Add event template", "wp-open-events")}
       </Button>
 
-      {templates.length === 0 && <p>{__('No event templates found', 'wp-open-events')}</p>}
-      {templates.length !== 0 &&
-        <table className='widefat mt'>
+      {templates.length === 0 && (
+        <p>{__("No event templates found", "wp-open-events")}</p>
+      )}
+      {templates.length !== 0 && (
+        <table className="widefat mt">
           <thead>
             <tr>
-              <th>{__('Name', 'wp-open-events')}</th>
+              <th>{__("Name", "wp-open-events")}</th>
               <th></th>
             </tr>
           </thead>
           <tbody>
             {templates.map((t: TemplateConfiguration) => {
-              return (<tr key={t.id}>
-                <td>
-                  <Link to={`/template/${t.id}`}>{t.name}</Link>
-                </td>
-                <td>
-                  <Button variant='primary' onClick={() => openDeleteTemplateModal(t)}>Delete</Button>
-                </td>
-              </tr>)
+              return (
+                <tr key={t.id}>
+                  <td>
+                    <Link to={`/template/${t.id}`}>{t.name}</Link>
+                  </td>
+                  <td>
+                    <Button
+                      variant="primary"
+                      onClick={() => openDeleteTemplateModal(t)}
+                    >
+                      Delete
+                    </Button>
+                  </td>
+                </tr>
+              );
             })}
           </tbody>
         </table>
-      }
+      )}
       <br />
 
-      {error && <Notice status='error' isDismissible={false}>{error}</Notice>}
+      {error && (
+        <Notice status="error" isDismissible={false}>
+          {error}
+        </Notice>
+      )}
 
-      {templateToDelete !== null &&
-        <Modal title={__('Delete template', 'wp-open-events')} onRequestClose={closeDeleteTemplateModal}>
-          <p>{sprintf(_x('Do you really want to delete the template %s?', 'Name of the template', 'wp-open-events'), templateToDelete.name)}</p>
-          {deleteError && <Notice status='error' isDismissible={false}>{deleteError}</Notice>}
-          {deleting && <p><Spinner />{__('Deleting...', 'wp-open-events')}</p>}
-          <Button variant='primary' onClick={confirmDeleteTemplate} disabled={deleting}>
-            {__('Confirm', 'wp-open-events')}
+      {templateToDelete !== null && (
+        <Modal
+          title={__("Delete template", "wp-open-events")}
+          onRequestClose={closeDeleteTemplateModal}
+        >
+          <p>
+            {sprintf(
+              _x(
+                "Do you really want to delete the template %s?",
+                "Name of the template",
+                "wp-open-events",
+              ),
+              templateToDelete.name,
+            )}
+          </p>
+          {deleteError && (
+            <Notice status="error" isDismissible={false}>
+              {deleteError}
+            </Notice>
+          )}
+          {deleting && (
+            <p>
+              <Spinner />
+              {__("Deleting...", "wp-open-events")}
+            </p>
+          )}
+          <Button
+            variant="primary"
+            onClick={confirmDeleteTemplate}
+            disabled={deleting}
+          >
+            {__("Confirm", "wp-open-events")}
           </Button>
           &nbsp;
-          <Button variant='secondary' onClick={closeDeleteTemplateModal}>
-            {__('Cancel', 'wp-open-events')}
+          <Button variant="secondary" onClick={closeDeleteTemplateModal}>
+            {__("Cancel", "wp-open-events")}
           </Button>
         </Modal>
-      }
+      )}
     </div>
   );
-}
+};
 
 export default ListTemplates;

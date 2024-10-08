@@ -3,17 +3,16 @@ import { __, _x, sprintf } from "@wordpress/i18n";
 import React, { useEffect, useState } from "react";
 
 const Pagination = (props: {
-  page: number,
-  setPage: (p: number) => void
-  pageSize: number
-  setPageSize: (s: number) => void
-  total: number
+  page: number;
+  setPage: (p: number) => void;
+  pageSize: number;
+  setPageSize: (s: number) => void;
+  total: number;
 }) => {
-
   const [pageNumbers, setPageNumbers] = useState([]);
 
   const maxVisibleNumbersPerSide = 3;
-  const separator = '...';
+  const separator = "...";
   const pageSizes = [10, 20, 50, 100];
 
   useEffect(() => {
@@ -28,7 +27,11 @@ const Pagination = (props: {
       if (props.page - maxVisibleNumbersPerSide !== 2) {
         pageNumbers.push(separator);
       }
-      for (let i = props.page - maxVisibleNumbersPerSide; i <= props.page; i++) {
+      for (
+        let i = props.page - maxVisibleNumbersPerSide;
+        i <= props.page;
+        i++
+      ) {
         pageNumbers.push(i);
       }
     }
@@ -38,7 +41,11 @@ const Pagination = (props: {
       }
     } else {
       let i: number;
-      for (i = props.page + 1; i <= props.page + maxVisibleNumbersPerSide; i++) {
+      for (
+        i = props.page + 1;
+        i <= props.page + maxVisibleNumbersPerSide;
+        i++
+      ) {
         pageNumbers.push(i);
       }
       if (i !== numberOfPages) {
@@ -62,34 +69,46 @@ const Pagination = (props: {
   return (
     <div className="flex">
       <div className="mr-2">
-        <p><strong>{__('Total', 'wp-open-events')}</strong>: {props.total}</p>
+        <p>
+          <strong>{__("Total", "wp-open-events")}</strong>: {props.total}
+        </p>
       </div>
 
       <div className="mr-2 mt">
-        {pageNumbers.length > 1 && pageNumbers.map((n, i) => <span key={`p_${i}`}>
-          {n === separator && <span>&nbsp;{n}&nbsp;</span>}
-          {n !== separator &&
-            <Button
-              variant={n === props.page ? 'primary' : 'secondary'}
-              onClick={() => setPage(n)}
-              aria-label={sprintf(_x('Go to page %d', 'page number', 'wp-open-events'), n)}>
-              {n}
-            </Button>
-          }
-        </span>
-        )}
+        {pageNumbers.length > 1 &&
+          pageNumbers.map((n, i) => (
+            <span key={`p_${i}`}>
+              {n === separator && <span>&nbsp;{n}&nbsp;</span>}
+              {n !== separator && (
+                <Button
+                  variant={n === props.page ? "primary" : "secondary"}
+                  onClick={() => setPage(n)}
+                  aria-label={sprintf(
+                    _x("Go to page %d", "page number", "wp-open-events"),
+                    n,
+                  )}
+                >
+                  {n}
+                </Button>
+              )}
+            </span>
+          ))}
       </div>
 
       <div className="flex-row mt">
         <SelectControl
-          label={__('Page size', 'wp-open-events')}
+          label={__("Page size", "wp-open-events")}
           value={props.pageSize.toString()}
-          options={pageSizes.map(s => ({ label: s.toString(), value: s.toString() }))}
+          options={pageSizes.map((s) => ({
+            label: s.toString(),
+            value: s.toString(),
+          }))}
           onChange={setPageSize}
-          __nextHasNoMarginBottom={true} />
+          __nextHasNoMarginBottom={true}
+        />
       </div>
     </div>
-  )
+  );
 };
 
 export default Pagination;
