@@ -117,6 +117,10 @@ class WPOE_DAO_Registrations extends WPOE_Base_DAO
     $remaining_seats = null;
 
     try {
+      if ($event->maxParticipants) {
+        $result = $wpdb->query('SET TRANSACTION ISOLATION LEVEL SERIALIZABLE');
+        $this->check_result($result, 'setting isolation level');
+      }
       $result = $wpdb->query('START TRANSACTION');
       $this->check_result($result, 'starting transaction');
 
@@ -266,6 +270,10 @@ class WPOE_DAO_Registrations extends WPOE_Base_DAO
     $waiting_picked = null;
 
     try {
+      if ($event->maxParticipants) {
+        $result = $wpdb->query('SET TRANSACTION ISOLATION LEVEL SERIALIZABLE');
+        $this->check_result($result, 'setting isolation level');
+      }
       $result = $wpdb->query('START TRANSACTION');
       $this->check_result($result, 'starting transaction');
 
@@ -371,6 +379,10 @@ class WPOE_DAO_Registrations extends WPOE_Base_DAO
     $waiting_picked = null;
 
     try {
+      if ($event->maxParticipants) {
+        $result = $wpdb->query('SET TRANSACTION ISOLATION LEVEL SERIALIZABLE');
+        $this->check_result($result, 'setting isolation level');
+      }
       $result = $wpdb->query('START TRANSACTION');
       $this->check_result($result, 'starting transaction');
 
