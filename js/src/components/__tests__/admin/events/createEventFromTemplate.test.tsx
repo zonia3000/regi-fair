@@ -1,6 +1,6 @@
 import * as React from "react";
 import { expect } from "vitest";
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { within } from "@testing-library/dom";
 import { server } from "../../__mocks__/api";
 import { HttpResponse, http } from "msw";
@@ -53,8 +53,10 @@ test("Create event from template", async () => {
     }),
   );
 
+  let templateLoaded = false;
   server.use(
     http.get("/wpoe/v1/admin/templates/1", async () => {
+      templateLoaded = true;
       return HttpResponse.json({
         id: 1,
         autoremove: true,
@@ -68,18 +70,27 @@ test("Create event from template", async () => {
     }),
   );
 
+  let requestBody: EventConfiguration;
+  server.use(
+    http.post("/wpoe/v1/admin/events", async ({ request }) => {
+      requestBody = (await request.json()) as EventConfiguration;
+      return HttpResponse.json({ id: 1 });
+    }),
+  );
+
+  const user = userEvent.setup();
+
   render(<EventsRoot />);
 
   expect(await screen.findByText("Your events")).toBeInTheDocument();
   expect(await screen.findByText("No events found")).toBeInTheDocument();
-
-  const user = userEvent.setup();
 
   await user.click(screen.getByText("Add event"));
   await user.click(
     within(await screen.findByRole("dialog")).getByLabelText("Close"),
   );
   await user.click(await screen.findByText("Add event"));
+  await waitFor(() => screen.getByRole("dialog"));
   await user.click(screen.getByText("From template"));
 
   await user.selectOptions(
@@ -88,7 +99,8 @@ test("Create event from template", async () => {
   );
   await user.click(screen.getByText("Create"));
 
-  await screen.findByText("Create event");
+  expect(templateLoaded);
+  await waitFor(() => screen.findByText("Create event"));
 
   const rows = screen.getAllByRole("row");
   expect(rows.length).toEqual(2);
@@ -129,14 +141,6 @@ test("Create event from template", async () => {
   expect(
     screen.getByRole("textbox", { name: "Custom confirmation e-mail content" }),
   ).toHaveValue("template email content");
-
-  let requestBody: EventConfiguration;
-  server.use(
-    http.post("/wpoe/v1/admin/events", async ({ request }) => {
-      requestBody = (await request.json()) as EventConfiguration;
-      return HttpResponse.json({ id: 1 });
-    }),
-  );
 
   await user.type(screen.getByRole("textbox", { name: "Name" }), "Event name");
   fireEvent.change(screen.getByLabelText("Date"), {

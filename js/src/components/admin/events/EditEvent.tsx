@@ -15,6 +15,7 @@ import EditFormFields from "../fields/EditFormFields";
 import { cleanupFields, extractError } from "../../utils";
 import { Settings } from "../../classes/settings";
 import { EventConfiguration } from "../../classes/event";
+import { TemplateConfiguration } from "../../classes/template";
 
 const EditEvent = () => {
   const { eventId } = useParams();

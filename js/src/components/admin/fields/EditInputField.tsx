@@ -13,6 +13,7 @@ const EditInputField = (props: EditInputFieldProps) => {
   const [fieldRequired, setFieldRequired] = useState(false);
   const [useAsConfirmationAddress, setUseAsConfirmationAddress] =
     useState(false);
+  const [useWpUserEmail, setUseWpUserEmail] = useState(false);
   const [useAsNumberOfPeople, setUseAsNumberOfPeople] = useState(false);
   const [min, setMin] = useState("");
   const [max, setMax] = useState("");
@@ -31,6 +32,7 @@ const EditInputField = (props: EditInputFieldProps) => {
         setUseAsConfirmationAddress(true);
         field.extra = {
           confirmationAddress: true,
+          useWpUserEmail: false,
         };
       }
       if (props.fieldType === "number" && props.useAsNumberOfPeople) {
@@ -45,16 +47,23 @@ const EditInputField = (props: EditInputFieldProps) => {
         ...props.field,
         validate,
       };
-      if (
-        props.fieldType === "email" &&
-        props.field.extra &&
-        "confirmationAddress" in props.field.extra &&
-        props.field.extra.confirmationAddress
-      ) {
-        setUseAsConfirmationAddress(true);
-        field.extra = {
-          confirmationAddress: true,
-        };
+      if (props.fieldType === "email" && props.field.extra) {
+        const extra: Record<string, boolean> = {};
+        if (
+          "confirmationAddress" in props.field.extra &&
+          props.field.extra.confirmationAddress
+        ) {
+          setUseAsConfirmationAddress(true);
+          extra.confirmationAddress = true;
+        }
+        if (
+          "useWpUserEmail" in props.field.extra &&
+          props.field.extra.useWpUserEmail
+        ) {
+          setUseWpUserEmail(true);
+          extra.useWpUserEmail = true;
+        }
+        field.extra = extra;
       }
       if (props.fieldType === "number" && props.field.extra) {
         if (
@@ -124,11 +133,26 @@ const EditInputField = (props: EditInputFieldProps) => {
   }
 
   function saveUseAsConfirmationAddress(value: boolean) {
+    const extra = props.field.extra || {};
     setUseAsConfirmationAddress(value);
     props.setField({
       ...props.field,
       extra: {
+        ...extra,
         confirmationAddress: value,
+      },
+      validate,
+    });
+  }
+
+  function saveUseWpUserEmail(value: boolean) {
+    const extra = props.field.extra || {};
+    setUseWpUserEmail(value);
+    props.setField({
+      ...props.field,
+      extra: {
+        ...extra,
+        useWpUserEmail: value,
       },
       validate,
     });
@@ -220,6 +244,18 @@ const EditInputField = (props: EditInputFieldProps) => {
           )}
           checked={useAsConfirmationAddress}
           onChange={saveUseAsConfirmationAddress}
+          className="mt-2 mb"
+          __nextHasNoMarginBottom={true}
+        />
+      )}
+      {props.fieldType === "email" && (
+        <CheckboxControl
+          label={__(
+            "For registered users, hide this field and automatically pick the e-mail address from Wordpress user data",
+            "wp-open-events",
+          )}
+          checked={useWpUserEmail}
+          onChange={saveUseWpUserEmail}
           className="mt-2 mb"
           __nextHasNoMarginBottom={true}
         />

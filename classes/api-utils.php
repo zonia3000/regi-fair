@@ -32,6 +32,7 @@ function get_form_fields_schema()
           'type' => 'object',
           'properties' => [
             'confirmationAddress' => ['type' => 'boolean', 'required' => false],
+            'useWpUserEmail' => ['type' => 'boolean', 'required' => false],
             'min' => ['type' => 'integer', 'required' => false],
             'max' => ['type' => 'integer', 'required' => false],
             'useAsNumberOfPeople' => ['type' => 'boolean', 'required' => false],
@@ -69,8 +70,8 @@ function get_form_field_from_request($request)
     }
     if (isset($value['extra']) && $value['extra'] !== null) {
       validate_extra($field, $value['extra']);
-      $field->extra = $value['extra'];
-      if (array_key_exists('useAsNumberOfPeople', $value['extra']) && $value['extra']['useAsNumberOfPeople'] === true) {
+      $field->extra = (object) $value['extra'];
+      if (use_as_number_of_people($field)) {
         if ($max_participants_set) {
           throw new WPOE_Validation_Exception(__('Only one field of type "number of people" is allowed', 'wp-open-events'));
         } else {
@@ -89,6 +90,9 @@ function validate_extra(WPOE_Form_Field $field, array $extra)
 {
   if (array_key_exists('confirmationAddress', $extra) && $field->fieldType !== 'email') {
     throw new WPOE_Validation_Exception(__('Only email fields can be set as confirmation address', 'wp-open-events'));
+  }
+  if (array_key_exists('useWpUserEmail', $extra) && $field->fieldType !== 'email') {
+    throw new WPOE_Validation_Exception(__('Only email fields can have the WP user option', 'wp-open-events'));
   }
   if (array_key_exists('useAsNumberOfPeople', $extra) && $field->fieldType !== 'number') {
     throw new WPOE_Validation_Exception(__('Only numeric fields can be used to set the number of people', 'wp-open-events'));
@@ -113,7 +117,7 @@ function get_user_email(WPOE_Event $event, array $input): array
 {
   $user_email = [];
   foreach ($event->formFields as $field) {
-    if ($field->fieldType === 'email' && $field->extra !== null && property_exists($field->extra, 'confirmationAddress') && $field->extra->confirmationAddress === true) {
+    if (use_as_confirmation_address($field)) {
       $user_email[] = $input[$field->id];
     }
   }
@@ -123,7 +127,7 @@ function get_user_email(WPOE_Event $event, array $input): array
 function get_number_of_people(WPOE_Event $event, array $input): int
 {
   foreach ($event->formFields as $field) {
-    if ($field->fieldType === 'number' && $field->extra !== null && property_exists($field->extra, 'useAsNumberOfPeople') && $field->extra->useAsNumberOfPeople === true) {
+    if (use_as_number_of_people($field)) {
       $count = (int) $input[$field->id];
       if ($count === 0) {
         return 1;
@@ -132,6 +136,52 @@ function get_number_of_people(WPOE_Event $event, array $input): int
     }
   }
   return 1;
+}
+
+function use_as_confirmation_address(WPOE_Form_Field $field): bool
+{
+  return $field->fieldType === 'email' && $field->extra !== null
+    && property_exists($field->extra, 'confirmationAddress')
+    && $field->extra->confirmationAddress === true;
+}
+
+function use_as_number_of_people(WPOE_Form_Field $field): bool
+{
+  return $field->fieldType === 'number' && $field->extra !== null
+    && property_exists($field->extra, 'useAsNumberOfPeople')
+    && $field->extra->useAsNumberOfPeople === true;
+}
+
+function use_wp_user_email(WPOE_Form_Field $field): bool
+{
+  return $field->fieldType === 'email' && $field->extra !== null
+    && property_exists($field->extra, 'useWpUserEmail')
+    && $field->extra->useWpUserEmail === true;
+}
+
+function set_registered_user_email(WPOE_Event $event, &$input)
+{
+  if (!is_array($input)) {
+    return;
+  }
+  $email = get_current_user_email();
+  if ($email === null) {
+    return;
+  }
+  foreach ($event->formFields as $field) {
+    if (use_wp_user_email($field)) {
+      $input[$field->id] = $email;
+    }
+  }
+}
+
+function get_current_user_email(): string|null
+{
+  $user = wp_get_current_user();
+  if ($user->exists() && $user->has_prop('user_email')) {
+    return $user->get('user_email');
+  }
+  return null;
 }
 
 function validate_event_request(WPOE_Event $event, $input): WP_Error|WP_REST_Response|null
@@ -173,7 +223,7 @@ function validate_event_request(WPOE_Event $event, $input): WP_Error|WP_REST_Res
 function get_no_more_seats_error(WPOE_Event $event): WP_Error|WP_REST_Response
 {
   foreach ($event->formFields as $field) {
-    if ($field->fieldType === 'number' && $field->extra !== null && property_exists($field->extra, 'useAsNumberOfPeople') && $field->extra->useAsNumberOfPeople === true) {
+    if (use_as_number_of_people($field)) {
       // If there is a "number of people" input put the error there
       return new WP_REST_Response([
         'code' => 'invalid_form_fields',

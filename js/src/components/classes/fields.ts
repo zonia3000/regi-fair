@@ -14,6 +14,7 @@ export type EmailField = Field & {
   fieldType: "email";
   extra: {
     confirmationAddress: boolean;
+    useWpUserEmail: boolean;
   };
 };
 

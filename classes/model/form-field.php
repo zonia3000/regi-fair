@@ -32,8 +32,6 @@ class WPOE_Form_Field
    */
   public $extra;
 
-  public $validators = [];
-
   /**
    * @var int
    */

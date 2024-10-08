@@ -25,7 +25,7 @@ class WPOE_Number_Validator extends WPOE_Base_Validator
       $value = (float) $value;
     }
     if ($this->field->extra !== null) {
-      $numberOfPeople = property_exists($this->field->extra, 'useAsNumberOfPeople') && $this->field->extra->useAsNumberOfPeople === true;
+      $numberOfPeople = use_as_number_of_people($this->field);
       if ($numberOfPeople && !is_int($value)) {
         throw new WPOE_Validation_Exception(__('Number must be an integer', 'wp-open-events'));
       }

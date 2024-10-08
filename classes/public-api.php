@@ -87,7 +87,27 @@ class WPOE_Public_Controller extends WP_REST_Controller
     if ($event === null) {
       return new WP_Error('event_not_found', __('Event not found', 'wp-open-events'), ['status' => 404]);
     }
+    $event->formFields = $this->remove_registered_user_email_field($event->formFields);
     return new WP_REST_Response($event);
+  }
+
+  /**
+   * @param WPOE_Form_Field[] $fields
+   * @return WPOE_Form_Field[]
+   */
+  private function remove_registered_user_email_field($fields)
+  {
+    $email = get_current_user_email();
+    if ($email === null) {
+      return $fields;
+    }
+    $filtered_fields = [];
+    foreach ($fields as $field) {
+      if (!use_wp_user_email($field)) {
+        $filtered_fields[] = $field;
+      }
+    }
+    return $filtered_fields;
   }
 
   /**
@@ -110,6 +130,7 @@ class WPOE_Public_Controller extends WP_REST_Controller
       }
 
       $input = json_decode($request->get_body(), true);
+      set_registered_user_email($event, $input);
       $error = validate_event_request($event, $input);
       if ($error !== null) {
         return $error;
@@ -183,6 +204,7 @@ class WPOE_Public_Controller extends WP_REST_Controller
       }
 
       $input = json_decode($request->get_body(), true);
+      set_registered_user_email($event, $input);
       $error = validate_event_request($event, $input);
       if ($error !== null) {
         return $error;

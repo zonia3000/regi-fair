@@ -14,6 +14,7 @@ import {
 import { extractError } from "../../utils";
 import "../../style.css";
 import { EventConfiguration } from "../../classes/event";
+import { TemplateConfiguration } from "../../classes/template";
 
 const ListEvents = () => {
   const navigate = useNavigate();
