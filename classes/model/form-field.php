@@ -2,40 +2,40 @@
 
 class WPOE_Form_Field
 {
-    /**
-     * @var int|null
-     */
-    public $id;
+  /**
+   * @var int|null
+   */
+  public $id;
 
-    /**
-     * @var string
-     */
-    public $label;
+  /**
+   * @var string
+   */
+  public $label;
 
-    /**
-     * @var string
-     */
-    public $fieldType;
+  /**
+   * @var string
+   */
+  public $fieldType;
 
-    /**
-     * @var bool
-     */
-    public $required;
+  /**
+   * @var bool
+   */
+  public $required;
 
-    /**
-     * @var string
-     */
-    public $description;
+  /**
+   * @var string
+   */
+  public $description;
 
-    /**
-     * @var object|null
-     */
-    public $extra;
+  /**
+   * @var object|null
+   */
+  public $extra;
 
-    public $validators = [];
+  public $validators = [];
 
-    /**
-     * @var int
-     */
-    public $position;
+  /**
+   * @var int
+   */
+  public $position;
 }
