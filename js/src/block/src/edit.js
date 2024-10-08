@@ -49,7 +49,8 @@ export default function Edit({ attributes, setAttributes }) {
                 <SelectControl
                     label={__('Select event', 'wp-open-events')}
                     options={eventsOptions}
-                    onChange={saveEventId} />
+                    onChange={saveEventId}
+                    __nextHasNoMarginBottom={true} />
             }
 
             {!loading && eventId &&

@@ -163,6 +163,8 @@ const EditInputField = (props: EditInputFieldProps) => {
                     onChange={saveFieldLabel}
                     value={fieldLabel}
                     required
+                    className='mb'
+                    __nextHasNoMarginBottom={true}
                 />
                 {!valid && !fieldLabel.trim() &&
                     <span className='error-text'>{__('Field is required', 'wp-open-events')}</span>
@@ -173,19 +175,23 @@ const EditInputField = (props: EditInputFieldProps) => {
                 onChange={saveFieldDescription}
                 value={fieldDescription}
                 required
+                className='mb'
+                __nextHasNoMarginBottom={true}
             />
             <CheckboxControl
                 label={__('Required', 'wp-open-events')}
                 checked={fieldRequired}
                 onChange={saveFieldRequired}
                 className='mt-2 mb-2'
+                __nextHasNoMarginBottom={true}
             />
             {props.fieldType === 'email' &&
                 <CheckboxControl
                     label={__('Use this address to send confirmation e-mail when the user register to the event', 'wp-open-events')}
                     checked={useAsConfirmationAddress}
                     onChange={saveUseAsConfirmationAddress}
-                    className='mt-2'
+                    className='mt-2 mb'
+                    __nextHasNoMarginBottom={true}
                 />
             }
             {props.fieldType === 'number' && useAsNumberOfPeople &&
@@ -205,6 +211,8 @@ const EditInputField = (props: EditInputFieldProps) => {
                     type='number'
                     onChange={saveMin}
                     value={min}
+                    className='mb'
+                    __nextHasNoMarginBottom={true}
                 />
             }
             {props.fieldType === 'number' &&
@@ -213,6 +221,8 @@ const EditInputField = (props: EditInputFieldProps) => {
                     type='number'
                     onChange={saveMax}
                     value={max}
+                    className='mb'
+                    __nextHasNoMarginBottom={true}
                 />
             }
         </>

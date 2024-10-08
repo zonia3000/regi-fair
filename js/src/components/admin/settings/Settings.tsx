@@ -77,7 +77,9 @@ const Settings = function () {
                 onChange={setDefaultAdminEmail}
                 value={defaultAdminEmail}
                 type='email'
+                className='mb'
                 help={__('Received registrations will be notified at this addres', 'wp-open-events')}
+                __nextHasNoMarginBottom={true}
             />
 
             <TextControl
@@ -85,20 +87,26 @@ const Settings = function () {
                 onChange={setDefaultAutoremovePeriod}
                 value={defaultAutoremovePeriod}
                 type='number'
+                className='mb'
                 help={__('Number of days to wait after the event conclusion before removing registrations data', 'wp-open-events')}
+                __nextHasNoMarginBottom={true}
             />
 
             <TextareaControl
                 label={__('Default extra content for confirmation e-mail messages', 'wp-open-events')}
                 onChange={setDefaultExtraEmailContent}
                 value={defaultExtraEmailContent}
+                className='mb'
                 help={__('This content will be added at the end of the confirmation e-mail messages. Allowed HTML tags: <b>, <i>, <a>, <hr>, <p>, <br>', 'wp-open-events')}
+                __nextHasNoMarginBottom={true}
             />
 
             <CheckboxControl
                 label={__('Track IP addresses during the registration', 'wp-open-events')}
                 onChange={setDefaultTrackIpAddresses}
                 checked={defaultTrackIpAddresses}
+                className='mb'
+                __nextHasNoMarginBottom={true}
             />
 
             {error && <div className='mt-2 mb'><Notice status='error' isDismissible={false}>{error}</Notice></div>}

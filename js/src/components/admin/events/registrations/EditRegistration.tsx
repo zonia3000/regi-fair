@@ -139,7 +139,8 @@ const EditRegistration = () => {
           label={__('Notify user by e-mail', 'wp-open-events')}
           checked={notifyUserByEmail}
           onChange={setNotifyUserByEmail}
-          className='mt-2'
+          className='mt-2 mb'
+          __nextHasNoMarginBottom={true}
         />
       }
 

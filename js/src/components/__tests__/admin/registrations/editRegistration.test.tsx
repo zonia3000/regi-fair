@@ -97,6 +97,7 @@ test('Update registration without email field', async () => {
     <MemoryRouter initialEntries={["/event/1/registrations/1"]}>
       <Routes>
         <Route path="/" element={<div></div>} />
+        <Route path="/event/:eventId/registrations" element={<div>BACK</div>} />
         <Route path="/event/:eventId/registrations/:registrationId" element={<EditRegistration />} />
       </Routes>
     </MemoryRouter>
@@ -110,6 +111,7 @@ test('Update registration without email field', async () => {
   await user.click(screen.getByRole('button', { name: 'Update' }));
 
   expect(requestBody['1']).toEqual('foobar');
+  expect(await screen.findByText(/BACK/)).toBeInTheDocument();
 
   server.restoreHandlers();
 });
@@ -144,6 +146,7 @@ test('Update registration with email field', async () => {
     <MemoryRouter initialEntries={["/event/1/registrations/1"]}>
       <Routes>
         <Route path="/" element={<div></div>} />
+        <Route path="/event/:eventId/registrations" element={<div>BACK</div>} />
         <Route path="/event/:eventId/registrations/:registrationId" element={<EditRegistration />} />
       </Routes>
     </MemoryRouter>
@@ -159,6 +162,7 @@ test('Update registration with email field', async () => {
   await user.click(screen.getByRole('button', { name: 'Update' }));
 
   expect(requestBody['1']).toEqual('bar@example.com');
+  expect(await screen.findByText(/BACK/)).toBeInTheDocument();
 
   server.restoreHandlers();
 });

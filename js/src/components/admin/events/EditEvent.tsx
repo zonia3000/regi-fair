@@ -231,14 +231,16 @@ const EditEvent = () => {
                     onChange={setEventName}
                     value={eventName}
                     required
+                    className='mb'
+                    __nextHasNoMarginBottom={true}
                 />
                 {!valid && !eventName.trim() &&
                     <span className='error-text'>{__('Field is required', 'wp-open-events')}</span>
                 }
             </div>
             <div className={!valid && !date ? 'form-error' : ''}>
-                <BaseControl label={__('Date', 'wp-open-events')} __nextHasNoMarginBottom={false} id='eventDate'>
-                    <input type='date' id='eventDate' className='components-text-control__input' required
+                <BaseControl label={__('Date', 'wp-open-events')} __nextHasNoMarginBottom={true} id='eventDate'>
+                    <input type='date' id='eventDate' className='components-text-control__input mb' required
                         value={date} onChange={e => setDate(e.target.value)} />
                 </BaseControl>
                 {!valid && !date &&
@@ -260,42 +262,56 @@ const EditEvent = () => {
                 label={__('Set a maximum number of participants', 'wp-open-events')}
                 checked={hasMaxParticipants}
                 onChange={setHasMaxParticipants}
+                className='mb'
+                __nextHasNoMarginBottom={true}
             />
             {hasMaxParticipants &&
-                <div className={!valid && !maxParticipants ? 'form-error' : ''}>
-                    <TextControl
-                        label={__('Total available seats', 'wp-open-events')}
-                        onChange={setMaxParticipants}
-                        value={maxParticipants}
-                        type='number'
-                        required
-                    />
-                    {!valid && !maxParticipants &&
-                        <span className='error-text'>{__('Field is required', 'wp-open-events')}</span>
-                    }
+                <>
+                    <div className={!valid && !maxParticipants ? 'form-error' : ''}>
+                        <TextControl
+                            label={__('Total available seats', 'wp-open-events')}
+                            onChange={setMaxParticipants}
+                            value={maxParticipants}
+                            type='number'
+                            required
+                            className='mb'
+                            __nextHasNoMarginBottom={true}
+                        />
+                        {!valid && !maxParticipants &&
+                            <span className='error-text'>{__('Field is required', 'wp-open-events')}</span>
+                        }
+                    </div>
                     <CheckboxControl
                         label={__('Enable waiting list when maximum number of participants has been reached', 'wp-open-events')}
                         checked={hasWaitingList}
                         onChange={setHasWaitingList}
+                        className='mb'
+                        __nextHasNoMarginBottom={true}
                     />
-                </div>
+                </>
             }
 
             <CheckboxControl
                 label={__('Autoremove user data after the event', 'wp-open-events')}
                 checked={autoremove}
                 onChange={setAutoremove}
+                className='mb'
+                __nextHasNoMarginBottom={true}
             />
 
             <CheckboxControl
                 label={__('Allow the users to edit or delete their registrations', 'wp-open-events')}
                 checked={editableRegistrations}
                 onChange={setEditableRegistrations}
+                className='mb'
+                __nextHasNoMarginBottom={true}
             />
             <CheckboxControl
                 label={__('Notify an administrator by e-mail when a new registration is created', 'wp-open-events')}
                 checked={notifyAdmin}
                 onChange={setNotifyAdmin}
+                className='mb'
+                __nextHasNoMarginBottom={true}
             />
             {notifyAdmin &&
                 <div className={!valid && !adminEmail ? 'form-error' : ''}>
@@ -304,6 +320,8 @@ const EditEvent = () => {
                         onChange={setAdminEmail}
                         value={adminEmail}
                         required
+                        className='mb'
+                        __nextHasNoMarginBottom={true}
                     />
                     {!valid && !adminEmail &&
                         <span className='error-text'>{__('Field is required', 'wp-open-events')}</span>
@@ -314,6 +332,8 @@ const EditEvent = () => {
                 label={__('Add custom message to confirmation e-mail', 'wp-open-events')}
                 checked={customizeEmailContent}
                 onChange={setCustomizeEmailContent}
+                className='mb'
+                __nextHasNoMarginBottom={true}
             />
             {customizeEmailContent &&
                 <TextareaControl
@@ -321,6 +341,8 @@ const EditEvent = () => {
                     onChange={setEmailExtraContent}
                     value={emailExtraContent}
                     help={__('This content will be added at the end of the confirmation e-mail messages. Allowed HTML tags: <b>, <i>, <a>, <hr>, <p>, <br>', 'wp-open-events')}
+                    className='mb'
+                    __nextHasNoMarginBottom={true}
                 />
             }
 

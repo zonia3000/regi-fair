@@ -162,6 +162,7 @@ const ListRegistrations = (props: { waiting: boolean }) => {
           label={__('Show deleted fields', 'wp-open-events')}
           checked={showDeletedFields}
           onChange={setShowDeletedFields}
+          __nextHasNoMarginBottom={true}
         />
       }
 

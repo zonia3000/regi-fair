@@ -17,6 +17,8 @@ const InputField = (props: InputFieldProps) => {
             min={props.min}
             max={props.max}
             disabled={!!props.disabled}
+            className='mb'
+            __nextHasNoMarginBottom={true}
         />
     );
 };

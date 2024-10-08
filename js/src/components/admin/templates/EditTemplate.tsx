@@ -166,6 +166,8 @@ const EditTemplate = () => {
           onChange={setTemplateName}
           value={templateName}
           required
+          className='mb'
+          __nextHasNoMarginBottom={true}
         />
         {!valid && !templateName.trim() &&
           <span className='error-text'>{__('Field is required', 'wp-open-events')}</span>
@@ -175,16 +177,22 @@ const EditTemplate = () => {
         label={__('Autoremove user data after the event', 'wp-open-events')}
         checked={autoremove}
         onChange={setAutoremove}
+        className='mb'
+        __nextHasNoMarginBottom={true}
       />
       <CheckboxControl
         label={__('Allow the users to edit or delete their registrations', 'wp-open-events')}
         checked={editableRegistrations}
         onChange={setEditableRegistrations}
+        className='mb'
+        __nextHasNoMarginBottom={true}
       />
       <CheckboxControl
         label={__('Notify an administrator by e-mail when a new registration is created', 'wp-open-events')}
         checked={notifyAdmin}
         onChange={setNotifyAdmin}
+        className='mb'
+        __nextHasNoMarginBottom={true}
       />
       {notifyAdmin &&
         <div className={!valid && !adminEmail.trim() ? 'form-error' : ''}>
@@ -193,6 +201,8 @@ const EditTemplate = () => {
             onChange={setAdminEmail}
             value={adminEmail}
             required
+            className='mb'
+            __nextHasNoMarginBottom={true}
           />
           {!valid && !adminEmail.trim() &&
             <span className='error-text'>{__('Field is required', 'wp-open-events')}</span>
@@ -203,6 +213,8 @@ const EditTemplate = () => {
         label={__('Add custom message to confirmation e-mail', 'wp-open-events')}
         checked={customizeEmailContent}
         onChange={setCustomizeEmailContent}
+        className='mb'
+        __nextHasNoMarginBottom={true}
       />
       {customizeEmailContent &&
         <TextareaControl
@@ -210,6 +222,8 @@ const EditTemplate = () => {
           onChange={setEmailExtraContent}
           value={emailExtraContent}
           help={__('This content will be added at the end of the confirmation e-mail messages. Allowed HTML tags: <b>, <i>, <a>, <hr>, <p>, <br>', 'wp-open-events')}
+          className='mb'
+          __nextHasNoMarginBottom={true}
         />
       }
 

@@ -217,7 +217,9 @@ const ListEvents = () => {
                             <SelectControl
                                 label={__('Select template', 'wp-open-events')}
                                 options={templates}
-                                onChange={setSelectedTemplateId} />
+                                onChange={setSelectedTemplateId}
+                                className='mb'
+                                __nextHasNoMarginBottom={true} />
                             <Button variant='primary' onClick={newEventFromTemplate}>
                                 {__('Create', 'wp-open-events')}
                             </Button>

@@ -111,6 +111,8 @@ const EditRadioField = (props: EditRadioFieldProps) => {
                     onChange={saveFieldLabel}
                     value={fieldLabel}
                     required
+                    className='mb'
+                    __nextHasNoMarginBottom={true}
                 />
                 {!valid && !fieldLabel.trim() &&
                     <span className='error-text'>{__('Field is required', 'wp-open-events')}</span>
@@ -121,12 +123,15 @@ const EditRadioField = (props: EditRadioFieldProps) => {
                 onChange={saveFieldDescription}
                 value={fieldDescription}
                 required
+                className='mb'
+                __nextHasNoMarginBottom={true}
             />
             <CheckboxControl
                 label={__('Required', 'wp-open-events')}
                 checked={fieldRequired}
                 onChange={saveFieldRequired}
                 className={'mt-2 mb-2'}
+                __nextHasNoMarginBottom={true}
             />
             {options.map((option, index) => {
                 return (
@@ -136,6 +141,8 @@ const EditRadioField = (props: EditRadioFieldProps) => {
                             onChange={value => saveFieldOptions(value, index)}
                             value={option}
                             required
+                            className='mb'
+                            __nextHasNoMarginBottom={true}
                         />
                         {options.length > 2 &&
                             <Button aria-label={__('Remove option', 'wp-open-events')} onClick={() => removeOption(index)} className='remove-option-btn'>
