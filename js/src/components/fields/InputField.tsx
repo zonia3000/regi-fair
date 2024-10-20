@@ -20,6 +20,7 @@ const InputField = (props: InputFieldProps) => {
       min={props.min}
       max={props.max}
       disabled={!!props.disabled}
+      help={props.description}
       className="mb"
       __nextHasNoMarginBottom={true}
     />

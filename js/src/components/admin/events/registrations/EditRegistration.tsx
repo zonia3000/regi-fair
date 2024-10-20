@@ -16,7 +16,7 @@ const EditRegistration = () => {
   const [loading, setLoading] = useState(true);
   const [found, setFound] = useState(false);
   const [event, setEvent] = useState(null as EventConfiguration);
-  const [fields, setFields] = useState({} as Record<number, string>);
+  const [fields, setFields] = useState({} as Record<number, string | boolean>);
   const [waitingList, setWaitingList] = useState(false);
   const [availableSeats, setAvailableSeats] = useState(null);
   const [fieldsErrors, setFieldsErrors] = useState({});

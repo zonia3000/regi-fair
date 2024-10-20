@@ -20,6 +20,7 @@ test("Render required radio field", async () => {
             fieldType: "radio",
             label: "myfield",
             required: true,
+            description: "mydescription",
             extra: { options: ["option1", "option2"] },
           },
         ],
@@ -48,6 +49,8 @@ test("Render required radio field", async () => {
   const field2 = await screen.findByRole("radio", { name: "option2" });
   expect(field2).toBeInTheDocument();
   expect(field2).not.toBeDisabled();
+
+  expect(screen.getByText("mydescription")).toBeVisible();
 
   const user = userEvent.setup();
   await user.click(field2);

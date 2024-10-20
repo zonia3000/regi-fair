@@ -14,7 +14,13 @@ test("Render required text field", async () => {
     http.get("/wpoe/v1/events/1", async () => {
       return HttpResponse.json({
         formFields: [
-          { id: 1, fieldType: "text", label: "myfield", required: true },
+          {
+            id: 1,
+            fieldType: "text",
+            label: "myfield",
+            description: "mydescription",
+            required: true,
+          },
         ],
       });
     }),
@@ -33,6 +39,7 @@ test("Render required text field", async () => {
   const field = await screen.findByRole("textbox", { name: "myfield" });
   expect(field).toBeInTheDocument();
   expect(field).not.toBeDisabled();
+  expect(screen.getByText("mydescription")).toBeVisible();
 
   server.restoreHandlers();
 });

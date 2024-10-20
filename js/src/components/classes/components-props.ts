@@ -28,6 +28,7 @@ export type BaseFieldProps = {
   label: string;
   disabled: boolean;
   required: boolean;
+  description?: string;
 };
 
 export type InputFieldProps = BaseFieldProps & {

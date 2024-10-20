@@ -1,7 +1,7 @@
 import React from "react";
 import { CheckboxControl } from "@wordpress/components";
 import { PrivacyFieldProps } from "../classes/components-props";
-import { __, _x, sprintf } from "@wordpress/i18n";
+import { _x, sprintf } from "@wordpress/i18n";
 import {
   __experimentalHStack as HStack,
   __experimentalVStack as VStack,

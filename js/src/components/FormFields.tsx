@@ -34,6 +34,7 @@ const FormFields = (props: FormFieldsProps) => {
           <InputField
             required={field.required}
             label={field.label}
+            description={field.description}
             disabled={props.disabled}
             type={field.fieldType}
             min={
@@ -54,6 +55,7 @@ const FormFields = (props: FormFieldsProps) => {
           <RadioField
             required={field.required}
             label={field.label}
+            description={field.description}
             disabled={props.disabled}
             options={(field as RadioFieldType).extra.options}
             value={props.fieldsValues[field.id] as string}
@@ -64,6 +66,7 @@ const FormFields = (props: FormFieldsProps) => {
           <CheckboxField
             required={field.required}
             label={field.label}
+            description={field.description}
             disabled={props.disabled}
             value={props.fieldsValues[field.id] as boolean}
             setValue={(v: boolean) => setFieldValue(field.id, v)}

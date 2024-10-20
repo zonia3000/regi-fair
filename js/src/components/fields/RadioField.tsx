@@ -18,6 +18,7 @@ const RadioField = (props: RadioFieldProps) => {
       disabled={!!props.disabled}
       onChange={onChange}
       selected={props.value}
+      help={props.description}
       className="mb"
     />
   );

@@ -20,6 +20,7 @@ test("Render checkbox field", async () => {
             fieldType: "checkbox",
             label: "myfield",
             required: false,
+            description: "mydescription",
           },
         ],
       });
@@ -51,6 +52,7 @@ test("Render checkbox field", async () => {
   const field = await screen.findByRole("checkbox", { name: "myfield" });
   expect(field).toBeInTheDocument();
   expect(field).not.toBeDisabled();
+  expect(screen.getByText("mydescription")).toBeVisible();
 
   await user.click(field);
 
