@@ -36,4 +36,19 @@ export const TEST_FIELDS = [
     required: false,
     extra: { options: ['op2-1', 'op2-2'] }
   },
+  {
+    label: 'checkbox-field-1',
+    fieldType: 'checkbox',
+    required: false
+  },
+  {
+    label: 'checkbox-field-2',
+    fieldType: 'checkbox',
+    required: false
+  },
+  {
+    label: 'privacy',
+    fieldType: 'privacy',
+    required: true
+  }
 ];

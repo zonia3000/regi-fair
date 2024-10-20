@@ -169,7 +169,8 @@ class WPOE_Events_Admin_Controller extends WP_REST_Controller
       $event = $this->get_event_from_request($request);
       $event->id = $id;
       $this->dao->update_event($event);
-      return new WP_REST_Response(null, 204);
+      $event = $this->dao->get_event($id);
+      return new WP_REST_Response($event, 200);
     } catch (WPOE_Validation_Exception $ex) {
       return new WP_Error('invalid_payload', $ex->getMessage(), ['status' => 400]);
     } catch (Exception $ex) {

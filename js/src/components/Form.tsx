@@ -13,7 +13,7 @@ import { Registration } from "./classes/registration";
 const Form = (props: FormProps) => {
   const [event, setEvent] = useState(null as EventConfiguration);
   const [found, setFound] = useState(false);
-  const [fields, setFields] = useState({} as Record<number, string>);
+  const [fields, setFields] = useState({} as Record<number, string | boolean>);
   const [error, setError] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [fieldsErrors, setFieldsErrors] = useState({});
@@ -49,7 +49,14 @@ const Form = (props: FormProps) => {
       setFound(true);
       setEvent(eventConfig);
       setFields(
-        Object.fromEntries(eventConfig.formFields.map((f) => [f.id, ""])),
+        Object.fromEntries(
+          eventConfig.formFields.map((f) => [
+            f.id,
+            f.fieldType === "checkbox" || f.fieldType === "privacy"
+              ? false
+              : "",
+          ]),
+        ),
       );
       if (!isNaN(eventConfig.availableSeats)) {
         setAvailableSeats(eventConfig.availableSeats);

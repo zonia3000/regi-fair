@@ -4,7 +4,7 @@ if (!defined('ABSPATH')) {
   exit;
 }
 
-require_once (WPOE_PLUGIN_DIR . 'classes/admin/settings-manager.php');
+require_once(WPOE_PLUGIN_DIR . 'classes/admin/settings-manager.php');
 
 class WPOE_Settings_Admin_Controller extends WP_REST_Controller
 {
@@ -39,6 +39,7 @@ class WPOE_Settings_Admin_Controller extends WP_REST_Controller
   public function get_item($request)
   {
     $settings = WPOE_Settings_Manager::get_settings();
+    $settings['privacyPolicyUrl'] = get_privacy_policy_url();
     return new WP_REST_Response($settings);
   }
 

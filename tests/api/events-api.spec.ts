@@ -224,7 +224,7 @@ test('Events Admin API', async ({ page, context, request }) => {
         formFields: []
       }
     });
-    expect(updateEventResponse.status()).toEqual(204);
+    expect(updateEventResponse.status()).toEqual(200);
 
     getEventResponse = await request.get(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId}`, {
       headers: {

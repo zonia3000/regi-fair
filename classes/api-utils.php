@@ -22,7 +22,7 @@ function get_form_fields_schema()
         'id' => ['type' => 'integer', 'required' => false, 'minimum' => 1],
         'fieldType' => [
           'type' => 'string',
-          'enum' => ['text', 'email', 'number', 'radio'],
+          'enum' => ['text', 'email', 'number', 'radio', 'checkbox', 'privacy'],
           'required' => true
         ],
         'label' => ['type' => 'string', 'required' => true],

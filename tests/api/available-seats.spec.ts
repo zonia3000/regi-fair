@@ -128,7 +128,7 @@ test('Available seats on event with number of people field', async ({ page, cont
         }]
       }
     });
-    expect(response.status()).toEqual(204);
+    expect(response.status()).toEqual(200);
   });
 
   await test.step('Attempt to register a number of people greater than the limit', async () => {
@@ -165,7 +165,7 @@ test('Available seats on event with number of people field', async ({ page, cont
         }]
       }
     });
-    expect(response.status()).toEqual(204);
+    expect(response.status()).toEqual(200);
   });
 
   await test.step('Register other 4 people', async () => {

@@ -170,8 +170,11 @@ const EditFormFields = (props: EditFormFieldsProps) => {
       </Button>
 
       <EditFieldModal
-        allowNumberOfPeopleField={
+        showNumberOfPeopleFieldButton={
           props.formFields.filter((f) => isNumberOfPeopleField(f)).length === 0
+        }
+        showPrivacyFieldButton={
+          props.formFields.filter((f) => f.fieldType === "privacy").length === 0
         }
         showEditFieldModal={showEditFieldModal}
         setShowEditFieldModal={setShowEditFieldModal}

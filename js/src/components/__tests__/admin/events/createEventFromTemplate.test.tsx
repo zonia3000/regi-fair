@@ -47,8 +47,10 @@ test("Create event from template", async () => {
     }),
   );
 
+  let templatesLoaded = false;
   server.use(
     http.get("/wpoe/v1/admin/templates", async () => {
+      templatesLoaded = true;
       return HttpResponse.json([{ id: 1, name: "template1" }]);
     }),
   );
@@ -91,15 +93,17 @@ test("Create event from template", async () => {
   );
   await user.click(await screen.findByText("Add event"));
   await waitFor(() => screen.getByRole("dialog"));
+  const dialog = screen.getByRole("dialog");
   await user.click(screen.getByText("From template"));
+  expect.poll(() => templatesLoaded).toBeTruthy();
 
   await user.selectOptions(
-    screen.getByRole("combobox", { name: "Select template" }),
+    within(dialog).getByRole("combobox", { name: "Select template" }),
     "template1",
   );
-  await user.click(screen.getByText("Create"));
+  await user.click(within(dialog).getByText("Create"));
 
-  expect(templateLoaded);
+  expect.poll(() => templateLoaded).toBeTruthy();
   await waitFor(() => screen.findByText("Create event"));
 
   const rows = screen.getAllByRole("row");

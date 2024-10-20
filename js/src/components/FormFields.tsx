@@ -1,12 +1,18 @@
 import React from "react";
-import { Field, RadioField as RadioFieldType } from "./classes/fields";
+import {
+  Field,
+  PrivacyField as PrivacyFieldType,
+  RadioField as RadioFieldType,
+} from "./classes/fields";
 import { FormFieldsProps } from "./classes/components-props";
 import InputField from "./fields/InputField";
 import "./style.css";
 import RadioField from "./fields/RadioField";
+import CheckboxField from "./fields/CheckboxField";
+import PrivacyField from "./fields/PrivacyField";
 
 const FormFields = (props: FormFieldsProps) => {
-  function setFieldValue(key: number, newValue: string) {
+  function setFieldValue(key: number, newValue: string | boolean) {
     props.setFieldsValues(
       Object.fromEntries(
         Object.entries(props.fieldsValues).map((e) =>
@@ -40,7 +46,7 @@ const FormFields = (props: FormFieldsProps) => {
                 ? Number(field.extra.max)
                 : undefined
             }
-            value={props.fieldsValues[field.id]}
+            value={props.fieldsValues[field.id] as string}
             setValue={(v: string) => setFieldValue(field.id, v)}
           />
         )}
@@ -50,8 +56,27 @@ const FormFields = (props: FormFieldsProps) => {
             label={field.label}
             disabled={props.disabled}
             options={(field as RadioFieldType).extra.options}
-            value={props.fieldsValues[field.id]}
+            value={props.fieldsValues[field.id] as string}
             setValue={(v: string) => setFieldValue(field.id, v)}
+          />
+        )}
+        {field.fieldType === "checkbox" && (
+          <CheckboxField
+            required={field.required}
+            label={field.label}
+            disabled={props.disabled}
+            value={props.fieldsValues[field.id] as boolean}
+            setValue={(v: boolean) => setFieldValue(field.id, v)}
+          />
+        )}
+        {field.fieldType === "privacy" && (
+          <PrivacyField
+            required={field.required}
+            label={field.label}
+            disabled={props.disabled}
+            value={props.fieldsValues[field.id] as boolean}
+            setValue={(v: boolean) => setFieldValue(field.id, v)}
+            privacyUrl={(field as PrivacyFieldType).extra?.url}
           />
         )}
         {field.id.toString() in props.fieldsErrors && (

@@ -137,7 +137,7 @@ test('Validate registration payload', async ({ page, context, request }) => {
         editableRegistrations: false,
       }
     });
-    expect(response.status()).toEqual(204);
+    expect(response.status()).toEqual(200);
   });
 
   await test.step('Attempt to update a registration that is not editable', async () => {

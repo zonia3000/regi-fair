@@ -62,7 +62,7 @@ test('Delete published event fields', async ({ page, context, request }) => {
         formFields: []
       }
     });
-    expect(response.status()).toEqual(204);
+    expect(response.status()).toEqual(200);
 
     response = await request.get(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId}`, {
       headers: {
@@ -75,6 +75,7 @@ test('Delete published event fields', async ({ page, context, request }) => {
     expect(body.formFields).toHaveLength(0);
   });
 
+  let nameFieldId: number, surnameFieldId: number, numberOfPeopleFieldId: number;
   await test.step('Set the fields again', async () => {
     const response = await request.put(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId}`, {
       headers: {
@@ -108,17 +109,6 @@ test('Delete published event fields', async ({ page, context, request }) => {
             }
           }
         ]
-      }
-    });
-    expect(response.status()).toEqual(204);
-  });
-
-  let nameFieldId: number, surnameFieldId: number, numberOfPeopleFieldId: number;
-  await test.step('Retrieve fields ids', async () => {
-    const response = await request.get(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId}`, {
-      headers: {
-        'Cookie': cookies,
-        'X-WP-Nonce': nonce
       }
     });
     expect(response.status()).toEqual(200);
@@ -169,14 +159,6 @@ test('Delete published event fields', async ({ page, context, request }) => {
             }
           }
         ]
-      }
-    });
-    expect(response.status()).toEqual(204);
-
-    response = await request.get(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId}`, {
-      headers: {
-        'Cookie': cookies,
-        'X-WP-Nonce': nonce
       }
     });
     expect(response.status()).toEqual(200);

@@ -1,4 +1,10 @@
-export type FieldType = "text" | "email" | "number" | "radio";
+export type FieldType =
+  | "text"
+  | "email"
+  | "number"
+  | "radio"
+  | "checkbox"
+  | "privacy";
 
 export type Field = {
   id?: number;
@@ -8,6 +14,17 @@ export type Field = {
   description?: string;
   extra?: object;
   validate: () => boolean;
+};
+
+export type CheckboxField = Field & {
+  fieldType: "checkbox";
+};
+
+export type PrivacyField = Field & {
+  fieldType: "privacy";
+  extra?: {
+    url?: string;
+  };
 };
 
 export type EmailField = Field & {

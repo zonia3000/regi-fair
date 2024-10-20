@@ -226,7 +226,7 @@ const ListRegistrations = (props: { waiting: boolean }) => {
                     j < 2 || showDeletedFields || !head[j - 2].deleted,
                 )
                 .map((c: string, j: number) => (
-                  <td key={`cell_${i}_${j}`}>{c}</td>
+                  <td key={`cell_${i}_${j}`}>{c.toString()}</td>
                 ))}
               <td>
                 <Button

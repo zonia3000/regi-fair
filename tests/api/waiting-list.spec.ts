@@ -161,6 +161,13 @@ test('Events with waiting list API', async ({ page, context, request }) => {
     expect(registration.waitingList).toEqual(true);
   });
 
+  await test.step('Get registration in waiting list from token', async () => {
+    const response = await request.get(`/index.php?rest_route=/wpoe/v1/events/${eventId}/${registrationToken3}`);
+    expect(response.status()).toEqual(200);
+    const body = await response.json();
+    expect(body.waitingList).toEqual(true);
+  });
+
   await test.step('Check available seats in public event data', async () => {
     const response = await request.get(`/index.php?rest_route=/wpoe/v1/events/${eventId}`);
     expect(response.status()).toEqual(200);
@@ -575,7 +582,7 @@ test('Events with waiting list API', async ({ page, context, request }) => {
         }]
       }
     });
-    expect(response.status()).toEqual(204);
+    expect(response.status()).toEqual(200);
   });
 
   await test.step('It is not possible to register using the waitingList flag if waiting list is disabled', async () => {

@@ -35,9 +35,12 @@ test('Register to event [anonymous]', async ({ page }) => {
     await registerBtn.click();
     await page.getByText('Some fields are not valid').first().waitFor();
     await expect(page.getByText('Required field', { exact: true })).toHaveCount(3);
+    await expect(page.getByText('It is necessary to accept the privacy policy')).toBeVisible();
   });
 
   await test.step('Validate invalid email', async () => {
+    await page.getByRole('checkbox', { name: 'privacy' }).click();
+    await expect(page.getByRole('checkbox', { name: 'privacy' })).toBeChecked();
     await page.getByRole('textbox', { name: 'email-field-1' }).fill('foo');
     await page.getByRole('textbox', { name: 'email-field-2' }).fill('foo');
     await registerBtn.click();
@@ -51,12 +54,17 @@ test('Register to event [anonymous]', async ({ page }) => {
     await page.getByRole('textbox', { name: 'email-field-1' }).fill('test@example.com');
     await page.getByLabel('op1-3').check();
     await page.getByRole('textbox', { name: 'email-field-2' }).fill(''); // optional email
+    await page.getByRole('checkbox', { name: 'checkbox-field-1' }).click();
+    await expect(page.getByRole('checkbox', { name: 'checkbox-field-1' })).toBeChecked();
     await registerBtn.click();
     await page.getByText('Your registration has been submitted').first().waitFor();
     await expect(page.getByRole('textbox', { name: 'text-field-1' })).toHaveValue('');
     await expect(page.getByRole('textbox', { name: 'text-field-2' })).toHaveValue('');
     await expect(page.getByRole('textbox', { name: 'email-field-1' })).toHaveValue('');
     await expect(page.getByRole('textbox', { name: 'email-field-2' })).toHaveValue('');
+    await expect(page.getByRole('checkbox', { name: 'privacy' })).not.toBeChecked();
+    await expect(page.getByRole('checkbox', { name: 'checkbox-field-1' })).not.toBeChecked();
+    await expect(page.getByRole('checkbox', { name: 'checkbox-field-2' })).not.toBeChecked();
     await expect(page.getByLabel('op1-3')).not.toBeChecked();
     expect(registrationToken).not.toBe('');
   });
@@ -68,6 +76,9 @@ test('Register to event [anonymous]', async ({ page }) => {
     await expect(page.getByRole('textbox', { name: 'text-field-2' })).toHaveValue('');
     await expect(page.getByRole('textbox', { name: 'email-field-1' })).toHaveValue('test@example.com');
     await expect(page.getByRole('textbox', { name: 'email-field-2' })).toHaveValue('');
+    await expect(page.getByRole('checkbox', { name: 'privacy' })).toBeChecked();
+    await expect(page.getByRole('checkbox', { name: 'checkbox-field-1' })).toBeChecked();
+    await expect(page.getByRole('checkbox', { name: 'checkbox-field-2' })).not.toBeChecked();
     await expect(page.getByLabel('op1-3')).toBeChecked();
   });
 
@@ -98,6 +109,9 @@ test('Register to event [anonymous]', async ({ page }) => {
     await expect(page.getByRole('textbox', { name: 'text-field-2' })).toHaveValue('');
     await expect(page.getByRole('textbox', { name: 'email-field-1' })).toHaveValue('');
     await expect(page.getByRole('textbox', { name: 'email-field-2' })).toHaveValue('');
+    await expect(page.getByRole('checkbox', { name: 'privacy' })).not.toBeChecked();
+    await expect(page.getByRole('checkbox', { name: 'checkbox-field-1' })).not.toBeChecked();
+    await expect(page.getByRole('checkbox', { name: 'checkbox-field-2' })).not.toBeChecked();
     await expect(page.getByLabel('op1-2')).not.toBeChecked();
   });
 });

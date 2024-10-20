@@ -4,7 +4,14 @@ import { __ } from "@wordpress/i18n";
 import EditInputField from "./EditInputField";
 import EditRadioField from "./EditRadioField";
 import { EditFieldModalProps } from "../../classes/components-props";
-import { FieldType, RadioField } from "../../classes/fields";
+import {
+  CheckboxField,
+  FieldType,
+  PrivacyField,
+  RadioField,
+} from "../../classes/fields";
+import EditPrivacyPolicyField from "./EditPrivacyPolicyField";
+import EditCheckboxField from "./EditCheckboxField";
 
 const EditFieldModal = (props: EditFieldModalProps) => {
   const [createNew, setCreateNew] = useState(true);
@@ -64,32 +71,73 @@ const EditFieldModal = (props: EditFieldModalProps) => {
           {fieldType === null && (
             <>
               <p>{__("Select field type", "wp-open-events")}</p>
-              <Button variant="primary" onClick={() => setFieldType("text")}>
-                {__("Text", "wp-open-events")}
-              </Button>
-              &nbsp;
-              <Button variant="primary" onClick={() => setFieldType("email")}>
-                {__("E-mail", "wp-open-events")}
-              </Button>
-              &nbsp;
-              <Button variant="primary" onClick={() => setFieldType("number")}>
-                {__("Number", "wp-open-events")}
-              </Button>
-              &nbsp;
-              <Button variant="primary" onClick={() => setFieldType("radio")}>
-                {__("Radio", "wp-open-events")}
-              </Button>
-              &nbsp;
-              {props.allowNumberOfPeopleField && (
+              <h4>{__("Standard", "wp-open-events")}</h4>
+              <div>
                 <Button
                   variant="primary"
-                  onClick={() => {
-                    setUseAsNumberOfPeople(true);
-                    setFieldType("number");
-                  }}
+                  onClick={() => setFieldType("text")}
+                  className="mr"
                 >
-                  {__("Number of people", "wp-open-events")}
+                  {__("Text", "wp-open-events")}
                 </Button>
+                <Button
+                  variant="primary"
+                  onClick={() => setFieldType("email")}
+                  className="mr"
+                >
+                  {__("E-mail", "wp-open-events")}
+                </Button>
+                <Button
+                  variant="primary"
+                  onClick={() => setFieldType("number")}
+                  className="mr"
+                >
+                  {__("Number", "wp-open-events")}
+                </Button>
+              </div>
+              <div className="mt">
+                <Button
+                  variant="primary"
+                  onClick={() => setFieldType("radio")}
+                  className="mr"
+                >
+                  {__("Radio", "wp-open-events")}
+                </Button>
+                <Button
+                  variant="primary"
+                  onClick={() => setFieldType("checkbox")}
+                  className="mr"
+                >
+                  {__("Checkbox", "wp-open-events")}
+                </Button>
+              </div>
+              {(props.showNumberOfPeopleFieldButton ||
+                props.showPrivacyFieldButton) && (
+                <>
+                  <h4>{__("Special", "wp-open-events")}</h4>
+                  <div>
+                    {props.showNumberOfPeopleFieldButton && (
+                      <Button
+                        variant="primary"
+                        className="mr"
+                        onClick={() => {
+                          setUseAsNumberOfPeople(true);
+                          setFieldType("number");
+                        }}
+                      >
+                        {__("Number of people", "wp-open-events")}
+                      </Button>
+                    )}
+                    {props.showPrivacyFieldButton && (
+                      <Button
+                        variant="primary"
+                        onClick={() => setFieldType("privacy")}
+                      >
+                        {__("Privacy policy", "wp-open-events")}
+                      </Button>
+                    )}
+                  </div>
+                </>
               )}
             </>
           )}
@@ -117,6 +165,18 @@ const EditFieldModal = (props: EditFieldModalProps) => {
           )}
           {fieldType === "radio" && (
             <EditRadioField field={field as RadioField} setField={setField} />
+          )}
+          {fieldType === "checkbox" && (
+            <EditCheckboxField
+              field={field as CheckboxField}
+              setField={setField}
+            />
+          )}
+          {fieldType === "privacy" && (
+            <EditPrivacyPolicyField
+              field={field as PrivacyField}
+              setField={setField}
+            />
           )}
           {fieldType !== null && (
             <>

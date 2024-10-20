@@ -13,8 +13,8 @@ export type FormProps = LoadingComponent & {
 
 export type FormFieldsProps = {
   formFields: Field[];
-  fieldsValues: Record<number, string>;
-  setFieldsValues: (values: Record<number, string>) => void;
+  fieldsValues: Record<number, string | boolean>;
+  setFieldsValues: (values: Record<number, string | boolean>) => void;
   fieldsErrors: Record<number, string>;
   disabled: boolean;
 };
@@ -44,6 +44,15 @@ export type RadioFieldProps = BaseFieldProps & {
   options: string[];
 };
 
+export type CheckboxFieldProps = BaseFieldProps & {
+  value: boolean;
+  setValue: (value: boolean) => void;
+};
+
+export type PrivacyFieldProps = CheckboxFieldProps & {
+  privacyUrl: string;
+};
+
 export type EditFieldProps<T extends Field> = {
   field: T;
   setField: (f: T) => void;
@@ -64,7 +73,8 @@ export type EditInputFieldProps = EditFieldProps<Field> &
 
 export type EditFieldModalProps = {
   showEditFieldModal: boolean;
-  allowNumberOfPeopleField: boolean;
+  showNumberOfPeopleFieldButton: boolean;
+  showPrivacyFieldButton: boolean;
   setShowEditFieldModal: (value: boolean) => void;
   fieldToEdit: Field | null;
   setFieldToEdit: (field: Field) => void;

@@ -55,7 +55,7 @@ test('Create event from template', async ({ page, context, request }) => {
     await expect(page.getByRole('checkbox', { name: 'Add custom message to confirmation e-mail' })).toBeChecked();
     await expect(page.getByRole('textbox', { name: 'Custom confirmation e-mail content' })).toHaveValue('foo');
 
-    await expect(page.getByRole('row')).toHaveCount(7);
+    await expect(page.getByRole('row')).toHaveCount(10);
 
     await expect(page.getByRole('row').nth(1).getByRole('cell').nth(0)).toContainText('text-field-1');
     await expect(page.getByRole('row').nth(1).getByRole('cell').nth(1)).toContainText('text');
@@ -80,6 +80,18 @@ test('Create event from template', async ({ page, context, request }) => {
     await expect(page.getByRole('row').nth(6).getByRole('cell').nth(0)).toContainText('radio-field-2');
     await expect(page.getByRole('row').nth(6).getByRole('cell').nth(1)).toContainText('radio');
     await expect(page.getByRole('row').nth(6).getByRole('cell').nth(2)).toContainText('No');
+
+    await expect(page.getByRole('row').nth(7).getByRole('cell').nth(0)).toContainText('checkbox-field-1');
+    await expect(page.getByRole('row').nth(7).getByRole('cell').nth(1)).toContainText('checkbox');
+    await expect(page.getByRole('row').nth(7).getByRole('cell').nth(2)).toContainText('No');
+
+    await expect(page.getByRole('row').nth(8).getByRole('cell').nth(0)).toContainText('checkbox-field-2');
+    await expect(page.getByRole('row').nth(8).getByRole('cell').nth(1)).toContainText('checkbox');
+    await expect(page.getByRole('row').nth(8).getByRole('cell').nth(2)).toContainText('No');
+
+    await expect(page.getByRole('row').nth(9).getByRole('cell').nth(0)).toContainText('privacy');
+    await expect(page.getByRole('row').nth(9).getByRole('cell').nth(1)).toContainText('privacy');
+    await expect(page.getByRole('row').nth(9).getByRole('cell').nth(2)).toContainText('Yes');
 
     await page.getByRole('row').nth(1).getByRole('button', { name: 'Edit' }).click();
     const dialog = page.getByRole('dialog');
@@ -125,6 +137,15 @@ test('Create event from template', async ({ page, context, request }) => {
     await expect(dialog.getByRole('textbox', { name: 'Option 1' })).toHaveValue('op2-1');
     await expect(dialog.getByRole('textbox', { name: 'Option 2' })).toHaveValue('op2-2');
     await expect(dialog.getByLabel('Remove option')).toHaveCount(0);
+    await dialog.getByLabel('Close').click();
+
+    await page.getByRole('row').nth(7).getByRole('button', { name: 'Edit' }).click();
+    await expect(dialog.getByRole('textbox', { name: 'Label' })).toHaveValue('checkbox-field-1');
+    await expect(dialog.getByRole('textbox', { name: 'Description' })).toHaveValue('');
+    await dialog.getByLabel('Close').click();
+
+    await page.getByRole('row').nth(9).getByRole('button', { name: 'Edit' }).click();
+    await expect(dialog).toContainText('privacy');
     await dialog.getByLabel('Close').click();
   });
 

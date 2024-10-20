@@ -88,6 +88,7 @@ class WPOE_Public_Controller extends WP_REST_Controller
       return new WP_Error('event_not_found', __('Event not found', 'wp-open-events'), ['status' => 404]);
     }
     $event->formFields = $this->remove_registered_user_email_field($event->formFields);
+    $this->add_privacy_policy_url($event->formFields);
     return new WP_REST_Response($event);
   }
 
@@ -108,6 +109,22 @@ class WPOE_Public_Controller extends WP_REST_Controller
       }
     }
     return $filtered_fields;
+  }
+
+  /**
+   * @param WPOE_Form_Field[] $fields
+   */
+  private function add_privacy_policy_url(&$fields)
+  {
+    $url = get_privacy_policy_url();
+    if ($url === '') {
+      return;
+    }
+    foreach ($fields as $field) {
+      if ($field->fieldType === 'privacy') {
+        $field->extra = ['url' => $url];
+      }
+    }
   }
 
   /**
