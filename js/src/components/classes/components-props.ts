@@ -1,4 +1,4 @@
-import { Field, RadioField } from "./fields";
+import { DropdownField, Field, RadioField } from "./fields";
 
 type LoadingComponent = {
   loading: boolean;
@@ -13,8 +13,10 @@ export type FormProps = LoadingComponent & {
 
 export type FormFieldsProps = {
   formFields: Field[];
-  fieldsValues: Record<number, string | boolean>;
-  setFieldsValues: (values: Record<number, string | boolean>) => void;
+  fieldsValues: Record<number, string | string[] | boolean>;
+  setFieldsValues: (
+    values: Record<number, string | string[] | boolean>,
+  ) => void;
   fieldsErrors: Record<number, string>;
   disabled: boolean;
 };
@@ -45,6 +47,13 @@ export type RadioFieldProps = BaseFieldProps & {
   options: string[];
 };
 
+export type DropdownFieldProps = BaseFieldProps & {
+  value: string | string[];
+  setValue: (value: string | string[]) => void;
+  options: string[];
+  multiple: boolean;
+};
+
 export type CheckboxFieldProps = BaseFieldProps & {
   value: boolean;
   setValue: (value: boolean) => void;
@@ -60,6 +69,8 @@ export type EditFieldProps<T extends Field> = {
 };
 
 export type EditRadioFieldProps = EditFieldProps<RadioField> & {};
+
+export type EditDropdownFieldProps = EditFieldProps<DropdownField> & {};
 
 export type EditInputFieldProps = EditFieldProps<Field> &
   (

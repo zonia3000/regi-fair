@@ -22,7 +22,7 @@ function get_form_fields_schema()
         'id' => ['type' => 'integer', 'required' => false, 'minimum' => 1],
         'fieldType' => [
           'type' => 'string',
-          'enum' => ['text', 'email', 'number', 'radio', 'checkbox', 'privacy'],
+          'enum' => ['text', 'email', 'number', 'radio', 'dropdown', 'checkbox', 'privacy'],
           'required' => true
         ],
         'label' => ['type' => 'string', 'required' => true],
@@ -36,7 +36,8 @@ function get_form_fields_schema()
             'min' => ['type' => 'integer', 'required' => false],
             'max' => ['type' => 'integer', 'required' => false],
             'useAsNumberOfPeople' => ['type' => 'boolean', 'required' => false],
-            'options' => ['type' => 'array', 'required' => false, 'items' => ['type' => 'string']]
+            'options' => ['type' => 'array', 'required' => false, 'items' => ['type' => 'string']],
+            'multiple' => ['type' => 'boolean', 'required' => false]
           ],
           'required' => false,
           'additionalProperties' => false
@@ -103,6 +104,9 @@ function validate_extra(WPOE_Form_Field $field, array $extra)
   if (array_key_exists('max', $extra) && $field->fieldType !== 'number') {
     throw new WPOE_Validation_Exception(__('Only numeric fields can have a maximum value', 'wp-open-events'));
   }
+  if (array_key_exists('multiple', $extra) && $field->fieldType !== 'dropdown') {
+    throw new WPOE_Validation_Exception(__('Only dropdown fields can have a multiple field', 'wp-open-events'));
+  }
 }
 
 function strip_forbidden_html_tags(string $content): string
@@ -157,6 +161,13 @@ function use_wp_user_email(WPOE_Form_Field $field): bool
   return $field->fieldType === 'email' && $field->extra !== null
     && property_exists($field->extra, 'useWpUserEmail')
     && $field->extra->useWpUserEmail === true;
+}
+
+function is_multiple(WPOE_Form_Field $field): bool
+{
+  return $field->fieldType === 'dropdown' && $field->extra !== null
+    && property_exists($field->extra, 'multiple')
+    && $field->extra->multiple === true;
 }
 
 function set_registered_user_email(WPOE_Event $event, &$input)

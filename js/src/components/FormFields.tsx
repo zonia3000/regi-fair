@@ -3,6 +3,7 @@ import {
   Field,
   PrivacyField as PrivacyFieldType,
   RadioField as RadioFieldType,
+  DropdownField as DropdownFieldType,
 } from "./classes/fields";
 import { FormFieldsProps } from "./classes/components-props";
 import InputField from "./fields/InputField";
@@ -10,9 +11,10 @@ import "./style.css";
 import RadioField from "./fields/RadioField";
 import CheckboxField from "./fields/CheckboxField";
 import PrivacyField from "./fields/PrivacyField";
+import DropdownField from "./fields/DropdownField";
 
 const FormFields = (props: FormFieldsProps) => {
-  function setFieldValue(key: number, newValue: string | boolean) {
+  function setFieldValue(key: number, newValue: string | string[] | boolean) {
     props.setFieldsValues(
       Object.fromEntries(
         Object.entries(props.fieldsValues).map((e) =>
@@ -60,6 +62,18 @@ const FormFields = (props: FormFieldsProps) => {
             options={(field as RadioFieldType).extra.options}
             value={props.fieldsValues[field.id] as string}
             setValue={(v: string) => setFieldValue(field.id, v)}
+          />
+        )}
+        {field.fieldType === "dropdown" && (
+          <DropdownField
+            required={field.required}
+            label={field.label}
+            description={field.description}
+            disabled={props.disabled}
+            options={(field as DropdownFieldType).extra.options}
+            multiple={(field as DropdownFieldType).extra.multiple}
+            value={props.fieldsValues[field.id] as string | string[]}
+            setValue={(v: string | string[]) => setFieldValue(field.id, v)}
           />
         )}
         {field.fieldType === "checkbox" && (

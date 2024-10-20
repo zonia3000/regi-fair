@@ -4,7 +4,7 @@ import apiFetch from "@wordpress/api-fetch";
 import Loading from "./Loading";
 import { Button, Modal, Notice } from "@wordpress/components";
 import { __, _x, sprintf } from "@wordpress/i18n";
-import { extractError } from "./utils";
+import { extractError, getDefaultFieldValue } from "./utils";
 import "./style.css";
 import FormFields from "./FormFields";
 import { EventConfiguration } from "./classes/event";
@@ -13,7 +13,9 @@ import { Registration } from "./classes/registration";
 const Form = (props: FormProps) => {
   const [event, setEvent] = useState(null as EventConfiguration);
   const [found, setFound] = useState(false);
-  const [fields, setFields] = useState({} as Record<number, string | boolean>);
+  const [fields, setFields] = useState(
+    {} as Record<number, string | string[] | boolean>,
+  );
   const [error, setError] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [fieldsErrors, setFieldsErrors] = useState({});
@@ -50,12 +52,7 @@ const Form = (props: FormProps) => {
       setEvent(eventConfig);
       setFields(
         Object.fromEntries(
-          eventConfig.formFields.map((f) => [
-            f.id,
-            f.fieldType === "checkbox" || f.fieldType === "privacy"
-              ? false
-              : "",
-          ]),
+          eventConfig.formFields.map((f) => [f.id, getDefaultFieldValue(f)]),
         ),
       );
       if (!isNaN(eventConfig.availableSeats)) {

@@ -3,6 +3,7 @@ export type FieldType =
   | "email"
   | "number"
   | "radio"
+  | "dropdown"
   | "checkbox"
   | "privacy";
 
@@ -48,5 +49,13 @@ export type RadioField = Field & {
   fieldType: "radio";
   extra: {
     options: string[];
+  };
+};
+
+export type DropdownField = Field & {
+  fieldType: "dropdown";
+  extra: {
+    options: string[];
+    multiple: boolean;
   };
 };

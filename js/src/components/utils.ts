@@ -7,6 +7,22 @@ export function extractError(err: unknown): string {
   return "Unexpected error";
 }
 
+export function getDefaultFieldValue(
+  field: Field,
+): string | string[] | boolean {
+  switch (field.fieldType) {
+    case "checkbox":
+    case "privacy":
+      return false;
+    case "dropdown":
+      if ("multiple" in field.extra && field.extra.multiple) {
+        return [] as string[];
+      }
+    default:
+      return "";
+  }
+}
+
 /**
  * Prepares the fields to be used as request body in API calls,
  * removing all the invalid or read-only properties.

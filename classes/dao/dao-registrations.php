@@ -22,7 +22,7 @@ class WPOE_DAO_Registrations extends WPOE_Base_DAO
 
     $waiting_clause = ($waiting ? "" : "NOT") . " waiting_list";
 
-    $sql = "SELECT r.id, r.inserted_at, f.label, f.type, f.deleted, rv.field_value
+    $sql = "SELECT r.id, r.inserted_at, f.label, f.type, f.deleted, f.extra, rv.field_value
       FROM " . WPOE_DB::get_table_name('event_registration') . " r
       RIGHT JOIN " . WPOE_DB::get_table_name('event_form_field') . " f ON f.event_id = r.event_id
       LEFT JOIN " . WPOE_DB::get_table_name('event_registration_value') . " rv ON f.id = rv.field_id AND rv.registration_id = r.id
@@ -59,7 +59,7 @@ class WPOE_DAO_Registrations extends WPOE_Base_DAO
         $ids[] = $id;
       }
       $label = $result['label'];
-      $value = $this->get_formatted_registration_value($result['field_value'], $result['type']);
+      $value = $this->get_formatted_registration_value($result['field_value'], $result['type'], $result['extra']);
       if (!array_key_exists($label, $head_map)) {
         $head_map[$label] = (bool) $result['deleted'];
       }
@@ -160,7 +160,7 @@ class WPOE_DAO_Registrations extends WPOE_Base_DAO
           [
             'registration_id' => $registration_id,
             'field_id' => $field_id,
-            'field_value' => $field_value,
+            'field_value' => is_array($field_value) ? json_encode($field_value) : $field_value,
           ],
           ['%d', '%d', '%s']
         );
@@ -239,7 +239,7 @@ class WPOE_DAO_Registrations extends WPOE_Base_DAO
   {
     global $wpdb;
 
-    $query = $wpdb->prepare("SELECT f.label, f.type, f.id AS field_id, rv.field_value
+    $query = $wpdb->prepare("SELECT f.label, f.type, f.id AS field_id, f.extra, rv.field_value
       FROM " . WPOE_DB::get_table_name('event_registration') . " r
       RIGHT JOIN " . WPOE_DB::get_table_name('event_form_field') . " f ON f.event_id = r.event_id
       LEFT JOIN " . WPOE_DB::get_table_name('event_registration_value') . " rv ON f.id = rv.field_id AND rv.registration_id = r.id
@@ -250,24 +250,39 @@ class WPOE_DAO_Registrations extends WPOE_Base_DAO
 
     $values = [];
     foreach ($results as $row) {
-      $values[$row['field_id']] = $this->get_registration_value($row['field_value'], $row['type']);
+      $values[$row['field_id']] = $this->get_registration_value($row['field_value'], $row['type'], $row['extra']);
     }
 
     return $values;
   }
 
-  private function get_registration_value(mixed $value, string $type)
+  private function get_registration_value(mixed $value, string $type, string|null $extra)
   {
     if ($type === 'checkbox' || $type === 'privacy') {
       return (bool) $value;
     }
+    if ($type === 'dropdown' && $extra !== null) {
+      $extra = json_decode($extra);
+      if (property_exists($extra, 'multiple') && $extra->multiple === true) {
+        return json_decode($value);
+      }
+    }
     return $value;
   }
 
-  private function get_formatted_registration_value(mixed $value, string $type)
+  private function get_formatted_registration_value(mixed $value, string $type, string|null $extra)
   {
     if ($value === null) {
       return '';
+    }
+    if ($type === 'dropdown' && $extra !== null) {
+      $extra = json_decode($extra);
+      if (property_exists($extra, 'multiple') && $extra->multiple === true) {
+        $decoded_value = json_decode($value);
+        if (is_array($decoded_value)) {
+          return implode(', ', $decoded_value);
+        }
+      }
     }
     if ($type === 'checkbox' || $type === 'privacy') {
       return ((bool) $value) ? __('Yes', 'wp-open-events') : __('No', 'wp-open-events');

@@ -6,12 +6,14 @@ import EditRadioField from "./EditRadioField";
 import { EditFieldModalProps } from "../../classes/components-props";
 import {
   CheckboxField,
+  DropdownField,
   FieldType,
   PrivacyField,
   RadioField,
 } from "../../classes/fields";
 import EditPrivacyPolicyField from "./EditPrivacyPolicyField";
 import EditCheckboxField from "./EditCheckboxField";
+import EditDropdownField from "./EditDropdownField";
 
 const EditFieldModal = (props: EditFieldModalProps) => {
   const [createNew, setCreateNew] = useState(true);
@@ -98,6 +100,13 @@ const EditFieldModal = (props: EditFieldModalProps) => {
               <div className="mt">
                 <Button
                   variant="primary"
+                  onClick={() => setFieldType("dropdown")}
+                  className="mr"
+                >
+                  {__("Dropdown", "wp-open-events")}
+                </Button>
+                <Button
+                  variant="primary"
                   onClick={() => setFieldType("radio")}
                   className="mr"
                 >
@@ -165,6 +174,12 @@ const EditFieldModal = (props: EditFieldModalProps) => {
           )}
           {fieldType === "radio" && (
             <EditRadioField field={field as RadioField} setField={setField} />
+          )}
+          {fieldType === "dropdown" && (
+            <EditDropdownField
+              field={field as DropdownField}
+              setField={setField}
+            />
           )}
           {fieldType === "checkbox" && (
             <EditCheckboxField
