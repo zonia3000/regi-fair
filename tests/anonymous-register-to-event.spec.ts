@@ -33,8 +33,8 @@ test('Register to event [anonymous]', async ({ page }) => {
 
   await test.step('Validate required fields', async () => {
     await registerBtn.click();
-    await page.getByText('Some fields are not valid').first().waitFor();
-    await expect(page.getByText('Required field', { exact: true })).toHaveCount(3);
+    await expect(page.getByText('Some fields are not valid').first()).toBeVisible();
+    await expect(page.getByText('Required field', { exact: true })).toHaveCount(5);
     await expect(page.getByText('It is necessary to accept the privacy policy')).toBeVisible();
   });
 
@@ -45,7 +45,7 @@ test('Register to event [anonymous]', async ({ page }) => {
     await page.getByRole('textbox', { name: 'email-field-2' }).fill('foo');
     await registerBtn.click();
     await page.getByText('Some fields are not valid').first().waitFor();
-    await expect(page.getByText('Required field', { exact: true })).toHaveCount(2);
+    await expect(page.getByText('Required field', { exact: true })).toHaveCount(4);
     await expect(page.getByText('Invalid e-mail address')).toHaveCount(2);
   });
 
@@ -56,6 +56,8 @@ test('Register to event [anonymous]', async ({ page }) => {
     await page.getByRole('textbox', { name: 'email-field-2' }).fill(''); // optional email
     await page.getByRole('checkbox', { name: 'checkbox-field-1' }).click();
     await expect(page.getByRole('checkbox', { name: 'checkbox-field-1' })).toBeChecked();
+    await page.getByRole('listbox', { name: 'dropdown-field-1' }).selectOption(['op1-1', 'op1-2']);
+    await page.getByRole('combobox', { name: 'dropdown-field-2' }).selectOption('op2-1');
     await registerBtn.click();
     await page.getByText('Your registration has been submitted').first().waitFor();
     await expect(page.getByRole('textbox', { name: 'text-field-1' })).toHaveValue('');
@@ -66,6 +68,8 @@ test('Register to event [anonymous]', async ({ page }) => {
     await expect(page.getByRole('checkbox', { name: 'checkbox-field-1' })).not.toBeChecked();
     await expect(page.getByRole('checkbox', { name: 'checkbox-field-2' })).not.toBeChecked();
     await expect(page.getByLabel('op1-3')).not.toBeChecked();
+    await expect(page.getByRole('listbox', { name: 'dropdown-field-1' })).toHaveValues([]);
+    await expect(page.getByRole('combobox', { name: 'dropdown-field-2' })).toHaveValue('');
     expect(registrationToken).not.toBe('');
   });
 
@@ -80,6 +84,8 @@ test('Register to event [anonymous]', async ({ page }) => {
     await expect(page.getByRole('checkbox', { name: 'checkbox-field-1' })).toBeChecked();
     await expect(page.getByRole('checkbox', { name: 'checkbox-field-2' })).not.toBeChecked();
     await expect(page.getByLabel('op1-3')).toBeChecked();
+    await expect(page.getByRole('listbox', { name: 'dropdown-field-1' })).toHaveValues(['op1-1', 'op1-2']);
+    await expect(page.getByRole('combobox', { name: 'dropdown-field-2' })).toHaveValue('op2-1');
   });
 
   await test.step('Trigger validation on registration editing', async () => {

@@ -49,17 +49,12 @@ createEventTest(
 
     await user.click(within(rows[1]).getByRole("button", { name: "Edit" }));
 
+    expect(screen.getByRole("textbox", { name: "Label" })).toHaveValue(
+      "Checkbox field",
+    );
     expect(
-      (screen.getByRole("textbox", { name: "Label" }) as HTMLInputElement)
-        .value,
-    ).toEqual("Checkbox field");
-    expect(
-      (
-        screen.getByRole("textbox", {
-          name: "Description (optional)",
-        }) as HTMLInputElement
-      ).value,
-    ).toEqual("Checkbox field description");
+      screen.getByRole("textbox", { name: "Description (optional)" }),
+    ).toHaveValue("Checkbox field description");
     await user.click(screen.getByRole("button", { name: "Save" }));
   },
   (requestBody: EventConfiguration) => {
