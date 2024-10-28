@@ -12,7 +12,6 @@ setup('Edit settings', async ({ page }) => {
     await page.getByRole('textbox', { name: 'Default extra content for confirmation e-mail messages' }).fill(
       'Test <b>content</b><br /><div>foo</div>'
     );
-    await page.getByRole('checkbox', { name: 'Track IP addresses during the registration' }).check();
   });
 
   await setup.step('Save the settings', async () => {
@@ -30,6 +29,5 @@ setup('Edit settings', async ({ page }) => {
     await expect(page.getByRole('textbox', { name: 'Default extra content for confirmation e-mail messages' })).toHaveValue(
       'Test <b>content</b><br />foo'
     );
-    await expect(page.getByRole('checkbox', { name: 'Track IP addresses during the registration' })).toBeChecked();
   });
 });

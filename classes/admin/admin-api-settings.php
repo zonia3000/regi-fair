@@ -67,7 +67,6 @@ class WPOE_Settings_Admin_Controller extends WP_REST_Controller
     $schema['properties']['defaultAdminEmail'] = ['type' => 'string', 'required' => true];
     $schema['properties']['defaultAutoremovePeriod'] = ['type' => 'integer', 'required' => true, 'minimum' => 1];
     $schema['properties']['defaultExtraEmailContent'] = ['type' => 'string', 'required' => true];
-    $schema['properties']['defaultTrackIpAddresses'] = ['type' => 'boolean', 'required' => true];
 
     // Cache generated schema on endpoint instance.
     $this->schema = $schema;

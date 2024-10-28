@@ -19,7 +19,6 @@ const Settings = function () {
   const [defaultAdminEmail, setDefaultAdminEmail] = useState("");
   const [defaultAutoremovePeriod, setDefaultAutoremovePeriod] = useState("30");
   const [defaultExtraEmailContent, setDefaultExtraEmailContent] = useState("");
-  const [defaultTrackIpAddresses, setDefaultTrackIpAddresses] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [updated, setUpdated] = useState(false);
@@ -33,7 +32,6 @@ const Settings = function () {
         setDefaultAdminEmail(settings.defaultAdminEmail);
         setDefaultAutoremovePeriod(settings.defaultAutoremovePeriod.toString());
         setDefaultExtraEmailContent(settings.defaultExtraEmailContent);
-        setDefaultTrackIpAddresses(settings.defaultTrackIpAddresses);
       })
       .catch((err) => {
         setError(extractError(err));
@@ -57,8 +55,7 @@ const Settings = function () {
         body: JSON.stringify({
           defaultAdminEmail,
           defaultAutoremovePeriod: Number(defaultAutoremovePeriod),
-          defaultExtraEmailContent,
-          defaultTrackIpAddresses,
+          defaultExtraEmailContent
         }),
       });
       setDefaultExtraEmailContent(
@@ -125,17 +122,6 @@ const Settings = function () {
           "This content will be added at the end of the confirmation e-mail messages. Allowed HTML tags: <b>, <i>, <a>, <hr>, <p>, <br>",
           "wp-open-events",
         )}
-        __nextHasNoMarginBottom={true}
-      />
-
-      <CheckboxControl
-        label={__(
-          "Track IP addresses during the registration",
-          "wp-open-events",
-        )}
-        onChange={setDefaultTrackIpAddresses}
-        checked={defaultTrackIpAddresses}
-        className="mb"
         __nextHasNoMarginBottom={true}
       />
 

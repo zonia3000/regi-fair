@@ -9,8 +9,7 @@ class WPOE_Settings_Manager
   private static $default_settings = [
     'defaultAdminEmail' => '',
     'defaultAutoremovePeriod' => 30,
-    'defaultExtraEmailContent' => '',
-    'defaultTrackIpAddresses' => false
+    'defaultExtraEmailContent' => ''
   ];
 
   public static function get_settings(): array
