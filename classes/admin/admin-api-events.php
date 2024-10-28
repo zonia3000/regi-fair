@@ -29,6 +29,9 @@ class WPOE_Events_Admin_Controller extends WP_REST_Controller
       $namespace,
       '/admin/events',
       [
+        'args' => [
+          'ignorePastEvents' => ['type' => 'boolean', 'required' => false]
+        ],
         [
           'methods' => WP_REST_Server::READABLE,
           'permission_callback' => 'is_events_admin',
@@ -97,7 +100,8 @@ class WPOE_Events_Admin_Controller extends WP_REST_Controller
   public function get_items($request)
   {
     try {
-      return new WP_REST_Response($this->dao->list_events());
+      $ignore_past_events = (bool) $request->get_param('ignorePastEvents');
+      return new WP_REST_Response($this->dao->list_events($ignore_past_events));
     } catch (Exception $ex) {
       return generic_server_error($ex);
     }

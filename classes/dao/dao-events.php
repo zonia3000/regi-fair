@@ -21,18 +21,25 @@ class WPOE_DAO_Events extends WPOE_Base_DAO
     $this->registrations_dao = new WPOE_DAO_Registrations();
   }
 
-  public function list_events(): array
+  public function list_events(bool $ignore_past_events = false): array
   {
     global $wpdb;
 
-    $query = $wpdb->prepare("SELECT e.id, e.name, e.date, COUNT(r.id) AS registrations, p.posts
+    $sql = "SELECT e.id, e.name, e.date, COUNT(r.id) AS registrations, p.posts
       FROM " . WPOE_DB::get_table_name('event') . " e
       LEFT JOIN " . WPOE_DB::get_table_name('event_registration') . " r ON e.id = r.event_id
       LEFT JOIN (
         SELECT event_id, GROUP_CONCAT(post_id ORDER BY updated_at DESC) AS posts
         FROM " . WPOE_DB::get_table_name('event_post') . " GROUP BY event_id  
-      ) AS p ON p.event_id = e.id
-      GROUP BY e.id ORDER BY e.date DESC");
+      ) AS p ON p.event_id = e.id ";
+
+    if ($ignore_past_events) {
+      $sql .= "WHERE e.date >= DATE(CURRENT_TIMESTAMP) ";
+    }
+
+    $sql .= "GROUP BY e.id ORDER BY e.date DESC";
+
+    $query = $wpdb->prepare($sql);
 
     $results = $wpdb->get_results($query, ARRAY_A);
     $this->check_results('retrieving events list');

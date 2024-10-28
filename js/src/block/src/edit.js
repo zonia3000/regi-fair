@@ -14,7 +14,7 @@ export default function Edit({ attributes, setAttributes }) {
 
     useEffect(() => {
         if (!attributes.eventId) {
-            apiFetch({ path: '/wpoe/v1/admin/events' })
+            apiFetch({ path: '/wpoe/v1/admin/events?ignorePastEvents=true' })
                 .then((result) => {
                     setEventsOptions(
                         [{
