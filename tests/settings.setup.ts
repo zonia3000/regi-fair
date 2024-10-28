@@ -12,6 +12,9 @@ setup('Edit settings', async ({ page }) => {
     await page.getByRole('textbox', { name: 'Default extra content for confirmation e-mail messages' }).fill(
       'Test <b>content</b><br /><div>foo</div>'
     );
+    await page.getByRole('textbox', { name: 'E-mail address used to send confirmation messages to users' }).fill(
+      'noreply@example.com'
+    );
   });
 
   await setup.step('Save the settings', async () => {
@@ -28,6 +31,9 @@ setup('Edit settings', async ({ page }) => {
     await expect(page.getByRole('spinbutton', { name: 'Default autoremove period' })).toHaveValue('10');
     await expect(page.getByRole('textbox', { name: 'Default extra content for confirmation e-mail messages' })).toHaveValue(
       'Test <b>content</b><br />foo'
+    );
+    await expect(page.getByRole('textbox', { name: 'E-mail address used to send confirmation messages to users' })).toHaveValue(
+      'noreply@example.com'
     );
   });
 });

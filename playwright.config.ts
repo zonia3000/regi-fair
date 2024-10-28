@@ -51,19 +51,19 @@ export default defineConfig({
     {
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
-      dependencies: ['auth', 'create_test_event']
+      dependencies: ['create_test_event']
     },
 
     {
       name: 'firefox',
       use: { ...devices['Desktop Firefox'] },
-      dependencies: ['auth', 'create_test_event']
+      dependencies: ['create_test_event']
     },
 
     {
       name: 'webkit',
       use: { ...devices['Desktop Safari'] },
-      dependencies: ['auth', 'create_test_event']
+      dependencies: ['create_test_event']
     },
 
     /* Test against mobile viewports. */

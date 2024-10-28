@@ -29,10 +29,14 @@ test("Edit settings", async () => {
   const extraEmailContentInput = screen.getByRole("textbox", {
     name: "Default extra content for confirmation e-mail messages",
   });
+  const fromEmailInput = screen.getByRole("textbox", {
+    name: "E-mail address used to send confirmation messages to users",
+  });
 
   expect(adminEmailInput).toHaveValue("test@example.com");
   expect(autoremovePeriodInput).toHaveValue(30);
   expect(extraEmailContentInput).toHaveValue("extra content");
+  expect(fromEmailInput).toHaveValue("noreply@localhost");
 
   const user = userEvent.setup();
 
@@ -42,6 +46,8 @@ test("Edit settings", async () => {
   await user.type(autoremovePeriodInput, "10");
   await user.clear(extraEmailContentInput);
   await user.type(extraEmailContentInput, "foobar");
+  await user.clear(fromEmailInput);
+  await user.type(fromEmailInput, "noreply@example.com");
 
   await user.click(screen.getByRole("button", { name: "Save" }));
 
@@ -50,6 +56,7 @@ test("Edit settings", async () => {
   expect(body.defaultAdminEmail).toEqual("foo@example.com");
   expect(body.defaultAutoremovePeriod).toEqual(10);
   expect(body.defaultExtraEmailContent).toEqual("foobar");
+  expect(body.fromEmail).toEqual("noreply@example.com");
 
   server.restoreHandlers();
 });

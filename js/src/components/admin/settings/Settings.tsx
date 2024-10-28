@@ -19,6 +19,7 @@ const Settings = function () {
   const [defaultAdminEmail, setDefaultAdminEmail] = useState("");
   const [defaultAutoremovePeriod, setDefaultAutoremovePeriod] = useState("30");
   const [defaultExtraEmailContent, setDefaultExtraEmailContent] = useState("");
+  const [fromEmail, setFromEmail] = useState("");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [updated, setUpdated] = useState(false);
@@ -32,6 +33,7 @@ const Settings = function () {
         setDefaultAdminEmail(settings.defaultAdminEmail);
         setDefaultAutoremovePeriod(settings.defaultAutoremovePeriod.toString());
         setDefaultExtraEmailContent(settings.defaultExtraEmailContent);
+        setFromEmail(settings.fromEmail);
       })
       .catch((err) => {
         setError(extractError(err));
@@ -55,7 +57,8 @@ const Settings = function () {
         body: JSON.stringify({
           defaultAdminEmail,
           defaultAutoremovePeriod: Number(defaultAutoremovePeriod),
-          defaultExtraEmailContent
+          defaultExtraEmailContent,
+          fromEmail,
         }),
       });
       setDefaultExtraEmailContent(
@@ -122,6 +125,18 @@ const Settings = function () {
           "This content will be added at the end of the confirmation e-mail messages. Allowed HTML tags: <b>, <i>, <a>, <hr>, <p>, <br>",
           "wp-open-events",
         )}
+        __nextHasNoMarginBottom={true}
+      />
+
+      <TextControl
+        label={__(
+          "E-mail address used to send confirmation messages to users",
+          "wp-open-events",
+        )}
+        onChange={setFromEmail}
+        value={fromEmail}
+        type="text"
+        className="mb"
         __nextHasNoMarginBottom={true}
       />
 

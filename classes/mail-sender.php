@@ -1,7 +1,23 @@
 <?php
 
+if (!defined('ABSPATH')) {
+  exit;
+}
+
+require_once(WPOE_PLUGIN_DIR . 'classes/admin/settings-manager.php');
+
 class WPOE_Mail_Sender
 {
+  private static function get_headers(): array
+  {
+    $settings = WPOE_Settings_Manager::get_settings();
+    $from_email = $settings['fromEmail'];
+    return [
+      'Content-Type: text/html; charset=UTF-8',
+      'From:' . $from_email
+    ];
+  }
+
   /**
    * @param string|string[] $to
    */
@@ -14,8 +30,9 @@ class WPOE_Mail_Sender
 
     $body .= WPOE_Mail_Sender::get_registration_fields_content($event, $values);
     $body .= WPOE_Mail_Sender::get_registration_link_content($event, $registration_token);
+    $body .= WPOE_Mail_Sender::get_extra_content($event);
 
-    $headers = array('Content-Type: text/html; charset=UTF-8');
+    $headers = WPOE_Mail_Sender::get_headers();
     wp_mail($to, $subject, $body, $headers);
   }
 
@@ -32,8 +49,9 @@ class WPOE_Mail_Sender
 
     $body .= WPOE_Mail_Sender::get_registration_fields_content($event, $values);
     $body .= WPOE_Mail_Sender::get_registration_link_content($event, $registration_token);
+    $body .= WPOE_Mail_Sender::get_extra_content($event);
 
-    $headers = array('Content-Type: text/html; charset=UTF-8');
+    $headers = WPOE_Mail_Sender::get_headers();
     wp_mail($to, $subject, $body, $headers);
   }
 
@@ -48,8 +66,9 @@ class WPOE_Mail_Sender
       . '<p>' . __('You inserted the following data:') . '</p>';
 
     $body .= WPOE_Mail_Sender::get_registration_fields_content($event, $values);
+    $body .= WPOE_Mail_Sender::get_extra_content($event);
 
-    $headers = array('Content-Type: text/html; charset=UTF-8');
+    $headers = WPOE_Mail_Sender::get_headers();
     wp_mail($to, $subject, $body, $headers);
   }
 
@@ -62,7 +81,7 @@ class WPOE_Mail_Sender
 
     $body .= WPOE_Mail_Sender::get_registration_fields_content($event, $values);
 
-    $headers = array('Content-Type: text/html; charset=UTF-8');
+    $headers = WPOE_Mail_Sender::get_headers();
     wp_mail($event->adminEmail, $subject, $body, $headers);
   }
 
@@ -75,7 +94,7 @@ class WPOE_Mail_Sender
 
     $body .= WPOE_Mail_Sender::get_registration_fields_content($event, $values);
 
-    $headers = array('Content-Type: text/html; charset=UTF-8');
+    $headers = WPOE_Mail_Sender::get_headers();
     wp_mail($event->adminEmail, $subject, $body, $headers);
   }
 
@@ -91,8 +110,9 @@ class WPOE_Mail_Sender
 
     $body .= WPOE_Mail_Sender::get_registration_fields_content($event, $values);
     $body .= WPOE_Mail_Sender::get_registration_link_content($event, $registration_token);
+    $body .= WPOE_Mail_Sender::get_extra_content($event);
 
-    $headers = array('Content-Type: text/html; charset=UTF-8');
+    $headers = WPOE_Mail_Sender::get_headers();
     wp_mail($to, $subject, $body, $headers);
   }
 
@@ -105,7 +125,7 @@ class WPOE_Mail_Sender
 
     $body .= WPOE_Mail_Sender::get_registration_fields_content($event, $values);
 
-    $headers = array('Content-Type: text/html; charset=UTF-8');
+    $headers = WPOE_Mail_Sender::get_headers();
     wp_mail($event->adminEmail, $subject, $body, $headers);
   }
 
@@ -117,8 +137,9 @@ class WPOE_Mail_Sender
       . '<p>' . __('The updated data is:') . '</p>';
 
     $body .= WPOE_Mail_Sender::get_registration_fields_content($event, $values);
+    $body .= WPOE_Mail_Sender::get_extra_content($event);
 
-    $headers = array('Content-Type: text/html; charset=UTF-8');
+    $headers = WPOE_Mail_Sender::get_headers();
     wp_mail($to, $subject, $body, $headers);
   }
 
@@ -130,8 +151,9 @@ class WPOE_Mail_Sender
     $subject = sprintf(__('Registration to the event "%s" has been deleted', 'wp-open-events'), $event->name);
     $body = '<p>' . __('Dear user,') . '<br/>'
       . sprintf(__('your registration to the event "%s" has been deleted.'), $event->name) . '</p>';
+    $body .= WPOE_Mail_Sender::get_extra_content($event);
 
-    $headers = array('Content-Type: text/html; charset=UTF-8');
+    $headers = WPOE_Mail_Sender::get_headers();
     wp_mail($to, $subject, $body, $headers);
   }
 
@@ -143,8 +165,9 @@ class WPOE_Mail_Sender
     $subject = sprintf(__('Registration to the event "%s" has been deleted', 'wp-open-events'), $event->name);
     $body = '<p>' . __('Dear user,') . '<br/>'
       . sprintf(__('your registration to the event "%s" has been deleted by an administrator.'), $event->name) . '</p>';
+    $body .= WPOE_Mail_Sender::get_extra_content($event);
 
-    $headers = array('Content-Type: text/html; charset=UTF-8');
+    $headers = WPOE_Mail_Sender::get_headers();
     wp_mail($to, $subject, $body, $headers);
   }
 
@@ -154,7 +177,7 @@ class WPOE_Mail_Sender
     $body = '<p>' . __('Dear admin,') . '<br/>'
       . sprintf(__('a user deleted their registration to the event "%s".'), $event->name) . '</p>';
 
-    $headers = array('Content-Type: text/html; charset=UTF-8');
+    $headers = WPOE_Mail_Sender::get_headers();
     wp_mail($event->adminEmail, $subject, $body, $headers);
   }
 
@@ -166,7 +189,7 @@ class WPOE_Mail_Sender
       . ' ' . implode(', ', $registrations)
       . '</p>';
 
-    $headers = array('Content-Type: text/html; charset=UTF-8');
+    $headers = WPOE_Mail_Sender::get_headers();
     wp_mail($event->adminEmail, $subject, $body, $headers);
   }
 
@@ -201,5 +224,13 @@ class WPOE_Mail_Sender
         . '</a></p>';
     }
     return $content;
+  }
+
+  private static function get_extra_content(WPOE_Event $event): string
+  {
+    if ($event->extraEmailContent !== null) {
+      return $event->extraEmailContent;
+    }
+    return '';
   }
 }

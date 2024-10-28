@@ -64,3 +64,15 @@ add_action('delete_post', ['WPOE_Event_Post_Mapper', 'delete_post_callback']);
 require_once(WPOE_PLUGIN_DIR . 'classes/admin/db-setup.php');
 register_activation_hook(__FILE__, ['WPOE_DB_Setup', 'create_tables']);
 register_uninstall_hook(__FILE__, ['WPOE_DB_Setup', 'drop_tables']);
+
+if (defined('WPOE_TESTING') && WPOE_TESTING === 'true') {
+  // Configures the PHP mailer to send email to mailpit test server
+  // Needed only for end-to-end tests
+  add_action('phpmailer_init', 'test_phpmailer_smtp');
+  function test_phpmailer_smtp($phpmailer)
+  {
+    $phpmailer->isSMTP();
+    $phpmailer->Host = "host.docker.internal";
+    $phpmailer->Port = 1025;
+  }
+}

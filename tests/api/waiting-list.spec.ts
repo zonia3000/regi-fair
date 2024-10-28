@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { adminAuthStateFile, getNonceAndCookiesForApi } from '../utils';
+import { searchMessage } from '../mailpit-client';
 
 test.use({ storageState: adminAuthStateFile });
 
@@ -19,8 +20,11 @@ test('Events with waiting list API', async ({ page, context, request }) => {
 
   const { nonce, cookies } = await getNonceAndCookiesForApi(page, context);
 
+  const eventName = Math.random().toString(36).substring(7);
+
   let eventId: number;
-  let fieldId: number;
+  let fieldId1: number;
+  let fieldId2: number;
   await test.step('Create test event with waiting list and number of people', async () => {
     const response = await request.post('/index.php?rest_route=/wpoe/v1/admin/events', {
       headers: {
@@ -28,13 +32,14 @@ test('Events with waiting list API', async ({ page, context, request }) => {
         'X-WP-Nonce': nonce
       },
       data: {
-        name: 'test',
+        name: eventName,
         date: '2050-01-01T00:00:00.000Z',
         autoremove: true,
         autoremovePeriod: 30,
         waitingList: true,
         editableRegistrations: true,
         maxParticipants: 3,
+        adminEmail: 'admin@example.com',
         formFields: [{
           label: 'number of people',
           fieldType: 'number',
@@ -42,13 +47,23 @@ test('Events with waiting list API', async ({ page, context, request }) => {
           extra: {
             useAsNumberOfPeople: true
           }
-        }]
+        },
+        {
+          label: 'email',
+          fieldType: 'email',
+          required: true,
+          extra: {
+            confirmationAddress: true
+          }
+        }],
+        extraEmailContent: 'extracontent'
       }
     });
     expect(response.status()).toEqual(201);
     const body = await response.json();
     eventId = body.id;
-    fieldId = body.formFields[0].id;
+    fieldId1 = body.formFields[0].id;
+    fieldId2 = body.formFields[1].id;
   });
 
   await test.step('Check waiting list flag in public event data', async () => {
@@ -61,7 +76,7 @@ test('Events with waiting list API', async ({ page, context, request }) => {
   let registrationToken1: string;
   await test.step('Create first registration', async () => {
     const response = await request.post(`/index.php?rest_route=/wpoe/v1/events/${eventId}`, {
-      data: { [fieldId]: '2' }
+      data: { [fieldId1]: '2', [fieldId2]: 'test1@example.com' }
     });
     expect(response.status()).toEqual(201);
     const body = await response.json();
@@ -72,7 +87,7 @@ test('Events with waiting list API', async ({ page, context, request }) => {
   let registrationToken2: string;
   await test.step('Create second registration', async () => {
     const response = await request.post(`/index.php?rest_route=/wpoe/v1/events/${eventId}&waitingList=false`, {
-      data: { [fieldId]: '1' }
+      data: { [fieldId1]: '1', [fieldId2]: 'test2@example.com' }
     });
     expect(response.status()).toEqual(201);
     const body = await response.json();
@@ -82,7 +97,7 @@ test('Events with waiting list API', async ({ page, context, request }) => {
 
   await test.step('Attempt to register without waiting list flag', async () => {
     const response = await request.post(`/index.php?rest_route=/wpoe/v1/events/${eventId}`, {
-      data: { [fieldId]: '2' }
+      data: { [fieldId1]: '2', [fieldId2]: 'test3@example.com' }
     });
     expect(response.status()).toEqual(400);
     const { code, message } = await response.json();
@@ -93,12 +108,25 @@ test('Events with waiting list API', async ({ page, context, request }) => {
   let registrationToken3: string;
   await test.step('Register with waiting list flag', async () => {
     const response = await request.post(`/index.php?rest_route=/wpoe/v1/events/${eventId}&waitingList=true`, {
-      data: { [fieldId]: '2' }
+      data: { [fieldId1]: '2', [fieldId2]: 'test3@example.com' }
     });
     expect(response.status()).toEqual(201);
     const body = await response.json();
     registrationToken3 = body.token;
     expect(body.remaining).toEqual(0);
+  });
+
+  await test.step('Verify user is notified by email', async () => {
+    const message = await searchMessage(request, `Registration to the waiting list of the event "${eventName}" is confirmed`);
+    expect(message.To[0].Address).toEqual('test3@example.com');
+    expect(message.Text).toContain(`test3@example.com`);
+    expect(message.Text).toContain('extracontent');
+  });
+
+  await test.step('Verify admin is notified by email', async () => {
+    const message = await searchMessage(request, `New registration for the waiting list of event "${eventName}"`);
+    expect(message.To[0].Address).toEqual('admin@example.com');
+    expect(message.Text).toContain(`test3@example.com`);
   });
 
   let registrationId1: string;
@@ -144,7 +172,7 @@ test('Events with waiting list API', async ({ page, context, request }) => {
     });
     expect(response.status()).toEqual(200);
     const registration = await response.json();
-    expect(registration.values[fieldId]).toEqual('2');
+    expect(registration.values[fieldId1]).toEqual('2');
     expect(registration.waitingList).toEqual(false);
   });
 
@@ -157,7 +185,7 @@ test('Events with waiting list API', async ({ page, context, request }) => {
     });
     expect(response.status()).toEqual(200);
     const registration = await response.json();
-    expect(registration.values[fieldId]).toEqual('2');
+    expect(registration.values[fieldId1]).toEqual('2');
     expect(registration.waitingList).toEqual(true);
   });
 
@@ -229,6 +257,18 @@ test('Events with waiting list API', async ({ page, context, request }) => {
     expect(result.totalWaiting).toEqual(0);
   });
 
+  await test.step('Verify user is notified by email', async () => {
+    const message = await searchMessage(request, `New seats available for the event "${eventName}"`);
+    expect(message.To[0].Address).toEqual('test3@example.com');
+    expect(message.Text).toContain(`test3@example.com`);
+    expect(message.Text).toContain('extracontent');
+  });
+
+  await test.step('Verify admin is notified by email', async () => {
+    const message = await searchMessage(request, `Registrations picked from the waiting list of event "${eventName}"`);
+    expect(message.To[0].Address).toEqual('admin@example.com');
+  });
+
   await test.step('List registrations in waiting list', async () => {
     const response = await request.get(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId}/registrations&page=1&pageSize=10&waitingList=true`, {
       headers: {
@@ -243,7 +283,7 @@ test('Events with waiting list API', async ({ page, context, request }) => {
 
   await test.step('Add 4th registration in waiting list', async () => {
     const response = await request.post(`/index.php?rest_route=/wpoe/v1/events/${eventId}&waitingList=true`, {
-      data: { [fieldId]: '2' }
+      data: { [fieldId1]: '2', [fieldId2]: 'test4@example.com' }
     });
     expect(response.status()).toEqual(201);
     const body = await response.json();
@@ -271,7 +311,7 @@ test('Events with waiting list API', async ({ page, context, request }) => {
 
   await test.step('User updates the third registration removing one person [case3]', async () => {
     const response = await request.put(`/index.php?rest_route=/wpoe/v1/events/${eventId}/${registrationToken3}`, {
-      data: { [fieldId]: '1' }
+      data: { [fieldId1]: '1', [fieldId2]: 'test3@example.com' }
     });
     expect(response.status()).toEqual(200);
     const body = await response.json();
@@ -308,7 +348,7 @@ test('Events with waiting list API', async ({ page, context, request }) => {
 
   await test.step('Add 5th registration in waiting list', async () => {
     const response = await request.post(`/index.php?rest_route=/wpoe/v1/events/${eventId}&waitingList=true`, {
-      data: { [fieldId]: '1' }
+      data: { [fieldId1]: '1', [fieldId2]: 'test5@example.com' }
     });
     expect(response.status()).toEqual(201);
     const body = await response.json();
@@ -333,7 +373,7 @@ test('Events with waiting list API', async ({ page, context, request }) => {
         'Cookie': cookies,
         'X-WP-Nonce': nonce
       },
-      data: { [fieldId]: '1' }
+      data: { [fieldId1]: '1', [fieldId2]: 'test4@example.com' }
     });
     expect(response.status()).toEqual(204);
   });
@@ -352,7 +392,7 @@ test('Events with waiting list API', async ({ page, context, request }) => {
 
   await test.step('Add 6th registration in waiting list', async () => {
     const response = await request.post(`/index.php?rest_route=/wpoe/v1/events/${eventId}&waitingList=true`, {
-      data: { [fieldId]: '1' }
+      data: { [fieldId1]: '1', [fieldId2]: 'test6@example.com' }
     });
     expect(response.status()).toEqual(201);
     const body = await response.json();
@@ -406,7 +446,7 @@ test('Events with waiting list API', async ({ page, context, request }) => {
   let registrationToken7: string;
   await test.step('Add 7th registration in waiting list', async () => {
     const response = await request.post(`/index.php?rest_route=/wpoe/v1/events/${eventId}&waitingList=true`, {
-      data: { [fieldId]: '2' }
+      data: { [fieldId1]: '2', [fieldId2]: 'test7@example.com' }
     });
     expect(response.status()).toEqual(201);
     const body = await response.json();
@@ -428,7 +468,7 @@ test('Events with waiting list API', async ({ page, context, request }) => {
 
   await test.step('User updates the 7th registration in waiting list removing one person [case6]', async () => {
     const response = await request.put(`/index.php?rest_route=/wpoe/v1/events/${eventId}/${registrationToken7}`, {
-      data: { [fieldId]: '1' }
+      data: { [fieldId1]: '1', [fieldId2]: 'test7@example.com' }
     });
     expect(response.status()).toEqual(200);
     const body = await response.json();
@@ -456,7 +496,7 @@ test('Events with waiting list API', async ({ page, context, request }) => {
 
   await test.step('The waitingList parameter is ignored if there are enough available seats [case7]', async () => {
     const response = await request.post(`/index.php?rest_route=/wpoe/v1/events/${eventId}&waitingList=true`, {
-      data: { [fieldId]: '1' }
+      data: { [fieldId1]: '1', [fieldId2]: 'test8@example.com' }
     });
     expect(response.status()).toEqual(201);
     const body = await response.json();
@@ -492,12 +532,21 @@ test('Events with waiting list API', async ({ page, context, request }) => {
         editableRegistrations: true,
         maxParticipants: 2,
         formFields: [{
-          id: fieldId,
+          id: fieldId1,
           label: 'number of people',
           fieldType: 'number',
           required: true,
           extra: {
             useAsNumberOfPeople: true
+          }
+        },
+        {
+          id: fieldId2,
+          label: 'email',
+          fieldType: 'email',
+          required: true,
+          extra: {
+            confirmationAddress: true
           }
         }]
       }
@@ -511,7 +560,7 @@ test('Events with waiting list API', async ({ page, context, request }) => {
   let registrationToken8: string;
   await test.step('Add 8th registration in waiting list', async () => {
     const response = await request.post(`/index.php?rest_route=/wpoe/v1/events/${eventId}&waitingList=true`, {
-      data: { [fieldId]: '2' }
+      data: { [fieldId1]: '2', [fieldId2]: 'test9@example.com' }
     });
     expect(response.status()).toEqual(201);
     const body = await response.json();
@@ -534,12 +583,21 @@ test('Events with waiting list API', async ({ page, context, request }) => {
         editableRegistrations: true,
         maxParticipants: 3,
         formFields: [{
-          id: fieldId,
+          id: fieldId1,
           label: 'number of people',
           fieldType: 'number',
           required: true,
           extra: {
             useAsNumberOfPeople: true
+          }
+        },
+        {
+          id: fieldId2,
+          label: 'email',
+          fieldType: 'email',
+          required: true,
+          extra: {
+            confirmationAddress: true
           }
         }]
       }
@@ -572,12 +630,21 @@ test('Events with waiting list API', async ({ page, context, request }) => {
         editableRegistrations: true,
         maxParticipants: 3,
         formFields: [{
-          id: fieldId,
+          id: fieldId1,
           label: 'number of people',
           fieldType: 'number',
           required: true,
           extra: {
             useAsNumberOfPeople: true
+          }
+        },
+        {
+          id: fieldId2,
+          label: 'email',
+          fieldType: 'email',
+          required: true,
+          extra: {
+            confirmationAddress: true
           }
         }]
       }
@@ -587,7 +654,7 @@ test('Events with waiting list API', async ({ page, context, request }) => {
 
   await test.step('It is not possible to register using the waitingList flag if waiting list is disabled', async () => {
     const response = await request.post(`/index.php?rest_route=/wpoe/v1/events/${eventId}&waitingList=true`, {
-      data: { [fieldId]: '2' }
+      data: { [fieldId1]: '2', [fieldId2]: 'test@example.com' }
     });
     expect(response.status()).toEqual(400);
     const body = await response.json();

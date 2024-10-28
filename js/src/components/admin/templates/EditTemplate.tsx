@@ -14,6 +14,7 @@ import {
 import { cleanupFields, extractError } from "../../utils";
 import "../../style.css";
 import { Settings } from "../../classes/settings";
+import { TemplateConfiguration } from "../../classes/template";
 
 const EditTemplate = () => {
   const { templateId } = useParams();

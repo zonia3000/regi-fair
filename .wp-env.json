@@ -1,0 +1,8 @@
+{
+  "plugins": [
+    "."
+  ],
+  "config": {
+    "WPOE_TESTING": "true"
+  }
+}

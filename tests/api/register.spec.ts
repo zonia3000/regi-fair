@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { adminAuthStateFile, getNonceAndCookiesForApi } from '../utils';
+import { searchMessage } from '../mailpit-client';
 
 test.use({ storageState: adminAuthStateFile });
 
@@ -13,6 +14,7 @@ test('Validate registration payload', async ({ page, context, request }) => {
     autoremovePeriod: 30,
     waitingList: false,
     editableRegistrations: true,
+    adminEmail: 'admin@example.com',
     formFields: [
       {
         label: 'name',
@@ -27,6 +29,7 @@ test('Validate registration payload', async ({ page, context, request }) => {
     ]
   }
 
+  const eventName1 = Math.random().toString(36).substring(7);
   let eventId1: number;
   let fieldId1Event1: number, fieldId2Event1: number;
   await test.step('Create first test event', async () => {
@@ -36,7 +39,7 @@ test('Validate registration payload', async ({ page, context, request }) => {
         'X-WP-Nonce': nonce
       },
       data: {
-        name: Math.random().toString(36).substring(7),
+        name: eventName1,
         ...eventPayload
       }
     });
@@ -105,6 +108,13 @@ test('Validate registration payload', async ({ page, context, request }) => {
     expect(response.status()).toEqual(201);
     let body = await response.json();
     registrationToken = body.token;
+  });
+
+  await test.step('Verify admin is notified by email', async () => {
+    const message = await searchMessage(request, `New registration for the event "${eventName1}"`);
+    expect(message.To[0].Address).toEqual('admin@example.com');
+    expect(message.Text).toContain(`a new registration to the event "${eventName1}" has been added`);
+    expect(message.Text).toContain(`test@example.com`);
   });
 
   await test.step('Update registration detects event id mismatch', async () => {

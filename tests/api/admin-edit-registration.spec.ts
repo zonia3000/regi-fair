@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { adminAuthStateFile, getNonceAndCookiesForApi } from '../utils';
+import { searchMessage } from '../mailpit-client';
 
 test.use({ storageState: adminAuthStateFile });
 
@@ -62,6 +63,13 @@ test('Admin edit and delete registration with email notification', async ({ page
     registrationId = body[0][0];
   });
 
+  await test.step('Verify registration confirmation email has been sent', async () => {
+    const message = await searchMessage(request, `Registration to the event "${eventName}" is confirmed`);
+    expect(message.To[0].Address).toEqual('test@example.com');
+    expect(message.Text).toContain(`your registration to the event "${eventName}" is confirmed`);
+    expect(message.Text).toContain(`test@example.com`);
+  });
+
   await test.step('Attempt to update the registration with an invalid payload', async () => {
     const response = await request.post(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId}/registrations/${registrationId}&sendEmail=true`, {
       headers: {
@@ -99,6 +107,13 @@ test('Admin edit and delete registration with email notification', async ({ page
     expect(values[fieldId]).toEqual('test2@example.com');
   });
 
+  await test.step('Verify registration update email has been sent', async () => {
+    const message = await searchMessage(request, `Registration to the event "${eventName}" has been updated`);
+    expect(message.To[0].Address).toEqual('test2@example.com');
+    expect(message.Text).toContain(`your registration to the event "${eventName}" has been updated by an administrator`);
+    expect(message.Text).toContain(`test2@example.com`);
+  });
+
   await test.step('Delete the registration', async () => {
     const response = await request.delete(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId}/registrations/${registrationId}&sendEmail=true`, {
       headers: {
@@ -119,6 +134,12 @@ test('Admin edit and delete registration with email notification', async ({ page
     expect(response.status()).toEqual(200);
     const { body } = await response.json();
     expect(body.length).toEqual(0);
+  });
+
+  await test.step('Verify registration deleted email has been sent', async () => {
+    const message = await searchMessage(request, `Registration to the event "${eventName}" has been deleted`);
+    expect(message.To[0].Address).toEqual('test2@example.com');
+    expect(message.Text).toContain(`your registration to the event "${eventName}" has been deleted by an administrator`);
   });
 
   await test.step('Attempt to load not existing registration', async () => {

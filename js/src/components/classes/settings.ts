@@ -3,4 +3,5 @@ export type Settings = {
   defaultAutoremovePeriod: number;
   defaultExtraEmailContent: string;
   privacyPolicyUrl: string;
+  fromEmail: string;
 };
