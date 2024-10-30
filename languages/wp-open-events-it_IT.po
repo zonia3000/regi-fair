@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: WP Open Events 0.0.1\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/wp-open-events\n"
 "POT-Creation-Date: 2024-03-23T22:56:10+00:00\n"
-"PO-Revision-Date: 2024-10-30 19:27+0100\n"
+"PO-Revision-Date: 2024-10-30 23:37+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: it_IT\n"
@@ -62,7 +62,7 @@ msgstr "Etichetta"
 
 #: js/build/components/events.js:2 js/build/components/templates.js:2
 msgid "Required"
-msgstr "Richiesto"
+msgstr "Obbligatorio"
 
 #: js/build/components/events.js:2 js/build/components/templates.js:2
 msgid "Option"
