@@ -11,7 +11,8 @@ class WPOE_Admin_Panel_Pages
       'wpoe-events',
       function () {
         echo '<div id="wpoe-events"></div>';
-      }
+      },
+      'dashicons-forms'
     );
 
     add_submenu_page(

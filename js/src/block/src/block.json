@@ -5,7 +5,7 @@
     "version": "0.0.1",
     "title": "WP Open Events Form",
     "category": "widgets",
-    "icon": "smiley",
+    "icon": "forms",
     "description": "WP Open Events Form",
     "textdomain": "wp-open-events",
     "supports": {
