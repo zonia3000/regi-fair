@@ -18,4 +18,5 @@ export type EventConfiguration = {
   adminEmail: string | null;
   editableRegistrations: boolean;
   extraEmailContent: string;
+  ended: boolean;
 };

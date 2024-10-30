@@ -179,6 +179,14 @@ const Form = (props: FormProps) => {
     }
   }
 
+  if (event.ended) {
+    return (
+      <Notice status="info" className="mb-2" isDismissible={false}>
+        {__("Event is ended", "wp-open-events")}
+      </Notice>
+    );
+  }
+
   return (
     <>
       {editingExisting && (

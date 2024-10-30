@@ -146,6 +146,10 @@ class WPOE_Public_Controller extends WP_REST_Controller
         return new WP_Error('waiting_list_not_enabled', __('Waiting list is not enabled', 'wp-open-events'), ['status' => 400]);
       }
 
+      if ($event->ended) {
+        return new WP_Error('event_ended', __('You cannot register because the event is already ended', 'wp-open-events'), ['status' => 400]);
+      }
+
       $input = json_decode($request->get_body(), true);
       set_registered_user_email($event, $input);
       $error = validate_event_request($event, $input);
@@ -212,6 +216,10 @@ class WPOE_Public_Controller extends WP_REST_Controller
 
       if (!$event->editableRegistrations) {
         return new WP_Error('registrations_not_editable', __('This event doesn\'t allow to edit the registrations', 'wp-open-events'), ['status' => 403]);
+      }
+
+      if ($event->ended) {
+        return new WP_Error('event_ended', __('You cannot register because the event is already ended', 'wp-open-events'), ['status' => 400]);
       }
 
       $token = $request->get_param('registration_token');

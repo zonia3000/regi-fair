@@ -206,7 +206,7 @@ const EditTemplate = () => {
         className="mb"
         __nextHasNoMarginBottom={true}
       />
-      {autoremove &&
+      {autoremove && (
         <TextControl
           label={__("Autoremove period", "wp-open-events")}
           onChange={setAutoremovePeriod}
@@ -214,10 +214,13 @@ const EditTemplate = () => {
           type="number"
           required
           className="mb"
-          help={__("Number of days to wait after the event conclusion before removing registrations data", "wp-open-events")}
+          help={__(
+            "Number of days to wait after the event conclusion before removing registrations data",
+            "wp-open-events",
+          )}
           __nextHasNoMarginBottom={true}
         />
-      }
+      )}
       {autoremove && !valid && !autoremovePeriod && (
         <span className="error-text">
           {__("Field is required", "wp-open-events")}

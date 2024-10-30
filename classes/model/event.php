@@ -46,6 +46,12 @@ class WPOE_Public_Event_Data
    * @var string|null
    */
   public $extraEmailContent;
+
+  /**
+   * True if the event date is in the past.
+   * @var bool
+   */
+  public $ended;
 }
 
 class WPOE_Post_Reference

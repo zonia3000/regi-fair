@@ -79,6 +79,7 @@ class WPOE_DAO_Events extends WPOE_Base_DAO
 
     $query = $wpdb->prepare("SELECT e.id, e.name, e.date, e.autoremove_submissions, e.autoremove_submissions_period,
       e.editable_registrations, e.admin_email, e.extra_email_content, e.max_participants, e.waiting_list,
+      DATE(e.date) < DATE(CURRENT_TIMESTAMP) AS ended,
       f.id AS field_id, f.label, f.type, f.description, f.required, f.extra, f.position
       FROM " . WPOE_DB::get_table_name('event') . " e
       LEFT JOIN " . WPOE_DB::get_table_name('event_form_field') . " f
@@ -99,6 +100,7 @@ class WPOE_DAO_Events extends WPOE_Base_DAO
     $event->id = (int) $event_results[0]['id'];
     $event->name = $event_results[0]['name'];
     $event->date = $event_results[0]['date'];
+    $event->ended = (bool) $event_results[0]['ended'];
     if ($event_results[0]['max_participants']) {
       $event->maxParticipants = (int) $event_results[0]['max_participants'];
       $event->availableSeats = $event->maxParticipants - $registrations_count;
@@ -120,7 +122,8 @@ class WPOE_DAO_Events extends WPOE_Base_DAO
   {
     global $wpdb;
 
-    $query = $wpdb->prepare("SELECT e.id, e.name, e.editable_registrations, e.date, e.max_participants, e.waiting_list,
+    $query = $wpdb->prepare("SELECT e.id, e.name, e.editable_registrations, e.date, e.max_participants,
+      e.waiting_list, DATE(e.date) < DATE(CURRENT_TIMESTAMP) AS ended,
       f.id AS field_id, f.label, f.type, f.description, f.required, f.extra, f.position
       FROM " . WPOE_DB::get_table_name('event') . " e
       LEFT JOIN " . WPOE_DB::get_table_name('event_form_field') . " f ON f.event_id = e.id
@@ -140,6 +143,7 @@ class WPOE_DAO_Events extends WPOE_Base_DAO
     $event->editableRegistrations = (bool) $results[0]['editable_registrations'];
     $event->waitingList = (bool) $results[0]['waiting_list'];
     $event->formFields = $this->load_form_fields($results);
+    $event->ended = (bool) $results[0]['ended'];
 
     if ($results[0]['max_participants']) {
       $max_participants = (int) $results[0]['max_participants'];
