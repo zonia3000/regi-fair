@@ -18,6 +18,7 @@ const Form = (props: FormProps) => {
   );
   const [error, setError] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const [fieldsErrors, setFieldsErrors] = useState({});
   const [registrationToken, setRegistrationToken] = useState("");
   const [editingExisting, setEditingExisting] = useState(false);
@@ -96,6 +97,7 @@ const Form = (props: FormProps) => {
     setDeletionError("");
     setFieldsErrors({});
     setSubmitted(false);
+    setSubmitting(true);
     setDeleted(false);
     try {
       let result: { remaining: null | number };
@@ -135,6 +137,8 @@ const Form = (props: FormProps) => {
         setFieldsErrors(err.data.fieldsErrors);
       }
       setError(extractError(err));
+    } finally {
+      setSubmitting(false);
     }
   }
 
@@ -289,7 +293,7 @@ const Form = (props: FormProps) => {
             variant="primary"
             className="mt"
             onClick={submitForm}
-            disabled={props.disabled}
+            disabled={props.disabled || submitting}
           >
             {editingExisting
               ? __("Update the registration", "wp-open-events")
