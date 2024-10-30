@@ -8,7 +8,7 @@ import EventsRoot from "../../../admin/events/EventsRoot";
 
 test("Delete event", async () => {
   server.use(
-    http.get("/wpoe/v1/admin/events", async () => {
+    http.get("/wpoe/v1/admin/events", () => {
       return HttpResponse.json([
         {
           id: 1,
@@ -24,7 +24,7 @@ test("Delete event", async () => {
   );
 
   server.use(
-    http.post("/wpoe/v1/admin/events/1", async () => {
+    http.post("/wpoe/v1/admin/events/1", () => {
       return HttpResponse.json({});
     }),
   );

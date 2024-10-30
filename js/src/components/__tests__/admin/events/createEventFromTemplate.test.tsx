@@ -11,13 +11,13 @@ import { EventConfiguration } from "../../../classes/event";
 
 test("Create first template", async () => {
   server.use(
-    http.get("/wpoe/v1/admin/events", async () => {
+    http.get("/wpoe/v1/admin/events", () => {
       return HttpResponse.json([]);
     }),
   );
 
   server.use(
-    http.get("/wpoe/v1/admin/templates", async () => {
+    http.get("/wpoe/v1/admin/templates", () => {
       return HttpResponse.json([]);
     }),
   );
@@ -42,14 +42,14 @@ test("Create first template", async () => {
 
 test("Create event from template", async () => {
   server.use(
-    http.get("/wpoe/v1/admin/events", async () => {
+    http.get("/wpoe/v1/admin/events", () => {
       return HttpResponse.json([]);
     }),
   );
 
   let templatesLoaded = false;
   server.use(
-    http.get("/wpoe/v1/admin/templates", async () => {
+    http.get("/wpoe/v1/admin/templates", () => {
       templatesLoaded = true;
       return HttpResponse.json([{ id: 1, name: "template1" }]);
     }),
@@ -57,11 +57,12 @@ test("Create event from template", async () => {
 
   let templateLoaded = false;
   server.use(
-    http.get("/wpoe/v1/admin/templates/1", async () => {
+    http.get("/wpoe/v1/admin/templates/1", () => {
       templateLoaded = true;
       return HttpResponse.json({
         id: 1,
         autoremove: true,
+        autoremovePeriod: 30,
         formFields: [
           { id: 1, fieldType: "text", label: "text field", required: true },
         ],

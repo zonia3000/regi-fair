@@ -4,7 +4,12 @@ import apiFetch from "@wordpress/api-fetch";
 import Loading from "./Loading";
 import { Button, Modal, Notice } from "@wordpress/components";
 import { __, _x, sprintf } from "@wordpress/i18n";
-import { extractError, getDefaultFieldValue } from "./utils";
+import {
+  checkErrorCode,
+  extactFieldErrors,
+  extractError,
+  getDefaultFieldValue,
+} from "./utils";
 import "./style.css";
 import FormFields from "./FormFields";
 import { EventConfiguration } from "./classes/event";
@@ -19,7 +24,9 @@ const Form = (props: FormProps) => {
   const [error, setError] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [fieldsErrors, setFieldsErrors] = useState({});
+  const [fieldsErrors, setFieldsErrors] = useState(
+    {} as Record<number, string>,
+  );
   const [registrationToken, setRegistrationToken] = useState("");
   const [editingExisting, setEditingExisting] = useState(false);
   const [
@@ -28,7 +35,7 @@ const Form = (props: FormProps) => {
   ] = useState(false);
   const [deletionError, setDeletionError] = useState("");
   const [deleted, setDeleted] = useState(false);
-  const [availableSeats, setAvailableSeats] = useState(null);
+  const [availableSeats, setAvailableSeats] = useState(null as number | null);
   const [waitingList, setWaitingList] = useState(false);
   const [lastSeatTaken, setLastSeatTaken] = useState(false);
 
@@ -60,7 +67,7 @@ const Form = (props: FormProps) => {
         setAvailableSeats(eventConfig.availableSeats);
       }
     } catch (err) {
-      if (err.code === "event_not_found") {
+      if (checkErrorCode(err, "event_not_found")) {
         setFound(false);
       } else {
         setError(extractError(err));
@@ -129,13 +136,7 @@ const Form = (props: FormProps) => {
       }
       setSubmitted(true);
     } catch (err) {
-      if (
-        typeof err === "object" &&
-        "data" in err &&
-        "fieldsErrors" in err.data
-      ) {
-        setFieldsErrors(err.data.fieldsErrors);
-      }
+      setFieldsErrors(extactFieldErrors(err));
       setError(extractError(err));
     } finally {
       setSubmitting(false);

@@ -8,7 +8,7 @@ import TemplatesRoot from "../../../admin/templates/TemplatesRoot";
 
 test("Navigate template pages", async () => {
   server.use(
-    http.get("/wpoe/v1/admin/templates", async () => {
+    http.get("/wpoe/v1/admin/templates", () => {
       return HttpResponse.json([
         { id: 1, name: "template1" },
         { id: 2, name: "template2" },
@@ -17,7 +17,7 @@ test("Navigate template pages", async () => {
   );
 
   server.use(
-    http.get("/wpoe/v1/admin/templates/1", async () => {
+    http.get("/wpoe/v1/admin/templates/1", () => {
       return HttpResponse.json({
         id: 1,
         name: "template name",

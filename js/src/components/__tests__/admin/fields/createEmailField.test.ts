@@ -34,12 +34,10 @@ createEventTest(
     );
     await user.click(screen.getByRole("checkbox", { name: "Required" }));
     expect(
-      (
-        screen.getByRole("checkbox", {
-          name: "Use this address to send confirmation e-mail when the user register to the event",
-        }) as HTMLInputElement
-      ).checked,
-    ).toEqual(true);
+      screen.getByRole("checkbox", {
+        name: "Use this address to send confirmation e-mail when the user register to the event",
+      }),
+    ).toBeChecked();
     await user.click(screen.getByRole("button", { name: "Save" }));
 
     const rows = screen.getAllByRole("row");
@@ -52,21 +50,13 @@ createEventTest(
 
     await user.click(within(rows[1]).getByRole("button", { name: "Edit" }));
 
+    expect(screen.getByRole("textbox", { name: "Label" })).toHaveValue(
+      "Email field",
+    );
     expect(
-      (screen.getByRole("textbox", { name: "Label" }) as HTMLInputElement)
-        .value,
-    ).toEqual("Email field");
-    expect(
-      (
-        screen.getByRole("textbox", {
-          name: "Description (optional)",
-        }) as HTMLInputElement
-      ).value,
-    ).toEqual("Email field description");
-    expect(
-      (screen.getByRole("checkbox", { name: "Required" }) as HTMLInputElement)
-        .checked,
-    ).toEqual(true);
+      screen.getByRole("textbox", { name: "Description (optional)" }),
+    ).toHaveValue("Email field description");
+    expect(screen.getByRole("checkbox", { name: "Required" })).toBeChecked();
     await user.click(screen.getByRole("button", { name: "Save" }));
   },
   (requestBody: EventConfiguration) => {
@@ -121,28 +111,20 @@ createEventTest(
 
     await user.click(within(rows[1]).getByRole("button", { name: "Edit" }));
 
+    expect(screen.getByRole("textbox", { name: "Label" })).toHaveValue(
+      "Email field",
+    );
     expect(
-      (screen.getByRole("textbox", { name: "Label" }) as HTMLInputElement)
-        .value,
-    ).toEqual("Email field");
+      screen.getByRole("textbox", { name: "Description (optional)" }),
+    ).toHaveValue("");
     expect(
-      (
-        screen.getByRole("textbox", {
-          name: "Description (optional)",
-        }) as HTMLInputElement
-      ).value,
-    ).toEqual("");
+      screen.getByRole("checkbox", { name: "Required" }),
+    ).not.toBeChecked();
     expect(
-      (screen.getByRole("checkbox", { name: "Required" }) as HTMLInputElement)
-        .checked,
-    ).toEqual(false);
-    expect(
-      (
-        screen.getByRole("checkbox", {
-          name: "Use this address to send confirmation e-mail when the user register to the event",
-        }) as HTMLInputElement
-      ).checked,
-    ).toEqual(false);
+      screen.getByRole("checkbox", {
+        name: "Use this address to send confirmation e-mail when the user register to the event",
+      }),
+    ).not.toBeChecked();
     await user.click(screen.getByRole("button", { name: "Save" }));
   },
   (requestBody: EventConfiguration) => {

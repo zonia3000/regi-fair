@@ -7,6 +7,7 @@ import { EventConfiguration } from "../../../classes/event";
 editEventTest(
   "Open existing event for editing",
   {
+    id: 1,
     name: "test",
     date: "2050-01-01",
     formFields: [
@@ -21,6 +22,11 @@ editEventTest(
     maxParticipants: 100,
     adminEmail: "admin@example.com",
     extraEmailContent: "extra content",
+    autoremove: true,
+    autoremovePeriod: 30,
+    editableRegistrations: true,
+    ended: false,
+    waitingList: false,
   },
   async () => {
     const rows = screen.getAllByRole("row");
@@ -60,6 +66,7 @@ editEventTest(
         name: "Custom confirmation e-mail content",
       }),
     ).toHaveValue("extra content");
+    return Promise.resolve();
   },
   (requestBody: EventConfiguration) => {
     expect(requestBody.name).toEqual("test");

@@ -31,7 +31,7 @@ test("Pagination, first page", async () => {
   expect(setPage).toHaveBeenCalledWith(4);
 });
 
-test("Pagination: 11th element creates second page", async () => {
+test("Pagination: 11th element creates second page", () => {
   const setPage = vi.fn();
   const setPageSize = vi.fn();
 
@@ -50,7 +50,7 @@ test("Pagination: 11th element creates second page", async () => {
   expect(screen.getByLabelText("Go to page 2")).toBeInTheDocument();
 });
 
-test("Pagination, page in the middle", async () => {
+test("Pagination, page in the middle", () => {
   const setPage = vi.fn();
   const setPageSize = vi.fn();
 

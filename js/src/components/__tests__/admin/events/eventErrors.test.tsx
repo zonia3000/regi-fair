@@ -8,7 +8,7 @@ import EditEvent from "../../../admin/events/EditEvent";
 
 test("Event not found", async () => {
   server.use(
-    http.get("/wpoe/v1/admin/events/1", async () => {
+    http.get("/wpoe/v1/admin/events/1", () => {
       return HttpResponse.json({ code: "event_not_found" }, { status: 404 });
     }),
   );
@@ -29,7 +29,7 @@ test("Event not found", async () => {
 
 test("Generic error when loading event", async () => {
   server.use(
-    http.get("/wpoe/v1/admin/events/2", async () => {
+    http.get("/wpoe/v1/admin/events/2", () => {
       return HttpResponse.json(
         { code: "generic_server_error", message: "A critical error happened" },
         { status: 500 },

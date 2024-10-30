@@ -16,7 +16,7 @@ describe("Event registration", () => {
 
     let requestBody: Record<string, string>;
     server.use(
-      http.get("/wpoe/v1/events/1", async () => {
+      http.get("/wpoe/v1/events/1", () => {
         return HttpResponse.json({
           editableRegistrations: true,
           formFields: [
@@ -24,7 +24,7 @@ describe("Event registration", () => {
           ],
         });
       }),
-      http.get("/wpoe/v1/events/1/1234", async () => {
+      http.get("/wpoe/v1/events/1/1234", () => {
         return HttpResponse.json({ values: { 1: "myvalue" } });
       }),
       http.post("/wpoe/v1/events/1/1234", async ({ request }) => {
@@ -61,7 +61,7 @@ describe("Event registration", () => {
     window.location.hash = "#registration=1234";
 
     server.use(
-      http.get("/wpoe/v1/events/1", async () => {
+      http.get("/wpoe/v1/events/1", () => {
         return HttpResponse.json({
           editableRegistrations: true,
           availableSeats: 2,
@@ -70,10 +70,10 @@ describe("Event registration", () => {
           ],
         });
       }),
-      http.get("/wpoe/v1/events/1/1234", async () => {
+      http.get("/wpoe/v1/events/1/1234", () => {
         return HttpResponse.json({ values: { 1: "myvalue" } });
       }),
-      http.post("/wpoe/v1/events/1/1234", async () => {
+      http.post("/wpoe/v1/events/1/1234", () => {
         return HttpResponse.json({ remaining: 3 });
       }),
     );
@@ -110,7 +110,7 @@ describe("Event registration", () => {
     window.location.hash = "#registration=1234";
 
     server.use(
-      http.get("/wpoe/v1/events/1", async () => {
+      http.get("/wpoe/v1/events/1", () => {
         return HttpResponse.json({
           editableRegistrations: true,
           availableSeats: 0,
@@ -119,7 +119,7 @@ describe("Event registration", () => {
           ],
         });
       }),
-      http.get("/wpoe/v1/events/1/1234", async () => {
+      http.get("/wpoe/v1/events/1/1234", () => {
         return HttpResponse.json({ values: { 1: "myvalue" } });
       }),
     );
@@ -141,7 +141,7 @@ describe("Event registration", () => {
 
   test("Open event with available seats", async () => {
     server.use(
-      http.get("/wpoe/v1/events/1", async () => {
+      http.get("/wpoe/v1/events/1", () => {
         return HttpResponse.json({
           availableSeats: 10,
           formFields: [
@@ -166,7 +166,7 @@ describe("Event registration", () => {
 
   test("Open event without available seats", async () => {
     server.use(
-      http.get("/wpoe/v1/events/1", async () => {
+      http.get("/wpoe/v1/events/1", () => {
         return HttpResponse.json({
           availableSeats: 0,
           formFields: [
@@ -190,7 +190,7 @@ describe("Event registration", () => {
   test("Register the last seat", async () => {
     let requestBody: Record<string, string>;
     server.use(
-      http.get("/wpoe/v1/events/1", async () => {
+      http.get("/wpoe/v1/events/1", () => {
         return HttpResponse.json({
           availableSeats: 1,
           formFields: [
@@ -231,7 +231,7 @@ describe("Event registration", () => {
     let requestBody: Record<string, string>;
     let requestUrl: string;
     server.use(
-      http.get("/wpoe/v1/events/1", async () => {
+      http.get("/wpoe/v1/events/1", () => {
         return HttpResponse.json({
           availableSeats: 0,
           waitingList: true,
@@ -277,7 +277,7 @@ describe("Event registration", () => {
     window.location.hash = "#registration=5555";
 
     server.use(
-      http.get("/wpoe/v1/events/1", async () => {
+      http.get("/wpoe/v1/events/1", () => {
         return HttpResponse.json({
           editableRegistrations: true,
           availableSeats: 0,
@@ -286,7 +286,7 @@ describe("Event registration", () => {
           ],
         });
       }),
-      http.get("/wpoe/v1/events/1/5555", async () => {
+      http.get("/wpoe/v1/events/1/5555", () => {
         return HttpResponse.json({
           values: { 1: "myvalue" },
           waitingList: true,

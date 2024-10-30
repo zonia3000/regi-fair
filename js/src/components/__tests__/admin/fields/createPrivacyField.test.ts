@@ -11,7 +11,7 @@ createEventTest(
   "Create privacy field - privacy policy URL is set",
   async () => {
     server.use(
-      http.get("/wpoe/v1/admin/settings", async () => {
+      http.get("/wpoe/v1/admin/settings", () => {
         return HttpResponse.json({
           privacyPolicyUrl: "http://www.example.com/privacy",
         });
@@ -71,7 +71,7 @@ createEventTest(
   "Create privacy field - privacy policy URL is not set",
   async () => {
     server.use(
-      http.get("/wpoe/v1/admin/settings", async () => {
+      http.get("/wpoe/v1/admin/settings", () => {
         return HttpResponse.json({ privacyPolicyUrl: "" });
       }),
     );

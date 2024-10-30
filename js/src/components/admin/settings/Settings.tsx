@@ -6,7 +6,6 @@ import { extractError } from "../../utils";
 import Loading from "../../Loading";
 import {
   Button,
-  CheckboxControl,
   Notice,
   Spinner,
   TextControl,

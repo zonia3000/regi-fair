@@ -11,7 +11,7 @@ test("Delete registration", async () => {
   let registrations = [[1, "2024-09-15 20:27:03", "mario"]];
 
   server.use(
-    http.get("/wpoe/v1/admin/events/1/registrations", async () => {
+    http.get("/wpoe/v1/admin/events/1/registrations", () => {
       return HttpResponse.json({
         head: [{ label: "name" }],
         body: registrations,
@@ -22,7 +22,7 @@ test("Delete registration", async () => {
   );
 
   server.use(
-    http.post("/wpoe/v1/admin/events/1/registrations/1", async () => {
+    http.post("/wpoe/v1/admin/events/1/registrations/1", () => {
       registrations = [];
       return new Response(null, { status: 204 });
     }),
@@ -62,7 +62,7 @@ test("Delete registration", async () => {
 
 test("Error happens while deleting a registration", async () => {
   server.use(
-    http.get("/wpoe/v1/admin/events/1/registrations", async () => {
+    http.get("/wpoe/v1/admin/events/1/registrations", () => {
       return HttpResponse.json({
         head: [{ label: "name" }],
         body: [[1, "2024-09-15 20:27:03", "mario"]],
@@ -73,7 +73,7 @@ test("Error happens while deleting a registration", async () => {
   );
 
   server.use(
-    http.post("/wpoe/v1/admin/events/1/registrations/1", async () => {
+    http.post("/wpoe/v1/admin/events/1/registrations/1", () => {
       return HttpResponse.json(
         { code: "generic_error", message: "A critical error happened" },
         { status: 500 },

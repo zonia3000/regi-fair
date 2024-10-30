@@ -12,10 +12,11 @@ import apiFetch from "@wordpress/api-fetch";
 import Loading from "../../Loading";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import EditFormFields from "../fields/EditFormFields";
-import { cleanupFields, extractError } from "../../utils";
+import { checkErrorCode, cleanupFields, extractError } from "../../utils";
 import { Settings } from "../../classes/settings";
 import { EventConfiguration } from "../../classes/event";
 import { TemplateConfiguration } from "../../classes/template";
+import { Field } from "../../classes/fields";
 
 const EditEvent = () => {
   const { eventId } = useParams();
@@ -28,7 +29,7 @@ const EditEvent = () => {
   const [date, setDate] = useState("");
   const [autoremove, setAutoremove] = useState(true);
   const [autoremovePeriod, setAutoremovePeriod] = useState("");
-  const [formFields, setFormFields] = useState([]);
+  const [formFields, setFormFields] = useState([] as Field[]);
   const [hasResponses, setHasResponses] = useState(false);
   const [hasMaxParticipants, setHasMaxParticipants] = useState(false);
   const [maxParticipants, setMaxParticipants] = useState("");
@@ -135,7 +136,7 @@ const EditEvent = () => {
           }
         })
         .catch((err) => {
-          if (err.code === "event_not_found") {
+          if (checkErrorCode(err, "event_not_found")) {
             setFound(false);
           } else {
             setError(extractError(err));
@@ -167,6 +168,7 @@ const EditEvent = () => {
       extraEmailContent: customizeEmailContent
         ? emailExtraContent.trim()
         : null,
+      ended: false,
     };
     setLoading(true);
     try {

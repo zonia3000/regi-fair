@@ -29,13 +29,15 @@ const ListEvents = () => {
   );
   const [templatesError, setTemplatesError] = useState("");
   const [selectedTemplateId, setSelectedTemplateId] = useState("");
-  const [eventToDelete, setEventToDelete] = useState(null);
+  const [eventToDelete, setEventToDelete] = useState(
+    null as EventConfiguration | null,
+  );
   const [deleteError, setDeleteError] = useState("");
   const [deleting, setDeleting] = useState(false);
   const [
     selectedEventWithMultipleReferences,
     setSelectedEventWithMultipleReferences,
-  ] = useState(null);
+  ] = useState(null as EventConfiguration | null);
   const [loadingEventReferences, setLoadingEventReferences] = useState(false);
   const [loadingEventReferencesError, setLoadingEventReferencesError] =
     useState("");
@@ -300,7 +302,7 @@ const ListEvents = () => {
           <p>
             <strong>
               {__(
-                "WARNING: all the saved registrations will be deleted",
+                "WARNING: all the saved registrations will be deleted and users will not be notified about the deletion",
                 "wp-open-events",
               )}
             </strong>

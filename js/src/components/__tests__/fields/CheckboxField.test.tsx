@@ -12,7 +12,7 @@ test("Render checkbox field", async () => {
 
   let requestBody: Record<string, string>;
   server.use(
-    http.get("/wpoe/v1/events/1", async () => {
+    http.get("/wpoe/v1/events/1", () => {
       return HttpResponse.json({
         formFields: [
           {

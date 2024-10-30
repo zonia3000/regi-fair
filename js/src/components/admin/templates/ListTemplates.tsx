@@ -6,12 +6,15 @@ import Loading from "../../Loading";
 import { Button, Modal, Notice, Spinner } from "@wordpress/components";
 import { extractError } from "../../utils";
 import "../../style.css";
+import { TemplateConfiguration } from "../../classes/template";
 
 const ListTemplates = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [templates, setTemplates] = useState([] as TemplateConfiguration[]);
-  const [templateToDelete, setTemplateToDelete] = useState(null);
+  const [templateToDelete, setTemplateToDelete] = useState(
+    null as TemplateConfiguration | null,
+  );
   const [error, setError] = useState("");
   const [deleteError, setDeleteError] = useState("");
   const [deleting, setDeleting] = useState(false);

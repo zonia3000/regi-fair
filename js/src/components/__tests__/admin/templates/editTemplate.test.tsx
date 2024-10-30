@@ -10,7 +10,7 @@ import { TemplateConfiguration } from "../../../classes/template";
 
 test("Edit template", async () => {
   server.use(
-    http.get("/wpoe/v1/admin/templates/1", async () => {
+    http.get("/wpoe/v1/admin/templates/1", () => {
       return HttpResponse.json({
         id: 1,
         name: "template name",

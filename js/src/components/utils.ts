@@ -1,5 +1,25 @@
 import { Field } from "./classes/fields";
 
+export function checkErrorCode(err: unknown, expectedCode: string) {
+  if (typeof err === "object" && "code" in err) {
+    return err.code === expectedCode;
+  }
+  return false;
+}
+
+export function extactFieldErrors(err: unknown): Record<number, string> {
+  if (
+    typeof err === "object" &&
+    "data" in err &&
+    typeof err.data === "object" &&
+    "fieldsErrors" in err.data &&
+    typeof err.data.fieldsErrors === "object"
+  ) {
+    return err.data.fieldsErrors as Record<number, string>;
+  }
+  return {};
+}
+
 export function extractError(err: unknown): string {
   if (typeof err === "object" && "message" in err) {
     return err.message as string;
@@ -18,6 +38,7 @@ export function getDefaultFieldValue(
       if ("multiple" in field.extra && field.extra.multiple) {
         return [] as string[];
       }
+      return "";
     default:
       return "";
   }
@@ -27,12 +48,13 @@ export function getDefaultFieldValue(
  * Prepares the fields to be used as request body in API calls,
  * removing all the invalid or read-only properties.
  */
-export function cleanupFields(fields: Field[]): Field[] {
+export function cleanupFields(
+  fields: Array<Field & { position?: number }>,
+): Field[] {
   return fields.map((f) => ({
     ...f,
     description: f.description || undefined,
     position: undefined,
-    validators: undefined,
     extra: f.extra || undefined,
   }));
 }

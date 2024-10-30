@@ -8,9 +8,13 @@ import { isNumberOfPeopleField } from "../../utils";
 
 const EditFormFields = (props: EditFormFieldsProps) => {
   const [showEditFieldModal, setShowEditFieldModal] = useState(false);
-  const [fieldToDeleteIndex, setFieldToDeleteIndex] = useState(null);
-  const [fieldToEditIndex, setFieldToEditIndex] = useState(null);
-  const [fieldToEdit, setFieldToEdit] = useState(null);
+  const [fieldToDeleteIndex, setFieldToDeleteIndex] = useState(
+    null as number | null,
+  );
+  const [fieldToEditIndex, setFieldToEditIndex] = useState(
+    null as number | null,
+  );
+  const [fieldToEdit, setFieldToEdit] = useState(null as Field | null);
   const fieldToEditIndexRef = useRef(fieldToEditIndex);
 
   useEffect(() => {

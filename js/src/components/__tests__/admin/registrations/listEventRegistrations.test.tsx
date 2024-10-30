@@ -9,7 +9,7 @@ import { userEvent } from "@testing-library/user-event";
 
 test("Event not found", async () => {
   server.use(
-    http.get("/wpoe/v1/admin/events/1/registrations", async () => {
+    http.get("/wpoe/v1/admin/events/1/registrations", () => {
       return HttpResponse.json(
         {
           code: "event_not_found",
@@ -41,7 +41,7 @@ test("Event not found", async () => {
 
 test("List registrations", async () => {
   server.use(
-    http.get("/wpoe/v1/admin/events/1/registrations", async () => {
+    http.get("/wpoe/v1/admin/events/1/registrations", () => {
       return HttpResponse.json({
         head: [{ label: "name", deleted: false }],
         body: [
@@ -77,7 +77,7 @@ test("List registrations with deleted records", async () => {
   const user = userEvent.setup();
 
   server.use(
-    http.get("/wpoe/v1/admin/events/1/registrations", async () => {
+    http.get("/wpoe/v1/admin/events/1/registrations", () => {
       return HttpResponse.json({
         head: [
           { label: "name", deleted: false },
@@ -128,7 +128,7 @@ test("List registrations with waiting list", async () => {
   const user = userEvent.setup();
 
   server.use(
-    http.get("/wpoe/v1/admin/events/1/registrations", async ({ request }) => {
+    http.get("/wpoe/v1/admin/events/1/registrations", ({ request }) => {
       const url = new URL(request.url);
       const waitingList = url.searchParams.get("waitingList");
       if (waitingList === "true") {

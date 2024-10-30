@@ -8,7 +8,7 @@ import EventsRoot from "../../../admin/events/EventsRoot";
 
 test("Open event with multiple references modal", async () => {
   server.use(
-    http.get("/wpoe/v1/admin/events", async () => {
+    http.get("/wpoe/v1/admin/events", () => {
       return HttpResponse.json([
         {
           id: 1,
@@ -24,7 +24,7 @@ test("Open event with multiple references modal", async () => {
   );
 
   server.use(
-    http.get("/wpoe/v1/admin/events/1/references", async () => {
+    http.get("/wpoe/v1/admin/events/1/references", () => {
       return HttpResponse.json([
         { title: "example", permalink: "http://localhost/?p=42" },
         { title: "example2", permalink: "http://localhost/?p=43" },

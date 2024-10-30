@@ -11,10 +11,11 @@ import {
   TextControl,
   TextareaControl,
 } from "@wordpress/components";
-import { cleanupFields, extractError } from "../../utils";
+import { checkErrorCode, cleanupFields, extractError } from "../../utils";
 import "../../style.css";
 import { Settings } from "../../classes/settings";
 import { TemplateConfiguration } from "../../classes/template";
+import { Field } from "../../classes/fields";
 
 const EditTemplate = () => {
   const { templateId } = useParams();
@@ -25,7 +26,7 @@ const EditTemplate = () => {
   const [templateName, setTemplateName] = useState("");
   const [autoremove, setAutoremove] = useState(true);
   const [autoremovePeriod, setAutoremovePeriod] = useState("");
-  const [formFields, setFormFields] = useState([]);
+  const [formFields, setFormFields] = useState([] as Field[]);
   const [notifyAdmin, setNotifyAdmin] = useState(false);
   const [adminEmail, setAdminEmail] = useState("");
   const [editableRegistrations, setEditableRegistrations] = useState(true);
@@ -79,7 +80,7 @@ const EditTemplate = () => {
           }
         })
         .catch((err) => {
-          if (err.code === "template_not_found") {
+          if (checkErrorCode(err, "template_not_found")) {
             setFound(false);
           } else {
             setError(extractError(err));

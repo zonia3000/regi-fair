@@ -8,7 +8,7 @@ import { MemoryRouter, Route, Routes } from "react-router-dom";
 
 test('Handles "No event templates found"', async () => {
   server.use(
-    http.get("/wpoe/v1/admin/templates", async () => {
+    http.get("/wpoe/v1/admin/templates", () => {
       return HttpResponse.json([]);
     }),
   );

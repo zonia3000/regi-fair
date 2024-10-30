@@ -11,7 +11,7 @@ const EditDropdownField = (props: EditDropdownFieldProps) => {
   const [fieldDescription, setFieldDescription] = useState("");
   const [fieldRequired, setFieldRequired] = useState(false);
   const [fieldMultiple, setFieldMultiple] = useState(false);
-  const [options, setOptions] = useState([]);
+  const [options, setOptions] = useState([] as string[]);
   const optionsRef = useRef(options);
   const [valid, setValid] = useState(true);
 

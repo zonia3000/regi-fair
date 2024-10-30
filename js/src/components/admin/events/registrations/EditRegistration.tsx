@@ -1,7 +1,11 @@
 import apiFetch from "@wordpress/api-fetch";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { extractError } from "../../../utils";
+import {
+  checkErrorCode,
+  extactFieldErrors,
+  extractError,
+} from "../../../utils";
 import { __, _x, sprintf } from "@wordpress/i18n";
 import Loading from "../../../Loading";
 import { Button, CheckboxControl, Notice } from "@wordpress/components";
@@ -16,10 +20,14 @@ const EditRegistration = () => {
   const [loading, setLoading] = useState(true);
   const [found, setFound] = useState(false);
   const [event, setEvent] = useState(null as EventConfiguration);
-  const [fields, setFields] = useState({} as Record<number, string | boolean>);
+  const [fields, setFields] = useState(
+    {} as Record<number, string | string[] | boolean>,
+  );
   const [waitingList, setWaitingList] = useState(false);
-  const [availableSeats, setAvailableSeats] = useState(null);
-  const [fieldsErrors, setFieldsErrors] = useState({});
+  const [availableSeats, setAvailableSeats] = useState(null as number | null);
+  const [fieldsErrors, setFieldsErrors] = useState(
+    {} as Record<number, string>,
+  );
   const [error, setError] = useState("");
   const [showEmailCheckbox, setShowEmailCheckbox] = useState(false);
   const [notifyUserByEmail, setNotifyUserByEmail] = useState(false);
@@ -40,7 +48,7 @@ const EditRegistration = () => {
         setAvailableSeats(eventConfig.availableSeats);
       }
     } catch (err) {
-      if (err.code === "event_not_found") {
+      if (checkErrorCode(err, "event_not_found")) {
         setFound(false);
       } else {
         setError(extractError(err));
@@ -67,7 +75,7 @@ const EditRegistration = () => {
         setNotifyUserByEmail(true);
       }
     } catch (err) {
-      if (err.code === "registration_not_found") {
+      if (checkErrorCode(err, "registration_not_found")) {
         setFound(false);
       } else {
         setError(extractError(err));
@@ -90,8 +98,8 @@ const EditRegistration = () => {
       });
       back();
     } catch (err) {
-      if (err.code === "invalid_form_fields") {
-        setFieldsErrors(err.data.fieldsErrors);
+      if (checkErrorCode(err, "invalid_form_fields")) {
+        setFieldsErrors(extactFieldErrors(err));
       }
       setError(extractError(err));
     } finally {

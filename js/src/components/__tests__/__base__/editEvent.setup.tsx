@@ -19,7 +19,7 @@ export const editEventTest = (
 ) => {
   test(testDescription, async () => {
     server.use(
-      http.get("/wpoe/v1/admin/events/1", async () => {
+      http.get("/wpoe/v1/admin/events/1", () => {
         return HttpResponse.json({ ...eventToEdit, id: 1 });
       }),
     );

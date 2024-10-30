@@ -14,7 +14,7 @@ export type Field = {
   required: boolean;
   description?: string;
   extra?: object;
-  validate: () => boolean;
+  validate?: () => boolean;
 };
 
 export type CheckboxField = Field & {

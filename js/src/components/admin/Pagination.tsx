@@ -9,14 +9,14 @@ const Pagination = (props: {
   setPageSize: (s: number) => void;
   total: number;
 }) => {
-  const [pageNumbers, setPageNumbers] = useState([]);
+  const [pageNumbers, setPageNumbers] = useState([] as Array<string | number>);
 
   const maxVisibleNumbersPerSide = 3;
   const separator = "...";
   const pageSizes = [10, 20, 50, 100];
 
   useEffect(() => {
-    const pageNumbers = [];
+    const pageNumbers = [] as Array<string | number>;
     const numberOfPages = Math.ceil(props.total / props.pageSize);
     if (props.page - maxVisibleNumbersPerSide <= 1) {
       for (let i = 1; i <= props.page; i++) {
@@ -82,7 +82,7 @@ const Pagination = (props: {
               {n !== separator && (
                 <Button
                   variant={n === props.page ? "primary" : "secondary"}
-                  onClick={() => setPage(n)}
+                  onClick={() => setPage(n as number)}
                   aria-label={sprintf(
                     _x("Go to page %d", "page number", "wp-open-events"),
                     n,

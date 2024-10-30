@@ -19,7 +19,9 @@ const ListRegistrations = (props: { waiting: boolean }) => {
   const [eventName, setEventName] = useState("");
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
-  const [head, setHead] = useState([]);
+  const [head, setHead] = useState(
+    [] as Array<{ label: string; deleted: boolean }>,
+  );
   const [rows, setRows] = useState([] as string[][]);
   const [total, setTotal] = useState(0);
   const [totalParticipants, setTotalParticipants] = useState(0);
@@ -30,7 +32,9 @@ const ListRegistrations = (props: { waiting: boolean }) => {
     showConfirmDeleteRegistrationModal,
     setShowConfirmDeleteRegistrationModal,
   ] = useState(false);
-  const [registrationToDelete, setRegistrationToDelete] = useState(null);
+  const [registrationToDelete, setRegistrationToDelete] = useState(
+    null as string | null,
+  );
   const [deletionError, setDeletionError] = useState("");
 
   useEffect(() => {

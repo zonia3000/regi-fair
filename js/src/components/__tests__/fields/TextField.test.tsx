@@ -11,7 +11,7 @@ test("Render required text field", async () => {
   const setLoading = (l: boolean) => (loading = l);
 
   server.use(
-    http.get("/wpoe/v1/events/1", async () => {
+    http.get("/wpoe/v1/events/1", () => {
       return HttpResponse.json({
         formFields: [
           {
@@ -49,7 +49,7 @@ test("Render optional text field, disabled", async () => {
   const setLoading = (l: boolean) => (loading = l);
 
   server.use(
-    http.get("/wpoe/v1/events/1", async () => {
+    http.get("/wpoe/v1/events/1", () => {
       return HttpResponse.json({
         formFields: [
           { id: 1, fieldType: "text", label: "myfield", required: false },
@@ -83,7 +83,7 @@ test("Edit text field", async () => {
 
   let requestBody: Record<string, string>;
   server.use(
-    http.get("/wpoe/v1/events/1", async () => {
+    http.get("/wpoe/v1/events/1", () => {
       return HttpResponse.json({
         formFields: [
           { id: 1, fieldType: "text", label: "myfield", required: true },

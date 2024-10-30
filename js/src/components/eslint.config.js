@@ -7,7 +7,7 @@ export default [
   { files: ["**/*.{js,mjs,cjs,ts,jsx,tsx}"] },
   { languageOptions: { globals: globals.browser } },
   pluginJs.configs.recommended,
-  ...tseslint.configs.recommended,
+  ...tseslint.configs.recommendedTypeChecked,
   pluginReact.configs.flat.recommended,
   {
     settings: {
@@ -16,4 +16,19 @@ export default [
       },
     },
   },
+  {
+    languageOptions: {
+      parserOptions: {
+        projectService: true,
+        tsconfigRootDir: import.meta.dirname,
+      },
+    },
+  },
+  {
+    rules: {
+      "@typescript-eslint/no-floating-promises": "off",
+      "@typescript-eslint/no-misused-promises": "off",
+    },
+  },
+  { ignores: ["**/*.config.js", "vitest.setup.ts"] },
 ];

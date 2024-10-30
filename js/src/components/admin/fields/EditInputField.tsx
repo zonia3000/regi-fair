@@ -74,16 +74,16 @@ const EditInputField = (props: EditInputFieldProps) => {
         }
         if ("min" in props.field.extra) {
           setMin(
-            props.field.extra.min === undefined
-              ? ""
-              : props.field.extra.min.toString(),
+            typeof props.field.extra.min === "number"
+              ? props.field.extra.min.toString()
+              : "",
           );
         }
         if ("max" in props.field.extra) {
           setMax(
-            props.field.extra.max === undefined
-              ? ""
-              : props.field.extra.max.toString(),
+            typeof props.field.extra.max === "number"
+              ? props.field.extra.max.toString()
+              : "",
           );
         }
       }

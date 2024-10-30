@@ -45,21 +45,13 @@ createEventTest(
 
     await user.click(within(rows[1]).getByRole("button", { name: "Edit" }));
 
+    expect(screen.getByRole("textbox", { name: "Label" })).toHaveValue(
+      "Number of people field",
+    );
     expect(
-      (screen.getByRole("textbox", { name: "Label" }) as HTMLInputElement)
-        .value,
-    ).toEqual("Number of people field");
-    expect(
-      (
-        screen.getByRole("textbox", {
-          name: "Description (optional)",
-        }) as HTMLInputElement
-      ).value,
-    ).toEqual("Number of people field description");
-    expect(
-      (screen.getByRole("checkbox", { name: "Required" }) as HTMLInputElement)
-        .checked,
-    ).toEqual(true);
+      screen.getByRole("textbox", { name: "Description (optional)" }),
+    ).toHaveValue("Number of people field description");
+    expect(screen.getByRole("checkbox", { name: "Required" })).toBeChecked();
     await user.click(screen.getByRole("button", { name: "Save" }));
   },
   (requestBody: EventConfiguration) => {
@@ -117,21 +109,15 @@ createEventTest(
 
     await user.click(within(rows[1]).getByRole("button", { name: "Edit" }));
 
+    expect(screen.getByRole("textbox", { name: "Label" })).toHaveValue(
+      "Number of people field",
+    );
     expect(
-      (screen.getByRole("textbox", { name: "Label" }) as HTMLInputElement)
-        .value,
-    ).toEqual("Number of people field");
+      screen.getByRole("spinbutton", { name: "Maximum value (optional)" }),
+    ).toHaveValue(3);
     expect(
-      (
-        screen.getByRole("spinbutton", {
-          name: "Maximum value (optional)",
-        }) as HTMLInputElement
-      ).value,
-    ).toEqual("3");
-    expect(
-      (screen.getByRole("checkbox", { name: "Required" }) as HTMLInputElement)
-        .checked,
-    ).toEqual(false);
+      screen.getByRole("checkbox", { name: "Required" }),
+    ).not.toBeChecked();
     await user.click(screen.getByRole("button", { name: "Save" }));
   },
   (requestBody: EventConfiguration) => {
