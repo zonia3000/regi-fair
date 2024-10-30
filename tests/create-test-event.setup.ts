@@ -89,7 +89,7 @@ setup('Create test event', async ({ page, context, request }) => {
       data: {
         title: TEST_POST_NAME,
         status: 'publish',
-        content: `<!-- wp:wp-open-events/form {"eventId":"${eventId}"} --><div class="wp-block-wp-open-events-form">TODO</div><!-- /wp:wp-open-events/form -->`
+        content: `<!-- wp:wp-open-events/form {"eventId":"${eventId}","className":"wp-block-wp-open-events-form"} /-->`
       }
     });
     expect(response.status()).toEqual(201);
