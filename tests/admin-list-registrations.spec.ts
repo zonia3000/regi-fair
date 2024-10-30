@@ -58,7 +58,7 @@ test('Admin list and download registrations', async ({ page, context, request })
 
   await test.step('List registrations', async () => {
     await page.goto('/wp-admin');
-    await page.getByRole('link', { name: 'Events' }).nth(1).click();
+    await page.getByRole('link', { name: 'Events' }).first().click();
     await expect(page.getByRole('heading', { name: 'Your events' })).toBeVisible();
     await page.getByRole('row', { name: eventName }).getByRole('link').nth(1).click();
     await expect(page.getByText(`Registrations for the event "${eventName}"`)).toBeVisible();

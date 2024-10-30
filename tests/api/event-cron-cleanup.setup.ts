@@ -4,9 +4,10 @@ import { adminAuthStateFile, getNonceAndCookiesForApi } from '../utils';
 test.use({ storageState: adminAuthStateFile });
 
 /**
+ * This test depends on WP Crontrol plugin and is currently skipped because of wp-env issue in installing it.
  * This test is run using only one browser, to avoid issues caused by running multiple copies of it in parallel.
  */
-test('Cleanup old event using WP-Cron', async ({ page, context, request }) => {
+test.skip('Cleanup old event using WP-Cron', async ({ page, context, request }) => {
 
   const { nonce, cookies } = await getNonceAndCookiesForApi(page, context);
 
@@ -113,5 +114,15 @@ test('Cleanup old event using WP-Cron', async ({ page, context, request }) => {
       }
     });
     expect(response.status()).toEqual(200);
+  });
+
+  await test.step('Delete second event', async () => {
+    const response = await request.delete(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId2}`, {
+      headers: {
+        'Cookie': cookies,
+        'X-WP-Nonce': nonce
+      }
+    });
+    expect(response.status()).toEqual(204);
   });
 });
