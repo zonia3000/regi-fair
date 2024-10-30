@@ -507,12 +507,13 @@ class WPOE_DAO_Events extends WPOE_Base_DAO
       $this->check_result($result, 'removing associations between post and events');
 
       foreach ($events_ids as $event_id) {
-        $result = $wpdb->insert(
+        $result = $wpdb->replace(
           WPOE_DB::get_table_name('event_post'),
           [
             'event_id' => $event_id,
             'post_id' => $post_id
-          ]
+          ],
+          ['%d', '%d']
         );
         $this->check_result($result, 'adding association between post and event');
       }
