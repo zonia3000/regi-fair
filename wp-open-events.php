@@ -1,9 +1,12 @@
 <?php
 /*
  * Plugin Name: WP Open Events
+ * Plugin URI: https://zonia3000.github.io/wp-open-events/
  * Author: Sonia Zorba
  * Author URI: https://www.zonia3000.net
- * Version: 0.0.1
+ * Version: 0.1.0
+ * License: GPLv3 or later
+ * License URI: https://www.gnu.org/licenses/gpl-3.0.html
  * Description: Open source plugin to manage event registration forms
  * Text Domain: wp-open-events
  * Domain Path: /languages

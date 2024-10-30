@@ -1,6 +1,6 @@
 {
   "name": "wp-open-events",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "WP Open Events Frontend",
   "type": "module",
   "scripts": {
@@ -10,8 +10,8 @@
     "coverage": "vitest --coverage",
     "lint": "eslint ."
   },
-  "author": "",
-  "license": "ISC",
+  "author": "Sonia Zorba",
+  "license": "GPL-3.0-or-later",
   "devDependencies": {
     "@babel/preset-react": "^7.25.7",
     "@babel/preset-typescript": "^7.25.7",
