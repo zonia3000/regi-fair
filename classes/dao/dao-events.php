@@ -34,7 +34,7 @@ class WPOE_DAO_Events extends WPOE_Base_DAO
       ) AS p ON p.event_id = e.id ";
 
     if ($ignore_past_events) {
-      $sql .= "WHERE e.date >= DATE(CURRENT_TIMESTAMP) ";
+      $sql .= "WHERE DATE(e.date) >= DATE(CURRENT_TIMESTAMP) ";
     }
 
     $sql .= "GROUP BY e.id ORDER BY e.date DESC";
@@ -530,5 +530,20 @@ class WPOE_DAO_Events extends WPOE_Base_DAO
       ['%d']
     );
     $this->check_result($result, 'removing associations between post and events');
+  }
+
+  public function delete_past_events()
+  {
+    global $wpdb;
+
+    $query = 'SELECT id FROM ' . WPOE_DB::get_table_name('event') . ' WHERE autoremove_submissions AND'
+      . ' DATE(date) < DATE_SUB(DATE(CURRENT_TIMESTAMP), INTERVAL autoremove_submissions_period DAY)';
+
+    $results = $wpdb->get_results($query, ARRAY_A);
+    $this->check_results('retrieving events to be deleted');
+
+    foreach ($results as $result) {
+      $this->delete_event((int) $result['id']);
+    }
   }
 }

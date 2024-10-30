@@ -24,6 +24,7 @@ const EditTemplate = () => {
   const [found, setFound] = useState(false);
   const [templateName, setTemplateName] = useState("");
   const [autoremove, setAutoremove] = useState(true);
+  const [autoremovePeriod, setAutoremovePeriod] = useState("");
   const [formFields, setFormFields] = useState([]);
   const [notifyAdmin, setNotifyAdmin] = useState(false);
   const [adminEmail, setAdminEmail] = useState("");
@@ -48,6 +49,7 @@ const EditTemplate = () => {
             setCustomizeEmailContent(true);
             setEmailExtraContent(settings.defaultExtraEmailContent);
           }
+          setAutoremovePeriod(settings.defaultAutoremovePeriod.toString());
         })
         .catch((err) => {
           setError(extractError(err));
@@ -62,6 +64,9 @@ const EditTemplate = () => {
           const template = result as TemplateConfiguration;
           setTemplateName(template.name);
           setAutoremove(template.autoremove);
+          if (template.autoremove) {
+            setAutoremovePeriod(template.autoremovePeriod.toString());
+          }
           setFormFields(template.formFields);
           if (template.adminEmail) {
             setNotifyAdmin(true);
@@ -96,8 +101,8 @@ const EditTemplate = () => {
       id: templateId === "new" ? null : Number(templateId),
       name: templateName,
       formFields,
-      autoremove: autoremove,
-      autoremovePeriod: 30,
+      autoremove,
+      autoremovePeriod: autoremove ? Number(autoremovePeriod) : null,
       waitingList: false,
       adminEmail: notifyAdmin ? adminEmail.trim() : null,
       editableRegistrations,
@@ -201,6 +206,23 @@ const EditTemplate = () => {
         className="mb"
         __nextHasNoMarginBottom={true}
       />
+      {autoremove &&
+        <TextControl
+          label={__("Autoremove period", "wp-open-events")}
+          onChange={setAutoremovePeriod}
+          value={autoremovePeriod}
+          type="number"
+          required
+          className="mb"
+          help={__("Number of days to wait after the event conclusion before removing registrations data", "wp-open-events")}
+          __nextHasNoMarginBottom={true}
+        />
+      }
+      {autoremove && !valid && !autoremovePeriod && (
+        <span className="error-text">
+          {__("Field is required", "wp-open-events")}
+        </span>
+      )}
       <CheckboxControl
         label={__(
           "Allow the users to edit or delete their registrations",

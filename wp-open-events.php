@@ -65,7 +65,35 @@ require_once(WPOE_PLUGIN_DIR . 'classes/admin/db-setup.php');
 register_activation_hook(__FILE__, ['WPOE_DB_Setup', 'create_tables']);
 register_uninstall_hook(__FILE__, ['WPOE_DB_Setup', 'drop_tables']);
 
-if (defined('WPOE_TESTING') && WPOE_TESTING === 'true') {
+// WP-Cron configuration for past events cleanup
+
+add_action('wpoe_cleanup_cron_hook', 'wpoe_cleanup_cron_exec');
+
+function wpoe_cleanup_cron_exec()
+{
+  try {
+    $dao = new WPOE_DAO_Events();
+    $dao->delete_past_events();
+  } catch (Exception $ex) {
+    error_log($ex->getMessage());
+  }
+}
+
+if (!wp_next_scheduled('wpoe_cleanup_cron_hook')) {
+  wp_schedule_event(time(), 'daily', 'wpoe_cleanup_cron_hook');
+}
+
+register_deactivation_hook(__FILE__, 'wpoe_deactivate');
+
+function wpoe_deactivate()
+{
+  $timestamp = wp_next_scheduled('wpoe_cleanup_cron_hook');
+  wp_unschedule_event($timestamp, 'wpoe_cleanup_cron_hook');
+}
+
+// Testing configuration
+
+if (defined('WPOE_TESTING') && WPOE_TESTING === true) {
   // Configures the PHP mailer to send email to mailpit test server
   // Needed only for end-to-end tests
   add_action('phpmailer_init', 'test_phpmailer_smtp');

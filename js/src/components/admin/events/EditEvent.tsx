@@ -27,6 +27,7 @@ const EditEvent = () => {
   const [eventName, setEventName] = useState("");
   const [date, setDate] = useState("");
   const [autoremove, setAutoremove] = useState(true);
+  const [autoremovePeriod, setAutoremovePeriod] = useState("");
   const [formFields, setFormFields] = useState([]);
   const [hasResponses, setHasResponses] = useState(false);
   const [hasMaxParticipants, setHasMaxParticipants] = useState(false);
@@ -62,6 +63,9 @@ const EditEvent = () => {
           .then((result) => {
             const template = result as TemplateConfiguration;
             setAutoremove(template.autoremove);
+            if (template.autoremove) {
+              setAutoremovePeriod(template.autoremovePeriod.toString());
+            }
             setFormFields(template.formFields);
             if (template.adminEmail) {
               setNotifyAdmin(true);
@@ -92,6 +96,7 @@ const EditEvent = () => {
               setCustomizeEmailContent(true);
               setEmailExtraContent(settings.defaultExtraEmailContent);
             }
+            setAutoremovePeriod(settings.defaultAutoremovePeriod.toString());
           })
           .catch((err) => {
             setError(extractError(err));
@@ -109,6 +114,9 @@ const EditEvent = () => {
           setEventName(event.name);
           setDate(event.date);
           setAutoremove(event.autoremove);
+          if (event.autoremove) {
+            setAutoremovePeriod(event.autoremovePeriod.toString());
+          }
           setFormFields(event.formFields);
           setHasResponses(event.hasResponses || false);
           if (event.maxParticipants) {
@@ -153,7 +161,7 @@ const EditEvent = () => {
       editableRegistrations,
       formFields,
       autoremove: autoremove,
-      autoremovePeriod: 30,
+      autoremovePeriod: autoremove ? Number(autoremovePeriod) : null,
       maxParticipants: hasMaxParticipants ? Number(maxParticipants) : null,
       waitingList: hasMaxParticipants ? hasWaitingList : false,
       extraEmailContent: customizeEmailContent
@@ -338,6 +346,23 @@ const EditEvent = () => {
         className="mb"
         __nextHasNoMarginBottom={true}
       />
+      {autoremove &&
+        <TextControl
+          label={__("Autoremove period", "wp-open-events")}
+          onChange={setAutoremovePeriod}
+          value={autoremovePeriod}
+          type="number"
+          required
+          className="mb"
+          help={__("Number of days to wait after the event conclusion before removing registrations data", "wp-open-events")}
+          __nextHasNoMarginBottom={true}
+        />
+      }
+      {autoremove && !valid && !autoremovePeriod && (
+        <span className="error-text">
+          {__("Field is required", "wp-open-events")}
+        </span>
+      )}
       <CheckboxControl
         label={__(
           "Allow the users to edit or delete their registrations",

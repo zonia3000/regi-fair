@@ -1,8 +1,10 @@
 {
   "plugins": [
-    "."
+    ".",
+    "https://downloads.wordpress.org/plugin/wp-crontrol.1.17.0.zip"
   ],
   "config": {
-    "WPOE_TESTING": "true"
+    "WPOE_TESTING": true,
+    "ALTERNATE_WP_CRON": true
   }
 }

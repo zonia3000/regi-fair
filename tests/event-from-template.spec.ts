@@ -34,7 +34,7 @@ test('Create event from template', async ({ page, context, request }) => {
   });
 
   await test.step('Open events page', async () => {
-    await page.locator('#adminmenu').getByRole('link', { name: 'Events' }).first().click();
+    await page.goto('/wp-admin/admin.php?page=wpoe-events');
     await expect(page.getByRole('heading', { name: 'Your events' })).toHaveCount(1);
   });
 

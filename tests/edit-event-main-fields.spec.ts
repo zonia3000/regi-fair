@@ -8,8 +8,8 @@ test('Admin event page - main fields CRUD', async ({ page }) => {
   await page.goto('/wp-admin');
 
   await test.step('Open events page', async () => {
-    await page.locator('#adminmenu').getByRole('link', { name: 'Events' }).first().click();
-    await expect(page.getByRole('heading', { name: 'Your events' })).toHaveCount(1);
+    await page.goto('/wp-admin/admin.php?page=wpoe-events');
+    await expect(page.getByText('Your events')).toBeVisible();
   });
 
   const eventName = Math.random().toString(36).substring(7);

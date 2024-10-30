@@ -43,6 +43,11 @@ export default defineConfig({
       dependencies: ['auth']
     },
     {
+      name: 'event_cron_cleanup',
+      testMatch: /event-cron-cleanup\.setup\.ts/,
+      dependencies: ['auth']
+    },
+    {
       name: 'create_test_event',
       testMatch: /create-test-event\.setup\.ts/,
       dependencies: ['auth', 'settings']
