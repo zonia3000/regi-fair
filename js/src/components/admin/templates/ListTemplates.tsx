@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { sprintf, __, _x } from "@wordpress/i18n";
+import { sprintf, __ } from "@wordpress/i18n";
 import { Link, useNavigate } from "react-router-dom";
 import apiFetch from "@wordpress/api-fetch";
 import Loading from "../../Loading";
@@ -121,9 +121,9 @@ const ListTemplates = () => {
         >
           <p>
             {sprintf(
-              _x(
+              /* translators: %s is replaced with the name of the template */
+              __(
                 "Do you really want to delete the template %s?",
-                "Name of the template",
                 "wp-open-events",
               ),
               templateToDelete.name,

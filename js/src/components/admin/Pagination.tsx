@@ -1,5 +1,5 @@
 import { Button, SelectControl } from "@wordpress/components";
-import { __, _x, sprintf } from "@wordpress/i18n";
+import { __, sprintf } from "@wordpress/i18n";
 import React, { useEffect, useState } from "react";
 
 const Pagination = (props: {
@@ -84,7 +84,8 @@ const Pagination = (props: {
                   variant={n === props.page ? "primary" : "secondary"}
                   onClick={() => setPage(n as number)}
                   aria-label={sprintf(
-                    _x("Go to page %d", "page number", "wp-open-events"),
+                    /* translators: %d is replaced with the page number */
+                    __("Go to page %d", "wp-open-events"),
                     n,
                   )}
                 >

@@ -206,7 +206,12 @@ function validate_event_request(WPOE_Event $event, $input): WP_Error|WP_REST_Res
 
   foreach ($event->formFields as $field) {
     if (!key_exists($field->id, $input)) {
-      return new WP_Error('invalid_form_fields', sprintf(_x('Missing field %d', 'id of the field', 'wp-open-events'), $field->id), ['status' => 400]);
+      return new WP_Error(
+        'invalid_form_fields',
+        /* translators: %d is replaced with the id of the field */
+        sprintf(__('Missing field %d', 'wp-open-events'), $field->id),
+        ['status' => 400]
+      );
     }
   }
 

@@ -33,13 +33,22 @@ class WPOE_Number_Validator extends WPOE_Base_Validator
         throw new WPOE_Validation_Exception(__('You have to register at least one person', 'wp-open-events'));
       }
       if (property_exists($this->field->extra, 'min') && $value < $this->field->extra->min) {
-        throw new WPOE_Validation_Exception(sprintf(_x('Number must not be lower than %d', 'minium value', 'wp-open-events'), $this->field->extra->min));
+        throw new WPOE_Validation_Exception(
+          /* translators: %d is replaced with the minimum value */
+          sprintf(__('Number must not be lower than %d', 'wp-open-events'), $this->field->extra->min)
+        );
       }
       if (property_exists($this->field->extra, 'max') && $value > $this->field->extra->max) {
         if ($numberOfPeople) {
-          throw new WPOE_Validation_Exception(sprintf(_x('It is not possible to add more than %d people in the same registration', 'maximum value', 'wp-open-events'), $this->field->extra->max));
+          throw new WPOE_Validation_Exception(
+            /* translators: %d is replaced with the maximum allowed participants value */
+            sprintf(__('It is not possible to add more than %d people in the same registration', 'wp-open-events'), $this->field->extra->max)
+          );
         } else {
-          throw new WPOE_Validation_Exception(sprintf(_x('Number must not be greater than %d', 'maximum value', 'wp-open-events'), $this->field->extra->max));
+          throw new WPOE_Validation_Exception(
+            /* translators: %d is replaced with the maximum value */
+            sprintf(__('Number must not be greater than %d', 'wp-open-events'), $this->field->extra->max)
+          );
         }
       }
     }

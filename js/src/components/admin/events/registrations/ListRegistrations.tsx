@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { RegistrationsList } from "../../../classes/registration";
 import { extractError } from "../../../utils";
-import { __, _x, sprintf } from "@wordpress/i18n";
+import { __, sprintf } from "@wordpress/i18n";
 import Loading from "../../../Loading";
 import { Button, CheckboxControl, Modal, Notice } from "@wordpress/components";
 import Pagination from "../../Pagination";
@@ -143,20 +143,14 @@ const ListRegistrations = (props: { waiting: boolean }) => {
       <h1 className="wp-heading-inline">
         {!props.waiting &&
           sprintf(
-            _x(
-              'Registrations for the event "%s"',
-              "Name of the event",
-              "wp-open-events",
-            ),
+            /* translators: %s is replaced with the name of the event */
+            __('Registrations for the event "%s"', "wp-open-events"),
             eventName,
           )}
         {props.waiting &&
           sprintf(
-            _x(
-              'Waiting list for the event "%s"',
-              "Name of the event",
-              "wp-open-events",
-            ),
+            /* translators: %s is replaced with the name of the event */
+            __('Waiting list for the event "%s"', "wp-open-events"),
             eventName,
           )}
       </h1>
@@ -271,9 +265,9 @@ const ListRegistrations = (props: { waiting: boolean }) => {
         >
           <p>
             {sprintf(
-              _x(
+              /* translators: %d is replaced with the id of the registration */
+              __(
                 "Do you really want to delete the registration #%d?",
-                "id of the registration",
                 "wp-open-events",
               ),
               registrationToDelete,

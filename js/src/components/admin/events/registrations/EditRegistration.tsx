@@ -6,7 +6,7 @@ import {
   extactFieldErrors,
   extractError,
 } from "../../../utils";
-import { __, _x, sprintf } from "@wordpress/i18n";
+import { __, sprintf } from "@wordpress/i18n";
 import Loading from "../../../Loading";
 import { Button, CheckboxControl, Notice } from "@wordpress/components";
 import FormFields from "../../../FormFields";
@@ -127,11 +127,8 @@ const EditRegistration = () => {
     <div>
       <h1 className="wp-heading-inline mb-2">
         {sprintf(
-          _x(
-            "Edit registration #%d",
-            "Id of the registration",
-            "wp-open-events",
-          ),
+          /* translators: %d is replaced with the id of the registration */
+          __("Edit registration #%d", "wp-open-events"),
           registrationId,
         )}
       </h1>
@@ -143,11 +140,8 @@ const EditRegistration = () => {
       {availableSeats !== null && (
         <Notice status="info" isDismissible={false} className="mt">
           {sprintf(
-            _x(
-              "There are still %d seats available.",
-              "number of available seats",
-              "wp-open-events",
-            ),
+            /* translators: %d is replaced with the number of available seats */
+            __("There are still %d seats available.", "wp-open-events"),
             availableSeats,
           )}
         </Notice>

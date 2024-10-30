@@ -3,7 +3,7 @@ import { FormProps } from "./classes/components-props";
 import apiFetch from "@wordpress/api-fetch";
 import Loading from "./Loading";
 import { Button, Modal, Notice } from "@wordpress/components";
-import { __, _x, sprintf } from "@wordpress/i18n";
+import { __, _nx, sprintf } from "@wordpress/i18n";
 import {
   checkErrorCode,
   extactFieldErrors,
@@ -206,8 +206,10 @@ const Form = (props: FormProps) => {
       {availableSeats !== null && availableSeats > 0 && (
         <Notice status="info" isDismissible={false}>
           {sprintf(
-            _x(
+            _nx(
+              "There is still one seat available.",
               "There are still %d seats available.",
+              availableSeats,
               "number of available seats",
               "wp-open-events",
             ),

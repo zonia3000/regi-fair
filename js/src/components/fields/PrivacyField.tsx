@@ -1,7 +1,7 @@
 import React from "react";
 import { CheckboxControl } from "@wordpress/components";
 import { PrivacyFieldProps } from "../classes/components-props";
-import { _x, sprintf } from "@wordpress/i18n";
+import { __, sprintf } from "@wordpress/i18n";
 import {
   __experimentalHStack as HStack,
   __experimentalVStack as VStack,
@@ -21,11 +21,8 @@ const PrivacyField = (props: PrivacyFieldProps) => {
     }
 
     return sprintf(
-      _x(
-        "I accept the %sprivacy policy%s",
-        "The %s placeholders will be replaced with HTML tags used for creating a link to the privacy policy page",
-        "wp-open-events",
-      ),
+      /* translators: The %s placeholders will be replaced with HTML tags used for creating a link to the privacy policy page */
+      __("I accept the %sprivacy policy%s", "wp-open-events"),
       `<a href="${safeUrl}">`,
       "</a>",
     );
