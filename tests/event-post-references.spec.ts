@@ -76,6 +76,10 @@ test('Event referenced in posts', async ({ page, context, request }) => {
 
   async function addEventToPost(postTitle: string, eventName: string): Promise<number> {
     await page.goto('/wp-admin/post-new.php');
+    if (await page.getByText('Welcome to the block editor').isVisible()) {
+      await page.getByRole('dialog').getByRole('button', { name: 'Close' }).click();
+      await expect(page.getByRole('dialog')).not.toBeVisible();
+    }
     await page.getByLabel('Add title').click();
     await page.getByLabel('Add title').fill(postTitle);
     await page.getByLabel('Add block').click();

@@ -1,0 +1,61 @@
+name: End to end tests
+
+on:
+  push:
+    branches: ['master']
+  pull_request:
+    branches: ['master']
+
+jobs:
+  end_to_end_tests:
+    runs-on: ubuntu-latest
+
+    services:
+      mailpit:
+        image: axllent/mailpit
+        ports:
+          - 1025:1025
+          - 8025:8025
+
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Set up node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install wp-env
+        run: npm -g install @wordpress/env
+
+      - name: Build components
+        run: |
+          cd js/src/components
+          npm install
+          npm run build
+
+      - name: Build blocks
+        run: |
+          cd js/src/block
+          npm install
+          npm run build
+
+      - name: Start wp-env
+        run: wp-env start
+
+      - name: Install e2e tests dependencies
+        run: |
+          npm install
+          npx playwright install
+
+      - name: Run e2e tests
+        run: npx playwright test
+
+      - name: Archive test results
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-folder
+          path: test-results

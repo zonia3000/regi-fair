@@ -8,3 +8,4 @@ node_modules/
 /tests/.state/
 coverage/
 venv
+site/
