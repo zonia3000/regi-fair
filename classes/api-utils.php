@@ -128,12 +128,14 @@ function get_user_email(WPOE_Event $event, array $input): array
   return $user_email;
 }
 
-function get_number_of_people(WPOE_Event $event, array $input): int
+function get_number_of_people(WPOE_Event $event, array &$input): int
 {
   foreach ($event->formFields as $field) {
     if (use_as_number_of_people($field)) {
       $count = (int) $input[$field->id];
       if ($count === 0) {
+        // Fill value for empty optional fields
+        $input[$field->id] = 1;
         return 1;
       }
       return $count;
