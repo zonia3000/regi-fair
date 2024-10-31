@@ -20,7 +20,7 @@ class WPOE_Form
       $event_id = '';
     }
     WPOE_Form::enqueue_scripts();
-    return '<div id="wpoe-form-' . $event_id . '" data-wpoe-event-id="' . $event_id . '"></div>';
+    return '<div id="' . esc_attr('wpoe-form-' . $event_id) . '" data-wpoe-event-id="' . esc_attr($event_id) . '"></div>';
   }
 
   private static function enqueue_scripts()
