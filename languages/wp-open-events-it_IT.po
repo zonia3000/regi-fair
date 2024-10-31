@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: WP Open Events 0.0.1\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/wp-open-events\n"
 "POT-Creation-Date: 2024-03-23T22:56:10+00:00\n"
-"PO-Revision-Date: 2024-10-30 23:37+0100\n"
+"PO-Revision-Date: 2024-10-31 17:23+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: it_IT\n"
@@ -125,13 +125,13 @@ msgstr "Il tuo modulo è vuoto. Aggiungi alcuni campi."
 msgid "Type"
 msgstr "Tipo"
 
-#: classes/dao/dao-registrations.php:288 js/build/components/events.js:2
-#: js/build/components/templates.js:2
+#: classes/dao/dao-registrations.php:288 classes/mail-sender.php:247
+#: js/build/components/events.js:2 js/build/components/templates.js:2
 msgid "Yes"
 msgstr "Sì"
 
-#: classes/dao/dao-registrations.php:288 js/build/components/events.js:2
-#: js/build/components/templates.js:2
+#: classes/dao/dao-registrations.php:288 classes/mail-sender.php:249
+#: js/build/components/events.js:2 js/build/components/templates.js:2
 msgid "No"
 msgstr "No"
 
@@ -248,32 +248,32 @@ msgstr "Solo i campi numerici possono avere un valore massimo"
 msgid "Only dropdown fields can have a multiple field"
 msgstr "Solo i menu a tendina possono avere il campo multiplo"
 
-#: classes/api-utils.php:201
+#: classes/api-utils.php:203
 msgid "The payload must be an array"
 msgstr "Il payload deve essere un array"
 
-#: classes/api-utils.php:204
+#: classes/api-utils.php:206
 msgid "Invalid number of fields"
 msgstr "Numero di campi non valido"
 
 #. translators: %d is replaced with the id of the field
-#: classes/api-utils.php:212
+#: classes/api-utils.php:214
 msgid "Missing field %d"
 msgstr "Campo %d mancante"
 
-#: classes/api-utils.php:229
+#: classes/api-utils.php:231
 msgid "Some fields are not valid"
 msgstr "Alcuni campi non sono validi"
 
-#: classes/api-utils.php:246
+#: classes/api-utils.php:248
 msgid "Unable to register the specified number of people"
 msgstr "Impossibile registrare il numero di persone specificato"
 
-#: classes/api-utils.php:250
+#: classes/api-utils.php:252
 msgid "The number is greater than the available number of seats"
 msgstr "Il numero è maggiore del numero di posti disponibili"
 
-#: classes/api-utils.php:257
+#: classes/api-utils.php:259
 msgid "No more seats available"
 msgstr "Non ci sono più posti disponibili"
 
@@ -857,3 +857,12 @@ msgstr "Elimina modello"
 #: js/build/components/templates.js:2
 msgid "Do you really want to delete the template %s?"
 msgstr "Vuoi veramente rimuovere il modello %s?"
+
+#. Plugin URI of the plugin
+#: wp-open-events.php
+msgid "https://zonia3000.github.io/wp-open-events/"
+msgstr "https://zonia3000.github.io/wp-open-events/"
+
+#: classes/mail-sender.php:253
+msgid "Accepted"
+msgstr "Accettata"

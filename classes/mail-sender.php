@@ -222,9 +222,11 @@ class WPOE_Mail_Sender
     $content = '<ul>';
     foreach ($values as $field_id => $value) {
       $label = null;
+      $type = null;
       foreach ($event->formFields as $field) {
         if ($field->id === $field_id) {
           $label = $field->label;
+          $type = $field->fieldType;
           break;
         }
       }
@@ -232,10 +234,25 @@ class WPOE_Mail_Sender
         error_log('Label not found for field id ' . $field_id);
         continue;
       }
-      $content .= "<li><strong>$label</strong>: " . sanitize_text_field($value) . "</li>";
+      $content .= "<li><strong>$label</strong>: " . WPOE_Mail_Sender::get_registration_value($type, $value) . "</li>";
     }
     $content .= '</ul>';
     return $content;
+  }
+
+  private static function get_registration_value($type, $value)
+  {
+    if ($type === 'checkbox') {
+      if ((int) $value === 1) {
+        return __('Yes', 'wp-open-events');
+      } else {
+        return __('No', 'wp-open-events');
+      }
+    }
+    if ($type === 'privacy') {
+      return __('Accepted', 'wp-open-events');
+    }
+    return sanitize_text_field($value);
   }
 
   private static function get_registration_link_content(WPOE_Event $event, string $registration_token): string

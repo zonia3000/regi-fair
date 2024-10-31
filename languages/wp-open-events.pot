@@ -1,15 +1,15 @@
 # Copyright (C) 2024 Sonia Zorba
-# This file is distributed under the same license as the WP Open Events plugin.
+# This file is distributed under the GPLv3 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: WP Open Events 0.0.1\n"
+"Project-Id-Version: WP Open Events 0.1.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/wp-open-events\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2024-10-30T17:52:31+00:00\n"
+"POT-Creation-Date: 2024-10-31T16:22:48+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.10.0\n"
 "X-Domain: wp-open-events\n"
@@ -17,6 +17,11 @@ msgstr ""
 #. Plugin Name of the plugin
 #: wp-open-events.php
 msgid "WP Open Events"
+msgstr ""
+
+#. Plugin URI of the plugin
+#: wp-open-events.php
+msgid "https://zonia3000.github.io/wp-open-events/"
 msgstr ""
 
 #. Description of the plugin
@@ -123,32 +128,32 @@ msgstr ""
 msgid "Only dropdown fields can have a multiple field"
 msgstr ""
 
-#: classes/api-utils.php:201
+#: classes/api-utils.php:203
 msgid "The payload must be an array"
 msgstr ""
 
-#: classes/api-utils.php:204
+#: classes/api-utils.php:206
 msgid "Invalid number of fields"
 msgstr ""
 
 #. translators: %d is replaced with the id of the field
-#: classes/api-utils.php:212
+#: classes/api-utils.php:214
 msgid "Missing field %d"
 msgstr ""
 
-#: classes/api-utils.php:229
+#: classes/api-utils.php:231
 msgid "Some fields are not valid"
 msgstr ""
 
-#: classes/api-utils.php:246
+#: classes/api-utils.php:248
 msgid "Unable to register the specified number of people"
 msgstr ""
 
-#: classes/api-utils.php:250
+#: classes/api-utils.php:252
 msgid "The number is greater than the available number of seats"
 msgstr ""
 
-#: classes/api-utils.php:257
+#: classes/api-utils.php:259
 msgid "No more seats available"
 msgstr ""
 
@@ -165,12 +170,14 @@ msgid "It is not possible to remove referenced \"number of people\" field"
 msgstr ""
 
 #: classes/dao/dao-registrations.php:288
+#: classes/mail-sender.php:247
 #: js/build/components/events.js:2
 #: js/build/components/templates.js:2
 msgid "Yes"
 msgstr ""
 
 #: classes/dao/dao-registrations.php:288
+#: classes/mail-sender.php:249
 #: js/build/components/events.js:2
 #: js/build/components/templates.js:2
 msgid "No"
@@ -226,6 +233,10 @@ msgstr ""
 #. translators: %s is replaced with the name of the event
 #: classes/mail-sender.php:209
 msgid "Registrations picked from the waiting list of event \"%s\""
+msgstr ""
+
+#: classes/mail-sender.php:253
+msgid "Accepted"
 msgstr ""
 
 #: classes/public-api.php:150
