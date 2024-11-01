@@ -29,6 +29,8 @@ WP Open Events is available in the following languages:
 
 ## User guide
 
+**Important**: before starting, go to the WP Open Events Settings page and ensure that the e-mail address used to send confirmation messages to users is a valid e-mail address, otherwise confirmation e-mail may not be sent.
+
 You can create an event from scratch or based on an event template. Creating a template is useful if you plan to organize several similar events and you need to use the same form and settings for each events.
 
 The event template includes a form editor that enables you to define the fields of your registration forms. This same form will be available when creating a new event. When you create an event based on a template, you have the flexibility to overwrite any settings defined in the template.

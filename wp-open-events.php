@@ -7,7 +7,7 @@
  * Version: 0.1.0
  * License: GPLv3 or later
  * License URI: https://www.gnu.org/licenses/gpl-3.0.html
- * Description: Open source plugin to manage event registration forms
+ * Description: Free and open source plugin to manage event registrations. Provides form builder, waiting lists, group registrations and email notifications. Works with Gutenberg blocks.
  * Text Domain: wp-open-events
  * Domain Path: /languages
  */
