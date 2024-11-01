@@ -4,8 +4,9 @@ if (!defined('ABSPATH')) {
   exit;
 }
 
-require_once (WPOE_PLUGIN_DIR . 'classes/db.php');
+require_once(WPOE_PLUGIN_DIR . 'classes/db.php');
 
+// phpcs:disable WordPress.DB.DirectDatabaseQuery
 class WPOE_DAO_Templates extends WPOE_Base_DAO
 {
   public function __construct()
@@ -17,10 +18,10 @@ class WPOE_DAO_Templates extends WPOE_Base_DAO
   {
     global $wpdb;
 
-    $query = $wpdb->prepare("SELECT t.id, t.name 
-                FROM " . WPOE_DB::get_table_name('event_template') . " t ORDER BY t.id");
-
-    $results = $wpdb->get_results($query, ARRAY_A);
+    $results = $wpdb->get_results(
+      "SELECT t.id, t.name FROM {$wpdb->prefix}wpoe_event_template t ORDER BY t.id",
+      ARRAY_A
+    );
     $this->check_results('retrieving the list of event templates');
 
     $events = [];
@@ -37,14 +38,18 @@ class WPOE_DAO_Templates extends WPOE_Base_DAO
   {
     global $wpdb;
 
-    $query = $wpdb->prepare("SELECT t.id, t.name, t.autoremove_submissions, t.autoremove_submissions_period,
-                t.editable_registrations, t.admin_email, t.extra_email_content,
-                f.id AS field_id, f.label, f.type, f.description, f.required, f.extra, f.position
-                FROM " . WPOE_DB::get_table_name('event_template') . " t
-                LEFT JOIN " . WPOE_DB::get_table_name('event_template_form_field') . " f ON f.template_id = t.id
-                WHERE t.id = %d ORDER BY f.position", $event_template_id);
-
-    $results = $wpdb->get_results($query, ARRAY_A);
+    $results = $wpdb->get_results(
+      $wpdb->prepare(
+        "SELECT t.id, t.name, t.autoremove_submissions, t.autoremove_submissions_period,
+         t.editable_registrations, t.admin_email, t.extra_email_content,
+         f.id AS field_id, f.label, f.type, f.description, f.required, f.extra, f.position
+         FROM {$wpdb->prefix}wpoe_event_template t
+         LEFT JOIN {$wpdb->prefix}wpoe_event_template_form_field f ON f.template_id = t.id
+         WHERE t.id = %d ORDER BY f.position",
+        $event_template_id
+      ),
+      ARRAY_A
+    );
     $this->check_results('retrieving the event template');
 
     if (count($results) === 0) {
@@ -120,7 +125,7 @@ class WPOE_DAO_Templates extends WPOE_Base_DAO
             'type' => $form_field->fieldType,
             'description' => $form_field->description,
             'required' => $form_field->required,
-            'extra' => $form_field->extra === null ? null : json_encode($form_field->extra),
+            'extra' => $form_field->extra === null ? null : wp_json_encode($form_field->extra),
             'position' => $form_field->position
           ],
           ['%d', '%s', '%s', '%s', '%d', '%s', '%d']
@@ -174,14 +179,15 @@ class WPOE_DAO_Templates extends WPOE_Base_DAO
       if (count($current_field_ids) > 0) {
         // Delete form fields whose ids are not present anymore
         $placeholders = array_fill(0, count($current_field_ids), '%d');
-        $query = $wpdb->prepare(
-          'DELETE FROM '
-          . WPOE_DB::get_table_name('event_template_form_field')
-          . ' WHERE template_id = %d AND id NOT IN (' . join(',', $placeholders) . ')',
-          $event_template->id,
-          ...$current_field_ids,
+        $result = $wpdb->query(
+          // phpcs:ignore WordPress.DB
+          $wpdb->prepare(
+            // phpcs:ignore WordPress.DB
+            "DELETE FROM {$wpdb->prefix}wpoe_event_template_form_field WHERE template_id = %d AND id NOT IN (" . join(',', $placeholders) . ")",
+            $event_template->id,
+            ...$current_field_ids,
+          )
         );
-        $result = $wpdb->query($query);
       } else {
         // Delete all old form fields
         $result = $wpdb->delete(
@@ -203,7 +209,7 @@ class WPOE_DAO_Templates extends WPOE_Base_DAO
               'type' => $form_field->fieldType,
               'description' => $form_field->description,
               'required' => $form_field->required,
-              'extra' => $form_field->extra === null ? null : json_encode($form_field->extra),
+              'extra' => $form_field->extra === null ? null : wp_json_encode($form_field->extra),
               'position' => $form_field->position
             ],
             ['%d', '%s', '%s', '%s', '%d', '%s', '%d'],
@@ -218,7 +224,7 @@ class WPOE_DAO_Templates extends WPOE_Base_DAO
               'type' => $form_field->fieldType,
               'description' => $form_field->description,
               'required' => $form_field->required,
-              'extra' => $form_field->extra === null ? null : json_encode($form_field->extra),
+              'extra' => $form_field->extra === null ? null : wp_json_encode($form_field->extra),
               'position' => $form_field->position
             ],
             ['id' => $form_field->id],

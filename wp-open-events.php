@@ -78,7 +78,10 @@ function wpoe_cleanup_cron_exec()
     $dao = new WPOE_DAO_Events();
     $dao->delete_past_events();
   } catch (Exception $ex) {
-    error_log($ex->getMessage());
+    if (defined('WP_DEBUG') && WP_DEBUG === true) {
+      // phpcs:ignore WordPress.PHP.DevelopmentFunctions
+      error_log($ex->getMessage());
+    }
   }
 }
 

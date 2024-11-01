@@ -5,7 +5,7 @@ class WPOE_Admin_Panel_Pages
   public static function create_menu()
   {
     add_menu_page(
-      __('Events'),
+      __('Events', 'wp-open-events'),
       __('Events', 'wp-open-events'),
       'manage_options',
       'wpoe-events',

@@ -16,6 +16,7 @@ class WPOE_Dropdown_Validator extends WPOE_Base_Validator
     if (parent::validate($value)) {
       return true;
     }
+    // phpcs:disable WordPress.Security.EscapeOutput.ExceptionNotEscaped
     $multiple = $this->field->extra !== null && property_exists($this->field->extra, 'multiple') && (bool) $this->field->extra->multiple;
     if ($multiple) {
       if (!is_array($value)) {
@@ -23,7 +24,7 @@ class WPOE_Dropdown_Validator extends WPOE_Base_Validator
       }
       foreach ($value as $v) {
         if (!is_string($v)) {
-          throw new WPOE_Validation_Exception(__('Each element of the array must be a string', 'wp-open-events'));
+          throw new WPOE_Validation_Exception(message: __('Each element of the array must be a string', 'wp-open-events'));
         }
       }
     }
@@ -37,9 +38,10 @@ class WPOE_Dropdown_Validator extends WPOE_Base_Validator
     $values = $multiple ? $value : [$value];
     foreach ($values as $value) {
       if (!in_array($value, $allowed_values)) {
-        throw new WPOE_Validation_Exception(__('Field value not allowed', 'wp-open-events'));
+        throw new WPOE_Validation_Exception(message: __('Field value not allowed', 'wp-open-events'));
       }
     }
+    // phpcs:enable
     return true;
   }
 }

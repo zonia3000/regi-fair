@@ -41,7 +41,7 @@ class WPOE_Validator
         $validator = new WPOE_Privacy_Validator($form_field);
         break;
       default:
-        throw new WPOE_Validation_Exception('Unsupported field type ' . $form_field->fieldType);
+        throw new WPOE_Validation_Exception('Unsupported field type ' . esc_html($form_field->fieldType));
     }
     $validator->validate($input);
   }

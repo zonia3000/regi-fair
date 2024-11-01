@@ -8,6 +8,7 @@ require_once(WPOE_PLUGIN_DIR . 'classes/db.php');
 require_once(WPOE_PLUGIN_DIR . 'classes/dao/base-dao.php');
 require_once(WPOE_PLUGIN_DIR . 'classes/dao/dao-registrations.php');
 
+// phpcs:disable WordPress.DB.DirectDatabaseQuery
 class WPOE_DAO_Events extends WPOE_Base_DAO
 {
   /**
@@ -25,23 +26,11 @@ class WPOE_DAO_Events extends WPOE_Base_DAO
   {
     global $wpdb;
 
-    $sql = "SELECT e.id, e.name, e.date, COUNT(r.id) AS registrations, p.posts
-      FROM " . WPOE_DB::get_table_name('event') . " e
-      LEFT JOIN " . WPOE_DB::get_table_name('event_registration') . " r ON e.id = r.event_id
-      LEFT JOIN (
-        SELECT event_id, GROUP_CONCAT(post_id ORDER BY updated_at DESC) AS posts
-        FROM " . WPOE_DB::get_table_name('event_post') . " GROUP BY event_id  
-      ) AS p ON p.event_id = e.id ";
-
     if ($ignore_past_events) {
-      $sql .= "WHERE DATE(e.date) >= DATE(CURRENT_TIMESTAMP) ";
+      $results = $this->list_all_events();
+    } else {
+      $results = $this->list_only_future_events();
     }
-
-    $sql .= "GROUP BY e.id ORDER BY e.date DESC";
-
-    $query = $wpdb->prepare($sql);
-
-    $results = $wpdb->get_results($query, ARRAY_A);
     $this->check_results('retrieving events list');
 
     $events = [];
@@ -73,20 +62,57 @@ class WPOE_DAO_Events extends WPOE_Base_DAO
     return $events;
   }
 
+  private function list_all_events()
+  {
+    global $wpdb;
+    return $wpdb->get_results(
+      "SELECT e.id, e.name, e.date, COUNT(r.id) AS registrations, p.posts
+       FROM {$wpdb->prefix}wpoe_event e
+       LEFT JOIN {$wpdb->prefix}wpoe_event_registration r ON e.id = r.event_id
+       LEFT JOIN (
+         SELECT event_id, GROUP_CONCAT(post_id ORDER BY updated_at DESC) AS posts
+         FROM {$wpdb->prefix}wpoe_event_post GROUP BY event_id
+       ) AS p ON p.event_id = e.id
+       GROUP BY e.id ORDER BY e.date DESC",
+      ARRAY_A
+    );
+  }
+
+  private function list_only_future_events()
+  {
+    global $wpdb;
+    return $wpdb->get_results(
+      "SELECT e.id, e.name, e.date, COUNT(r.id) AS registrations, p.posts
+       FROM {$wpdb->prefix}wpoe_event e
+       LEFT JOIN {$wpdb->prefix}wpoe_event_registration r ON e.id = r.event_id
+       LEFT JOIN (
+         SELECT event_id, GROUP_CONCAT(post_id ORDER BY updated_at DESC) AS posts
+         FROM {$wpdb->prefix}wpoe_event_post GROUP BY event_id
+       ) AS p ON p.event_id = e.id
+       WHERE DATE(e.date) >= DATE(CURRENT_TIMESTAMP)
+       GROUP BY e.id ORDER BY e.date DESC",
+      ARRAY_A
+    );
+  }
+
   public function get_event(int $event_id): ?WPOE_Event
   {
     global $wpdb;
 
-    $query = $wpdb->prepare("SELECT e.id, e.name, e.date, e.autoremove_submissions, e.autoremove_submissions_period,
-      e.editable_registrations, e.admin_email, e.extra_email_content, e.max_participants, e.waiting_list,
-      DATE(e.date) < DATE(CURRENT_TIMESTAMP) AS ended,
-      f.id AS field_id, f.label, f.type, f.description, f.required, f.extra, f.position
-      FROM " . WPOE_DB::get_table_name('event') . " e
-      LEFT JOIN " . WPOE_DB::get_table_name('event_form_field') . " f
-      ON f.event_id = e.id AND (f.deleted IS NULL OR NOT f.deleted)
-      WHERE e.id = %d  ORDER BY f.position", $event_id);
-
-    $event_results = $wpdb->get_results($query, ARRAY_A);
+    $event_results = $wpdb->get_results(
+      $wpdb->prepare(
+        "SELECT e.id, e.name, e.date, e.autoremove_submissions, e.autoremove_submissions_period,
+         e.editable_registrations, e.admin_email, e.extra_email_content, e.max_participants, e.waiting_list,
+         DATE(e.date) < DATE(CURRENT_TIMESTAMP) AS ended,
+         f.id AS field_id, f.label, f.type, f.description, f.required, f.extra, f.position
+         FROM {$wpdb->prefix}wpoe_event e
+         LEFT JOIN {$wpdb->prefix}wpoe_event_form_field f
+         ON f.event_id = e.id AND (f.deleted IS NULL OR NOT f.deleted)
+         WHERE e.id = %d  ORDER BY f.position",
+        $event_id
+      ),
+      ARRAY_A
+    );
     $this->check_results('retrieving event');
 
     if (count($event_results) === 0) {
@@ -122,14 +148,18 @@ class WPOE_DAO_Events extends WPOE_Base_DAO
   {
     global $wpdb;
 
-    $query = $wpdb->prepare("SELECT e.id, e.name, e.editable_registrations, e.date, e.max_participants,
-      e.waiting_list, DATE(e.date) < DATE(CURRENT_TIMESTAMP) AS ended,
-      f.id AS field_id, f.label, f.type, f.description, f.required, f.extra, f.position
-      FROM " . WPOE_DB::get_table_name('event') . " e
-      LEFT JOIN " . WPOE_DB::get_table_name('event_form_field') . " f ON f.event_id = e.id
-      WHERE e.id = %d AND (f.id IS NULL OR NOT f.deleted) ORDER BY f.position", $event_id);
-
-    $results = $wpdb->get_results($query, ARRAY_A);
+    $results = $wpdb->get_results(
+      $wpdb->prepare(
+        "SELECT e.id, e.name, e.editable_registrations, e.date, e.max_participants,
+         e.waiting_list, DATE(e.date) < DATE(CURRENT_TIMESTAMP) AS ended,
+         f.id AS field_id, f.label, f.type, f.description, f.required, f.extra, f.position
+         FROM {$wpdb->prefix}wpoe_event e
+         LEFT JOIN {$wpdb->prefix}wpoe_event_form_field f ON f.event_id = e.id
+         WHERE e.id = %d AND (f.id IS NULL OR NOT f.deleted) ORDER BY f.position",
+        $event_id
+      ),
+      ARRAY_A
+    );
     $this->check_results('retrieving public event data');
 
     if (count($results) === 0) {
@@ -157,10 +187,14 @@ class WPOE_DAO_Events extends WPOE_Base_DAO
   private function get_registrations_count(int $event_id): int
   {
     global $wpdb;
-    $query = $wpdb->prepare("SELECT COALESCE(SUM(number_of_people), 0) AS number_of_people FROM "
-      . WPOE_DB::get_table_name('event_registration')
-      . " WHERE event_id = %d AND NOT waiting_list", $event_id);
-    $var = $wpdb->get_var($query);
+    $var = $wpdb->get_var(
+      $wpdb->prepare(
+        "SELECT COALESCE(SUM(number_of_people), 0) AS number_of_people
+         FROM {$wpdb->prefix}wpoe_event_registration
+         WHERE event_id = %d AND NOT waiting_list",
+        $event_id
+      )
+    );
     $this->check_var($var, 'retrieving event registrations count');
     return (int) $var;
   }
@@ -227,7 +261,7 @@ class WPOE_DAO_Events extends WPOE_Base_DAO
             'type' => $form_field->fieldType,
             'description' => $form_field->description,
             'required' => $form_field->required,
-            'extra' => $form_field->extra === null ? null : json_encode($form_field->extra),
+            'extra' => $form_field->extra === null ? null : wp_json_encode($form_field->extra),
             'position' => $i
           ],
           ['%d', '%s', '%s', '%s', '%d', '%s', '%d']
@@ -259,7 +293,7 @@ class WPOE_DAO_Events extends WPOE_Base_DAO
           throw new WPOE_Validation_Exception(__("The number of available seats can't be lower than the current confirmed registered people", 'wp-open-events'));
         }
         if (!$event->waitingList && $this->registrations_dao->get_waiting_list_count($event->id) > 0) {
-          throw new WPOE_Validation_Exception(__("It is not possible to remove the waiting list because there are some people in it", 'wp-open-events'));
+          throw new WPOE_Validation_Exception(message: __("It is not possible to remove the waiting list because there are some people in it", 'wp-open-events'));
         }
       }
       // Update the event
@@ -293,19 +327,26 @@ class WPOE_DAO_Events extends WPOE_Base_DAO
       $results = [];
       if (count($current_field_ids) > 0) {
         $placeholders = array_fill(0, count($current_field_ids), '%d');
-        $query = $wpdb->prepare(
-          'SELECT id, extra FROM ' . WPOE_DB::get_table_name('event_form_field')
-          . ' WHERE event_id = %d AND id NOT IN (' . join(',', $placeholders) . ')',
-          $event->id,
-          ...$current_field_ids
+        $results = $wpdb->get_results(
+          // phpcs:ignore WordPress.DB
+          $wpdb->prepare(
+            "SELECT id, extra FROM {$wpdb->prefix}wpoe_event_form_field
+            WHERE event_id = %d AND id NOT IN ("
+            // phpcs:ignore WordPress.DB
+            . join(',', $placeholders) . ")",
+            $event->id,
+            ...$current_field_ids
+          ),
+          ARRAY_A
         );
-        $results = $wpdb->get_results($query, ARRAY_A);
       } else {
-        $query = $wpdb->prepare(
-          'SELECT id, extra FROM ' . WPOE_DB::get_table_name('event_form_field') . ' WHERE event_id = %d',
-          $event->id
+        $results = $wpdb->get_results(
+          $wpdb->prepare(
+            "SELECT id, extra FROM {$wpdb->prefix}wpoe_event_form_field WHERE event_id = %d",
+            $event->id
+          ),
+          ARRAY_A
         );
-        $results = $wpdb->get_results($query, ARRAY_A);
       }
       $this->check_results('retrieving form fields to delete');
 
@@ -327,14 +368,18 @@ class WPOE_DAO_Events extends WPOE_Base_DAO
         // Select the fields to preserve because they are associated with some registration values
         // These fields will be marked as deleted but they will not be really removed from the database
         $placeholders = array_fill(0, count($field_ids_to_delete), '%d');
-        $query = $wpdb->prepare(
-          'SELECT DISTINCT rv.field_id FROM '
-          . WPOE_DB::get_table_name('event_registration')
-          . ' r JOIN ' . WPOE_DB::get_table_name('event_registration_value')
-          . ' rv ON r.id = rv.registration_id AND field_id IN (' . join(',', $placeholders) . ')',
-          ...$field_ids_to_delete
+        $results = $wpdb->get_results(
+          $wpdb->prepare(
+            "SELECT DISTINCT rv.field_id
+            FROM {$wpdb->prefix}wpoe_event_registration r
+            JOIN {$wpdb->prefix}wpoe_event_registration_value rv
+            ON r.id = rv.registration_id AND field_id IN ("
+            // phpcs:ignore WordPress.DB
+            . join(',', $placeholders) . ")",
+            ...$field_ids_to_delete
+          ),
+          ARRAY_A
         );
-        $results = $wpdb->get_results($query, ARRAY_A);
         $this->check_results('retrieving form fields to preserve');
 
         if (count($results) > 0) {
@@ -350,12 +395,15 @@ class WPOE_DAO_Events extends WPOE_Base_DAO
           }
 
           $placeholders = array_fill(0, count($referenced_ids), '%d');
-          $query = $wpdb->prepare(
-            'UPDATE ' . WPOE_DB::get_table_name('event_form_field')
-            . ' SET deleted = 1 WHERE id IN (' . join(',', $placeholders) . ')',
-            ...$referenced_ids
+          $result = $wpdb->query(
+            $wpdb->prepare(
+              "UPDATE {$wpdb->prefix}wpoe_event_form_field
+              SET deleted = 1 WHERE id IN ("
+              // phpcs:ignore WordPress.DB
+              . join(',', $placeholders) . ")",
+              ...$referenced_ids
+            )
           );
-          $result = $wpdb->query($query);
           $this->check_result($result, 'marking fields as deleted');
 
           // Recompute the list of ids that can be deleted
@@ -392,7 +440,7 @@ class WPOE_DAO_Events extends WPOE_Base_DAO
               'type' => $form_field->fieldType,
               'description' => $form_field->description,
               'required' => $form_field->required,
-              'extra' => $form_field->extra === null ? null : json_encode($form_field->extra),
+              'extra' => $form_field->extra === null ? null : wp_json_encode($form_field->extra),
               'position' => $form_field->position
             ],
             ['%d', '%s', '%s', '%s', '%d', '%s', '%d'],
@@ -408,7 +456,7 @@ class WPOE_DAO_Events extends WPOE_Base_DAO
               'type' => $form_field->fieldType,
               'description' => $form_field->description,
               'required' => $form_field->required,
-              'extra' => $form_field->extra === null ? null : json_encode($form_field->extra),
+              'extra' => $form_field->extra === null ? null : wp_json_encode($form_field->extra),
               'position' => $form_field->position
             ],
             ['id' => $form_field->id],
@@ -442,8 +490,14 @@ class WPOE_DAO_Events extends WPOE_Base_DAO
       );
       $this->check_result($result, 'removing associations between post and events');
 
-      $result = $wpdb->query($wpdb->prepare('DELETE rv FROM ' . WPOE_DB::get_table_name('event_registration_value') . ' rv JOIN '
-        . WPOE_DB::get_table_name('event_registration') . ' r ON rv.registration_id = r.id WHERE r.event_id = %d', $event_id));
+      $result = $wpdb->query(
+        $wpdb->prepare(
+          "DELETE rv FROM {$wpdb->prefix}wpoe_event_registration_value rv
+         JOIN {$wpdb->prefix}wpoe_event_registration r ON rv.registration_id = r.id
+         WHERE r.event_id = %d",
+          $event_id
+        )
+      );
       $this->check_result($result, 'deleting registrations values');
 
       $result = $wpdb->delete(WPOE_DB::get_table_name('event_registration'), ['event_id' => $event_id], ['%d']);
@@ -470,11 +524,13 @@ class WPOE_DAO_Events extends WPOE_Base_DAO
   public function get_referencing_posts(int $event_id): array
   {
     global $wpdb;
-    $query = $wpdb->prepare(
-      'SELECT post_id FROM ' . WPOE_DB::get_table_name('event_post') . ' WHERE event_id = %d ORDER BY updated_at DESC',
-      $event_id
+    $results = $wpdb->get_results(
+      $wpdb->prepare(
+        "SELECT post_id FROM {$wpdb->prefix}wpoe_event_post WHERE event_id = %d ORDER BY updated_at DESC",
+        $event_id
+      ),
+      ARRAY_A
     );
-    $results = $wpdb->get_results($query, ARRAY_A);
     $this->check_results('loading posts referencing the event');
     $posts = [];
     foreach ($results as $result) {
@@ -541,10 +597,12 @@ class WPOE_DAO_Events extends WPOE_Base_DAO
   {
     global $wpdb;
 
-    $query = 'SELECT id FROM ' . WPOE_DB::get_table_name('event') . ' WHERE autoremove_submissions AND'
-      . ' DATE(date) < DATE_SUB(DATE(CURRENT_TIMESTAMP), INTERVAL autoremove_submissions_period DAY)';
-
-    $results = $wpdb->get_results($query, ARRAY_A);
+    $results = $wpdb->get_results(
+      "SELECT id FROM {$wpdb->prefix}wpoe_event
+       WHERE autoremove_submissions AND
+       DATE(date) < DATE_SUB(DATE(CURRENT_TIMESTAMP), INTERVAL autoremove_submissions_period DAY)",
+      ARRAY_A
+    );
     $this->check_results('retrieving events to be deleted');
 
     foreach ($results as $result) {

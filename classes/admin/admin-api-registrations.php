@@ -141,11 +141,11 @@ class WPOE_Registrations_Admin_Controller extends WP_REST_Controller
       header('Cache-Control: must-revalidate');
 
       $header = $registrations['head'];
-      echo '"#","' . __('date', 'wp-open-events') . '"';
+      echo '"#","' . esc_html(__('date', 'wp-open-events')) . '"';
       foreach ($header as $index => $cell) {
         if ($cell['deleted'] === false) {
           echo ',';
-          echo '"' . str_replace('"', '""', $cell['label']) . '"';
+          echo '"' . esc_html(str_replace('"', '""', $cell['label'])) . '"';
         }
       }
       echo "\n";
@@ -157,7 +157,7 @@ class WPOE_Registrations_Admin_Controller extends WP_REST_Controller
             if ($index > 0) {
               echo ',';
             }
-            echo '"' . str_replace('"', '""', $cell) . '"';
+            echo '"' . esc_html(str_replace('"', '""', $cell)) . '"';
           }
         }
         echo "\n";

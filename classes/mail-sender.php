@@ -25,10 +25,10 @@ class WPOE_Mail_Sender
   {
     /* translators: %s is replaced with the name of the event */
     $subject = sprintf(__('Registration to the event "%s" is confirmed', 'wp-open-events'), sanitize_text_field($event->name));
-    $body = '<p>' . __('Dear user,') . '<br/>'
+    $body = '<p>' . __('Dear user,', 'wp-open-events') . '<br/>'
       /* translators: %s is replaced with the name of the event */
-      . sprintf(__('your registration to the event "%s" is confirmed.'), sanitize_text_field($event->name)) . '</p>'
-      . '<p>' . __('You inserted the following data:') . '</p>';
+      . sprintf(__('your registration to the event "%s" is confirmed.', 'wp-open-events'), sanitize_text_field($event->name)) . '</p>'
+      . '<p>' . __('You inserted the following data:', 'wp-open-events') . '</p>';
 
     $body .= WPOE_Mail_Sender::get_registration_fields_content($event, $values);
     $body .= WPOE_Mail_Sender::get_registration_link_content($event, $registration_token);
@@ -45,11 +45,11 @@ class WPOE_Mail_Sender
   {
     /* translators: %s is replaced with the name of the event */
     $subject = sprintf(__('Registration to the waiting list of the event "%s" is confirmed', 'wp-open-events'), sanitize_text_field($event->name));
-    $body = '<p>' . __('Dear user,') . '<br/>'
+    $body = '<p>' . __('Dear user,', 'wp-open-events') . '<br/>'
       /* translators: %s is replaced with the name of the event */
-      . sprintf(__('your registration to the waiting list of the event "%s" is confirmed.'), sanitize_text_field($event->name)) . '</p>'
-      . '<p>' . __('If some seats will be available you will be automatically registered and notified by e-mail.') . '</p>'
-      . '<p>' . __('You inserted the following data:') . '</p>';
+      . sprintf(__('your registration to the waiting list of the event "%s" is confirmed.', 'wp-open-events'), sanitize_text_field($event->name)) . '</p>'
+      . '<p>' . __('If some seats will be available you will be automatically registered and notified by e-mail.', 'wp-open-events') . '</p>'
+      . '<p>' . __('You inserted the following data:', 'wp-open-events') . '</p>';
 
     $body .= WPOE_Mail_Sender::get_registration_fields_content($event, $values);
     $body .= WPOE_Mail_Sender::get_registration_link_content($event, $registration_token);
@@ -66,10 +66,10 @@ class WPOE_Mail_Sender
   {
     /* translators: %s is replaced with the name of the event */
     $subject = sprintf(__('New seats available for the event "%s"', 'wp-open-events'), sanitize_text_field($event->name));
-    $body = '<p>' . __('Dear user,') . '<br/>'
+    $body = '<p>' . __('Dear user,', 'wp-open-events') . '<br/>'
       /* translators: %s is replaced with the name of the event */
-      . sprintf(__('new seats have become available for the event "%s", and you have been automatically selected from the waiting list. Your registration is confirmed.'), sanitize_text_field($event->name)) . '</p>'
-      . '<p>' . __('You inserted the following data:') . '</p>';
+      . sprintf(__('new seats have become available for the event "%s", and you have been automatically selected from the waiting list. Your registration is confirmed.', 'wp-open-events'), sanitize_text_field($event->name)) . '</p>'
+      . '<p>' . __('You inserted the following data:', 'wp-open-events') . '</p>';
 
     $body .= WPOE_Mail_Sender::get_registration_fields_content($event, $values);
     $body .= WPOE_Mail_Sender::get_extra_content($event);
@@ -82,10 +82,10 @@ class WPOE_Mail_Sender
   {
     /* translators: %s is replaced with the name of the event */
     $subject = sprintf(__('New registration for the event "%s"', 'wp-open-events'), sanitize_text_field($event->name));
-    $body = '<p>' . __('Dear admin,') . '<br/>'
+    $body = '<p>' . __('Dear admin,', 'wp-open-events') . '<br/>'
       /* translators: %s is replaced with the name of the event */
-      . sprintf(__('a new registration to the event "%s" has been added.'), sanitize_text_field($event->name)) . '</p>'
-      . '<p>' . __('The user inserted the following data:') . '</p>';
+      . sprintf(__('a new registration to the event "%s" has been added.', 'wp-open-events'), sanitize_text_field($event->name)) . '</p>'
+      . '<p>' . __('The user inserted the following data:', 'wp-open-events') . '</p>';
 
     $body .= WPOE_Mail_Sender::get_registration_fields_content($event, $values);
 
@@ -97,10 +97,10 @@ class WPOE_Mail_Sender
   {
     /* translators: %s is replaced with the name of the event */
     $subject = sprintf(__('New registration for the waiting list of event "%s"', 'wp-open-events'), sanitize_text_field($event->name));
-    $body = '<p>' . __('Dear admin,') . '<br/>'
+    $body = '<p>' . __('Dear admin,', 'wp-open-events') . '<br/>'
       /* translators: %s is replaced with the name of the event */
-      . sprintf(__('a new registration to the waiting list of event "%s" has been added.'), sanitize_text_field($event->name)) . '</p>'
-      . '<p>' . __('The user inserted the following data:') . '</p>';
+      . sprintf(__('a new registration to the waiting list of event "%s" has been added.', 'wp-open-events'), sanitize_text_field($event->name)) . '</p>'
+      . '<p>' . __('The user inserted the following data:', 'wp-open-events') . '</p>';
 
     $body .= WPOE_Mail_Sender::get_registration_fields_content($event, $values);
 
@@ -115,10 +115,10 @@ class WPOE_Mail_Sender
   {
     /* translators: %s is replaced with the name of the event */
     $subject = sprintf(__('Registration to the event "%s" has been updated', 'wp-open-events'), sanitize_text_field($event->name));
-    $body = '<p>' . __('Dear user,') . '<br/>'
+    $body = '<p>' . __('Dear user,', 'wp-open-events') . '<br/>'
       /* translators: %s is replaced with the name of the event */
-      . sprintf(__('your registration to the event "%s" has been updated.'), sanitize_text_field($event->name)) . '</p>'
-      . '<p>' . __('You inserted the following data:') . '</p>';
+      . sprintf(__('your registration to the event "%s" has been updated.', 'wp-open-events'), sanitize_text_field($event->name)) . '</p>'
+      . '<p>' . __('You inserted the following data:', 'wp-open-events') . '</p>';
 
     $body .= WPOE_Mail_Sender::get_registration_fields_content($event, $values);
     $body .= WPOE_Mail_Sender::get_registration_link_content($event, $registration_token);
@@ -132,10 +132,10 @@ class WPOE_Mail_Sender
   {
     /* translators: %s is replaced with the name of the event */
     $subject = sprintf(__('Registration updated for the event "%s"', 'wp-open-events'), sanitize_text_field($event->name));
-    $body = '<p>' . __('Dear admin,') . '<br/>'
+    $body = '<p>' . __('Dear admin,', 'wp-open-events') . '<br/>'
       /* translators: %s is replaced with the name of the event */
-      . sprintf(__('a registration to the event "%s" has been updated.'), sanitize_text_field($event->name)) . '</p>'
-      . '<p>' . __('The user inserted the following data:') . '</p>';
+      . sprintf(__('a registration to the event "%s" has been updated.', 'wp-open-events'), sanitize_text_field($event->name)) . '</p>'
+      . '<p>' . __('The user inserted the following data:', 'wp-open-events') . '</p>';
 
     $body .= WPOE_Mail_Sender::get_registration_fields_content($event, $values);
 
@@ -147,10 +147,10 @@ class WPOE_Mail_Sender
   {
     /* translators: %s is replaced with the name of the event */
     $subject = sprintf(__('Registration to the event "%s" has been updated', 'wp-open-events'), sanitize_text_field($event->name));
-    $body = '<p>' . __('Dear user,') . '<br/>'
+    $body = '<p>' . __('Dear user,', 'wp-open-events') . '<br/>'
       /* translators: %s is replaced with the name of the event */
-      . sprintf(__('your registration to the event "%s" has been updated by an administrator.'), sanitize_text_field($event->name)) . '</p>'
-      . '<p>' . __('The updated data is:') . '</p>';
+      . sprintf(__('your registration to the event "%s" has been updated by an administrator.', 'wp-open-events'), sanitize_text_field($event->name)) . '</p>'
+      . '<p>' . __('The updated data is:', 'wp-open-events') . '</p>';
 
     $body .= WPOE_Mail_Sender::get_registration_fields_content($event, $values);
     $body .= WPOE_Mail_Sender::get_extra_content($event);
@@ -166,9 +166,9 @@ class WPOE_Mail_Sender
   {
     /* translators: %s is replaced with the name of the event */
     $subject = sprintf(__('Registration to the event "%s" has been deleted', 'wp-open-events'), sanitize_text_field($event->name));
-    $body = '<p>' . __('Dear user,') . '<br/>'
+    $body = '<p>' . __('Dear user,', 'wp-open-events') . '<br/>'
       /* translators: %s is replaced with the name of the event */
-      . sprintf(__('your registration to the event "%s" has been deleted.'), sanitize_text_field($event->name)) . '</p>';
+      . sprintf(__('your registration to the event "%s" has been deleted.', 'wp-open-events'), sanitize_text_field($event->name)) . '</p>';
     $body .= WPOE_Mail_Sender::get_extra_content($event);
 
     $headers = WPOE_Mail_Sender::get_headers();
@@ -182,9 +182,9 @@ class WPOE_Mail_Sender
   {
     /* translators: %s is replaced with the name of the event */
     $subject = sprintf(__('Registration to the event "%s" has been deleted', 'wp-open-events'), sanitize_text_field($event->name));
-    $body = '<p>' . __('Dear user,') . '<br/>'
+    $body = '<p>' . __('Dear user,', 'wp-open-events') . '<br/>'
       /* translators: %s is replaced with the name of the event */
-      . sprintf(__('your registration to the event "%s" has been deleted by an administrator.'), sanitize_text_field($event->name)) . '</p>';
+      . sprintf(__('your registration to the event "%s" has been deleted by an administrator.', 'wp-open-events'), sanitize_text_field($event->name)) . '</p>';
     $body .= WPOE_Mail_Sender::get_extra_content($event);
 
     $headers = WPOE_Mail_Sender::get_headers();
@@ -195,9 +195,9 @@ class WPOE_Mail_Sender
   {
     /* translators: %s is replaced with the name of the event */
     $subject = sprintf(__('Registration deleted for the event "%s"', 'wp-open-events'), sanitize_text_field($event->name));
-    $body = '<p>' . __('Dear admin,') . '<br/>'
+    $body = '<p>' . __('Dear admin,', 'wp-open-events') . '<br/>'
       /* translators: %s is replaced with the name of the event */
-      . sprintf(__('a user deleted their registration to the event "%s".'), sanitize_text_field($event->name)) . '</p>';
+      . sprintf(__('a user deleted their registration to the event "%s".', 'wp-open-events'), sanitize_text_field($event->name)) . '</p>';
 
     $headers = WPOE_Mail_Sender::get_headers();
     wp_mail($event->adminEmail, $subject, $body, $headers);
@@ -213,9 +213,9 @@ class WPOE_Mail_Sender
   {
     /* translators: %s is replaced with the name of the event */
     $subject = sprintf(__('Registrations picked from the waiting list of event "%s"', 'wp-open-events'), sanitize_text_field($event->name));
-    $body = '<p>' . __('Dear admin,') . '<br/>'
+    $body = '<p>' . __('Dear admin,', 'wp-open-events') . '<br/>'
       /* translators: %s is replaced with the name of the event */
-      . sprintf(__('the following registration identifiers for the event "%s" were moved from waiting list to confirmed:'), sanitize_text_field($event->name))
+      . sprintf(__('the following registration identifiers for the event "%s" were moved from waiting list to confirmed:', 'wp-open-events'), sanitize_text_field($event->name))
       . ' ' . implode(', ', $registrations)
       . '</p>';
 
@@ -237,7 +237,10 @@ class WPOE_Mail_Sender
         }
       }
       if ($label === null) {
-        error_log('Label not found for field id ' . $field_id);
+        if (defined('WP_DEBUG') && WP_DEBUG === true) {
+          // phpcs:ignore WordPress.PHP.DevelopmentFunctions
+          error_log('Label not found for field id ' . $field_id);
+        }
         continue;
       }
       $content .= '<li><strong>' . sanitize_text_field($label) . '</strong>: '
@@ -274,7 +277,7 @@ class WPOE_Mail_Sender
   {
     $content = '';
     if ($event->editableRegistrations && count($event->posts) > 0) {
-      $content .= '<p>' . __('You can modify or delete your registration by clicking on the following link:') . '</p>'
+      $content .= '<p>' . __('You can modify or delete your registration by clicking on the following link:', 'wp-open-events') . '</p>'
         . '<p><a href="' . $event->posts[0]->permalink . '#registration=' . $registration_token . '">' .
         $event->posts[0]->title
         . '</a></p>';

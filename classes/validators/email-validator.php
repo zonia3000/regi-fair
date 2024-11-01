@@ -17,6 +17,7 @@ class WPOE_Email_Validator extends WPOE_Base_Validator
       return true;
     }
     if (!is_email($value)) {
+      // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
       throw new WPOE_Validation_Exception(__('Invalid e-mail address', 'wp-open-events'));
     }
     return true;

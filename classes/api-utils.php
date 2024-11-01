@@ -2,7 +2,10 @@
 
 function generic_server_error(Exception $exception)
 {
-  error_log($exception);
+  if (defined('WP_DEBUG') && WP_DEBUG === true) {
+    // phpcs:ignore WordPress.PHP.DevelopmentFunctions
+    error_log($exception);
+  }
   return new WP_Error('generic_server_error', __('A critical error happened', 'wp-open-events'), ['status' => 500]);
 }
 
@@ -74,6 +77,7 @@ function get_form_field_from_request($request)
       $field->extra = (object) $value['extra'];
       if (use_as_number_of_people($field)) {
         if ($max_participants_set) {
+          // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
           throw new WPOE_Validation_Exception(__('Only one field of type "number of people" is allowed', 'wp-open-events'));
         } else {
           $max_participants_set = true;
@@ -89,8 +93,9 @@ function get_form_field_from_request($request)
 
 function validate_extra(WPOE_Form_Field $field, array $extra)
 {
+  // phpcs:disable WordPress.Security.EscapeOutput.ExceptionNotEscaped
   if (array_key_exists('confirmationAddress', $extra) && $field->fieldType !== 'email') {
-    throw new WPOE_Validation_Exception(__('Only email fields can be set as confirmation address', 'wp-open-events'));
+    throw new WPOE_Validation_Exception(message: __('Only email fields can be set as confirmation address', 'wp-open-events'));
   }
   if (array_key_exists('useWpUserEmail', $extra) && $field->fieldType !== 'email') {
     throw new WPOE_Validation_Exception(__('Only email fields can have the WP user option', 'wp-open-events'));
@@ -99,7 +104,7 @@ function validate_extra(WPOE_Form_Field $field, array $extra)
     throw new WPOE_Validation_Exception(__('Only numeric fields can be used to set the number of people', 'wp-open-events'));
   }
   if (array_key_exists('min', $extra) && $field->fieldType !== 'number') {
-    throw new WPOE_Validation_Exception(__('Only numeric fields can have a minimum value', 'wp-open-events'));
+    throw new WPOE_Validation_Exception(message: __('Only numeric fields can have a minimum value', 'wp-open-events'));
   }
   if (array_key_exists('max', $extra) && $field->fieldType !== 'number') {
     throw new WPOE_Validation_Exception(__('Only numeric fields can have a maximum value', 'wp-open-events'));
@@ -107,6 +112,7 @@ function validate_extra(WPOE_Form_Field $field, array $extra)
   if (array_key_exists('multiple', $extra) && $field->fieldType !== 'dropdown') {
     throw new WPOE_Validation_Exception(__('Only dropdown fields can have a multiple field', 'wp-open-events'));
   }
+  // phpcs:enable
 }
 
 function strip_forbidden_html_tags(string $content): string

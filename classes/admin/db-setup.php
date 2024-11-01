@@ -105,7 +105,7 @@ class WPOE_DB_Setup
     $tables = ['event_form_field', 'event', 'event_template', 'event_template_form_field', 'event_registration', 'event_registration_value'];
 
     foreach ($tables as $table) {
-      $wpdb->query('DROP TABLE IF EXISTS ' . WPOE_DB::get_table_name($table));
+      $wpdb->prepare('DROP TABLE IF EXISTS %s', WPOE_DB::get_table_name($table));
     }
 
     delete_option(WPOE_DB_VERSION_KEY);

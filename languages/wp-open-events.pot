@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2024-10-31T16:22:48+00:00\n"
+"POT-Creation-Date: 2024-11-01T22:41:13+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.10.0\n"
 "X-Domain: wp-open-events\n"
@@ -26,7 +26,7 @@ msgstr ""
 
 #. Description of the plugin
 #: wp-open-events.php
-msgid "Open source plugin to manage event registration forms"
+msgid "Free and open source plugin to manage event registrations. Provides form builder, waiting lists, group registrations and email notifications. Works with Gutenberg blocks."
 msgstr ""
 
 #. Author of the plugin
@@ -84,6 +84,7 @@ msgstr ""
 msgid "Event template not found"
 msgstr ""
 
+#: classes/admin/create-admin-menu.php:8
 #: classes/admin/create-admin-menu.php:9
 msgid "Events"
 msgstr ""
@@ -96,88 +97,88 @@ msgstr ""
 msgid "Settings"
 msgstr ""
 
-#: classes/api-utils.php:6
+#: classes/api-utils.php:9
 msgid "A critical error happened"
 msgstr ""
 
-#: classes/api-utils.php:77
+#: classes/api-utils.php:81
 msgid "Only one field of type \"number of people\" is allowed"
 msgstr ""
 
-#: classes/api-utils.php:93
+#: classes/api-utils.php:98
 msgid "Only email fields can be set as confirmation address"
 msgstr ""
 
-#: classes/api-utils.php:96
+#: classes/api-utils.php:101
 msgid "Only email fields can have the WP user option"
 msgstr ""
 
-#: classes/api-utils.php:99
+#: classes/api-utils.php:104
 msgid "Only numeric fields can be used to set the number of people"
 msgstr ""
 
-#: classes/api-utils.php:102
+#: classes/api-utils.php:107
 msgid "Only numeric fields can have a minimum value"
 msgstr ""
 
-#: classes/api-utils.php:105
+#: classes/api-utils.php:110
 msgid "Only numeric fields can have a maximum value"
 msgstr ""
 
-#: classes/api-utils.php:108
+#: classes/api-utils.php:113
 msgid "Only dropdown fields can have a multiple field"
 msgstr ""
 
-#: classes/api-utils.php:203
+#: classes/api-utils.php:209
 msgid "The payload must be an array"
 msgstr ""
 
-#: classes/api-utils.php:206
+#: classes/api-utils.php:212
 msgid "Invalid number of fields"
 msgstr ""
 
 #. translators: %d is replaced with the id of the field
-#: classes/api-utils.php:214
+#: classes/api-utils.php:220
 msgid "Missing field %d"
 msgstr ""
 
-#: classes/api-utils.php:231
+#: classes/api-utils.php:237
 msgid "Some fields are not valid"
 msgstr ""
 
-#: classes/api-utils.php:248
+#: classes/api-utils.php:254
 msgid "Unable to register the specified number of people"
 msgstr ""
 
-#: classes/api-utils.php:252
+#: classes/api-utils.php:258
 msgid "The number is greater than the available number of seats"
 msgstr ""
 
-#: classes/api-utils.php:259
+#: classes/api-utils.php:265
 msgid "No more seats available"
 msgstr ""
 
-#: classes/dao/dao-events.php:259
+#: classes/dao/dao-events.php:293
 msgid "The number of available seats can't be lower than the current confirmed registered people"
 msgstr ""
 
-#: classes/dao/dao-events.php:262
+#: classes/dao/dao-events.php:296
 msgid "It is not possible to remove the waiting list because there are some people in it"
 msgstr ""
 
-#: classes/dao/dao-events.php:347
+#: classes/dao/dao-events.php:392
 msgid "It is not possible to remove referenced \"number of people\" field"
 msgstr ""
 
-#: classes/dao/dao-registrations.php:288
-#: classes/mail-sender.php:247
+#: classes/dao/dao-registrations.php:333
+#: classes/mail-sender.php:257
 #: js/build/components/events.js:2
 #: js/build/components/templates.js:2
 msgid "Yes"
 msgstr ""
 
-#: classes/dao/dao-registrations.php:288
-#: classes/mail-sender.php:249
+#: classes/dao/dao-registrations.php:333
+#: classes/mail-sender.php:259
 #: js/build/components/events.js:2
 #: js/build/components/templates.js:2
 msgid "No"
@@ -188,9 +189,40 @@ msgstr ""
 msgid "Registration to the event \"%s\" is confirmed"
 msgstr ""
 
+#: classes/mail-sender.php:28
+#: classes/mail-sender.php:48
+#: classes/mail-sender.php:69
+#: classes/mail-sender.php:118
+#: classes/mail-sender.php:150
+#: classes/mail-sender.php:169
+#: classes/mail-sender.php:185
+msgid "Dear user,"
+msgstr ""
+
+#. translators: %s is replaced with the name of the event
+#: classes/mail-sender.php:30
+msgid "your registration to the event \"%s\" is confirmed."
+msgstr ""
+
+#: classes/mail-sender.php:31
+#: classes/mail-sender.php:52
+#: classes/mail-sender.php:72
+#: classes/mail-sender.php:121
+msgid "You inserted the following data:"
+msgstr ""
+
 #. translators: %s is replaced with the name of the event
 #: classes/mail-sender.php:47
 msgid "Registration to the waiting list of the event \"%s\" is confirmed"
+msgstr ""
+
+#. translators: %s is replaced with the name of the event
+#: classes/mail-sender.php:50
+msgid "your registration to the waiting list of the event \"%s\" is confirmed."
+msgstr ""
+
+#: classes/mail-sender.php:51
+msgid "If some seats will be available you will be automatically registered and notified by e-mail."
 msgstr ""
 
 #. translators: %s is replaced with the name of the event
@@ -199,13 +231,42 @@ msgid "New seats available for the event \"%s\""
 msgstr ""
 
 #. translators: %s is replaced with the name of the event
+#: classes/mail-sender.php:71
+msgid "new seats have become available for the event \"%s\", and you have been automatically selected from the waiting list. Your registration is confirmed."
+msgstr ""
+
+#. translators: %s is replaced with the name of the event
 #: classes/mail-sender.php:84
 msgid "New registration for the event \"%s\""
+msgstr ""
+
+#: classes/mail-sender.php:85
+#: classes/mail-sender.php:100
+#: classes/mail-sender.php:135
+#: classes/mail-sender.php:198
+#: classes/mail-sender.php:216
+msgid "Dear admin,"
+msgstr ""
+
+#. translators: %s is replaced with the name of the event
+#: classes/mail-sender.php:87
+msgid "a new registration to the event \"%s\" has been added."
+msgstr ""
+
+#: classes/mail-sender.php:88
+#: classes/mail-sender.php:103
+#: classes/mail-sender.php:138
+msgid "The user inserted the following data:"
 msgstr ""
 
 #. translators: %s is replaced with the name of the event
 #: classes/mail-sender.php:99
 msgid "New registration for the waiting list of event \"%s\""
+msgstr ""
+
+#. translators: %s is replaced with the name of the event
+#: classes/mail-sender.php:102
+msgid "a new registration to the waiting list of event \"%s\" has been added."
 msgstr ""
 
 #. translators: %s is replaced with the name of the event
@@ -215,8 +276,27 @@ msgid "Registration to the event \"%s\" has been updated"
 msgstr ""
 
 #. translators: %s is replaced with the name of the event
+#: classes/mail-sender.php:120
+msgid "your registration to the event \"%s\" has been updated."
+msgstr ""
+
+#. translators: %s is replaced with the name of the event
 #: classes/mail-sender.php:134
 msgid "Registration updated for the event \"%s\""
+msgstr ""
+
+#. translators: %s is replaced with the name of the event
+#: classes/mail-sender.php:137
+msgid "a registration to the event \"%s\" has been updated."
+msgstr ""
+
+#. translators: %s is replaced with the name of the event
+#: classes/mail-sender.php:152
+msgid "your registration to the event \"%s\" has been updated by an administrator."
+msgstr ""
+
+#: classes/mail-sender.php:153
+msgid "The updated data is:"
 msgstr ""
 
 #. translators: %s is replaced with the name of the event
@@ -226,17 +306,41 @@ msgid "Registration to the event \"%s\" has been deleted"
 msgstr ""
 
 #. translators: %s is replaced with the name of the event
+#: classes/mail-sender.php:171
+msgid "your registration to the event \"%s\" has been deleted."
+msgstr ""
+
+#. translators: %s is replaced with the name of the event
+#: classes/mail-sender.php:187
+msgid "your registration to the event \"%s\" has been deleted by an administrator."
+msgstr ""
+
+#. translators: %s is replaced with the name of the event
 #: classes/mail-sender.php:197
 msgid "Registration deleted for the event \"%s\""
 msgstr ""
 
 #. translators: %s is replaced with the name of the event
-#: classes/mail-sender.php:209
+#: classes/mail-sender.php:200
+msgid "a user deleted their registration to the event \"%s\"."
+msgstr ""
+
+#. translators: %s is replaced with the name of the event
+#: classes/mail-sender.php:215
 msgid "Registrations picked from the waiting list of event \"%s\""
 msgstr ""
 
-#: classes/mail-sender.php:253
+#. translators: %s is replaced with the name of the event
+#: classes/mail-sender.php:218
+msgid "the following registration identifiers for the event \"%s\" were moved from waiting list to confirmed:"
+msgstr ""
+
+#: classes/mail-sender.php:263
 msgid "Accepted"
+msgstr ""
+
+#: classes/mail-sender.php:280
+msgid "You can modify or delete your registration by clicking on the following link:"
 msgstr ""
 
 #: classes/public-api.php:150
@@ -250,66 +354,66 @@ msgstr ""
 msgid "This event doesn't allow to edit the registrations"
 msgstr ""
 
-#: classes/validators/base-validator.php:28
+#: classes/validators/base-validator.php:29
 msgid "Required field"
 msgstr ""
 
 #. translators: Do not translate 'true' and 'false'
-#: classes/validators/checkbox-validator.php:22
+#: classes/validators/checkbox-validator.php:23
 msgid "Value must be true or false"
 msgstr ""
 
-#: classes/validators/dropdown-validator.php:22
+#: classes/validators/dropdown-validator.php:23
 msgid "Field must be an array"
 msgstr ""
 
-#: classes/validators/dropdown-validator.php:26
+#: classes/validators/dropdown-validator.php:27
 msgid "Each element of the array must be a string"
 msgstr ""
 
-#: classes/validators/dropdown-validator.php:31
-#: classes/validators/radio-validator.php:20
-#: classes/validators/text-validator.php:20
+#: classes/validators/dropdown-validator.php:32
+#: classes/validators/radio-validator.php:21
+#: classes/validators/text-validator.php:21
 msgid "Field must be a string"
 msgstr ""
 
-#: classes/validators/dropdown-validator.php:40
-#: classes/validators/radio-validator.php:27
+#: classes/validators/dropdown-validator.php:41
+#: classes/validators/radio-validator.php:29
 msgid "Field value not allowed"
 msgstr ""
 
-#: classes/validators/email-validator.php:20
+#: classes/validators/email-validator.php:21
 msgid "Invalid e-mail address"
 msgstr ""
 
-#: classes/validators/number-validator.php:20
+#: classes/validators/number-validator.php:21
 msgid "Invalid number"
 msgstr ""
 
-#: classes/validators/number-validator.php:30
+#: classes/validators/number-validator.php:31
 msgid "Number must be an integer"
 msgstr ""
 
-#: classes/validators/number-validator.php:33
+#: classes/validators/number-validator.php:34
 msgid "You have to register at least one person"
 msgstr ""
 
 #. translators: %d is replaced with the minimum value
-#: classes/validators/number-validator.php:38
+#: classes/validators/number-validator.php:39
 msgid "Number must not be lower than %d"
 msgstr ""
 
 #. translators: %d is replaced with the maximum allowed participants value
-#: classes/validators/number-validator.php:45
+#: classes/validators/number-validator.php:46
 msgid "It is not possible to add more than %d people in the same registration"
 msgstr ""
 
 #. translators: %d is replaced with the maximum value
-#: classes/validators/number-validator.php:50
+#: classes/validators/number-validator.php:51
 msgid "Number must not be greater than %d"
 msgstr ""
 
-#: classes/validators/privacy-validator.php:20
+#: classes/validators/privacy-validator.php:21
 msgid "It is necessary to accept the privacy policy"
 msgstr ""
 

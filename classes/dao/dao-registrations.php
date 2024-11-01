@@ -9,6 +9,7 @@ require_once(WPOE_PLUGIN_DIR . 'classes/dao/base-dao.php');
 require_once(WPOE_PLUGIN_DIR . 'classes/model/event.php');
 require_once(WPOE_PLUGIN_DIR . 'classes/model/registration.php');
 
+// phpcs:disable WordPress.DB.DirectDatabaseQuery
 class WPOE_DAO_Registrations extends WPOE_Base_DAO
 {
   public function __construct()
@@ -16,33 +17,24 @@ class WPOE_DAO_Registrations extends WPOE_Base_DAO
     parent::__construct();
   }
 
-  public function list_event_registrations(int $event_id, bool $waiting, int|null $limit, int|null $offset): array
+  public function list_event_registrations(int $event_id, bool $waiting_list, int|null $limit, int|null $offset): array
   {
     global $wpdb;
 
-    $waiting_clause = ($waiting ? "" : "NOT") . " waiting_list";
-
-    $sql = "SELECT r.id, r.inserted_at, f.label, f.type, f.deleted, f.extra, rv.field_value
-      FROM " . WPOE_DB::get_table_name('event_registration') . " r
-      RIGHT JOIN " . WPOE_DB::get_table_name('event_form_field') . " f ON f.event_id = r.event_id
-      LEFT JOIN " . WPOE_DB::get_table_name('event_registration_value') . " rv ON f.id = rv.field_id AND rv.registration_id = r.id
-      JOIN (SELECT id FROM " . WPOE_DB::get_table_name('event_registration') . "
-      WHERE event_id = %d AND " . $waiting_clause . " ORDER BY id DESC";
     if ($limit !== null && $offset !== null) {
-      $sql .= " LIMIT %d OFFSET %d";
-    }
-    $sql .= ") AS rpage ON r.id = rpage.id ORDER BY r.id DESC, f.deleted, f.position";
-    if ($limit !== null && $offset !== null) {
-      $query = $wpdb->prepare($sql, $event_id, $limit, $offset);
+      $results = $this->list_all_event_registrations_paginated($event_id, $waiting_list, $limit, $offset);
     } else {
-      $query = $wpdb->prepare($sql, $event_id);
+      $results = $this->list_all_event_registrations($event_id, $waiting_list);
     }
-    $results = $wpdb->get_results($query, ARRAY_A);
     $this->check_results('retrieving the event registrations');
 
-    $query = $wpdb->prepare('SELECT COUNT(*) FROM ' . WPOE_DB::get_table_name('event_registration')
-      . ' WHERE event_id = %d AND ' . $waiting_clause, $event_id);
-    $var = $wpdb->get_var($query);
+    $var = $wpdb->get_var(
+      $wpdb->prepare(
+        "SELECT COUNT(*) FROM {$wpdb->prefix}wpoe_event_registration WHERE event_id = %d AND waiting_list = %d",
+        $event_id,
+        (int) $waiting_list
+      )
+    );
     $this->check_var($var, 'retrieving the event registration rows');
     $total = (int) $var;
 
@@ -104,6 +96,45 @@ class WPOE_DAO_Registrations extends WPOE_Base_DAO
     ];
   }
 
+  private function list_all_event_registrations(int $event_id, bool $waiting_list)
+  {
+    global $wpdb;
+    return $wpdb->get_results(
+      $wpdb->prepare(
+        "SELECT r.id, r.inserted_at, f.label, f.type, f.deleted, f.extra, rv.field_value
+        FROM {$wpdb->prefix}wpoe_event_registration r
+        RIGHT JOIN {$wpdb->prefix}wpoe_event_form_field f ON f.event_id = r.event_id
+        LEFT JOIN {$wpdb->prefix}wpoe_event_registration_value rv ON f.id = rv.field_id AND rv.registration_id = r.id
+        WHERE r.event_id = %d AND waiting_list = %d
+        ORDER BY r.id DESC, f.deleted, f.position",
+        $event_id,
+        (int) $waiting_list
+      ),
+      ARRAY_A
+    );
+  }
+
+  private function list_all_event_registrations_paginated(int $event_id, bool $waiting_list, int $limit, int $offset)
+  {
+    global $wpdb;
+    return $wpdb->get_results(
+      $wpdb->prepare(
+        "SELECT r.id, r.inserted_at, f.label, f.type, f.deleted, f.extra, rv.field_value
+        FROM {$wpdb->prefix}wpoe_event_registration r
+        RIGHT JOIN {$wpdb->prefix}wpoe_event_form_field f ON f.event_id = r.event_id
+        LEFT JOIN {$wpdb->prefix}wpoe_event_registration_value rv ON f.id = rv.field_id AND rv.registration_id = r.id
+        JOIN (SELECT id FROM {$wpdb->prefix}wpoe_event_registration
+          WHERE event_id = %d AND waiting_list = %d ORDER BY id DESC LIMIT %d OFFSET %d
+        ) AS rpage ON r.id = rpage.id ORDER BY r.id DESC, f.deleted, f.position",
+        $event_id,
+        (int) $waiting_list,
+        $limit,
+        $offset
+      ),
+      ARRAY_A
+    );
+  }
+
   /**
    * Returns:
    * - null if the event has no maxiumum number of participants limit
@@ -160,7 +191,7 @@ class WPOE_DAO_Registrations extends WPOE_Base_DAO
           [
             'registration_id' => $registration_id,
             'field_id' => $field_id,
-            'field_value' => is_array($field_value) ? json_encode($field_value) : $field_value,
+            'field_value' => is_array($field_value) ? wp_json_encode($field_value) : $field_value,
           ],
           ['%d', '%d', '%s']
         );
@@ -184,18 +215,22 @@ class WPOE_DAO_Registrations extends WPOE_Base_DAO
   {
     global $wpdb;
 
-    $query = $wpdb->prepare('SELECT inserted_at, updated_at, waiting_list FROM '
-      . WPOE_DB::get_table_name('event_registration')
-      . ' WHERE event_id = %d AND id = %s', $event_id, $registration_id);
-    $results = $wpdb->get_results($query);
+    $row = $wpdb->get_row(
+      $wpdb->prepare(
+        "SELECT inserted_at, updated_at, waiting_list
+        FROM {$wpdb->prefix}wpoe_event_registration WHERE event_id = %d AND id = %s",
+        $event_id,
+        $registration_id
+      )
+    );
     $this->check_results('retrieving registration');
-    if (count($results) === 0) {
+    if ($row === null) {
       return null;
     }
 
-    $inserted_at = $results[0]->inserted_at;
-    $updated_at = $results[0]->updated_at;
-    $waiting_list = $results[0]->waiting_list;
+    $inserted_at = $row->inserted_at;
+    $updated_at = $row->updated_at;
+    $waiting_list = $row->waiting_list;
 
     $values = $this->get_registration_values($registration_id);
 
@@ -212,9 +247,14 @@ class WPOE_DAO_Registrations extends WPOE_Base_DAO
   {
     global $wpdb;
 
-    $query = $wpdb->prepare('SELECT id, waiting_list FROM ' . WPOE_DB::get_table_name('event_registration')
-      . ' WHERE event_id = %d AND registration_token = %s', $event_id, $registration_token);
-    $results = $wpdb->get_results($query);
+    $results = $wpdb->get_results(
+      $wpdb->prepare(
+        "SELECT id, waiting_list FROM {$wpdb->prefix}wpoe_event_registration
+         WHERE event_id = %d AND registration_token = %s",
+        $event_id,
+        $registration_token
+      )
+    );
     $this->check_results('retrieving registration');
     if (count($results) === 0) {
       return null;
@@ -239,13 +279,18 @@ class WPOE_DAO_Registrations extends WPOE_Base_DAO
   {
     global $wpdb;
 
-    $query = $wpdb->prepare("SELECT f.label, f.type, f.id AS field_id, f.extra, rv.field_value
-      FROM " . WPOE_DB::get_table_name('event_registration') . " r
-      RIGHT JOIN " . WPOE_DB::get_table_name('event_form_field') . " f ON f.event_id = r.event_id
-      LEFT JOIN " . WPOE_DB::get_table_name('event_registration_value') . " rv ON f.id = rv.field_id AND rv.registration_id = r.id
-      WHERE r.id = %d AND NOT f.deleted
-      ORDER BY f.position", $registration_id);
-    $results = $wpdb->get_results($query, ARRAY_A);
+    $results = $wpdb->get_results(
+      $wpdb->prepare(
+        "SELECT f.label, f.type, f.id AS field_id, f.extra, rv.field_value
+         FROM {$wpdb->prefix}wpoe_event_registration r
+         RIGHT JOIN {$wpdb->prefix}wpoe_event_form_field f ON f.event_id = r.event_id
+         LEFT JOIN {$wpdb->prefix}wpoe_event_registration_value rv ON f.id = rv.field_id AND rv.registration_id = r.id
+         WHERE r.id = %d AND NOT f.deleted
+         ORDER BY f.position",
+        $registration_id
+      ),
+      ARRAY_A
+    );
     $this->check_results('retrieving the event registration value');
 
     $values = [];
@@ -315,10 +360,12 @@ class WPOE_DAO_Registrations extends WPOE_Base_DAO
         $registrations_count = $this->get_registrations_count($event->id);
         $remaining_seats = $event->maxParticipants - $registrations_count;
 
-        $query = $wpdb->prepare('SELECT number_of_people FROM '
-          . WPOE_DB::get_table_name('event_registration')
-          . ' WHERE id = %d', $request->id);
-        $var = $wpdb->get_var($query);
+        $var = $wpdb->get_var(
+          $wpdb->prepare(
+            "SELECT number_of_people FROM {$wpdb->prefix}wpoe_event_registration WHERE id = %d",
+            $request->id
+          )
+        );
         $this->check_var($var, 'retrieving previous number of people');
         $previous_number_of_people = (int) $var;
 
@@ -462,9 +509,15 @@ class WPOE_DAO_Registrations extends WPOE_Base_DAO
   private function pick_from_waiting_list(WPOE_Event $event, int $remaining_seats)
   {
     global $wpdb;
-    $query = $wpdb->prepare('SELECT id, number_of_people FROM ' . WPOE_DB::get_table_name('event_registration')
-      . ' WHERE event_id = %d AND waiting_list ORDER BY id ASC', $event->id);
-    $results = $wpdb->get_results($query, ARRAY_A);
+    $results = $wpdb->get_results(
+      $wpdb->prepare(
+        "SELECT id, number_of_people
+        FROM {$wpdb->prefix}wpoe_event_registration
+        WHERE event_id = %d AND waiting_list ORDER BY id ASC",
+        $event->id
+      ),
+      ARRAY_A
+    );
     $this->check_results('retrieving the waiting event registrations');
 
     $waiting_picked = [];
@@ -501,10 +554,14 @@ class WPOE_DAO_Registrations extends WPOE_Base_DAO
   public function get_registrations_count(int $event_id): int
   {
     global $wpdb;
-    $query = $wpdb->prepare('SELECT COALESCE(SUM(number_of_people), 0) AS number_of_people FROM 
-      ' . WPOE_DB::get_table_name('event_registration') .
-      ' WHERE event_id = %d AND NOT waiting_list', $event_id);
-    $var = $wpdb->get_var($query);
+    $var = $wpdb->get_var(
+      $wpdb->prepare(
+        "SELECT COALESCE(SUM(number_of_people), 0) AS number_of_people
+        FROM {$wpdb->prefix}wpoe_event_registration
+        WHERE event_id = %d AND NOT waiting_list",
+        $event_id
+      )
+    );
     $this->check_var($var, 'counting number of registrations');
     return (int) $var;
   }
@@ -515,10 +572,14 @@ class WPOE_DAO_Registrations extends WPOE_Base_DAO
   public function get_waiting_list_count(int $event_id): int
   {
     global $wpdb;
-    $query = $wpdb->prepare('SELECT COALESCE(SUM(number_of_people), 0) AS number_of_people FROM '
-      . WPOE_DB::get_table_name('event_registration')
-      . ' WHERE event_id = %d AND waiting_list', $event_id);
-    $var = $wpdb->get_var($query);
+    $var = $wpdb->get_var(
+      $wpdb->prepare(
+        "SELECT COALESCE(SUM(number_of_people), 0) AS number_of_people
+        FROM {$wpdb->prefix}wpoe_event_registration
+        WHERE event_id = %d AND waiting_list",
+        $event_id
+      )
+    );
     $this->check_var($var, 'retrieving the event registrations waiting count');
     return (int) $var;
   }

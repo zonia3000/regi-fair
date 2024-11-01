@@ -52,9 +52,9 @@ class WPOE_Settings_Manager
 
     $new_settings = array_merge($old_settings, $settings_to_update);
     if ($old_settings_value === false) {
-      add_option('wpoe_settings', json_encode($new_settings));
+      add_option('wpoe_settings', wp_json_encode($new_settings));
     } else {
-      update_option('wpoe_settings', json_encode($new_settings));
+      update_option('wpoe_settings', wp_json_encode($new_settings));
     }
     return $new_settings;
   }

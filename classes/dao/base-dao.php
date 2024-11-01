@@ -19,12 +19,16 @@ class WPOE_Base_DAO
   {
     global $wpdb;
     if ($result === false) {
-      if ($wpdb->last_error) {
-        error_log($wpdb->last_error);
-      } else {
-        error_log('The last query returned an error: ' . $wpdb->last_query);
+      if (defined('WP_DEBUG') && WP_DEBUG === true) {
+        if ($wpdb->last_error) {
+          // phpcs:ignore WordPress.PHP.DevelopmentFunctions
+          error_log($wpdb->last_error);
+        } else {
+          // phpcs:ignore WordPress.PHP.DevelopmentFunctions
+          error_log('The last query returned an error: ' . $wpdb->last_query);
+        }
       }
-      throw new Exception('Error ' . $description);
+      throw new Exception('Error ' . esc_html($description));
     }
   }
 
@@ -36,8 +40,11 @@ class WPOE_Base_DAO
   {
     global $wpdb;
     if ($wpdb->last_error) {
-      error_log($wpdb->last_error);
-      throw new Exception('Error ' . $description);
+      if (defined('WP_DEBUG') && WP_DEBUG === true) {
+        // phpcs:ignore WordPress.PHP.DevelopmentFunctions
+        error_log($wpdb->last_error);
+      }
+      throw new Exception('Error ' . esc_html($description));
     }
   }
 
@@ -49,12 +56,16 @@ class WPOE_Base_DAO
   {
     global $wpdb;
     if ($var === null) {
-      if ($wpdb->last_error) {
-        error_log($wpdb->last_error);
-      } else {
-        error_log('The last query returned an error: ' . $wpdb->last_query);
+      if (defined('WP_DEBUG') && WP_DEBUG === true) {
+        if ($wpdb->last_error) {
+          // phpcs:ignore WordPress.PHP.DevelopmentFunctions
+          error_log($wpdb->last_error);
+        } else {
+          // phpcs:ignore WordPress.PHP.DevelopmentFunctions
+          error_log('The last query returned an error: ' . $wpdb->last_query);
+        }
       }
-      throw new Exception('Error ' . $description);
+      throw new Exception('Error ' . esc_html($description));
     }
   }
 }

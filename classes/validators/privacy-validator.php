@@ -17,6 +17,7 @@ class WPOE_Privacy_Validator extends WPOE_Base_Validator
       return true;
     }
     if ($value !== true) {
+      // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
       throw new WPOE_Validation_Exception(__('It is necessary to accept the privacy policy', 'wp-open-events'));
     }
     return true;

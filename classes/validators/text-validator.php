@@ -17,7 +17,8 @@ class WPOE_Text_Validator extends WPOE_Base_Validator
       return true;
     }
     if (!is_string($value)) {
-      throw new WPOE_Validation_Exception(__('Field must be a string', 'wp-open-events'));
+      // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
+      throw new WPOE_Validation_Exception(message: __('Field must be a string', 'wp-open-events'));
     }
     return true;
   }
