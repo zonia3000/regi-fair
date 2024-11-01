@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="None">
+        
+        
+        <link rel="shortcut icon" href="img/favicon.ico">
+        <title>WP Open Events</title>
+        <link href="css/bootstrap.min.css" rel="stylesheet">
+        <link href="css/fontawesome.min.css" rel="stylesheet">
+        <link href="css/brands.min.css" rel="stylesheet">
+        <link href="css/solid.min.css" rel="stylesheet">
+        <link href="css/v4-font-face.min.css" rel="stylesheet">
+        <link href="css/base.css" rel="stylesheet">
+        <link id="hljs-light" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" >
+        <link id="hljs-dark" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css" disabled>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+        <script>hljs.highlightAll();</script> 
+    </head>
+
+    <body class="homepage">
+        <div class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
+            <div class="container">
+                <a class="navbar-brand" href=".">WP Open Events</a>
+
+                <!-- Expanded navigation -->
+                <div id="navbar-collapse" class="navbar-collapse collapse">
+
+                    <ul class="nav navbar-nav ms-md-auto">
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                    <div class="col-md-3"><div class="navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggler collapsed" data-bs-toggle="collapse" data-bs-target="#toc-collapse" title="Table of Contents">
+            <span class="fa fa-angle-down"></span>
+        </button>
+    </div>
+
+    
+    <div id="toc-collapse" class="navbar-collapse collapse card bg-body-tertiary">
+        <ul class="nav flex-column">
+            
+            <li class="nav-item" data-bs-level="1"><a href="#wp-open-events" class="nav-link">WP Open Events</a>
+              <ul class="nav flex-column">
+            <li class="nav-item" data-bs-level="2"><a href="#user-guide" class="nav-link">User guide</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+              </ul>
+            </li>
+        </ul>
+    </div>
+</div></div>
+                    <div class="col-md-9" role="main">
+
+<h1 id="wp-open-events">WP Open Events</h1>
+<p><img alt="WP Open Events Banner" src="assets/wpoe-banner.jpg" /></p>
+<p><strong>WP Open Events</strong> is a free and open-source WordPress plugin designed to manage registrations to events. It is based on the modern <strong>Gutenberg</strong> block editor.</p>
+<p>Key Features:</p>
+<ul>
+<li>
+<p><strong>Custom Form Builder</strong>: Build the registration form for your events with the fields that you need. Currently supported elements are standard HTML fields like text, number and email inputs, dropdowns, checkboxes, radio buttons and some special field with custom logic (see next points).</p>
+</li>
+<li>
+<p><strong>Email Notifications</strong>: Both administrators and users receive updates regarding registration confirmations, changes, and cancellations.</p>
+</li>
+<li>
+<p><strong>Available Seats Limit</strong>: Set a maximum number of available seats for each event. The event automatically stops accepting new registrations when the limit is reached.</p>
+</li>
+<li>
+<p><strong>Waiting List</strong>: When an event reaches its capacity, interested attendees can join a waiting list. The plugin automatically notifies them if a spot becomes available.</p>
+</li>
+<li>
+<p><strong>Autonomous Registration Editing</strong>: Participants can edit or delete their bookings without needing to contact the event organizer.</p>
+</li>
+<li>
+<p><strong>Group Registrations</strong>: Attendees can specify multiple people in a single registration. This feature is perfect for group events, enabling users to register friends, family, or colleagues all at once.</p>
+</li>
+<li>
+<p><strong>GDPR Friendly</strong>: The plugin can automatically remove registrations after the event has ended and provides a field for accepting the privacy policy.</p>
+</li>
+<li>
+<p><strong>Event templates</strong>: It is possible to create events from templates, to quickly create events having the same form and settings.</p>
+</li>
+</ul>
+<p>WP Open Events is available in the following languages:</p>
+<ul>
+<li>English</li>
+<li>Italian</li>
+</ul>
+<h2 id="user-guide">User guide</h2>
+<p><strong>Important</strong>: before starting, go to the WP Open Events Settings page and ensure that the e-mail address used to send confirmation messages to users is a valid e-mail address, otherwise confirmation e-mail may not be sent.</p>
+<p>You can create an event from scratch or based on an event template. Creating a template is useful if you plan to organize several similar events and you need to use the same form and settings for each events.</p>
+<p>The event template includes a form editor that enables you to define the fields of your registration forms. This same form will be available when creating a new event. When you create an event based on a template, you have the flexibility to overwrite any settings defined in the template.</p>
+<p><img alt="" src="assets/wp-open-events-template.png" /></p>
+<p>To create a new event, navigate to the events list page and click the "Add Event" button. This action will open a modal prompting you to choose whether to create the event from scratch or based on a template.</p>
+<p><img alt="" src="assets/wp-open-events-create-event-modal.png" /></p>
+<p>On the event creation page, you can specify additional details, including the event name, the date and the maximum number of participants. The event date is needed to determine when the event form will be hidden after the event concludes and to perform the automatic removal of user data post-event (if the auto-removal setting is enabled).</p>
+<p><img alt="" src="assets/wp-open-events-create-event.png" /></p>
+<p>After creating your event, you can add the event form to a post. To do this, search for the "WP Open Events Form" Gutenberg block. This block allows you to select the event from a list of upcoming events.</p>
+<p><img alt="" src="assets/wp-open-events-select-event.png" /></p>
+<p>Once your post is published, the event form will be visible within it.</p>
+<p><img alt="" src="assets/wp-open-events-event-form.png" /></p>
+<p>Users can register for the event and will receive a confirmation email upon successful registration.</p>
+<p><img alt="" src="assets/wp-open-events-confirmation-email.png" /></p>
+<p>Users have the option to edit or delete their registrations at any time, provided this feature is enabled.</p>
+<p><img alt="" src="assets/wp-open-events-registration-editing.png" /></p>
+<p>If the event reaches full capacity, users can still join a waiting list (if this feature is enabled).</p>
+<p><img alt="" src="assets/wp-open-events-waiting-list.png" /></p>
+<p>The administrator can check the list of registrations and export it as a CSV file.</p>
+<p><img alt="" src="assets/wp-open-events-registrations.png" /></p></div>
+            </div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script src="js/bootstrap.bundle.min.js"></script>
+        <script>
+            var base_url = ".",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="js/base.js"></script>
+
+        <div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>
+
+<!--
+MkDocs version : 1.6.1
+Build Date UTC : 2024-11-01 12:36:14.189307+00:00
+-->
