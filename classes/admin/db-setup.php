@@ -102,13 +102,17 @@ class REGI_FAIR_DB_Setup
   public static function drop_tables()
   {
     global $wpdb;
-    $tables = ['event_form_field', 'event', 'event_template', 'event_template_form_field', 'event_registration', 'event_registration_value'];
-
-    foreach ($tables as $table) {
-      $wpdb->prepare('DROP TABLE IF EXISTS %s', REGI_FAIR_DB::get_table_name($table));
-    }
-
+    // phpcs:disable WordPress.DB.DirectDatabaseQuery
+    $wpdb->query("DROP TABLE IF EXISTS {$wpdb->prefix}regi_fair_event_post");
+    $wpdb->query("DROP TABLE IF EXISTS {$wpdb->prefix}regi_fair_event_registration_value");
+    $wpdb->query("DROP TABLE IF EXISTS {$wpdb->prefix}regi_fair_event_registration");
+    $wpdb->query("DROP TABLE IF EXISTS {$wpdb->prefix}regi_fair_event_form_field");
+    $wpdb->query("DROP TABLE IF EXISTS {$wpdb->prefix}regi_fair_event");
+    $wpdb->query("DROP TABLE IF EXISTS {$wpdb->prefix}regi_fair_event_template_form_field");
+    $wpdb->query("DROP TABLE IF EXISTS {$wpdb->prefix}regi_fair_event_template");
+    // phpcs:enable
     delete_option(REGI_FAIR_DB_VERSION_KEY);
+    delete_option('regi_fair_settings');
   }
 
   private static function create_table(string $table_name, string $sql_fields): string
