@@ -40,14 +40,19 @@ class REGI_FAIR_DB_Setup
       FOREIGN KEY (event_id) REFERENCES $event_table (id)
     ");
 
-    REGI_FAIR_DB_Setup::create_table('event_post', "
+    $event_post_create_sql = "
       event_id bigint unsigned NOT NULL,
       post_id bigint unsigned NOT NULL,
       updated_at timestamp DEFAULT CURRENT_TIMESTAMP,
       PRIMARY KEY  (event_id, post_id),
-      FOREIGN KEY (event_id) REFERENCES $event_table (id),
-      FOREIGN KEY (post_id) REFERENCES " . $wpdb->prefix . "posts (ID)
-    ");
+      FOREIGN KEY (event_id) REFERENCES $event_table (id)";
+
+    if (REGI_FAIR_DB_Setup::can_create_posts_foreign_key()) {
+      $event_post_create_sql .= ",
+      FOREIGN KEY (post_id) REFERENCES " . $wpdb->prefix . "posts (ID)";
+    }
+
+    REGI_FAIR_DB_Setup::create_table('event_post', $event_post_create_sql);
 
     $event_template_table = REGI_FAIR_DB_Setup::create_table('event_template', "
       id bigint unsigned NOT NULL AUTO_INCREMENT,
@@ -97,6 +102,30 @@ class REGI_FAIR_DB_Setup
     ");
 
     add_option(REGI_FAIR_DB_VERSION_KEY, REGI_FAIR_DB_VERSION);
+  }
+
+  /**
+   * Check if it is possible to create foreign key references to the posts table.
+   * Creating the foreign key is not possible if the posts table was created using
+   * an engine different than the current default engine. In any case the foreign
+   * key constraint has effect only if the table engine is set to InnoDB.
+   * @return bool
+   */
+  private static function can_create_posts_foreign_key()
+  {
+    // phpcs:disable WordPress.DB.DirectDatabaseQuery
+    global $wpdb;
+    $posts_table_engine = $wpdb->get_var(
+      $wpdb->prepare(
+        "SELECT ENGINE FROM information_schema.tables WHERE table_name = %s",
+        $wpdb->prefix . 'posts'
+      )
+    );
+    $default_engine = $wpdb->get_var(
+      "SELECT ENGINE FROM information_schema.ENGINES WHERE SUPPORT = 'DEFAULT'"
+    );
+    return $posts_table_engine === $default_engine;
+    // phpcs:enable
   }
 
   public static function drop_tables()
