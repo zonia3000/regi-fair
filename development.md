@@ -1,17 +1,9 @@
-# RegiFair
-
-RegiFair is a free and open-source WordPress plugin designed to manage registrations to events. It is based on the modern Gutenberg block editor.
-
-This README file contains information for developers. To see the features of the plugin and the user guide visit the following website:
-
-https://zonia3000.github.io/regi-fair/
+## RegiFair developer notes
 
 Requirements:
 
 * WP-Cron needs to be enabled if you want the autoremoval of old events data;
 * MySQL/MariaDB InnoDB engine should be used, since the plugin sets the `serializable` isolation level to avoid concurrent registrations when an event as a limited number of available seats.
-
-## Developer notes
 
 ### Build process
 

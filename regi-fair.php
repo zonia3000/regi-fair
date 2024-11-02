@@ -1,6 +1,6 @@
 <?php
 /*
- * Plugin Name: RegiFair: Event Registration Manager
+ * Plugin Name: RegiFair
  * Plugin URI: https://zonia3000.github.io/regi-fair/
  * Author: Sonia Zorba
  * Author URI: https://www.zonia3000.net
