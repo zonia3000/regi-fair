@@ -8,7 +8,7 @@ import { server } from "../../__mocks__/api";
 
 test("Template not found", async () => {
   server.use(
-    http.get("/wpoe/v1/admin/templates/1", () => {
+    http.get("/regifair/v1/admin/templates/1", () => {
       return HttpResponse.json({ code: "template_not_found" }, { status: 404 });
     }),
   );
@@ -29,7 +29,7 @@ test("Template not found", async () => {
 
 test("Generic error when loading template", async () => {
   server.use(
-    http.get("/wpoe/v1/admin/templates/2", () => {
+    http.get("/regifair/v1/admin/templates/2", () => {
       return HttpResponse.json(
         { code: "generic_server_error", message: "A critical error happened" },
         { status: 500 },

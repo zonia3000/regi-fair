@@ -10,7 +10,7 @@ import { TemplateConfiguration } from "../../../classes/template";
 
 test("Edit template", async () => {
   server.use(
-    http.get("/wpoe/v1/admin/templates/1", () => {
+    http.get("/regifair/v1/admin/templates/1", () => {
       return HttpResponse.json({
         id: 1,
         name: "template name",
@@ -40,7 +40,7 @@ test("Edit template", async () => {
 
   let requestBody: TemplateConfiguration;
   server.use(
-    http.post("/wpoe/v1/admin/templates/1", async ({ request }) => {
+    http.post("/regifair/v1/admin/templates/1", async ({ request }) => {
       requestBody = (await request.json()) as TemplateConfiguration;
       return HttpResponse.json({});
     }),

@@ -2,40 +2,40 @@
 # This file is distributed under the GPLv3 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: WP Open Events 0.1.0\n"
+"Project-Id-Version: RegiFair: Event Registration Manager 0.1.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/wp-open-events\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2024-11-01T22:41:13+00:00\n"
+"POT-Creation-Date: 2024-11-02T00:10:46+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.10.0\n"
-"X-Domain: wp-open-events\n"
+"X-Domain: regi-fair\n"
 
 #. Plugin Name of the plugin
-#: wp-open-events.php
-msgid "WP Open Events"
+#: regi-fair.php
+msgid "RegiFair: Event Registration Manager"
 msgstr ""
 
 #. Plugin URI of the plugin
-#: wp-open-events.php
-msgid "https://zonia3000.github.io/wp-open-events/"
+#: regi-fair.php
+msgid "https://zonia3000.github.io/regi-fair/"
 msgstr ""
 
 #. Description of the plugin
-#: wp-open-events.php
-msgid "Free and open source plugin to manage event registrations. Provides form builder, waiting lists, group registrations and email notifications. Works with Gutenberg blocks."
+#: regi-fair.php
+msgid "Free and open source plugin to manage events registrations. Provides form builder, waiting lists, group registrations and email notifications. Works with Gutenberg blocks."
 msgstr ""
 
 #. Author of the plugin
-#: wp-open-events.php
+#: regi-fair.php
 msgid "Sonia Zorba"
 msgstr ""
 
 #. Author URI of the plugin
-#: wp-open-events.php
+#: regi-fair.php
 msgid "https://www.zonia3000.net"
 msgstr ""
 
@@ -1058,13 +1058,21 @@ msgid "Do you really want to delete the template %s?"
 msgstr ""
 
 #: js/build/block/block.json
-#: js/src/block/src/block.json
 msgctxt "block title"
 msgid "WP Open Events Form"
 msgstr ""
 
 #: js/build/block/block.json
-#: js/src/block/src/block.json
 msgctxt "block description"
 msgid "WP Open Events Form"
+msgstr ""
+
+#: js/src/block/src/block.json
+msgctxt "block title"
+msgid "RegiFair Form"
+msgstr ""
+
+#: js/src/block/src/block.json
+msgctxt "block description"
+msgid "RegiFair Form"
 msgstr ""

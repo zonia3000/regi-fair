@@ -35,7 +35,7 @@ setup('Create test event', async ({ page, context, request }) => {
   });
 
   await setup.step('Delete old test event, if exists', async () => {
-    const response = await request.get('/index.php?rest_route=/wpoe/v1/admin/events', {
+    const response = await request.get('/index.php?rest_route=/regifair/v1/admin/events', {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce
@@ -47,7 +47,7 @@ setup('Create test event', async ({ page, context, request }) => {
 
     if (events.length > 0) {
       expect(events.length).toEqual(1);
-      const response = await request.delete(`/index.php?rest_route=/wpoe/v1/admin/events/${events[0].id}`, {
+      const response = await request.delete(`/index.php?rest_route=/regifair/v1/admin/events/${events[0].id}`, {
         headers: {
           'Cookie': cookies,
           'X-WP-Nonce': nonce
@@ -60,7 +60,7 @@ setup('Create test event', async ({ page, context, request }) => {
   let eventId: number;
 
   await setup.step('Create event', async () => {
-    const response = await request.post('/index.php?rest_route=/wpoe/v1/admin/events', {
+    const response = await request.post('/index.php?rest_route=/regifair/v1/admin/events', {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce
@@ -89,7 +89,7 @@ setup('Create test event', async ({ page, context, request }) => {
       data: {
         title: TEST_POST_NAME,
         status: 'publish',
-        content: `<!-- wp:wp-open-events/form {"eventId":"${eventId}","className":"wp-block-wp-open-events-form"} /-->`
+        content: `<!-- wp:regi-fair/form {"eventId":"${eventId}","className":"wp-block-regi-fair-form"} /-->`
       }
     });
     expect(response.status()).toEqual(201);

@@ -9,7 +9,7 @@ import userEvent from "@testing-library/user-event";
 
 test("Event not found", async () => {
   server.use(
-    http.get("/wpoe/v1/admin/events/1", () => {
+    http.get("/regifair/v1/admin/events/1", () => {
       return HttpResponse.json(
         {
           code: "event_not_found",
@@ -41,7 +41,7 @@ test("Event not found", async () => {
 
 test("Registration not found", async () => {
   server.use(
-    http.get("/wpoe/v1/admin/events/1", () => {
+    http.get("/regifair/v1/admin/events/1", () => {
       return HttpResponse.json({
         id: 1,
         name: "test",
@@ -53,7 +53,7 @@ test("Registration not found", async () => {
   );
 
   server.use(
-    http.get("/wpoe/v1/admin/events/1/registrations/1", () => {
+    http.get("/regifair/v1/admin/events/1/registrations/1", () => {
       return HttpResponse.json(
         {
           code: "registration_not_found",
@@ -85,7 +85,7 @@ test("Registration not found", async () => {
 
 test("Update registration without email field", async () => {
   server.use(
-    http.get("/wpoe/v1/admin/events/1", () => {
+    http.get("/regifair/v1/admin/events/1", () => {
       return HttpResponse.json({
         id: 1,
         name: "test",
@@ -97,7 +97,7 @@ test("Update registration without email field", async () => {
   );
 
   server.use(
-    http.get("/wpoe/v1/admin/events/1/registrations/1", () => {
+    http.get("/regifair/v1/admin/events/1/registrations/1", () => {
       return HttpResponse.json({ values: { 1: "foo" } });
     }),
   );
@@ -105,7 +105,7 @@ test("Update registration without email field", async () => {
   let requestBody: Record<string, string>;
   server.use(
     http.post(
-      "/wpoe/v1/admin/events/1/registrations/1&sendEmail=false",
+      "/regifair/v1/admin/events/1/registrations/1&sendEmail=false",
       async ({ request }) => {
         requestBody = (await request.json()) as Record<string, string>;
         return new Response(null, { status: 204 });
@@ -141,7 +141,7 @@ test("Update registration without email field", async () => {
 
 test("Update registration with email field", async () => {
   server.use(
-    http.get("/wpoe/v1/admin/events/1", () => {
+    http.get("/regifair/v1/admin/events/1", () => {
       return HttpResponse.json({
         id: 1,
         name: "test",
@@ -159,7 +159,7 @@ test("Update registration with email field", async () => {
   );
 
   server.use(
-    http.get("/wpoe/v1/admin/events/1/registrations/1", () => {
+    http.get("/regifair/v1/admin/events/1/registrations/1", () => {
       return HttpResponse.json({ values: { 1: "foo@example.com" } });
     }),
   );
@@ -167,7 +167,7 @@ test("Update registration with email field", async () => {
   let requestBody: Record<string, string>;
   server.use(
     http.post(
-      "/wpoe/v1/admin/events/1/registrations/1&sendEmail=true",
+      "/regifair/v1/admin/events/1/registrations/1&sendEmail=true",
       async ({ request }) => {
         requestBody = (await request.json()) as Record<string, string>;
         return new Response(null, { status: 204 });
@@ -207,7 +207,7 @@ test("Update registration with email field", async () => {
 
 test("Update registration failing validation", async () => {
   server.use(
-    http.get("/wpoe/v1/admin/events/1", () => {
+    http.get("/regifair/v1/admin/events/1", () => {
       return HttpResponse.json({
         id: 1,
         name: "test",
@@ -226,7 +226,7 @@ test("Update registration failing validation", async () => {
   );
 
   server.use(
-    http.get("/wpoe/v1/admin/events/1/registrations/1", () => {
+    http.get("/regifair/v1/admin/events/1/registrations/1", () => {
       return HttpResponse.json({ values: { 1: "foo@example.com" } });
     }),
   );
@@ -234,7 +234,7 @@ test("Update registration failing validation", async () => {
   let requestBody: Record<string, string>;
   server.use(
     http.post(
-      "/wpoe/v1/admin/events/1/registrations/1&sendEmail=false",
+      "/regifair/v1/admin/events/1/registrations/1&sendEmail=false",
       async ({ request }) => {
         requestBody = (await request.json()) as Record<string, string>;
         return HttpResponse.json(
@@ -283,7 +283,7 @@ test("Update registration failing validation", async () => {
 
 test("Display confirmed registration", async () => {
   server.use(
-    http.get("/wpoe/v1/admin/events/1", () => {
+    http.get("/regifair/v1/admin/events/1", () => {
       return HttpResponse.json({
         id: 1,
         name: "test",
@@ -296,7 +296,7 @@ test("Display confirmed registration", async () => {
   );
 
   server.use(
-    http.get("/wpoe/v1/admin/events/1/registrations/1", () => {
+    http.get("/regifair/v1/admin/events/1/registrations/1", () => {
       return HttpResponse.json({ values: { 1: "foo" }, waitingList: false });
     }),
   );
@@ -328,7 +328,7 @@ test("Display confirmed registration", async () => {
 
 test("Display registration in waiting list", async () => {
   server.use(
-    http.get("/wpoe/v1/admin/events/1", () => {
+    http.get("/regifair/v1/admin/events/1", () => {
       return HttpResponse.json({
         id: 1,
         name: "test",
@@ -341,7 +341,7 @@ test("Display registration in waiting list", async () => {
   );
 
   server.use(
-    http.get("/wpoe/v1/admin/events/1/registrations/1", () => {
+    http.get("/regifair/v1/admin/events/1/registrations/1", () => {
       return HttpResponse.json({ values: { 1: "foo" }, waitingList: true });
     }),
   );

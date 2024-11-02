@@ -12,7 +12,7 @@ test('Validate options (radio and dropdown fields)', async ({ page, context, req
   let fieldId1: number, fieldId2: number, fieldId3: number;
 
   await test.step('Create event with options fields', async () => {
-    const response = await request.post('/index.php?rest_route=/wpoe/v1/admin/events', {
+    const response = await request.post('/index.php?rest_route=/regifair/v1/admin/events', {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce
@@ -55,7 +55,7 @@ test('Validate options (radio and dropdown fields)', async ({ page, context, req
   });
 
   await test.step('Attempt to register with invalid fields', async () => {
-    const response = await request.post(`/index.php?rest_route=/wpoe/v1/events/${eventId}`, {
+    const response = await request.post(`/index.php?rest_route=/regifair/v1/events/${eventId}`, {
       data: { [fieldId1]: 'foo', [fieldId2]: 'bar', [fieldId3]: ['baz', 'bax'] }
     });
     expect(response.status()).toEqual(400);
@@ -68,14 +68,14 @@ test('Validate options (radio and dropdown fields)', async ({ page, context, req
   });
 
   await test.step('Register with valid fields', async () => {
-    const response = await request.post(`/index.php?rest_route=/wpoe/v1/events/${eventId}`, {
+    const response = await request.post(`/index.php?rest_route=/regifair/v1/events/${eventId}`, {
       data: { [fieldId1]: 'op1-1', [fieldId2]: 'op1-2', [fieldId3]: ['op1-1', 'op1-2'] }
     });
     expect(response.status()).toEqual(201);
   });
 
   await test.step('Delete test event', async () => {
-    const response = await request.delete(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId}`, {
+    const response = await request.delete(`/index.php?rest_route=/regifair/v1/admin/events/${eventId}`, {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce

@@ -12,7 +12,7 @@ const InputField = (props: InputFieldProps) => {
     <TextControl
       label={
         props.label +
-        (props.required ? "" : ` (${__("optional", "wp-open-events")})`)
+        (props.required ? "" : ` (${__("optional", "regi-fair")})`)
       }
       onChange={onChange}
       value={props.value}

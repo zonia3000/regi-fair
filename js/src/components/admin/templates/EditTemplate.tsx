@@ -39,7 +39,7 @@ const EditTemplate = () => {
     setLoading(true);
     if (templateId === "new") {
       setFound(true);
-      apiFetch({ path: `/wpoe/v1/admin/settings` })
+      apiFetch({ path: `/regifair/v1/admin/settings` })
         .then((result) => {
           const settings = result as Settings;
           if (settings.defaultAdminEmail) {
@@ -59,7 +59,7 @@ const EditTemplate = () => {
           setLoading(false);
         });
     } else {
-      apiFetch({ path: `/wpoe/v1/admin/templates/${templateId}` })
+      apiFetch({ path: `/regifair/v1/admin/templates/${templateId}` })
         .then((result) => {
           setFound(true);
           const template = result as TemplateConfiguration;
@@ -115,7 +115,7 @@ const EditTemplate = () => {
     try {
       if (templateId === "new") {
         await apiFetch({
-          path: "/wpoe/v1/admin/templates",
+          path: "/regifair/v1/admin/templates",
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -127,7 +127,7 @@ const EditTemplate = () => {
         });
       } else {
         await apiFetch({
-          path: `/wpoe/v1/admin/templates/${templateId}`,
+          path: `/regifair/v1/admin/templates/${templateId}`,
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
@@ -174,7 +174,7 @@ const EditTemplate = () => {
         </div>
       );
     } else {
-      return <p>{__("Template not found", "wp-open-events")}</p>;
+      return <p>{__("Template not found", "regi-fair")}</p>;
     }
   }
 
@@ -182,12 +182,12 @@ const EditTemplate = () => {
     <div>
       <h1>
         {templateId === "new"
-          ? __("Create template", "wp-open-events")
-          : __("Edit template", "wp-open-events")}
+          ? __("Create template", "regi-fair")
+          : __("Edit template", "regi-fair")}
       </h1>
       <div className={!valid && !templateName.trim() ? "form-error" : ""}>
         <TextControl
-          label={__("Name", "wp-open-events")}
+          label={__("Name", "regi-fair")}
           onChange={setTemplateName}
           value={templateName}
           required
@@ -196,12 +196,12 @@ const EditTemplate = () => {
         />
         {!valid && !templateName.trim() && (
           <span className="error-text">
-            {__("Field is required", "wp-open-events")}
+            {__("Field is required", "regi-fair")}
           </span>
         )}
       </div>
       <CheckboxControl
-        label={__("Autoremove user data after the event", "wp-open-events")}
+        label={__("Autoremove user data after the event", "regi-fair")}
         checked={autoremove}
         onChange={setAutoremove}
         className="mb"
@@ -209,7 +209,7 @@ const EditTemplate = () => {
       />
       {autoremove && (
         <TextControl
-          label={__("Autoremove period", "wp-open-events")}
+          label={__("Autoremove period", "regi-fair")}
           onChange={setAutoremovePeriod}
           value={autoremovePeriod}
           type="number"
@@ -217,20 +217,20 @@ const EditTemplate = () => {
           className="mb"
           help={__(
             "Number of days to wait after the event conclusion before removing registrations data",
-            "wp-open-events",
+            "regi-fair",
           )}
           __nextHasNoMarginBottom={true}
         />
       )}
       {autoremove && !valid && !autoremovePeriod && (
         <span className="error-text">
-          {__("Field is required", "wp-open-events")}
+          {__("Field is required", "regi-fair")}
         </span>
       )}
       <CheckboxControl
         label={__(
           "Allow the users to edit or delete their registrations",
-          "wp-open-events",
+          "regi-fair",
         )}
         checked={editableRegistrations}
         onChange={setEditableRegistrations}
@@ -240,7 +240,7 @@ const EditTemplate = () => {
       <CheckboxControl
         label={__(
           "Notify an administrator by e-mail when a new registration is created",
-          "wp-open-events",
+          "regi-fair",
         )}
         checked={notifyAdmin}
         onChange={setNotifyAdmin}
@@ -250,7 +250,7 @@ const EditTemplate = () => {
       {notifyAdmin && (
         <div className={!valid && !adminEmail.trim() ? "form-error" : ""}>
           <TextControl
-            label={__("Administrator e-mail address", "wp-open-events")}
+            label={__("Administrator e-mail address", "regi-fair")}
             onChange={setAdminEmail}
             value={adminEmail}
             required
@@ -259,7 +259,7 @@ const EditTemplate = () => {
           />
           {!valid && !adminEmail.trim() && (
             <span className="error-text">
-              {__("Field is required", "wp-open-events")}
+              {__("Field is required", "regi-fair")}
             </span>
           )}
         </div>
@@ -267,7 +267,7 @@ const EditTemplate = () => {
       <CheckboxControl
         label={__(
           "Add custom message to confirmation e-mail",
-          "wp-open-events",
+          "regi-fair",
         )}
         checked={customizeEmailContent}
         onChange={setCustomizeEmailContent}
@@ -276,12 +276,12 @@ const EditTemplate = () => {
       />
       {customizeEmailContent && (
         <TextareaControl
-          label={__("Custom confirmation e-mail content", "wp-open-events")}
+          label={__("Custom confirmation e-mail content", "regi-fair")}
           onChange={setEmailExtraContent}
           value={emailExtraContent}
           help={__(
             "This content will be added at the end of the confirmation e-mail messages. Allowed HTML tags: <b>, <i>, <a>, <hr>, <p>, <br>",
-            "wp-open-events",
+            "regi-fair",
           )}
           className="mb"
           __nextHasNoMarginBottom={true}
@@ -298,11 +298,11 @@ const EditTemplate = () => {
         </div>
       )}
       <Button onClick={save} variant="primary">
-        {__("Save", "wp-open-events")}
+        {__("Save", "regi-fair")}
       </Button>
       &nbsp;
       <Button onClick={back} variant="secondary">
-        {__("Back", "wp-open-events")}
+        {__("Back", "regi-fair")}
       </Button>
     </div>
   );

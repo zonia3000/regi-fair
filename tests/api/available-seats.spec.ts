@@ -12,7 +12,7 @@ test('Available seats on event with number of people field', async ({ page, cont
   let eventId: number;
 
   await test.step('Create event with number of people field', async () => {
-    const response = await request.post('/index.php?rest_route=/wpoe/v1/admin/events', {
+    const response = await request.post('/index.php?rest_route=/regifair/v1/admin/events', {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce
@@ -42,7 +42,7 @@ test('Available seats on event with number of people field', async ({ page, cont
 
   let fieldId: number;
   await test.step('Retrieve field id', async () => {
-    const response = await request.get(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId}`, {
+    const response = await request.get(`/index.php?rest_route=/regifair/v1/admin/events/${eventId}`, {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce
@@ -54,14 +54,14 @@ test('Available seats on event with number of people field', async ({ page, cont
   });
 
   await test.step('Check available seats', async () => {
-    const response = await request.get(`/index.php?rest_route=/wpoe/v1/events/${eventId}`);
+    const response = await request.get(`/index.php?rest_route=/regifair/v1/events/${eventId}`);
     expect(response.status()).toEqual(200);
     const body = await response.json();
     expect(body.availableSeats).toEqual(10);
   });
 
   await test.step('Check available seats (admin side)', async () => {
-    const response = await request.get(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId}`, {
+    const response = await request.get(`/index.php?rest_route=/regifair/v1/admin/events/${eventId}`, {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce
@@ -73,7 +73,7 @@ test('Available seats on event with number of people field', async ({ page, cont
   });
 
   await test.step('Reject float number of people', async () => {
-    const response = await request.post(`/index.php?rest_route=/wpoe/v1/events/${eventId}`, {
+    const response = await request.post(`/index.php?rest_route=/regifair/v1/events/${eventId}`, {
       data: { [fieldId]: '1.5' }
     });
     expect(response.status()).toEqual(400);
@@ -82,7 +82,7 @@ test('Available seats on event with number of people field', async ({ page, cont
   });
 
   await test.step('Reject number of people lower than 1', async () => {
-    const response = await request.post(`/index.php?rest_route=/wpoe/v1/events/${eventId}`, {
+    const response = await request.post(`/index.php?rest_route=/regifair/v1/events/${eventId}`, {
       data: { [fieldId]: '0' }
     });
     expect(response.status()).toEqual(400);
@@ -93,7 +93,7 @@ test('Available seats on event with number of people field', async ({ page, cont
   let registrationToken: string;
 
   await test.step('Register 2 people', async () => {
-    const response = await request.post(`/index.php?rest_route=/wpoe/v1/events/${eventId}`, {
+    const response = await request.post(`/index.php?rest_route=/regifair/v1/events/${eventId}`, {
       data: { [fieldId]: '2' }
     });
     expect(response.status()).toEqual(201);
@@ -103,7 +103,7 @@ test('Available seats on event with number of people field', async ({ page, cont
   });
 
   await test.step('Add max to number of people field', async () => {
-    const response = await request.put(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId}`, {
+    const response = await request.put(`/index.php?rest_route=/regifair/v1/admin/events/${eventId}`, {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce
@@ -132,7 +132,7 @@ test('Available seats on event with number of people field', async ({ page, cont
   });
 
   await test.step('Attempt to register a number of people greater than the limit', async () => {
-    const response = await request.post(`/index.php?rest_route=/wpoe/v1/events/${eventId}`, {
+    const response = await request.post(`/index.php?rest_route=/regifair/v1/events/${eventId}`, {
       data: { [fieldId]: '4' }
     });
     expect(response.status()).toEqual(400);
@@ -141,7 +141,7 @@ test('Available seats on event with number of people field', async ({ page, cont
   });
 
   await test.step('Remove max to number of people field', async () => {
-    const response = await request.put(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId}`, {
+    const response = await request.put(`/index.php?rest_route=/regifair/v1/admin/events/${eventId}`, {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce
@@ -169,7 +169,7 @@ test('Available seats on event with number of people field', async ({ page, cont
   });
 
   await test.step('Register other 4 people', async () => {
-    const response = await request.post(`/index.php?rest_route=/wpoe/v1/events/${eventId}`, {
+    const response = await request.post(`/index.php?rest_route=/regifair/v1/events/${eventId}`, {
       data: { [fieldId]: '4' }
     });
     expect(response.status()).toEqual(201);
@@ -178,7 +178,7 @@ test('Available seats on event with number of people field', async ({ page, cont
   });
 
   await test.step('Attempt to register more than available seats', async () => {
-    const response = await request.post(`/index.php?rest_route=/wpoe/v1/events/${eventId}`, {
+    const response = await request.post(`/index.php?rest_route=/regifair/v1/events/${eventId}`, {
       data: { [fieldId]: '5' }
     });
     expect(response.status()).toEqual(400);
@@ -187,7 +187,7 @@ test('Available seats on event with number of people field', async ({ page, cont
   });
 
   await test.step('Update the first registration attempting to register more than available seats', async () => {
-    const response = await request.put(`/index.php?rest_route=/wpoe/v1/events/${eventId}/${registrationToken}`, {
+    const response = await request.put(`/index.php?rest_route=/regifair/v1/events/${eventId}/${registrationToken}`, {
       data: { [fieldId]: '7' }
     });
     expect(response.status()).toEqual(400);
@@ -196,7 +196,7 @@ test('Available seats on event with number of people field', async ({ page, cont
   });
 
   await test.step('Update the first registration adding one person', async () => {
-    const response = await request.put(`/index.php?rest_route=/wpoe/v1/events/${eventId}/${registrationToken}`, {
+    const response = await request.put(`/index.php?rest_route=/regifair/v1/events/${eventId}/${registrationToken}`, {
       data: { [fieldId]: '3' }
     });
     expect(response.status()).toEqual(200);
@@ -205,7 +205,7 @@ test('Available seats on event with number of people field', async ({ page, cont
   });
 
   await test.step('Update the first registration removing one person', async () => {
-    const response = await request.put(`/index.php?rest_route=/wpoe/v1/events/${eventId}/${registrationToken}`, {
+    const response = await request.put(`/index.php?rest_route=/regifair/v1/events/${eventId}/${registrationToken}`, {
       data: { [fieldId]: '2' }
     });
     expect(response.status()).toEqual(200);
@@ -214,14 +214,14 @@ test('Available seats on event with number of people field', async ({ page, cont
   });
 
   await test.step('Delete the first registration', async () => {
-    const response = await request.delete(`/index.php?rest_route=/wpoe/v1/events/${eventId}/${registrationToken}`);
+    const response = await request.delete(`/index.php?rest_route=/regifair/v1/events/${eventId}/${registrationToken}`);
     expect(response.status()).toEqual(200);
     const body = await response.json();
     expect(body.remaining).toEqual(6);
   });
 
   await test.step('Delete test event', async () => {
-    const deleteEventResponse = await request.delete(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId}`, {
+    const deleteEventResponse = await request.delete(`/index.php?rest_route=/regifair/v1/admin/events/${eventId}`, {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce
@@ -241,7 +241,7 @@ test('Available seats on event without number of people field', async ({ page, c
   let fieldId: number;
 
   await test.step('Create event with max participants and without number of people field', async () => {
-    const response = await request.post(`/index.php?rest_route=/wpoe/v1/admin/events`, {
+    const response = await request.post(`/index.php?rest_route=/regifair/v1/admin/events`, {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce
@@ -270,7 +270,7 @@ test('Available seats on event without number of people field', async ({ page, c
   let registrationToken: string;
 
   await test.step('Register one person', async () => {
-    const response = await request.post(`/index.php?rest_route=/wpoe/v1/events/${eventId}`, {
+    const response = await request.post(`/index.php?rest_route=/regifair/v1/events/${eventId}`, {
       data: { [fieldId]: 'Mario' }
     });
     expect(response.status()).toEqual(201);
@@ -280,7 +280,7 @@ test('Available seats on event without number of people field', async ({ page, c
   });
 
   await test.step('Register another person', async () => {
-    const response = await request.post(`/index.php?rest_route=/wpoe/v1/events/${eventId}`, {
+    const response = await request.post(`/index.php?rest_route=/regifair/v1/events/${eventId}`, {
       data: { [fieldId]: 'Jenny' }
     });
     expect(response.status()).toEqual(201);
@@ -289,7 +289,7 @@ test('Available seats on event without number of people field', async ({ page, c
   });
 
   await test.step('The third registration is rejected', async () => {
-    const response = await request.post(`/index.php?rest_route=/wpoe/v1/events/${eventId}`, {
+    const response = await request.post(`/index.php?rest_route=/regifair/v1/events/${eventId}`, {
       data: { [fieldId]: 'Paul' }
     });
     expect(response.status()).toEqual(400);
@@ -299,7 +299,7 @@ test('Available seats on event without number of people field', async ({ page, c
   });
 
   await test.step('It is still possible to modify the first registration', async () => {
-    const response = await request.put(`/index.php?rest_route=/wpoe/v1/events/${eventId}/${registrationToken}`, {
+    const response = await request.put(`/index.php?rest_route=/regifair/v1/events/${eventId}/${registrationToken}`, {
       data: { [fieldId]: 'Maria' }
     });
     expect(response.status()).toEqual(200);
@@ -308,14 +308,14 @@ test('Available seats on event without number of people field', async ({ page, c
   });
 
   await test.step('Delete the first registration', async () => {
-    const response = await request.delete(`/index.php?rest_route=/wpoe/v1/events/${eventId}/${registrationToken}`);
+    const response = await request.delete(`/index.php?rest_route=/regifair/v1/events/${eventId}/${registrationToken}`);
     expect(response.status()).toEqual(200);
     const body = await response.json();
     expect(body.remaining).toEqual(1);
   });
 
   await test.step('Delete test event', async () => {
-    const deleteEventResponse = await request.delete(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId}`, {
+    const deleteEventResponse = await request.delete(`/index.php?rest_route=/regifair/v1/admin/events/${eventId}`, {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce
@@ -331,7 +331,7 @@ test('Attempt to add multiple "number of people" field in the same event', async
 
   const eventName = Math.random().toString(36).substring(7);
 
-  const response = await request.post(`/index.php?rest_route=/wpoe/v1/admin/events`, {
+  const response = await request.post(`/index.php?rest_route=/regifair/v1/admin/events`, {
     headers: {
       'Cookie': cookies,
       'X-WP-Nonce': nonce
@@ -378,7 +378,7 @@ test('Event with optional "number of people" field', async ({ page, context, req
   let eventId: number;
   let fieldId: number;
   await test.step('Create event', async () => {
-    const response = await request.post(`/index.php?rest_route=/wpoe/v1/admin/events`, {
+    const response = await request.post(`/index.php?rest_route=/regifair/v1/admin/events`, {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce
@@ -409,7 +409,7 @@ test('Event with optional "number of people" field', async ({ page, context, req
   });
 
   await test.step('Register to test event without filling the number of people field', async () => {
-    const response = await request.post(`/index.php?rest_route=/wpoe/v1/events/${eventId}`, {
+    const response = await request.post(`/index.php?rest_route=/regifair/v1/events/${eventId}`, {
       data: { [fieldId]: '' }
     });
     expect(response.status()).toEqual(201);
@@ -418,7 +418,7 @@ test('Event with optional "number of people" field', async ({ page, context, req
   });
 
   await test.step('Register to test event specifying the number of people', async () => {
-    const response = await request.post(`/index.php?rest_route=/wpoe/v1/events/${eventId}`, {
+    const response = await request.post(`/index.php?rest_route=/regifair/v1/events/${eventId}`, {
       data: { [fieldId]: '2' }
     });
     expect(response.status()).toEqual(201);
@@ -427,7 +427,7 @@ test('Event with optional "number of people" field', async ({ page, context, req
   });
 
   await test.step('Delete test event', async () => {
-    const deleteEventResponse = await request.delete(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId}`, {
+    const deleteEventResponse = await request.delete(`/index.php?rest_route=/regifair/v1/admin/events/${eventId}`, {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce

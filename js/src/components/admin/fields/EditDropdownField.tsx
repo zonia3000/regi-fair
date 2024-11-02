@@ -120,7 +120,7 @@ const EditDropdownField = (props: EditDropdownFieldProps) => {
     <>
       <div className={!valid && !fieldLabel.trim() ? "form-error" : ""}>
         <TextControl
-          label={__("Label", "wp-open-events")}
+          label={__("Label", "regi-fair")}
           onChange={saveFieldLabel}
           value={fieldLabel}
           required
@@ -129,12 +129,12 @@ const EditDropdownField = (props: EditDropdownFieldProps) => {
         />
         {!valid && !fieldLabel.trim() && (
           <span className="error-text">
-            {__("Field is required", "wp-open-events")}
+            {__("Field is required", "regi-fair")}
           </span>
         )}
       </div>
       <TextControl
-        label={__("Description (optional)", "wp-open-events")}
+        label={__("Description (optional)", "regi-fair")}
         onChange={saveFieldDescription}
         value={fieldDescription}
         required
@@ -142,14 +142,14 @@ const EditDropdownField = (props: EditDropdownFieldProps) => {
         __nextHasNoMarginBottom={true}
       />
       <CheckboxControl
-        label={__("Required", "wp-open-events")}
+        label={__("Required", "regi-fair")}
         checked={fieldRequired}
         onChange={saveFieldRequired}
         className={"mt-2 mb-2"}
         __nextHasNoMarginBottom={true}
       />
       <CheckboxControl
-        label={__("Multiple", "wp-open-events")}
+        label={__("Multiple", "regi-fair")}
         checked={fieldMultiple}
         onChange={saveFieldMultiple}
         className={"mt-2 mb-2"}
@@ -166,7 +166,7 @@ const EditDropdownField = (props: EditDropdownFieldProps) => {
             key={index}
           >
             <TextControl
-              label={__("Option", "wp-open-events") + " " + (index + 1)}
+              label={__("Option", "regi-fair") + " " + (index + 1)}
               onChange={(value) => saveFieldOptions(value, index)}
               value={option}
               required
@@ -174,7 +174,7 @@ const EditDropdownField = (props: EditDropdownFieldProps) => {
               __nextHasNoMarginBottom={true}
             />
             <Button
-              aria-label={__("Remove option", "wp-open-events")}
+              aria-label={__("Remove option", "regi-fair")}
               onClick={() => removeOption(index)}
               className="remove-option-btn"
             >
@@ -182,14 +182,14 @@ const EditDropdownField = (props: EditDropdownFieldProps) => {
             </Button>
             {!valid && !option.trim() && (
               <span className="error-text">
-                {__("Field is required", "wp-open-events")}
+                {__("Field is required", "regi-fair")}
               </span>
             )}
           </div>
         );
       })}
       <Button onClick={addOption} variant="primary">
-        {__("Add option", "wp-open-events")}
+        {__("Add option", "regi-fair")}
       </Button>
       <br />
     </>

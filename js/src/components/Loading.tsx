@@ -7,7 +7,7 @@ const Loading = () => {
   return (
     <>
       <Spinner />
-      &nbsp;{__("Loading...", "wp-open-events")}
+      &nbsp;{__("Loading...", "regi-fair")}
     </>
   );
 };

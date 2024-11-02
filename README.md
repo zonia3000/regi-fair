@@ -1,10 +1,10 @@
-# WP Open Events
+# RegiFair
 
-WP Open Events is a free and open-source WordPress plugin designed to manage registrations to events. It is based on the modern Gutenberg block editor.
+RegiFair is a free and open-source WordPress plugin designed to manage registrations to events. It is based on the modern Gutenberg block editor.
 
 This README file contains information for developers. To see the features of the plugin and the user guide visit the following website:
 
-https://zonia3000.github.io/wp-open-events/
+https://zonia3000.github.io/regi-fair/
 
 Requirements:
 
@@ -44,10 +44,10 @@ docker run -d -p 8025:8025 -p 1025:1025 axllent/mailpit
 Generate translation files, after having executed `npm run build`:
 
 ```
-wp i18n make-pot . languages/wp-open-events.pot --domain=wp-open-events
-wp i18n update-po languages/wp-open-events.pot languages/wp-open-events-it_IT.po
-poedit languages/wp-open-events-it_IT.po
-wp i18n make-json languages/wp-open-events-it_IT.po --no-purge --pretty-print
+wp i18n make-pot . languages/regi-fair.pot --domain=regi-fair
+wp i18n update-po languages/regi-fair.pot languages/regi-fair-it_IT.po
+poedit languages/regi-fair-it_IT.po
+wp i18n make-json languages/regi-fair-it_IT.po --no-purge --pretty-print
 ```
 
 Notice that the `make-pot` command can cause the following error:

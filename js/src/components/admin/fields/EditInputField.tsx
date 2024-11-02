@@ -208,7 +208,7 @@ const EditInputField = (props: EditInputFieldProps) => {
     <>
       <div className={!valid && !fieldLabel.trim() ? "form-error" : ""}>
         <TextControl
-          label={__("Label", "wp-open-events")}
+          label={__("Label", "regi-fair")}
           onChange={saveFieldLabel}
           value={fieldLabel}
           required
@@ -217,12 +217,12 @@ const EditInputField = (props: EditInputFieldProps) => {
         />
         {!valid && !fieldLabel.trim() && (
           <span className="error-text">
-            {__("Field is required", "wp-open-events")}
+            {__("Field is required", "regi-fair")}
           </span>
         )}
       </div>
       <TextControl
-        label={__("Description (optional)", "wp-open-events")}
+        label={__("Description (optional)", "regi-fair")}
         onChange={saveFieldDescription}
         value={fieldDescription}
         required
@@ -230,7 +230,7 @@ const EditInputField = (props: EditInputFieldProps) => {
         __nextHasNoMarginBottom={true}
       />
       <CheckboxControl
-        label={__("Required", "wp-open-events")}
+        label={__("Required", "regi-fair")}
         checked={fieldRequired}
         onChange={saveFieldRequired}
         className="mt-2 mb-2"
@@ -240,7 +240,7 @@ const EditInputField = (props: EditInputFieldProps) => {
         <CheckboxControl
           label={__(
             "Use this address to send confirmation e-mail when the user register to the event",
-            "wp-open-events",
+            "regi-fair",
           )}
           checked={useAsConfirmationAddress}
           onChange={saveUseAsConfirmationAddress}
@@ -252,7 +252,7 @@ const EditInputField = (props: EditInputFieldProps) => {
         <CheckboxControl
           label={__(
             "For registered users, hide this field and automatically pick the e-mail address from Wordpress user data",
-            "wp-open-events",
+            "regi-fair",
           )}
           checked={useWpUserEmail}
           onChange={saveUseWpUserEmail}
@@ -265,25 +265,25 @@ const EditInputField = (props: EditInputFieldProps) => {
           <Notice status="info" className="mt-2" isDismissible={false}>
             {__(
               "This input will be used to allow adding multiple people with the same registration.",
-              "wp-open-events",
+              "regi-fair",
             )}
           </Notice>
           <p>
             {__(
               "This is useful when you don't need to collect each participant name, but you need to know the number of seats.",
-              "wp-open-events",
+              "regi-fair",
             )}
             <br />
             {__(
               "Example: a mother register and wants to add 3 kids, without having to specify their names.",
-              "wp-open-events",
+              "regi-fair",
             )}
           </p>
         </>
       )}
       {props.fieldType === "number" && !useAsNumberOfPeople && (
         <TextControl
-          label={__("Minimum value (optional)", "wp-open-events")}
+          label={__("Minimum value (optional)", "regi-fair")}
           type="number"
           onChange={saveMin}
           value={min}
@@ -293,7 +293,7 @@ const EditInputField = (props: EditInputFieldProps) => {
       )}
       {props.fieldType === "number" && (
         <TextControl
-          label={__("Maximum value (optional)", "wp-open-events")}
+          label={__("Maximum value (optional)", "regi-fair")}
           type="number"
           onChange={saveMax}
           value={max}

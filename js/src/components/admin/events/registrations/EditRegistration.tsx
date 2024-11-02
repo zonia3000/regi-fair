@@ -40,7 +40,7 @@ const EditRegistration = () => {
     let eventConfig: EventConfiguration | null = null;
     try {
       eventConfig = await apiFetch({
-        path: `/wpoe/v1/admin/events/${eventId}`,
+        path: `/regifair/v1/admin/events/${eventId}`,
       });
       setFound(true);
       setEvent(eventConfig);
@@ -58,7 +58,7 @@ const EditRegistration = () => {
     }
     try {
       const registration: Registration = await apiFetch({
-        path: `/wpoe/v1/admin/events/${eventId}/registrations/${registrationId}`,
+        path: `/regifair/v1/admin/events/${eventId}/registrations/${registrationId}`,
       });
       setFields(registration.values);
       setWaitingList(registration.waitingList);
@@ -89,7 +89,7 @@ const EditRegistration = () => {
     setLoading(true);
     try {
       await apiFetch({
-        path: `/wpoe/v1/admin/events/${eventId}/registrations/${registrationId}&sendEmail=${notifyUserByEmail}`,
+        path: `/regifair/v1/admin/events/${eventId}/registrations/${registrationId}&sendEmail=${notifyUserByEmail}`,
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -120,7 +120,7 @@ const EditRegistration = () => {
   }
 
   if (!found) {
-    return <p>{__("Registration not found", "wp-open-events")}</p>;
+    return <p>{__("Registration not found", "regi-fair")}</p>;
   }
 
   return (
@@ -128,20 +128,20 @@ const EditRegistration = () => {
       <h1 className="wp-heading-inline mb-2">
         {sprintf(
           /* translators: %d is replaced with the id of the registration */
-          __("Edit registration #%d", "wp-open-events"),
+          __("Edit registration #%d", "regi-fair"),
           registrationId,
         )}
       </h1>
       {waitingList && (
         <Notice status="info" isDismissible={false} className="mt">
-          {__("This registration is in the waiting list.", "wp-open-events")}
+          {__("This registration is in the waiting list.", "regi-fair")}
         </Notice>
       )}
       {availableSeats !== null && (
         <Notice status="info" isDismissible={false} className="mt">
           {sprintf(
             /* translators: %d is replaced with the number of available seats */
-            __("There are still %d seats available.", "wp-open-events"),
+            __("There are still %d seats available.", "regi-fair"),
             availableSeats,
           )}
         </Notice>
@@ -155,7 +155,7 @@ const EditRegistration = () => {
       />
       {showEmailCheckbox && (
         <CheckboxControl
-          label={__("Notify user by e-mail", "wp-open-events")}
+          label={__("Notify user by e-mail", "regi-fair")}
           checked={notifyUserByEmail}
           onChange={setNotifyUserByEmail}
           className="mt-2 mb"
@@ -170,11 +170,11 @@ const EditRegistration = () => {
         </div>
       )}
       <Button variant="primary" className="mt-2" onClick={updateRegistration}>
-        {__("Update", "wp-open-events")}
+        {__("Update", "regi-fair")}
       </Button>
       &nbsp;
       <Button onClick={back} className="mt-2" variant="secondary">
-        {__("Back", "wp-open-events")}
+        {__("Back", "regi-fair")}
       </Button>
     </div>
   );

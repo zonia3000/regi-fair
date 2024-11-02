@@ -65,36 +65,36 @@ const EditFieldModal = (props: EditFieldModalProps) => {
         <Modal
           title={
             createNew
-              ? __("Add field", "wp-open-events")
-              : __("Edit field", "wp-open-events")
+              ? __("Add field", "regi-fair")
+              : __("Edit field", "regi-fair")
           }
           onRequestClose={close}
         >
           {fieldType === null && (
             <>
-              <p>{__("Select field type", "wp-open-events")}</p>
-              <h4>{__("Standard", "wp-open-events")}</h4>
+              <p>{__("Select field type", "regi-fair")}</p>
+              <h4>{__("Standard", "regi-fair")}</h4>
               <div>
                 <Button
                   variant="primary"
                   onClick={() => setFieldType("text")}
                   className="mr"
                 >
-                  {__("Text", "wp-open-events")}
+                  {__("Text", "regi-fair")}
                 </Button>
                 <Button
                   variant="primary"
                   onClick={() => setFieldType("email")}
                   className="mr"
                 >
-                  {__("E-mail", "wp-open-events")}
+                  {__("E-mail", "regi-fair")}
                 </Button>
                 <Button
                   variant="primary"
                   onClick={() => setFieldType("number")}
                   className="mr"
                 >
-                  {__("Number", "wp-open-events")}
+                  {__("Number", "regi-fair")}
                 </Button>
               </div>
               <div className="mt">
@@ -103,27 +103,27 @@ const EditFieldModal = (props: EditFieldModalProps) => {
                   onClick={() => setFieldType("dropdown")}
                   className="mr"
                 >
-                  {__("Dropdown", "wp-open-events")}
+                  {__("Dropdown", "regi-fair")}
                 </Button>
                 <Button
                   variant="primary"
                   onClick={() => setFieldType("radio")}
                   className="mr"
                 >
-                  {__("Radio", "wp-open-events")}
+                  {__("Radio", "regi-fair")}
                 </Button>
                 <Button
                   variant="primary"
                   onClick={() => setFieldType("checkbox")}
                   className="mr"
                 >
-                  {__("Checkbox", "wp-open-events")}
+                  {__("Checkbox", "regi-fair")}
                 </Button>
               </div>
               {(props.showNumberOfPeopleFieldButton ||
                 props.showPrivacyFieldButton) && (
                 <>
-                  <h4>{__("Special", "wp-open-events")}</h4>
+                  <h4>{__("Special", "regi-fair")}</h4>
                   <div>
                     {props.showNumberOfPeopleFieldButton && (
                       <Button
@@ -134,7 +134,7 @@ const EditFieldModal = (props: EditFieldModalProps) => {
                           setFieldType("number");
                         }}
                       >
-                        {__("Number of people", "wp-open-events")}
+                        {__("Number of people", "regi-fair")}
                       </Button>
                     )}
                     {props.showPrivacyFieldButton && (
@@ -142,7 +142,7 @@ const EditFieldModal = (props: EditFieldModalProps) => {
                         variant="primary"
                         onClick={() => setFieldType("privacy")}
                       >
-                        {__("Privacy policy", "wp-open-events")}
+                        {__("Privacy policy", "regi-fair")}
                       </Button>
                     )}
                   </div>
@@ -198,12 +198,12 @@ const EditFieldModal = (props: EditFieldModalProps) => {
               <br />
               <hr />
               <Button variant="primary" onClick={save}>
-                {__("Save", "wp-open-events")}
+                {__("Save", "regi-fair")}
               </Button>
               &nbsp;
               {createNew && (
                 <Button variant="secondary" onClick={unsetField}>
-                  {__("Cancel", "wp-open-events")}
+                  {__("Cancel", "regi-fair")}
                 </Button>
               )}
             </>

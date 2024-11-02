@@ -4,9 +4,9 @@ if (!defined('ABSPATH')) {
   exit;
 }
 
-class WPOE_Checkbox_Validator extends WPOE_Base_Validator
+class REGI_FAIR_Checkbox_Validator extends REGI_FAIR_Base_Validator
 {
-  public function __construct(WPOE_Form_Field $field)
+  public function __construct(REGI_FAIR_Form_Field $field)
   {
     parent::__construct($field);
   }
@@ -18,9 +18,9 @@ class WPOE_Checkbox_Validator extends WPOE_Base_Validator
     }
     if ($value !== true && $value !== false) {
       // phpcs:disable WordPress.Security.EscapeOutput.ExceptionNotEscaped
-      throw new WPOE_Validation_Exception(
+      throw new REGI_FAIR_Validation_Exception(
         /* translators: Do not translate 'true' and 'false' */
-        __('Value must be true or false', 'wp-open-events')
+        __('Value must be true or false', 'regi-fair')
       );
       // phpcs:enable
     }

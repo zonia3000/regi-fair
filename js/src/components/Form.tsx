@@ -54,7 +54,7 @@ const Form = (props: FormProps) => {
     let eventConfig: EventConfiguration | null = null;
     try {
       eventConfig = await apiFetch({
-        path: `/wpoe/v1/events/${props.eventId}`,
+        path: `/regifair/v1/events/${props.eventId}`,
       });
       setFound(true);
       setEvent(eventConfig);
@@ -88,7 +88,7 @@ const Form = (props: FormProps) => {
     const token = match[1];
     try {
       const registration: Registration = await apiFetch({
-        path: `/wpoe/v1/events/${props.eventId}/${token}`,
+        path: `/regifair/v1/events/${props.eventId}/${token}`,
       });
       setRegistrationToken(token);
       setFields(registration.values);
@@ -110,7 +110,7 @@ const Form = (props: FormProps) => {
       let result: { remaining: null | number };
       if (editingExisting) {
         result = await apiFetch({
-          path: `/wpoe/v1/events/${props.eventId}/${registrationToken}`,
+          path: `/regifair/v1/events/${props.eventId}/${registrationToken}`,
           method: "PUT",
           data: fields,
         });
@@ -119,7 +119,7 @@ const Form = (props: FormProps) => {
           waitingList ||
           (availableSeats !== null && availableSeats <= 0 && event.waitingList);
         result = await apiFetch({
-          path: `/wpoe/v1/events/${props.eventId}?waitingList=${waiting}`,
+          path: `/regifair/v1/events/${props.eventId}?waitingList=${waiting}`,
           method: "POST",
           data: fields,
         });
@@ -151,7 +151,7 @@ const Form = (props: FormProps) => {
     setSubmitted(false);
     try {
       const result: { remaining: null | number } = await apiFetch({
-        path: `/wpoe/v1/events/${props.eventId}/${registrationToken}`,
+        path: `/regifair/v1/events/${props.eventId}/${registrationToken}`,
         method: "DELETE",
       });
       // reset registration token on URL
@@ -177,7 +177,7 @@ const Form = (props: FormProps) => {
 
   if (!found) {
     if (props.admin) {
-      return <p>{__("Event not found", "wp-open-events")}</p>;
+      return <p>{__("Event not found", "regi-fair")}</p>;
     } else {
       // Show nothing in public posts
       return;
@@ -187,7 +187,7 @@ const Form = (props: FormProps) => {
   if (event.ended) {
     return (
       <Notice status="info" className="mb-2" isDismissible={false}>
-        {__("Event is ended", "wp-open-events")}
+        {__("Event is ended", "regi-fair")}
       </Notice>
     );
   }
@@ -198,7 +198,7 @@ const Form = (props: FormProps) => {
         <Notice status="info" className="mb-2" isDismissible={false}>
           {__(
             "Welcome back. You are editing an existing registration.",
-            "wp-open-events",
+            "regi-fair",
           )}
         </Notice>
       )}
@@ -211,7 +211,7 @@ const Form = (props: FormProps) => {
               "There are still %d seats available.",
               availableSeats,
               "number of available seats",
-              "wp-open-events",
+              "regi-fair",
             ),
             availableSeats,
           )}
@@ -220,10 +220,10 @@ const Form = (props: FormProps) => {
 
       {availableSeats !== null && availableSeats <= 0 && editingExisting && (
         <Notice status="info" isDismissible={false}>
-          {__("There are no more seats available.", "wp-open-events")}
+          {__("There are no more seats available.", "regi-fair")}
           {waitingList &&
             " " +
-              __("This registration is in the waiting list.", "wp-open-events")}
+              __("This registration is in the waiting list.", "regi-fair")}
         </Notice>
       )}
 
@@ -232,16 +232,16 @@ const Form = (props: FormProps) => {
           {event.waitingList
             ? __(
                 "There are no more seats available. You can only join the waiting list. You will be notified when new seats will be available.",
-                "wp-open-events",
+                "regi-fair",
               )
             : lastSeatTaken
             ? __(
                 "Congratulation! You took the last seat available!",
-                "wp-open-events",
+                "regi-fair",
               )
             : __(
                 "We are sorry. You can't register because there are no more seats available.",
-                "wp-open-events",
+                "regi-fair",
               )}
         </Notice>
       )}
@@ -277,8 +277,8 @@ const Form = (props: FormProps) => {
               isDismissible={false}
             >
               {editingExisting
-                ? __("Your registration has been updated", "wp-open-events")
-                : __("Your registration has been submitted", "wp-open-events")}
+                ? __("Your registration has been updated", "regi-fair")
+                : __("Your registration has been submitted", "regi-fair")}
             </Notice>
           )}
 
@@ -288,7 +288,7 @@ const Form = (props: FormProps) => {
               className="mt-2 mb-2"
               isDismissible={false}
             >
-              {__("Your registration has been deleted", "wp-open-events")}
+              {__("Your registration has been deleted", "regi-fair")}
             </Notice>
           )}
 
@@ -299,10 +299,10 @@ const Form = (props: FormProps) => {
             disabled={props.disabled || submitting}
           >
             {editingExisting
-              ? __("Update the registration", "wp-open-events")
+              ? __("Update the registration", "regi-fair")
               : availableSeats === null || availableSeats > 0
-              ? __("Register to the event", "wp-open-events")
-              : __("Join the waiting list", "wp-open-events")}
+              ? __("Register to the event", "regi-fair")
+              : __("Join the waiting list", "regi-fair")}
           </Button>
 
           {editingExisting && (
@@ -312,13 +312,13 @@ const Form = (props: FormProps) => {
               onClick={() => setShowConfirmDeleteRegistrationModal(true)}
               disabled={props.disabled}
             >
-              {__("Delete the registration", "wp-open-events")}
+              {__("Delete the registration", "regi-fair")}
             </Button>
           )}
 
           {showConfirmDeleteRegistrationModal && (
             <Modal
-              title={__("Confirm registration deletion", "wp-open-events")}
+              title={__("Confirm registration deletion", "regi-fair")}
               onRequestClose={() =>
                 setShowConfirmDeleteRegistrationModal(false)
               }
@@ -326,7 +326,7 @@ const Form = (props: FormProps) => {
               <p>
                 {__(
                   "Do you really want to delete the registration to this event?",
-                  "wp-open-events",
+                  "regi-fair",
                 )}
               </p>
               {deletionError && (
@@ -339,7 +339,7 @@ const Form = (props: FormProps) => {
                 </Notice>
               )}
               <Button variant="primary" onClick={deleteRegistration}>
-                {__("Confirm", "wp-open-events")}
+                {__("Confirm", "regi-fair")}
               </Button>
             </Modal>
           )}

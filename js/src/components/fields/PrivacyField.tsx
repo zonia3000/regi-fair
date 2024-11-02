@@ -22,7 +22,7 @@ const PrivacyField = (props: PrivacyFieldProps) => {
 
     return sprintf(
       /* translators: The %s placeholders will be replaced with HTML tags used for creating a link to the privacy policy page */
-      __("I accept the %sprivacy policy%s", "wp-open-events"),
+      __("I accept the %sprivacy policy%s", "regi-fair"),
       `<a href="${safeUrl}">`,
       "</a>",
     );

@@ -4,28 +4,28 @@ if (!defined('ABSPATH')) {
   die();
 }
 
-require_once(WPOE_PLUGIN_DIR . 'classes/model/registration.php');
+require_once(REGI_FAIR_PLUGIN_DIR . 'classes/model/registration.php');
 
-class WPOE_Public_Controller extends WP_REST_Controller
+class REGI_FAIR_Public_Controller extends WP_REST_Controller
 {
   /**
-   * @var WPOE_DAO_Events
+   * @var REGI_FAIR_DAO_Events
    */
   private $events_dao;
   /**
-   * @var WPOE_DAO_Registrations
+   * @var REGI_FAIR_DAO_Registrations
    */
   private $registrations_dao;
 
   public function __construct()
   {
-    $this->events_dao = new WPOE_DAO_Events();
-    $this->registrations_dao = new WPOE_DAO_Registrations();
+    $this->events_dao = new REGI_FAIR_DAO_Events();
+    $this->registrations_dao = new REGI_FAIR_DAO_Registrations();
   }
 
   public function register_routes()
   {
-    $namespace = 'wpoe/v1';
+    $namespace = 'regifair/v1';
 
     register_rest_route(
       $namespace,
@@ -85,7 +85,7 @@ class WPOE_Public_Controller extends WP_REST_Controller
     $id = (int) $request->get_param('id');
     $event = $this->events_dao->get_public_event_data($id);
     if ($event === null) {
-      return new WP_Error('event_not_found', __('Event not found', 'wp-open-events'), ['status' => 404]);
+      return new WP_Error('event_not_found', __('Event not found', 'regi-fair'), ['status' => 404]);
     }
     $event->formFields = $this->remove_registered_user_email_field($event->formFields);
     $this->add_privacy_policy_url($event->formFields);
@@ -93,8 +93,8 @@ class WPOE_Public_Controller extends WP_REST_Controller
   }
 
   /**
-   * @param WPOE_Form_Field[] $fields
-   * @return WPOE_Form_Field[]
+   * @param REGI_FAIR_Form_Field[] $fields
+   * @return REGI_FAIR_Form_Field[]
    */
   private function remove_registered_user_email_field($fields)
   {
@@ -112,7 +112,7 @@ class WPOE_Public_Controller extends WP_REST_Controller
   }
 
   /**
-   * @param WPOE_Form_Field[] $fields
+   * @param REGI_FAIR_Form_Field[] $fields
    */
   private function add_privacy_policy_url(&$fields)
   {
@@ -139,15 +139,15 @@ class WPOE_Public_Controller extends WP_REST_Controller
       $waiting_list = (bool) $request->get_param('waitingList');
 
       if ($event === null) {
-        return new WP_Error('event_not_found', __('Event not found', 'wp-open-events'), ['status' => 400]);
+        return new WP_Error('event_not_found', __('Event not found', 'regi-fair'), ['status' => 400]);
       }
 
       if ($waiting_list && !$event->waitingList) {
-        return new WP_Error('waiting_list_not_enabled', __('Waiting list is not enabled', 'wp-open-events'), ['status' => 400]);
+        return new WP_Error('waiting_list_not_enabled', __('Waiting list is not enabled', 'regi-fair'), ['status' => 400]);
       }
 
       if ($event->ended) {
-        return new WP_Error('event_ended', __('You cannot register because the event is already ended', 'wp-open-events'), ['status' => 400]);
+        return new WP_Error('event_ended', __('You cannot register because the event is already ended', 'regi-fair'), ['status' => 400]);
       }
 
       $input = json_decode($request->get_body(), true);
@@ -159,7 +159,7 @@ class WPOE_Public_Controller extends WP_REST_Controller
 
       $user_email = get_user_email($event, $input);
 
-      $data = new WPOE_Registration();
+      $data = new REGI_FAIR_Registration();
       $data->numberOfPeople = get_number_of_people($event, $input);
       $data->values = $input;
       $data->waitingList = $waiting_list;
@@ -173,16 +173,16 @@ class WPOE_Public_Controller extends WP_REST_Controller
 
       if (count($user_email) > 0) {
         if ($waiting_list) {
-          WPOE_Mail_Sender::send_waiting_list_confirmation($event, $user_email, $registration_token, $input);
+          REGI_FAIR_Mail_Sender::send_waiting_list_confirmation($event, $user_email, $registration_token, $input);
         } else {
-          WPOE_Mail_Sender::send_registration_confirmation($event, $user_email, $registration_token, $input);
+          REGI_FAIR_Mail_Sender::send_registration_confirmation($event, $user_email, $registration_token, $input);
         }
       }
       if ($event->adminEmail !== null) {
         if ($waiting_list) {
-          WPOE_Mail_Sender::send_new_waiting_list_registration_to_admin($event, $input);
+          REGI_FAIR_Mail_Sender::send_new_waiting_list_registration_to_admin($event, $input);
         } else {
-          WPOE_Mail_Sender::send_new_registration_to_admin($event, $input);
+          REGI_FAIR_Mail_Sender::send_new_registration_to_admin($event, $input);
         }
       }
 
@@ -207,25 +207,25 @@ class WPOE_Public_Controller extends WP_REST_Controller
       $waiting_list = (bool) $request->get_param('waitingList');
 
       if ($event === null) {
-        return new WP_Error('event_not_found', __('Event not found', 'wp-open-events'), ['status' => 400]);
+        return new WP_Error('event_not_found', __('Event not found', 'regi-fair'), ['status' => 400]);
       }
 
       if ($waiting_list && !$event->waitingList) {
-        return new WP_Error('waiting_list_not_enabled', __('Waiting list is not enabled', 'wp-open-events'), ['status' => 400]);
+        return new WP_Error('waiting_list_not_enabled', __('Waiting list is not enabled', 'regi-fair'), ['status' => 400]);
       }
 
       if (!$event->editableRegistrations) {
-        return new WP_Error('registrations_not_editable', __('This event doesn\'t allow to edit the registrations', 'wp-open-events'), ['status' => 403]);
+        return new WP_Error('registrations_not_editable', __('This event doesn\'t allow to edit the registrations', 'regi-fair'), ['status' => 403]);
       }
 
       if ($event->ended) {
-        return new WP_Error('event_ended', __('You cannot register because the event is already ended', 'wp-open-events'), ['status' => 400]);
+        return new WP_Error('event_ended', __('You cannot register because the event is already ended', 'regi-fair'), ['status' => 400]);
       }
 
       $token = $request->get_param('registration_token');
       $registration = $this->registrations_dao->get_registration_from_token($event_id, md5($token));
       if ($registration === null) {
-        return new WP_Error('registration_not_found', __('Registration not found', 'wp-open-events'), ['status' => 400]);
+        return new WP_Error('registration_not_found', __('Registration not found', 'regi-fair'), ['status' => 400]);
       }
 
       $input = json_decode($request->get_body(), true);
@@ -237,7 +237,7 @@ class WPOE_Public_Controller extends WP_REST_Controller
 
       $user_email = get_user_email($event, $input);
 
-      $data = new WPOE_Registration();
+      $data = new REGI_FAIR_Registration();
       $data->id = $registration->id;
       $data->numberOfPeople = get_number_of_people($event, $input);
       $data->values = $input;
@@ -252,10 +252,10 @@ class WPOE_Public_Controller extends WP_REST_Controller
       $waiting_picked = $update_result['waiting_picked'];
 
       if (count($user_email) > 0) {
-        WPOE_Mail_Sender::send_registration_updated_confirmation($event, $user_email, $token, $input);
+        REGI_FAIR_Mail_Sender::send_registration_updated_confirmation($event, $user_email, $token, $input);
       }
       if ($event->adminEmail !== null) {
-        WPOE_Mail_Sender::send_registration_updated_to_admin($event, $input);
+        REGI_FAIR_Mail_Sender::send_registration_updated_to_admin($event, $input);
       }
 
       if ($waiting_picked !== null && count($waiting_picked) > 0) {
@@ -264,12 +264,12 @@ class WPOE_Public_Controller extends WP_REST_Controller
           if ($waiting_registration !== null) {
             $user_email = get_user_email($event, $waiting_registration->values);
             if (count($user_email) > 0) {
-              WPOE_Mail_Sender::send_picked_from_waiting_list_confirmation($event, $user_email, $waiting_registration->values);
+              REGI_FAIR_Mail_Sender::send_picked_from_waiting_list_confirmation($event, $user_email, $waiting_registration->values);
             }
           }
         }
         if ($event->adminEmail !== null) {
-          WPOE_Mail_Sender::send_registrations_picked_from_waiting_list_to_admin($event, $waiting_picked);
+          REGI_FAIR_Mail_Sender::send_registrations_picked_from_waiting_list_to_admin($event, $waiting_picked);
         }
       }
 
@@ -292,17 +292,17 @@ class WPOE_Public_Controller extends WP_REST_Controller
       $event = $this->events_dao->get_event($event_id);
 
       if ($event === null) {
-        return new WP_Error('event_not_found', __('Event not found', 'wp-open-events'), ['status' => 404]);
+        return new WP_Error('event_not_found', __('Event not found', 'regi-fair'), ['status' => 404]);
       }
 
       if (!$event->editableRegistrations) {
-        return new WP_Error('registrations_not_editable', __('This event doesn\'t allow to edit the registrations', 'wp-open-events'), ['status' => 403]);
+        return new WP_Error('registrations_not_editable', __('This event doesn\'t allow to edit the registrations', 'regi-fair'), ['status' => 403]);
       }
 
       $token = $request->get_param('registration_token');
       $registration = $this->registrations_dao->get_registration_from_token($event_id, md5($token));
       if ($registration === null) {
-        return new WP_Error('registration_not_found', __('Registration not found', 'wp-open-events'), ['status' => 404]);
+        return new WP_Error('registration_not_found', __('Registration not found', 'regi-fair'), ['status' => 404]);
       }
       return new WP_REST_Response($registration);
     } catch (Exception $ex) {
@@ -321,17 +321,17 @@ class WPOE_Public_Controller extends WP_REST_Controller
       $event = $this->events_dao->get_event($event_id);
 
       if ($event === null) {
-        return new WP_Error('event_not_found', __('Event not found', 'wp-open-events'), ['status' => 400]);
+        return new WP_Error('event_not_found', __('Event not found', 'regi-fair'), ['status' => 400]);
       }
 
       if (!$event->editableRegistrations) {
-        return new WP_Error('registrations_not_editable', __('This event doesn\'t allow to edit the registrations', 'wp-open-events'), ['status' => 403]);
+        return new WP_Error('registrations_not_editable', __('This event doesn\'t allow to edit the registrations', 'regi-fair'), ['status' => 403]);
       }
 
       $token = $request->get_param('registration_token');
       $registration = $this->registrations_dao->get_registration_from_token($event_id, md5($token));
       if ($registration === null) {
-        return new WP_Error('registration_not_found', __('Registration not found', 'wp-open-events'), ['status' => 400]);
+        return new WP_Error('registration_not_found', __('Registration not found', 'regi-fair'), ['status' => 400]);
       }
 
       $deletion_result = $this->registrations_dao->delete_registration($event, $registration->id);
@@ -342,10 +342,10 @@ class WPOE_Public_Controller extends WP_REST_Controller
       $user_email = get_user_email($event, $registration->values);
 
       if (count($user_email) > 0) {
-        WPOE_Mail_Sender::send_registration_deleted_confirmation($event, $user_email);
+        REGI_FAIR_Mail_Sender::send_registration_deleted_confirmation($event, $user_email);
       }
       if ($event->adminEmail !== null) {
-        WPOE_Mail_Sender::send_registration_deleted_to_admin($event);
+        REGI_FAIR_Mail_Sender::send_registration_deleted_to_admin($event);
       }
       if ($waiting_picked !== null && count($waiting_picked) > 0) {
         foreach ($waiting_picked as $registration_id) {
@@ -353,12 +353,12 @@ class WPOE_Public_Controller extends WP_REST_Controller
           if ($waiting_registration !== null) {
             $user_email = get_user_email($event, $waiting_registration->values);
             if (count($user_email) > 0) {
-              WPOE_Mail_Sender::send_picked_from_waiting_list_confirmation($event, $user_email, $waiting_registration->values);
+              REGI_FAIR_Mail_Sender::send_picked_from_waiting_list_confirmation($event, $user_email, $waiting_registration->values);
             }
           }
         }
         if ($event->adminEmail !== null) {
-          WPOE_Mail_Sender::send_registrations_picked_from_waiting_list_to_admin($event, $waiting_picked);
+          REGI_FAIR_Mail_Sender::send_registrations_picked_from_waiting_list_to_admin($event, $waiting_picked);
         }
       }
 

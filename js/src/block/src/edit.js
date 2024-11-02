@@ -3,8 +3,8 @@ import { useBlockProps } from '@wordpress/block-editor';
 import apiFetch from '@wordpress/api-fetch';
 import React, { useState, useEffect } from 'react';
 import { SelectControl } from '@wordpress/components';
-import Form from 'wp-open-events/Form';
-import Loading from 'wp-open-events/Loading';
+import Form from 'regi-fair/Form';
+import Loading from 'regi-fair/Loading';
 
 export default function Edit({ attributes, setAttributes }) {
     const [loading, setLoading] = useState(!attributes.eventId);
@@ -14,11 +14,11 @@ export default function Edit({ attributes, setAttributes }) {
 
     useEffect(() => {
         if (!attributes.eventId) {
-            apiFetch({ path: '/wpoe/v1/admin/events?ignorePastEvents=true' })
+            apiFetch({ path: '/regifair/v1/admin/events?ignorePastEvents=true' })
                 .then((result) => {
                     setEventsOptions(
                         [{
-                            label: __('Select...', 'wp-open-events'),
+                            label: __('Select...', 'regi-fair'),
                             value: ''
                         }].concat(
                             result.map(event => {
@@ -47,7 +47,7 @@ export default function Edit({ attributes, setAttributes }) {
 
             {!loading && !eventId &&
                 <SelectControl
-                    label={__('Select event', 'wp-open-events')}
+                    label={__('Select event', 'regi-fair')}
                     options={eventsOptions}
                     onChange={saveEventId}
                     __nextHasNoMarginBottom={true} />

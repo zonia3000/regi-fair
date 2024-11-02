@@ -1,6 +1,6 @@
 <?php
 
-class WPOE_Event_Template
+class REGI_FAIR_Event_Template
 {
   /**
    * @var int
@@ -13,7 +13,7 @@ class WPOE_Event_Template
   public $name;
 
   /**
-   * @var WPOE_Form_Field[]
+   * @var REGI_FAIR_Form_Field[]
    */
   public $formFields = [];
 

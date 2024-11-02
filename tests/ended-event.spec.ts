@@ -13,7 +13,7 @@ test('Attempt to register to ended event', async ({ page, request, context }) =>
   let eventId: number;
   let fieldId: number;
   await test.step('Create event in the future', async () => {
-    const response = await request.post('/index.php?rest_route=/wpoe/v1/admin/events', {
+    const response = await request.post('/index.php?rest_route=/regifair/v1/admin/events', {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce
@@ -42,7 +42,7 @@ test('Attempt to register to ended event', async ({ page, request, context }) =>
 
   let registrationToken: string;
   await test.step('Verify that it is possible to register to future event', async () => {
-    const response = await request.post(`/index.php?rest_route=/wpoe/v1/events/${eventId}`, {
+    const response = await request.post(`/index.php?rest_route=/regifair/v1/events/${eventId}`, {
       data: { [fieldId]: 'foo' }
     });
     expect(response.status()).toEqual(201);
@@ -51,7 +51,7 @@ test('Attempt to register to ended event', async ({ page, request, context }) =>
   });
 
   await test.step('Update event date moving it to the past', async () => {
-    const response = await request.put(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId}`, {
+    const response = await request.put(`/index.php?rest_route=/regifair/v1/admin/events/${eventId}`, {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce
@@ -77,7 +77,7 @@ test('Attempt to register to ended event', async ({ page, request, context }) =>
   });
 
   await test.step('Verify that it is not possible to register to past event', async () => {
-    const response = await request.post(`/index.php?rest_route=/wpoe/v1/events/${eventId}`, {
+    const response = await request.post(`/index.php?rest_route=/regifair/v1/events/${eventId}`, {
       data: { [fieldId]: 'foo' }
     });
     expect(response.status()).toEqual(400);
@@ -87,7 +87,7 @@ test('Attempt to register to ended event', async ({ page, request, context }) =>
   });
 
   await test.step('Verify that it is not possible to update past event', async () => {
-    const response = await request.put(`/index.php?rest_route=/wpoe/v1/events/${eventId}/${registrationToken}`, {
+    const response = await request.put(`/index.php?rest_route=/regifair/v1/events/${eventId}/${registrationToken}`, {
       data: { [fieldId]: 'foo' }
     });
     expect(response.status()).toEqual(400);
@@ -106,7 +106,7 @@ test('Attempt to register to ended event', async ({ page, request, context }) =>
       data: {
         title: postName,
         status: 'publish',
-        content: `<!-- wp:wp-open-events/form {"eventId":"${eventId}","className":"wp-block-wp-open-events-form"} /-->`
+        content: `<!-- wp:regi-fair/form {"eventId":"${eventId}","className":"wp-block-regi-fair-form"} /-->`
       }
     });
     expect(response.status()).toEqual(201);
@@ -130,7 +130,7 @@ test('Attempt to register to ended event', async ({ page, request, context }) =>
   });
 
   await test.step('Delete test event', async () => {
-    const response = await request.delete(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId}`, {
+    const response = await request.delete(`/index.php?rest_route=/regifair/v1/admin/events/${eventId}`, {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce

@@ -26,7 +26,7 @@ test('Events with waiting list API', async ({ page, context, request }) => {
   let fieldId1: number;
   let fieldId2: number;
   await test.step('Create test event with waiting list and number of people', async () => {
-    const response = await request.post('/index.php?rest_route=/wpoe/v1/admin/events', {
+    const response = await request.post('/index.php?rest_route=/regifair/v1/admin/events', {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce
@@ -67,7 +67,7 @@ test('Events with waiting list API', async ({ page, context, request }) => {
   });
 
   await test.step('Check waiting list flag in public event data', async () => {
-    const response = await request.get(`/index.php?rest_route=/wpoe/v1/events/${eventId}`);
+    const response = await request.get(`/index.php?rest_route=/regifair/v1/events/${eventId}`);
     expect(response.status()).toEqual(200);
     const body = await response.json();
     expect(body.waitingList).toEqual(true);
@@ -75,7 +75,7 @@ test('Events with waiting list API', async ({ page, context, request }) => {
 
   let registrationToken1: string;
   await test.step('Create first registration', async () => {
-    const response = await request.post(`/index.php?rest_route=/wpoe/v1/events/${eventId}`, {
+    const response = await request.post(`/index.php?rest_route=/regifair/v1/events/${eventId}`, {
       data: { [fieldId1]: '2', [fieldId2]: 'test1@example.com' }
     });
     expect(response.status()).toEqual(201);
@@ -86,7 +86,7 @@ test('Events with waiting list API', async ({ page, context, request }) => {
 
   let registrationToken2: string;
   await test.step('Create second registration', async () => {
-    const response = await request.post(`/index.php?rest_route=/wpoe/v1/events/${eventId}&waitingList=false`, {
+    const response = await request.post(`/index.php?rest_route=/regifair/v1/events/${eventId}&waitingList=false`, {
       data: { [fieldId1]: '1', [fieldId2]: 'test2@example.com' }
     });
     expect(response.status()).toEqual(201);
@@ -96,7 +96,7 @@ test('Events with waiting list API', async ({ page, context, request }) => {
   });
 
   await test.step('Attempt to register without waiting list flag', async () => {
-    const response = await request.post(`/index.php?rest_route=/wpoe/v1/events/${eventId}`, {
+    const response = await request.post(`/index.php?rest_route=/regifair/v1/events/${eventId}`, {
       data: { [fieldId1]: '2', [fieldId2]: 'test3@example.com' }
     });
     expect(response.status()).toEqual(400);
@@ -107,7 +107,7 @@ test('Events with waiting list API', async ({ page, context, request }) => {
 
   let registrationToken3: string;
   await test.step('Register with waiting list flag', async () => {
-    const response = await request.post(`/index.php?rest_route=/wpoe/v1/events/${eventId}&waitingList=true`, {
+    const response = await request.post(`/index.php?rest_route=/regifair/v1/events/${eventId}&waitingList=true`, {
       data: { [fieldId1]: '2', [fieldId2]: 'test3@example.com' }
     });
     expect(response.status()).toEqual(201);
@@ -131,7 +131,7 @@ test('Events with waiting list API', async ({ page, context, request }) => {
 
   let registrationId1: string;
   await test.step('List registrations', async () => {
-    const response = await request.get(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId}/registrations&page=1&pageSize=10`, {
+    const response = await request.get(`/index.php?rest_route=/regifair/v1/admin/events/${eventId}/registrations&page=1&pageSize=10`, {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce
@@ -148,7 +148,7 @@ test('Events with waiting list API', async ({ page, context, request }) => {
 
   let registrationId3: string;
   await test.step('List registrations in waiting list', async () => {
-    const response = await request.get(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId}/registrations&page=1&pageSize=10&waitingList=true`, {
+    const response = await request.get(`/index.php?rest_route=/regifair/v1/admin/events/${eventId}/registrations&page=1&pageSize=10&waitingList=true`, {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce
@@ -164,7 +164,7 @@ test('Events with waiting list API', async ({ page, context, request }) => {
   });
 
   await test.step('Get single confirmed registration', async () => {
-    const response = await request.get(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId}/registrations/${registrationId1}`, {
+    const response = await request.get(`/index.php?rest_route=/regifair/v1/admin/events/${eventId}/registrations/${registrationId1}`, {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce
@@ -177,7 +177,7 @@ test('Events with waiting list API', async ({ page, context, request }) => {
   });
 
   await test.step('Get single registration in waiting list', async () => {
-    const response = await request.get(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId}/registrations/${registrationId3}`, {
+    const response = await request.get(`/index.php?rest_route=/regifair/v1/admin/events/${eventId}/registrations/${registrationId3}`, {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce
@@ -190,28 +190,28 @@ test('Events with waiting list API', async ({ page, context, request }) => {
   });
 
   await test.step('Get registration in waiting list from token', async () => {
-    const response = await request.get(`/index.php?rest_route=/wpoe/v1/events/${eventId}/${registrationToken3}`);
+    const response = await request.get(`/index.php?rest_route=/regifair/v1/events/${eventId}/${registrationToken3}`);
     expect(response.status()).toEqual(200);
     const body = await response.json();
     expect(body.waitingList).toEqual(true);
   });
 
   await test.step('Check available seats in public event data', async () => {
-    const response = await request.get(`/index.php?rest_route=/wpoe/v1/events/${eventId}`);
+    const response = await request.get(`/index.php?rest_route=/regifair/v1/events/${eventId}`);
     expect(response.status()).toEqual(200);
     const body = await response.json();
     expect(body.availableSeats).toEqual(0);
   });
 
   await test.step('User deletes the second registration [case1]', async () => {
-    const response = await request.delete(`/index.php?rest_route=/wpoe/v1/events/${eventId}/${registrationToken2}`);
+    const response = await request.delete(`/index.php?rest_route=/regifair/v1/events/${eventId}/${registrationToken2}`);
     expect(response.status()).toEqual(200);
     const body = await response.json();
     expect(body.remaining).toEqual(1);
   });
 
   await test.step('List registrations', async () => {
-    const response = await request.get(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId}/registrations&page=1&pageSize=10`, {
+    const response = await request.get(`/index.php?rest_route=/regifair/v1/admin/events/${eventId}/registrations&page=1&pageSize=10`, {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce
@@ -225,7 +225,7 @@ test('Events with waiting list API', async ({ page, context, request }) => {
   });
 
   await test.step('List registrations in waiting list', async () => {
-    const response = await request.get(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId}/registrations&page=1&pageSize=10&waitingList=true`, {
+    const response = await request.get(`/index.php?rest_route=/regifair/v1/admin/events/${eventId}/registrations&page=1&pageSize=10&waitingList=true`, {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce
@@ -237,14 +237,14 @@ test('Events with waiting list API', async ({ page, context, request }) => {
   });
 
   await test.step('User deletes the first registration [case2]', async () => {
-    const response = await request.delete(`/index.php?rest_route=/wpoe/v1/events/${eventId}/${registrationToken1}`);
+    const response = await request.delete(`/index.php?rest_route=/regifair/v1/events/${eventId}/${registrationToken1}`);
     expect(response.status()).toEqual(200);
     const { remaining } = await response.json();
     expect(remaining).toEqual(1);
   });
 
   await test.step('List registrations', async () => {
-    const response = await request.get(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId}/registrations&page=1&pageSize=10`, {
+    const response = await request.get(`/index.php?rest_route=/regifair/v1/admin/events/${eventId}/registrations&page=1&pageSize=10`, {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce
@@ -270,7 +270,7 @@ test('Events with waiting list API', async ({ page, context, request }) => {
   });
 
   await test.step('List registrations in waiting list', async () => {
-    const response = await request.get(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId}/registrations&page=1&pageSize=10&waitingList=true`, {
+    const response = await request.get(`/index.php?rest_route=/regifair/v1/admin/events/${eventId}/registrations&page=1&pageSize=10&waitingList=true`, {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce
@@ -282,7 +282,7 @@ test('Events with waiting list API', async ({ page, context, request }) => {
   });
 
   await test.step('Add 4th registration in waiting list', async () => {
-    const response = await request.post(`/index.php?rest_route=/wpoe/v1/events/${eventId}&waitingList=true`, {
+    const response = await request.post(`/index.php?rest_route=/regifair/v1/events/${eventId}&waitingList=true`, {
       data: { [fieldId1]: '2', [fieldId2]: 'test4@example.com' }
     });
     expect(response.status()).toEqual(201);
@@ -291,7 +291,7 @@ test('Events with waiting list API', async ({ page, context, request }) => {
   });
 
   await test.step('List registrations in waiting list', async () => {
-    const response = await request.get(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId}/registrations&page=1&pageSize=10&waitingList=true`, {
+    const response = await request.get(`/index.php?rest_route=/regifair/v1/admin/events/${eventId}/registrations&page=1&pageSize=10&waitingList=true`, {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce
@@ -303,14 +303,14 @@ test('Events with waiting list API', async ({ page, context, request }) => {
   });
 
   await test.step('Check available seats in public event data', async () => {
-    const response = await request.get(`/index.php?rest_route=/wpoe/v1/events/${eventId}`);
+    const response = await request.get(`/index.php?rest_route=/regifair/v1/events/${eventId}`);
     expect(response.status()).toEqual(200);
     const body = await response.json();
     expect(body.availableSeats).toEqual(1);
   });
 
   await test.step('User updates the third registration removing one person [case3]', async () => {
-    const response = await request.put(`/index.php?rest_route=/wpoe/v1/events/${eventId}/${registrationToken3}`, {
+    const response = await request.put(`/index.php?rest_route=/regifair/v1/events/${eventId}/${registrationToken3}`, {
       data: { [fieldId1]: '1', [fieldId2]: 'test3@example.com' }
     });
     expect(response.status()).toEqual(200);
@@ -320,7 +320,7 @@ test('Events with waiting list API', async ({ page, context, request }) => {
 
   let registrationId4: string;
   await test.step('List registrations', async () => {
-    const response = await request.get(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId}/registrations&page=1&pageSize=10`, {
+    const response = await request.get(`/index.php?rest_route=/regifair/v1/admin/events/${eventId}/registrations&page=1&pageSize=10`, {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce
@@ -335,7 +335,7 @@ test('Events with waiting list API', async ({ page, context, request }) => {
   });
 
   await test.step('List registrations in waiting list', async () => {
-    const response = await request.get(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId}/registrations&page=1&pageSize=10&waitingList=true`, {
+    const response = await request.get(`/index.php?rest_route=/regifair/v1/admin/events/${eventId}/registrations&page=1&pageSize=10&waitingList=true`, {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce
@@ -347,7 +347,7 @@ test('Events with waiting list API', async ({ page, context, request }) => {
   });
 
   await test.step('Add 5th registration in waiting list', async () => {
-    const response = await request.post(`/index.php?rest_route=/wpoe/v1/events/${eventId}&waitingList=true`, {
+    const response = await request.post(`/index.php?rest_route=/regifair/v1/events/${eventId}&waitingList=true`, {
       data: { [fieldId1]: '1', [fieldId2]: 'test5@example.com' }
     });
     expect(response.status()).toEqual(201);
@@ -356,7 +356,7 @@ test('Events with waiting list API', async ({ page, context, request }) => {
   });
 
   await test.step('List registrations in waiting list', async () => {
-    const response = await request.get(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId}/registrations&page=1&pageSize=10&waitingList=true`, {
+    const response = await request.get(`/index.php?rest_route=/regifair/v1/admin/events/${eventId}/registrations&page=1&pageSize=10&waitingList=true`, {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce
@@ -368,7 +368,7 @@ test('Events with waiting list API', async ({ page, context, request }) => {
   });
 
   await test.step('Admin updates the 4th registration removing one person [case4]', async () => {
-    const response = await request.post(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId}/registrations/${registrationId4}&sendEmail=true`, {
+    const response = await request.post(`/index.php?rest_route=/regifair/v1/admin/events/${eventId}/registrations/${registrationId4}&sendEmail=true`, {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce
@@ -379,7 +379,7 @@ test('Events with waiting list API', async ({ page, context, request }) => {
   });
 
   await test.step('List registrations in waiting list', async () => {
-    const response = await request.get(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId}/registrations&page=1&pageSize=10&waitingList=true`, {
+    const response = await request.get(`/index.php?rest_route=/regifair/v1/admin/events/${eventId}/registrations&page=1&pageSize=10&waitingList=true`, {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce
@@ -391,7 +391,7 @@ test('Events with waiting list API', async ({ page, context, request }) => {
   });
 
   await test.step('Add 6th registration in waiting list', async () => {
-    const response = await request.post(`/index.php?rest_route=/wpoe/v1/events/${eventId}&waitingList=true`, {
+    const response = await request.post(`/index.php?rest_route=/regifair/v1/events/${eventId}&waitingList=true`, {
       data: { [fieldId1]: '1', [fieldId2]: 'test6@example.com' }
     });
     expect(response.status()).toEqual(201);
@@ -400,7 +400,7 @@ test('Events with waiting list API', async ({ page, context, request }) => {
   });
 
   await test.step('List registrations in waiting list', async () => {
-    const response = await request.get(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId}/registrations&page=1&pageSize=10&waitingList=true`, {
+    const response = await request.get(`/index.php?rest_route=/regifair/v1/admin/events/${eventId}/registrations&page=1&pageSize=10&waitingList=true`, {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce
@@ -412,7 +412,7 @@ test('Events with waiting list API', async ({ page, context, request }) => {
   });
 
   await test.step('Admin deletes the 4th registration', async () => {
-    const response = await request.delete(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId}/registrations/${registrationId4}&sendEmail=true`, {
+    const response = await request.delete(`/index.php?rest_route=/regifair/v1/admin/events/${eventId}/registrations/${registrationId4}&sendEmail=true`, {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce
@@ -422,7 +422,7 @@ test('Events with waiting list API', async ({ page, context, request }) => {
   });
 
   await test.step('List registrations in waiting list', async () => {
-    const response = await request.get(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId}/registrations&page=1&pageSize=10&waitingList=true`, {
+    const response = await request.get(`/index.php?rest_route=/regifair/v1/admin/events/${eventId}/registrations&page=1&pageSize=10&waitingList=true`, {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce
@@ -434,7 +434,7 @@ test('Events with waiting list API', async ({ page, context, request }) => {
   });
 
   await test.step('Admin deletes the third registration', async () => {
-    const response = await request.delete(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId}/registrations/${registrationId3}&sendEmail=true`, {
+    const response = await request.delete(`/index.php?rest_route=/regifair/v1/admin/events/${eventId}/registrations/${registrationId3}&sendEmail=true`, {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce
@@ -445,7 +445,7 @@ test('Events with waiting list API', async ({ page, context, request }) => {
 
   let registrationToken7: string;
   await test.step('Add 7th registration in waiting list', async () => {
-    const response = await request.post(`/index.php?rest_route=/wpoe/v1/events/${eventId}&waitingList=true`, {
+    const response = await request.post(`/index.php?rest_route=/regifair/v1/events/${eventId}&waitingList=true`, {
       data: { [fieldId1]: '2', [fieldId2]: 'test7@example.com' }
     });
     expect(response.status()).toEqual(201);
@@ -455,7 +455,7 @@ test('Events with waiting list API', async ({ page, context, request }) => {
   });
 
   await test.step('List registrations in waiting list', async () => {
-    const response = await request.get(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId}/registrations&page=1&pageSize=10&waitingList=true`, {
+    const response = await request.get(`/index.php?rest_route=/regifair/v1/admin/events/${eventId}/registrations&page=1&pageSize=10&waitingList=true`, {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce
@@ -467,7 +467,7 @@ test('Events with waiting list API', async ({ page, context, request }) => {
   });
 
   await test.step('User updates the 7th registration in waiting list removing one person [case6]', async () => {
-    const response = await request.put(`/index.php?rest_route=/wpoe/v1/events/${eventId}/${registrationToken7}`, {
+    const response = await request.put(`/index.php?rest_route=/regifair/v1/events/${eventId}/${registrationToken7}`, {
       data: { [fieldId1]: '1', [fieldId2]: 'test7@example.com' }
     });
     expect(response.status()).toEqual(200);
@@ -476,7 +476,7 @@ test('Events with waiting list API', async ({ page, context, request }) => {
   });
 
   await test.step('List registrations in waiting list', async () => {
-    const response = await request.get(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId}/registrations&page=1&pageSize=10&waitingList=true`, {
+    const response = await request.get(`/index.php?rest_route=/regifair/v1/admin/events/${eventId}/registrations&page=1&pageSize=10&waitingList=true`, {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce
@@ -488,14 +488,14 @@ test('Events with waiting list API', async ({ page, context, request }) => {
   });
 
   await test.step('User deletes the 7th registration', async () => {
-    const response = await request.delete(`/index.php?rest_route=/wpoe/v1/events/${eventId}/${registrationToken7}`);
+    const response = await request.delete(`/index.php?rest_route=/regifair/v1/events/${eventId}/${registrationToken7}`);
     expect(response.status()).toEqual(200);
     const body = await response.json();
     expect(body.remaining).toEqual(1);
   });
 
   await test.step('The waitingList parameter is ignored if there are enough available seats [case7]', async () => {
-    const response = await request.post(`/index.php?rest_route=/wpoe/v1/events/${eventId}&waitingList=true`, {
+    const response = await request.post(`/index.php?rest_route=/regifair/v1/events/${eventId}&waitingList=true`, {
       data: { [fieldId1]: '1', [fieldId2]: 'test8@example.com' }
     });
     expect(response.status()).toEqual(201);
@@ -504,7 +504,7 @@ test('Events with waiting list API', async ({ page, context, request }) => {
   });
 
   await test.step('List registrations', async () => {
-    const response = await request.get(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId}/registrations&page=1&pageSize=10`, {
+    const response = await request.get(`/index.php?rest_route=/regifair/v1/admin/events/${eventId}/registrations&page=1&pageSize=10`, {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce
@@ -518,7 +518,7 @@ test('Events with waiting list API', async ({ page, context, request }) => {
   });
 
   await test.step('Attempt to update event reducing the number of available seats [case8]', async () => {
-    const response = await request.put(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId}`, {
+    const response = await request.put(`/index.php?rest_route=/regifair/v1/admin/events/${eventId}`, {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce
@@ -559,7 +559,7 @@ test('Events with waiting list API', async ({ page, context, request }) => {
 
   let registrationToken8: string;
   await test.step('Add 8th registration in waiting list', async () => {
-    const response = await request.post(`/index.php?rest_route=/wpoe/v1/events/${eventId}&waitingList=true`, {
+    const response = await request.post(`/index.php?rest_route=/regifair/v1/events/${eventId}&waitingList=true`, {
       data: { [fieldId1]: '2', [fieldId2]: 'test9@example.com' }
     });
     expect(response.status()).toEqual(201);
@@ -569,7 +569,7 @@ test('Events with waiting list API', async ({ page, context, request }) => {
   });
 
   await test.step('Attempt to update event removing the waiting list [case9]', async () => {
-    const response = await request.put(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId}`, {
+    const response = await request.put(`/index.php?rest_route=/regifair/v1/admin/events/${eventId}`, {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce
@@ -609,14 +609,14 @@ test('Events with waiting list API', async ({ page, context, request }) => {
   });
 
   await test.step('User deletes the 8th registration', async () => {
-    const response = await request.delete(`/index.php?rest_route=/wpoe/v1/events/${eventId}/${registrationToken8}`);
+    const response = await request.delete(`/index.php?rest_route=/regifair/v1/events/${eventId}/${registrationToken8}`);
     expect(response.status()).toEqual(200);
     const body = await response.json();
     expect(body.remaining).toEqual(0);
   });
 
   await test.step('It is now possible to remove the waiting list', async () => {
-    const response = await request.put(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId}`, {
+    const response = await request.put(`/index.php?rest_route=/regifair/v1/admin/events/${eventId}`, {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce
@@ -653,7 +653,7 @@ test('Events with waiting list API', async ({ page, context, request }) => {
   });
 
   await test.step('It is not possible to register using the waitingList flag if waiting list is disabled', async () => {
-    const response = await request.post(`/index.php?rest_route=/wpoe/v1/events/${eventId}&waitingList=true`, {
+    const response = await request.post(`/index.php?rest_route=/regifair/v1/events/${eventId}&waitingList=true`, {
       data: { [fieldId1]: '2', [fieldId2]: 'test@example.com' }
     });
     expect(response.status()).toEqual(400);
@@ -663,7 +663,7 @@ test('Events with waiting list API', async ({ page, context, request }) => {
   });
 
   await test.step('Delete test event', async () => {
-    const deleteEventResponse = await request.delete(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId}`, {
+    const deleteEventResponse = await request.delete(`/index.php?rest_route=/regifair/v1/admin/events/${eventId}`, {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce

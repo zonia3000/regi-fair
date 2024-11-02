@@ -4,13 +4,13 @@ if (!defined('ABSPATH')) {
   exit;
 }
 
-require_once(WPOE_PLUGIN_DIR . 'classes/db.php');
-require_once(WPOE_PLUGIN_DIR . 'classes/dao/base-dao.php');
-require_once(WPOE_PLUGIN_DIR . 'classes/model/event.php');
-require_once(WPOE_PLUGIN_DIR . 'classes/model/registration.php');
+require_once(REGI_FAIR_PLUGIN_DIR . 'classes/db.php');
+require_once(REGI_FAIR_PLUGIN_DIR . 'classes/dao/base-dao.php');
+require_once(REGI_FAIR_PLUGIN_DIR . 'classes/model/event.php');
+require_once(REGI_FAIR_PLUGIN_DIR . 'classes/model/registration.php');
 
 // phpcs:disable WordPress.DB.DirectDatabaseQuery
-class WPOE_DAO_Registrations extends WPOE_Base_DAO
+class REGI_FAIR_DAO_Registrations extends REGI_FAIR_Base_DAO
 {
   public function __construct()
   {
@@ -30,7 +30,7 @@ class WPOE_DAO_Registrations extends WPOE_Base_DAO
 
     $var = $wpdb->get_var(
       $wpdb->prepare(
-        "SELECT COUNT(*) FROM {$wpdb->prefix}wpoe_event_registration WHERE event_id = %d AND waiting_list = %d",
+        "SELECT COUNT(*) FROM {$wpdb->prefix}regi_fair_event_registration WHERE event_id = %d AND waiting_list = %d",
         $event_id,
         (int) $waiting_list
       )
@@ -102,9 +102,9 @@ class WPOE_DAO_Registrations extends WPOE_Base_DAO
     return $wpdb->get_results(
       $wpdb->prepare(
         "SELECT r.id, r.inserted_at, f.label, f.type, f.deleted, f.extra, rv.field_value
-        FROM {$wpdb->prefix}wpoe_event_registration r
-        RIGHT JOIN {$wpdb->prefix}wpoe_event_form_field f ON f.event_id = r.event_id
-        LEFT JOIN {$wpdb->prefix}wpoe_event_registration_value rv ON f.id = rv.field_id AND rv.registration_id = r.id
+        FROM {$wpdb->prefix}regi_fair_event_registration r
+        RIGHT JOIN {$wpdb->prefix}regi_fair_event_form_field f ON f.event_id = r.event_id
+        LEFT JOIN {$wpdb->prefix}regi_fair_event_registration_value rv ON f.id = rv.field_id AND rv.registration_id = r.id
         WHERE r.event_id = %d AND waiting_list = %d
         ORDER BY r.id DESC, f.deleted, f.position",
         $event_id,
@@ -120,10 +120,10 @@ class WPOE_DAO_Registrations extends WPOE_Base_DAO
     return $wpdb->get_results(
       $wpdb->prepare(
         "SELECT r.id, r.inserted_at, f.label, f.type, f.deleted, f.extra, rv.field_value
-        FROM {$wpdb->prefix}wpoe_event_registration r
-        RIGHT JOIN {$wpdb->prefix}wpoe_event_form_field f ON f.event_id = r.event_id
-        LEFT JOIN {$wpdb->prefix}wpoe_event_registration_value rv ON f.id = rv.field_id AND rv.registration_id = r.id
-        JOIN (SELECT id FROM {$wpdb->prefix}wpoe_event_registration
+        FROM {$wpdb->prefix}regi_fair_event_registration r
+        RIGHT JOIN {$wpdb->prefix}regi_fair_event_form_field f ON f.event_id = r.event_id
+        LEFT JOIN {$wpdb->prefix}regi_fair_event_registration_value rv ON f.id = rv.field_id AND rv.registration_id = r.id
+        JOIN (SELECT id FROM {$wpdb->prefix}regi_fair_event_registration
           WHERE event_id = %d AND waiting_list = %d ORDER BY id DESC LIMIT %d OFFSET %d
         ) AS rpage ON r.id = rpage.id ORDER BY r.id DESC, f.deleted, f.position",
         $event_id,
@@ -141,7 +141,7 @@ class WPOE_DAO_Registrations extends WPOE_Base_DAO
    * - an integer representing the number of remaining available seats if there is a maxiumum number of participants limit
    * - false if there is a maxiumum number of participants limit and this limit has already been reached
    */
-  public function register_to_event(WPOE_Event $event, WPOE_Registration $request, ?string $registration_token): int|false|null
+  public function register_to_event(REGI_FAIR_Event $event, REGI_FAIR_Registration $request, ?string $registration_token): int|false|null
   {
     global $wpdb;
 
@@ -171,7 +171,7 @@ class WPOE_DAO_Registrations extends WPOE_Base_DAO
 
       // Insert the registration
       $result = $wpdb->insert(
-        WPOE_DB::get_table_name('event_registration'),
+        REGI_FAIR_DB::get_table_name('event_registration'),
         [
           'event_id' => $event->id,
           'registration_token' => $registration_token,
@@ -187,7 +187,7 @@ class WPOE_DAO_Registrations extends WPOE_Base_DAO
       // Insert the registration fields
       foreach ($request->values as $field_id => $field_value) {
         $result = $wpdb->insert(
-          WPOE_DB::get_table_name('event_registration_value'),
+          REGI_FAIR_DB::get_table_name('event_registration_value'),
           [
             'registration_id' => $registration_id,
             'field_id' => $field_id,
@@ -211,14 +211,14 @@ class WPOE_DAO_Registrations extends WPOE_Base_DAO
     return $remaining_seats;
   }
 
-  public function get_registration_by_id(int $event_id, int $registration_id): WPOE_Registration|null
+  public function get_registration_by_id(int $event_id, int $registration_id): REGI_FAIR_Registration|null
   {
     global $wpdb;
 
     $row = $wpdb->get_row(
       $wpdb->prepare(
         "SELECT inserted_at, updated_at, waiting_list
-        FROM {$wpdb->prefix}wpoe_event_registration WHERE event_id = %d AND id = %s",
+        FROM {$wpdb->prefix}regi_fair_event_registration WHERE event_id = %d AND id = %s",
         $event_id,
         $registration_id
       )
@@ -234,7 +234,7 @@ class WPOE_DAO_Registrations extends WPOE_Base_DAO
 
     $values = $this->get_registration_values($registration_id);
 
-    $registration = new WPOE_Registration();
+    $registration = new REGI_FAIR_Registration();
     $registration->id = $registration_id;
     $registration->insertedAt = $inserted_at;
     $registration->updatedAt = $updated_at;
@@ -243,13 +243,13 @@ class WPOE_DAO_Registrations extends WPOE_Base_DAO
     return $registration;
   }
 
-  public function get_registration_from_token(int $event_id, string $registration_token): WPOE_Registration|null
+  public function get_registration_from_token(int $event_id, string $registration_token): REGI_FAIR_Registration|null
   {
     global $wpdb;
 
     $results = $wpdb->get_results(
       $wpdb->prepare(
-        "SELECT id, waiting_list FROM {$wpdb->prefix}wpoe_event_registration
+        "SELECT id, waiting_list FROM {$wpdb->prefix}regi_fair_event_registration
          WHERE event_id = %d AND registration_token = %s",
         $event_id,
         $registration_token
@@ -268,7 +268,7 @@ class WPOE_DAO_Registrations extends WPOE_Base_DAO
 
     $values = $this->get_registration_values($registration_id);
 
-    $registration = new WPOE_Registration();
+    $registration = new REGI_FAIR_Registration();
     $registration->id = $registration_id;
     $registration->values = $values;
     $registration->waitingList = $waiting_list;
@@ -282,9 +282,9 @@ class WPOE_DAO_Registrations extends WPOE_Base_DAO
     $results = $wpdb->get_results(
       $wpdb->prepare(
         "SELECT f.label, f.type, f.id AS field_id, f.extra, rv.field_value
-         FROM {$wpdb->prefix}wpoe_event_registration r
-         RIGHT JOIN {$wpdb->prefix}wpoe_event_form_field f ON f.event_id = r.event_id
-         LEFT JOIN {$wpdb->prefix}wpoe_event_registration_value rv ON f.id = rv.field_id AND rv.registration_id = r.id
+         FROM {$wpdb->prefix}regi_fair_event_registration r
+         RIGHT JOIN {$wpdb->prefix}regi_fair_event_form_field f ON f.event_id = r.event_id
+         LEFT JOIN {$wpdb->prefix}regi_fair_event_registration_value rv ON f.id = rv.field_id AND rv.registration_id = r.id
          WHERE r.id = %d AND NOT f.deleted
          ORDER BY f.position",
         $registration_id
@@ -330,7 +330,7 @@ class WPOE_DAO_Registrations extends WPOE_Base_DAO
       }
     }
     if ($type === 'checkbox' || $type === 'privacy') {
-      return ((bool) $value) ? __('Yes', 'wp-open-events') : __('No', 'wp-open-events');
+      return ((bool) $value) ? __('Yes', 'regi-fair') : __('No', 'regi-fair');
     }
     return $value;
   }
@@ -340,7 +340,7 @@ class WPOE_DAO_Registrations extends WPOE_Base_DAO
    * - the number of remaining seats, or null if the event has no max participants set;
    * - the list of registrations ids picked from waiting list, or null if waiting list is not enabled.
    */
-  public function update_registration(WPOE_Event $event, WPOE_Registration $request): array|false
+  public function update_registration(REGI_FAIR_Event $event, REGI_FAIR_Registration $request): array|false
   {
     global $wpdb;
 
@@ -362,7 +362,7 @@ class WPOE_DAO_Registrations extends WPOE_Base_DAO
 
         $var = $wpdb->get_var(
           $wpdb->prepare(
-            "SELECT number_of_people FROM {$wpdb->prefix}wpoe_event_registration WHERE id = %d",
+            "SELECT number_of_people FROM {$wpdb->prefix}regi_fair_event_registration WHERE id = %d",
             $request->id
           )
         );
@@ -394,7 +394,7 @@ class WPOE_DAO_Registrations extends WPOE_Base_DAO
 
       // Update registration updated_at
       $result = $wpdb->update(
-        WPOE_DB::get_table_name('event_registration'),
+        REGI_FAIR_DB::get_table_name('event_registration'),
         [
           'updated_at' => current_time('mysql'),
           'number_of_people' => $request->numberOfPeople,
@@ -408,7 +408,7 @@ class WPOE_DAO_Registrations extends WPOE_Base_DAO
 
       // Delete the registration fields
       $result = $wpdb->delete(
-        WPOE_DB::get_table_name('event_registration_value'),
+        REGI_FAIR_DB::get_table_name('event_registration_value'),
         ['registration_id' => $request->id],
         ['%d']
       );
@@ -417,7 +417,7 @@ class WPOE_DAO_Registrations extends WPOE_Base_DAO
       // Insert the registration fields
       foreach ($request->values as $field_id => $field_value) {
         $result = $wpdb->insert(
-          WPOE_DB::get_table_name('event_registration_value'),
+          REGI_FAIR_DB::get_table_name('event_registration_value'),
           [
             'registration_id' => $request->id,
             'field_id' => $field_id,
@@ -452,7 +452,7 @@ class WPOE_DAO_Registrations extends WPOE_Base_DAO
    * - the number of remaining seats, or null if the event has no max participants set;
    * - the list of registrations ids picked from waiting list, or null if waiting list is not enabled.
    */
-  public function delete_registration(WPOE_Event $event, int $registration_id): array
+  public function delete_registration(REGI_FAIR_Event $event, int $registration_id): array
   {
     global $wpdb;
 
@@ -469,7 +469,7 @@ class WPOE_DAO_Registrations extends WPOE_Base_DAO
 
       // Delete the registration fields
       $result = $wpdb->delete(
-        WPOE_DB::get_table_name('event_registration_value'),
+        REGI_FAIR_DB::get_table_name('event_registration_value'),
         ['registration_id' => $registration_id],
         ['%d']
       );
@@ -477,7 +477,7 @@ class WPOE_DAO_Registrations extends WPOE_Base_DAO
 
       // Delete the registration
       $result = $wpdb->delete(
-        WPOE_DB::get_table_name('event_registration'),
+        REGI_FAIR_DB::get_table_name('event_registration'),
         ['id' => $registration_id],
         ['%d']
       );
@@ -506,13 +506,13 @@ class WPOE_DAO_Registrations extends WPOE_Base_DAO
     ];
   }
 
-  private function pick_from_waiting_list(WPOE_Event $event, int $remaining_seats)
+  private function pick_from_waiting_list(REGI_FAIR_Event $event, int $remaining_seats)
   {
     global $wpdb;
     $results = $wpdb->get_results(
       $wpdb->prepare(
         "SELECT id, number_of_people
-        FROM {$wpdb->prefix}wpoe_event_registration
+        FROM {$wpdb->prefix}regi_fair_event_registration
         WHERE event_id = %d AND waiting_list ORDER BY id ASC",
         $event->id
       ),
@@ -528,7 +528,7 @@ class WPOE_DAO_Registrations extends WPOE_Base_DAO
       }
       $registration_id = (int) $row['id'];
       $result = $wpdb->update(
-        WPOE_DB::get_table_name('event_registration'),
+        REGI_FAIR_DB::get_table_name('event_registration'),
         [
           'updated_at' => current_time('mysql'),
           'waiting_list' => 0
@@ -557,7 +557,7 @@ class WPOE_DAO_Registrations extends WPOE_Base_DAO
     $var = $wpdb->get_var(
       $wpdb->prepare(
         "SELECT COALESCE(SUM(number_of_people), 0) AS number_of_people
-        FROM {$wpdb->prefix}wpoe_event_registration
+        FROM {$wpdb->prefix}regi_fair_event_registration
         WHERE event_id = %d AND NOT waiting_list",
         $event_id
       )
@@ -575,7 +575,7 @@ class WPOE_DAO_Registrations extends WPOE_Base_DAO
     $var = $wpdb->get_var(
       $wpdb->prepare(
         "SELECT COALESCE(SUM(number_of_people), 0) AS number_of_people
-        FROM {$wpdb->prefix}wpoe_event_registration
+        FROM {$wpdb->prefix}regi_fair_event_registration
         WHERE event_id = %d AND waiting_list",
         $event_id
       )

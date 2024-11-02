@@ -12,7 +12,7 @@ test('Event with optional number of people field', async ({ page, context, reque
   let fieldId: number;
 
   await test.step('Create test event', async () => {
-    const response = await request.post('/index.php?rest_route=/wpoe/v1/admin/events', {
+    const response = await request.post('/index.php?rest_route=/regifair/v1/admin/events', {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce
@@ -43,21 +43,21 @@ test('Event with optional number of people field', async ({ page, context, reque
   });
 
   await test.step('Create registration specifying the field', async () => {
-    const response = await request.post(`/index.php?rest_route=/wpoe/v1/events/${eventId}`, {
+    const response = await request.post(`/index.php?rest_route=/regifair/v1/events/${eventId}`, {
       data: { [fieldId]: 3 }
     });
     expect(response.status()).toEqual(201);
   });
 
   await test.step('Create registration specifying the field', async () => {
-    const response = await request.post(`/index.php?rest_route=/wpoe/v1/events/${eventId}`, {
+    const response = await request.post(`/index.php?rest_route=/regifair/v1/events/${eventId}`, {
       data: { [fieldId]: '' }
     });
     expect(response.status()).toEqual(201);
   });
 
   await test.step('List the registrations', async () => {
-    const response = await request.get(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId}/registrations&page=1&pageSize=10`, {
+    const response = await request.get(`/index.php?rest_route=/regifair/v1/admin/events/${eventId}/registrations&page=1&pageSize=10`, {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce
@@ -71,7 +71,7 @@ test('Event with optional number of people field', async ({ page, context, reque
   });
 
   await test.step('Delete test event', async () => {
-    const response = await request.delete(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId}`, {
+    const response = await request.delete(`/index.php?rest_route=/regifair/v1/admin/events/${eventId}`, {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce

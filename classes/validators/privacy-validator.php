@@ -4,9 +4,9 @@ if (!defined('ABSPATH')) {
   exit;
 }
 
-class WPOE_Privacy_Validator extends WPOE_Base_Validator
+class REGI_FAIR_Privacy_Validator extends REGI_FAIR_Base_Validator
 {
-  public function __construct(WPOE_Form_Field $field)
+  public function __construct(REGI_FAIR_Form_Field $field)
   {
     parent::__construct($field);
   }
@@ -18,7 +18,7 @@ class WPOE_Privacy_Validator extends WPOE_Base_Validator
     }
     if ($value !== true) {
       // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
-      throw new WPOE_Validation_Exception(__('It is necessary to accept the privacy policy', 'wp-open-events'));
+      throw new REGI_FAIR_Validation_Exception(__('It is necessary to accept the privacy policy', 'regi-fair'));
     }
     return true;
   }

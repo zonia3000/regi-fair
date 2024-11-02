@@ -22,7 +22,7 @@ test("Validate base template fields", async () => {
 
   let requestBody: TemplateConfiguration;
   server.use(
-    http.post("/wpoe/v1/admin/templates", async ({ request }) => {
+    http.post("/regifair/v1/admin/templates", async ({ request }) => {
       requestBody = (await request.json()) as TemplateConfiguration;
       return HttpResponse.json({ id: 1 });
     }),

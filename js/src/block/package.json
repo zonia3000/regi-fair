@@ -1,7 +1,7 @@
 {
-    "name": "wp-open-events-form",
+    "name": "regi-fair-form",
     "version": "0.1.0",
-    "description": "WP Open Events Form",
+    "description": "RegiFair Form",
     "author": "Sonia Zorba",
     "license": "GPL-3.0-or-later",
     "scripts": {
@@ -17,6 +17,6 @@
         "@wordpress/scripts": "^30.4.0"
     },
     "dependencies": {
-        "wp-open-events": "file:../components"
+        "regi-fair": "file:../components"
     }
 }

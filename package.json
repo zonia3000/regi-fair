@@ -1,7 +1,7 @@
 {
-  "name": "wp-open-events",
+  "name": "regi-fair",
   "version": "0.1.0",
-  "description": "WP Open Events e2e tests",
+  "description": "RegiFair e2e tests",
   "main": "index.js",
   "scripts": {},
   "keywords": [],

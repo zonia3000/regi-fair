@@ -2,17 +2,17 @@
 
 require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 
-define('WPOE_DB_VERSION_KEY', 'wpoe_db_version');
-define('WPOE_DB_VERSION', '1.0');
-require_once(WPOE_PLUGIN_DIR . 'classes/db.php');
+define('REGI_FAIR_DB_VERSION_KEY', 'regi_fair_db_version');
+define('REGI_FAIR_DB_VERSION', '1.0');
+require_once(REGI_FAIR_PLUGIN_DIR . 'classes/db.php');
 
-class WPOE_DB_Setup
+class REGI_FAIR_DB_Setup
 {
   public static function create_tables()
   {
     global $wpdb;
 
-    $event_table = WPOE_DB_Setup::create_table('event', "
+    $event_table = REGI_FAIR_DB_Setup::create_table('event', "
       id bigint unsigned NOT NULL AUTO_INCREMENT,
       name varchar(255) NOT NULL,
       date date NOT NULL,
@@ -26,7 +26,7 @@ class WPOE_DB_Setup
       PRIMARY KEY  (id)
     ");
 
-    $event_form_field_table = WPOE_DB_Setup::create_table('event_form_field', "
+    $event_form_field_table = REGI_FAIR_DB_Setup::create_table('event_form_field', "
       id bigint unsigned NOT NULL AUTO_INCREMENT,
       event_id bigint unsigned NOT NULL,
       label varchar(255) NOT NULL,
@@ -40,7 +40,7 @@ class WPOE_DB_Setup
       FOREIGN KEY (event_id) REFERENCES $event_table (id)
     ");
 
-    WPOE_DB_Setup::create_table('event_post', "
+    REGI_FAIR_DB_Setup::create_table('event_post', "
       event_id bigint unsigned NOT NULL,
       post_id bigint unsigned NOT NULL,
       updated_at timestamp DEFAULT CURRENT_TIMESTAMP,
@@ -49,7 +49,7 @@ class WPOE_DB_Setup
       FOREIGN KEY (post_id) REFERENCES " . $wpdb->prefix . "posts (ID)
     ");
 
-    $event_template_table = WPOE_DB_Setup::create_table('event_template', "
+    $event_template_table = REGI_FAIR_DB_Setup::create_table('event_template', "
       id bigint unsigned NOT NULL AUTO_INCREMENT,
       name varchar(255) NOT NULL,
       autoremove_submissions bit DEFAULT 1,
@@ -61,7 +61,7 @@ class WPOE_DB_Setup
       PRIMARY KEY  (id)
     ");
 
-    WPOE_DB_Setup::create_table('event_template_form_field', "
+    REGI_FAIR_DB_Setup::create_table('event_template_form_field', "
       id bigint unsigned NOT NULL AUTO_INCREMENT,
       template_id bigint unsigned NOT NULL,
       label varchar(255) NOT NULL,
@@ -74,7 +74,7 @@ class WPOE_DB_Setup
       FOREIGN KEY (template_id) REFERENCES $event_template_table (id)
     ");
 
-    $event_registration_table = WPOE_DB_Setup::create_table('event_registration', "
+    $event_registration_table = REGI_FAIR_DB_Setup::create_table('event_registration', "
       id bigint unsigned NOT NULL AUTO_INCREMENT,
       event_id bigint unsigned NOT NULL,
       registration_token varchar(255) NULL,
@@ -87,7 +87,7 @@ class WPOE_DB_Setup
       UNIQUE (registration_token)
     ");
 
-    WPOE_DB_Setup::create_table('event_registration_value', "
+    REGI_FAIR_DB_Setup::create_table('event_registration_value', "
       registration_id bigint unsigned NOT NULL,
       field_id bigint unsigned NOT NULL,
       field_value text NULL,
@@ -96,7 +96,7 @@ class WPOE_DB_Setup
       FOREIGN KEY (field_id) REFERENCES $event_form_field_table (id)
     ");
 
-    add_option(WPOE_DB_VERSION_KEY, WPOE_DB_VERSION);
+    add_option(REGI_FAIR_DB_VERSION_KEY, REGI_FAIR_DB_VERSION);
   }
 
   public static function drop_tables()
@@ -105,16 +105,16 @@ class WPOE_DB_Setup
     $tables = ['event_form_field', 'event', 'event_template', 'event_template_form_field', 'event_registration', 'event_registration_value'];
 
     foreach ($tables as $table) {
-      $wpdb->prepare('DROP TABLE IF EXISTS %s', WPOE_DB::get_table_name($table));
+      $wpdb->prepare('DROP TABLE IF EXISTS %s', REGI_FAIR_DB::get_table_name($table));
     }
 
-    delete_option(WPOE_DB_VERSION_KEY);
+    delete_option(REGI_FAIR_DB_VERSION_KEY);
   }
 
   private static function create_table(string $table_name, string $sql_fields): string
   {
     global $wpdb;
-    $table_name = WPOE_DB::get_table_name($table_name);
+    $table_name = REGI_FAIR_DB::get_table_name($table_name);
     $charset_collate = $wpdb->get_charset_collate();
     $sql = "CREATE TABLE $table_name ($sql_fields) $charset_collate;";
     dbDelta($sql);

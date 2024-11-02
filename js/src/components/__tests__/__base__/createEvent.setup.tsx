@@ -29,7 +29,7 @@ export const createEventTest = (
 
     let body: unknown;
     server.use(
-      http.post("/wpoe/v1/admin/events", async ({ request }) => {
+      http.post("/regifair/v1/admin/events", async ({ request }) => {
         body = await request.json();
         return HttpResponse.json({ id: 1 });
       }),

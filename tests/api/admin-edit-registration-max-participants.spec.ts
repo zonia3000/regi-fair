@@ -13,7 +13,7 @@ test('Admin edit registration with max participants', async ({ page, context, re
   let fieldId: number;
 
   await test.step('Create event', async () => {
-    const response = await request.post('/index.php?rest_route=/wpoe/v1/admin/events', {
+    const response = await request.post('/index.php?rest_route=/regifair/v1/admin/events', {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce
@@ -43,7 +43,7 @@ test('Admin edit registration with max participants', async ({ page, context, re
   });
 
   await test.step('Create a registration to the event', async () => {
-    let response = await request.post(`/index.php?rest_route=/wpoe/v1/events/${eventId}`, {
+    let response = await request.post(`/index.php?rest_route=/regifair/v1/events/${eventId}`, {
       data: { [fieldId]: 1 }
     });
     expect(response.status()).toEqual(201);
@@ -51,7 +51,7 @@ test('Admin edit registration with max participants', async ({ page, context, re
 
   let registrationId: number;
   await test.step('List registrations', async () => {
-    const response = await request.get(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId}/registrations&page=1&pageSize=10`, {
+    const response = await request.get(`/index.php?rest_route=/regifair/v1/admin/events/${eventId}/registrations&page=1&pageSize=10`, {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce
@@ -64,7 +64,7 @@ test('Admin edit registration with max participants', async ({ page, context, re
   });
 
   await test.step('Attempt to update the registration with more participants than the allowed value', async () => {
-    const response = await request.post(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId}/registrations/${registrationId}&sendEmail=true`, {
+    const response = await request.post(`/index.php?rest_route=/regifair/v1/admin/events/${eventId}/registrations/${registrationId}&sendEmail=true`, {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce
@@ -78,7 +78,7 @@ test('Admin edit registration with max participants', async ({ page, context, re
   });
 
   await test.step('Delete the event', async () => {
-    const response = await request.delete(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId}`, {
+    const response = await request.delete(`/index.php?rest_route=/regifair/v1/admin/events/${eventId}`, {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce

@@ -45,7 +45,7 @@ const ListRegistrations = (props: { waiting: boolean }) => {
     setLoading(true);
     try {
       const result: RegistrationsList = await apiFetch({
-        path: `/wpoe/v1/admin/events/${eventId}/registrations?waitingList=${props.waiting}&page=${page}&pageSize=${pageSize}`,
+        path: `/regifair/v1/admin/events/${eventId}/registrations?waitingList=${props.waiting}&page=${page}&pageSize=${pageSize}`,
       });
       setEventName(result.eventName);
       setHead(result.head);
@@ -82,7 +82,7 @@ const ListRegistrations = (props: { waiting: boolean }) => {
     setDownloadError("");
     try {
       const response: Response = await apiFetch({
-        path: `/wpoe/v1/admin/events/${eventId}/registrations/download?waitingList=${props.waiting}`,
+        path: `/regifair/v1/admin/events/${eventId}/registrations/download?waitingList=${props.waiting}`,
         parse: false,
       });
       const data = await response.text();
@@ -112,7 +112,7 @@ const ListRegistrations = (props: { waiting: boolean }) => {
     setLoading(true);
     try {
       await apiFetch({
-        path: `/wpoe/v1/admin/events/${eventId}/registrations/${registrationToDelete}`,
+        path: `/regifair/v1/admin/events/${eventId}/registrations/${registrationToDelete}`,
         method: "DELETE",
       });
       setShowConfirmDeleteRegistrationModal(false);
@@ -144,18 +144,18 @@ const ListRegistrations = (props: { waiting: boolean }) => {
         {!props.waiting &&
           sprintf(
             /* translators: %s is replaced with the name of the event */
-            __('Registrations for the event "%s"', "wp-open-events"),
+            __('Registrations for the event "%s"', "regi-fair"),
             eventName,
           )}
         {props.waiting &&
           sprintf(
             /* translators: %s is replaced with the name of the event */
-            __('Waiting list for the event "%s"', "wp-open-events"),
+            __('Waiting list for the event "%s"', "regi-fair"),
             eventName,
           )}
       </h1>
       <Button onClick={download} variant="primary">
-        {__("Download CSV", "wp-open-events")}
+        {__("Download CSV", "regi-fair")}
       </Button>
       {downloadError && (
         <div className="mt">
@@ -165,7 +165,7 @@ const ListRegistrations = (props: { waiting: boolean }) => {
         </div>
       )}
       <p>
-        <strong>{__("Confirmed participants", "wp-open-events")}</strong>:
+        <strong>{__("Confirmed participants", "regi-fair")}</strong>:
         &nbsp;
         {props.waiting ? (
           <Button variant="link" onClick={showConfirmedRegistrations}>
@@ -176,7 +176,7 @@ const ListRegistrations = (props: { waiting: boolean }) => {
         )}
         {totalWaiting > 0 && (
           <span className="ml-2">
-            <strong>{__("Waiting list", "wp-open-events")}</strong>: &nbsp;
+            <strong>{__("Waiting list", "regi-fair")}</strong>: &nbsp;
             {props.waiting ? (
               totalWaiting
             ) : (
@@ -190,7 +190,7 @@ const ListRegistrations = (props: { waiting: boolean }) => {
 
       {hasDeletedFields && (
         <CheckboxControl
-          label={__("Show deleted fields", "wp-open-events")}
+          label={__("Show deleted fields", "regi-fair")}
           checked={showDeletedFields}
           onChange={setShowDeletedFields}
           __nextHasNoMarginBottom={true}
@@ -201,14 +201,14 @@ const ListRegistrations = (props: { waiting: boolean }) => {
         <thead>
           <tr>
             <td>#</td>
-            <td>{__("Date and time", "wp-open-events")}</td>
+            <td>{__("Date and time", "regi-fair")}</td>
             {head
               .filter((h) => showDeletedFields || !h.deleted)
               .map((h) => (
                 <th key={h.label}>
                   {h.label}
                   {h.deleted && (
-                    <span>&nbsp; ({__("deleted", "wp-open-events")})</span>
+                    <span>&nbsp; ({__("deleted", "regi-fair")})</span>
                   )}
                 </th>
               ))}
@@ -231,14 +231,14 @@ const ListRegistrations = (props: { waiting: boolean }) => {
                   onClick={() => editRegistration(r[0])}
                   variant="primary"
                 >
-                  {__("Edit", "wp-open-events")}
+                  {__("Edit", "regi-fair")}
                 </Button>
                 <Button
                   onClick={() => openDeleteRegistrationModal(r[0])}
                   variant="secondary"
                   className="ml"
                 >
-                  {__("Delete", "wp-open-events")}
+                  {__("Delete", "regi-fair")}
                 </Button>
               </td>
             </tr>
@@ -255,12 +255,12 @@ const ListRegistrations = (props: { waiting: boolean }) => {
       />
 
       <Button onClick={back} variant="secondary" className="mt">
-        {__("Back", "wp-open-events")}
+        {__("Back", "regi-fair")}
       </Button>
 
       {showConfirmDeleteRegistrationModal && (
         <Modal
-          title={__("Confirm registration deletion", "wp-open-events")}
+          title={__("Confirm registration deletion", "regi-fair")}
           onRequestClose={() => setShowConfirmDeleteRegistrationModal(false)}
         >
           <p>
@@ -268,7 +268,7 @@ const ListRegistrations = (props: { waiting: boolean }) => {
               /* translators: %d is replaced with the id of the registration */
               __(
                 "Do you really want to delete the registration #%d?",
-                "wp-open-events",
+                "regi-fair",
               ),
               registrationToDelete,
             )}
@@ -279,7 +279,7 @@ const ListRegistrations = (props: { waiting: boolean }) => {
             </Notice>
           )}
           <Button variant="primary" onClick={deleteRegistration}>
-            {__("Confirm", "wp-open-events")}
+            {__("Confirm", "regi-fair")}
           </Button>
         </Modal>
       )}

@@ -16,7 +16,7 @@ test('Admin list and download registrations', async ({ page, context, request })
   let fieldId: number;
 
   await test.step('Create event', async () => {
-    const response = await request.post('/index.php?rest_route=/wpoe/v1/admin/events', {
+    const response = await request.post('/index.php?rest_route=/regifair/v1/admin/events', {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce
@@ -42,15 +42,15 @@ test('Admin list and download registrations', async ({ page, context, request })
   });
 
   await test.step('Create some registrations to the event', async () => {
-    let response = await request.post(`/index.php?rest_route=/wpoe/v1/events/${eventId}`, {
+    let response = await request.post(`/index.php?rest_route=/regifair/v1/events/${eventId}`, {
       data: { [fieldId]: 'mario' }
     });
     expect(response.status()).toEqual(201);
-    response = await request.post(`/index.php?rest_route=/wpoe/v1/events/${eventId}`, {
+    response = await request.post(`/index.php?rest_route=/regifair/v1/events/${eventId}`, {
       data: { [fieldId]: 'paola' }
     });
     expect(response.status()).toEqual(201);
-    response = await request.post(`/index.php?rest_route=/wpoe/v1/events/${eventId}`, {
+    response = await request.post(`/index.php?rest_route=/regifair/v1/events/${eventId}`, {
       data: { [fieldId]: 'giovanna' }
     });
     expect(response.status()).toEqual(201);

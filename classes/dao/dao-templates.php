@@ -4,10 +4,10 @@ if (!defined('ABSPATH')) {
   exit;
 }
 
-require_once(WPOE_PLUGIN_DIR . 'classes/db.php');
+require_once(REGI_FAIR_PLUGIN_DIR . 'classes/db.php');
 
 // phpcs:disable WordPress.DB.DirectDatabaseQuery
-class WPOE_DAO_Templates extends WPOE_Base_DAO
+class REGI_FAIR_DAO_Templates extends REGI_FAIR_Base_DAO
 {
   public function __construct()
   {
@@ -19,7 +19,7 @@ class WPOE_DAO_Templates extends WPOE_Base_DAO
     global $wpdb;
 
     $results = $wpdb->get_results(
-      "SELECT t.id, t.name FROM {$wpdb->prefix}wpoe_event_template t ORDER BY t.id",
+      "SELECT t.id, t.name FROM {$wpdb->prefix}regi_fair_event_template t ORDER BY t.id",
       ARRAY_A
     );
     $this->check_results('retrieving the list of event templates');
@@ -34,7 +34,7 @@ class WPOE_DAO_Templates extends WPOE_Base_DAO
     return $events;
   }
 
-  public function get_event_template(int $event_template_id): ?WPOE_Event_Template
+  public function get_event_template(int $event_template_id): ?REGI_FAIR_Event_Template
   {
     global $wpdb;
 
@@ -43,8 +43,8 @@ class WPOE_DAO_Templates extends WPOE_Base_DAO
         "SELECT t.id, t.name, t.autoremove_submissions, t.autoremove_submissions_period,
          t.editable_registrations, t.admin_email, t.extra_email_content,
          f.id AS field_id, f.label, f.type, f.description, f.required, f.extra, f.position
-         FROM {$wpdb->prefix}wpoe_event_template t
-         LEFT JOIN {$wpdb->prefix}wpoe_event_template_form_field f ON f.template_id = t.id
+         FROM {$wpdb->prefix}regi_fair_event_template t
+         LEFT JOIN {$wpdb->prefix}regi_fair_event_template_form_field f ON f.template_id = t.id
          WHERE t.id = %d ORDER BY f.position",
         $event_template_id
       ),
@@ -56,7 +56,7 @@ class WPOE_DAO_Templates extends WPOE_Base_DAO
       return null;
     }
 
-    $template = new WPOE_Event_Template();
+    $template = new REGI_FAIR_Event_Template();
     $template->id = (int) $results[0]['id'];
     $template->name = $results[0]['name'];
     $template->autoremove = (bool) $results[0]['autoremove_submissions'];
@@ -74,7 +74,7 @@ class WPOE_DAO_Templates extends WPOE_Base_DAO
     $formFields = [];
     foreach ($results as $result) {
       if ($result['field_id'] !== null) {
-        $field = new WPOE_Form_Field();
+        $field = new REGI_FAIR_Form_Field();
         $field->id = (int) $result['field_id'];
         $field->label = $result['label'];
         $field->fieldType = $result['type'];
@@ -88,7 +88,7 @@ class WPOE_DAO_Templates extends WPOE_Base_DAO
     return $formFields;
   }
 
-  public function create_event_template(WPOE_Event_Template $event_template): int
+  public function create_event_template(REGI_FAIR_Event_Template $event_template): int
   {
     global $wpdb;
 
@@ -98,7 +98,7 @@ class WPOE_DAO_Templates extends WPOE_Base_DAO
 
       // Insert the template
       $result = $wpdb->insert(
-        WPOE_DB::get_table_name('event_template'),
+        REGI_FAIR_DB::get_table_name('event_template'),
         [
           'name' => $event_template->name,
           'autoremove_submissions' => $event_template->autoremove,
@@ -118,7 +118,7 @@ class WPOE_DAO_Templates extends WPOE_Base_DAO
       // Insert the form fields
       foreach ($event_template->formFields as $form_field) {
         $result = $wpdb->insert(
-          WPOE_DB::get_table_name('event_template_form_field'),
+          REGI_FAIR_DB::get_table_name('event_template_form_field'),
           [
             'template_id' => $event_template_id,
             'label' => $form_field->label,
@@ -143,7 +143,7 @@ class WPOE_DAO_Templates extends WPOE_Base_DAO
     return $event_template_id;
   }
 
-  public function update_event_template(WPOE_Event_Template $event_template): void
+  public function update_event_template(REGI_FAIR_Event_Template $event_template): void
   {
     global $wpdb;
 
@@ -153,7 +153,7 @@ class WPOE_DAO_Templates extends WPOE_Base_DAO
 
       // Update the template
       $result = $wpdb->update(
-        WPOE_DB::get_table_name('event_template'),
+        REGI_FAIR_DB::get_table_name('event_template'),
         [
           'name' => $event_template->name,
           'autoremove_submissions' => $event_template->autoremove,
@@ -183,7 +183,7 @@ class WPOE_DAO_Templates extends WPOE_Base_DAO
           // phpcs:ignore WordPress.DB
           $wpdb->prepare(
             // phpcs:ignore WordPress.DB
-            "DELETE FROM {$wpdb->prefix}wpoe_event_template_form_field WHERE template_id = %d AND id NOT IN (" . join(',', $placeholders) . ")",
+            "DELETE FROM {$wpdb->prefix}regi_fair_event_template_form_field WHERE template_id = %d AND id NOT IN (" . join(',', $placeholders) . ")",
             $event_template->id,
             ...$current_field_ids,
           )
@@ -191,7 +191,7 @@ class WPOE_DAO_Templates extends WPOE_Base_DAO
       } else {
         // Delete all old form fields
         $result = $wpdb->delete(
-          WPOE_DB::get_table_name('event_template_form_field'),
+          REGI_FAIR_DB::get_table_name('event_template_form_field'),
           ['template_id' => $event_template->id],
           ['%d']
         );
@@ -202,7 +202,7 @@ class WPOE_DAO_Templates extends WPOE_Base_DAO
       foreach ($event_template->formFields as $form_field) {
         if ($form_field->id === null) {
           $result = $wpdb->insert(
-            WPOE_DB::get_table_name('event_template_form_field'),
+            REGI_FAIR_DB::get_table_name('event_template_form_field'),
             [
               'template_id' => $event_template->id,
               'label' => $form_field->label,
@@ -217,7 +217,7 @@ class WPOE_DAO_Templates extends WPOE_Base_DAO
           $this->check_result($result, 'inserting new event template form field');
         } else {
           $result = $wpdb->update(
-            WPOE_DB::get_table_name('event_template_form_field'),
+            REGI_FAIR_DB::get_table_name('event_template_form_field'),
             [
               'template_id' => $event_template->id,
               'label' => $form_field->label,
@@ -251,10 +251,10 @@ class WPOE_DAO_Templates extends WPOE_Base_DAO
       $result = $wpdb->query('START TRANSACTION');
       $this->check_result($result, 'starting transaction');
 
-      $result = $wpdb->delete(WPOE_DB::get_table_name('event_template_form_field'), ['template_id' => $event_template_id], ['%d']);
+      $result = $wpdb->delete(REGI_FAIR_DB::get_table_name('event_template_form_field'), ['template_id' => $event_template_id], ['%d']);
       $this->check_result($result, 'deleting event template form fields');
 
-      $result = $wpdb->delete(WPOE_DB::get_table_name('event_template'), ['id' => $event_template_id], ['%d']);
+      $result = $wpdb->delete(REGI_FAIR_DB::get_table_name('event_template'), ['id' => $event_template_id], ['%d']);
       $this->check_result($result, 'deleting event template');
 
     } catch (Exception $ex) {

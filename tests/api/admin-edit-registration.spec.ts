@@ -14,7 +14,7 @@ test('Admin edit and delete registration with email notification', async ({ page
   let fieldId: number;
 
   await test.step('Create event', async () => {
-    const response = await request.post('/index.php?rest_route=/wpoe/v1/admin/events', {
+    const response = await request.post('/index.php?rest_route=/regifair/v1/admin/events', {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce
@@ -43,7 +43,7 @@ test('Admin edit and delete registration with email notification', async ({ page
   });
 
   await test.step('Create a registration to the event', async () => {
-    let response = await request.post(`/index.php?rest_route=/wpoe/v1/events/${eventId}`, {
+    let response = await request.post(`/index.php?rest_route=/regifair/v1/events/${eventId}`, {
       data: { [fieldId]: 'test@example.com' }
     });
     expect(response.status()).toEqual(201);
@@ -51,7 +51,7 @@ test('Admin edit and delete registration with email notification', async ({ page
 
   let registrationId: number;
   await test.step('List registrations', async () => {
-    const response = await request.get(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId}/registrations&page=1&pageSize=10`, {
+    const response = await request.get(`/index.php?rest_route=/regifair/v1/admin/events/${eventId}/registrations&page=1&pageSize=10`, {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce
@@ -71,7 +71,7 @@ test('Admin edit and delete registration with email notification', async ({ page
   });
 
   await test.step('Attempt to update the registration with an invalid payload', async () => {
-    const response = await request.post(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId}/registrations/${registrationId}&sendEmail=true`, {
+    const response = await request.post(`/index.php?rest_route=/regifair/v1/admin/events/${eventId}/registrations/${registrationId}&sendEmail=true`, {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce
@@ -85,7 +85,7 @@ test('Admin edit and delete registration with email notification', async ({ page
   });
 
   await test.step('Update the registration', async () => {
-    const response = await request.post(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId}/registrations/${registrationId}&sendEmail=true`, {
+    const response = await request.post(`/index.php?rest_route=/regifair/v1/admin/events/${eventId}/registrations/${registrationId}&sendEmail=true`, {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce
@@ -96,7 +96,7 @@ test('Admin edit and delete registration with email notification', async ({ page
   });
 
   await test.step('Verify that the registration has been updated', async () => {
-    const response = await request.get(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId}/registrations/${registrationId}`, {
+    const response = await request.get(`/index.php?rest_route=/regifair/v1/admin/events/${eventId}/registrations/${registrationId}`, {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce
@@ -115,7 +115,7 @@ test('Admin edit and delete registration with email notification', async ({ page
   });
 
   await test.step('Delete the registration', async () => {
-    const response = await request.delete(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId}/registrations/${registrationId}&sendEmail=true`, {
+    const response = await request.delete(`/index.php?rest_route=/regifair/v1/admin/events/${eventId}/registrations/${registrationId}&sendEmail=true`, {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce
@@ -125,7 +125,7 @@ test('Admin edit and delete registration with email notification', async ({ page
   });
 
   await test.step('Verify that the registration has been deleted', async () => {
-    const response = await request.get(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId}/registrations&page=1&pageSize=10`, {
+    const response = await request.get(`/index.php?rest_route=/regifair/v1/admin/events/${eventId}/registrations&page=1&pageSize=10`, {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce
@@ -143,7 +143,7 @@ test('Admin edit and delete registration with email notification', async ({ page
   });
 
   await test.step('Attempt to load not existing registration', async () => {
-    const response = await request.get(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId}/registrations/${registrationId}`, {
+    const response = await request.get(`/index.php?rest_route=/regifair/v1/admin/events/${eventId}/registrations/${registrationId}`, {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce
@@ -155,7 +155,7 @@ test('Admin edit and delete registration with email notification', async ({ page
   });
 
   await test.step('Delete the event', async () => {
-    const response = await request.delete(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId}`, {
+    const response = await request.delete(`/index.php?rest_route=/regifair/v1/admin/events/${eventId}`, {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce
@@ -165,7 +165,7 @@ test('Admin edit and delete registration with email notification', async ({ page
   });
 
   await test.step('Attempt to load registration of not existing event', async () => {
-    const response = await request.get(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId}/registrations/${registrationId}`, {
+    const response = await request.get(`/index.php?rest_route=/regifair/v1/admin/events/${eventId}/registrations/${registrationId}`, {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce

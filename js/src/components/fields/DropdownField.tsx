@@ -13,7 +13,7 @@ const DropdownField = (props: DropdownFieldProps) => {
       <SelectControl
         label={
           props.label +
-          (props.required ? "" : ` (${__("optional", "wp-open-events")})`)
+          (props.required ? "" : ` (${__("optional", "regi-fair")})`)
         }
         disabled={!!props.disabled}
         options={props.options.map((p) => ({ label: p, value: p }))}
@@ -30,13 +30,13 @@ const DropdownField = (props: DropdownFieldProps) => {
       <SelectControl
         label={
           props.label +
-          (props.required ? "" : ` (${__("optional", "wp-open-events")})`)
+          (props.required ? "" : ` (${__("optional", "regi-fair")})`)
         }
         disabled={!!props.disabled}
         options={[
           {
             disabled: true,
-            label: __("Select...", "wp-open-events"),
+            label: __("Select...", "regi-fair"),
             value: "",
           },
           ...props.options.map((p) => ({ label: p, value: p })),

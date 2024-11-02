@@ -10,17 +10,17 @@ npm run build
 
 cd ../../..
 
-if [ -d "/tmp/wp-open-events" ]; then
-  rm -Rf /tmp/wp-open-events
+if [ -d "/tmp/regi-fair" ]; then
+  rm -Rf /tmp/regi-fair
 fi
-mkdir -p /tmp/wp-open-events/js
+mkdir -p /tmp/regi-fair/js
 
-cp -r js/build /tmp/wp-open-events/js
-cp -r classes /tmp/wp-open-events
-cp -r languages /tmp/wp-open-events
-cp wp-open-events.php /tmp/wp-open-events
-cp LICENSE /tmp/wp-open-events
+cp -r js/build /tmp/regi-fair/js
+cp -r classes /tmp/regi-fair
+cp -r languages /tmp/regi-fair
+cp regi-fair.php /tmp/regi-fair
+cp LICENSE /tmp/regi-fair
 
-cd /tmp/wp-open-events
+cd /tmp/regi-fair
 
-zip -r wp-open-events.zip *
+zip -r regi-fair.zip *

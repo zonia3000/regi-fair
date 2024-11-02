@@ -26,7 +26,7 @@ const Settings = function () {
   useEffect(() => {
     setLoading(true);
     setError("");
-    apiFetch({ path: `/wpoe/v1/admin/settings` })
+    apiFetch({ path: `/regifair/v1/admin/settings` })
       .then((result) => {
         const settings = result as SettingsType;
         setDefaultAdminEmail(settings.defaultAdminEmail);
@@ -48,7 +48,7 @@ const Settings = function () {
     setError("");
     try {
       const response = await apiFetch({
-        path: `/wpoe/v1/admin/settings`,
+        path: `/regifair/v1/admin/settings`,
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -82,32 +82,32 @@ const Settings = function () {
         <em>
           {__(
             "All the following options are just defaults and they can be redefined for each event",
-            "wp-open-events",
+            "regi-fair",
           )}
         </em>
       </p>
       <TextControl
-        label={__("Default event admin e-mail address", "wp-open-events")}
+        label={__("Default event admin e-mail address", "regi-fair")}
         onChange={setDefaultAdminEmail}
         value={defaultAdminEmail}
         type="email"
         className="mb"
         help={__(
           "Received registrations will be notified at this addres",
-          "wp-open-events",
+          "regi-fair",
         )}
         __nextHasNoMarginBottom={true}
       />
 
       <TextControl
-        label={__("Default autoremove period", "wp-open-events")}
+        label={__("Default autoremove period", "regi-fair")}
         onChange={setDefaultAutoremovePeriod}
         value={defaultAutoremovePeriod}
         type="number"
         className="mb"
         help={__(
           "Number of days to wait after the event conclusion before removing registrations data",
-          "wp-open-events",
+          "regi-fair",
         )}
         __nextHasNoMarginBottom={true}
       />
@@ -115,14 +115,14 @@ const Settings = function () {
       <TextareaControl
         label={__(
           "Default extra content for confirmation e-mail messages",
-          "wp-open-events",
+          "regi-fair",
         )}
         onChange={setDefaultExtraEmailContent}
         value={defaultExtraEmailContent}
         className="mb"
         help={__(
           "This content will be added at the end of the confirmation e-mail messages. Allowed HTML tags: <b>, <i>, <a>, <hr>, <p>, <br>",
-          "wp-open-events",
+          "regi-fair",
         )}
         __nextHasNoMarginBottom={true}
       />
@@ -130,7 +130,7 @@ const Settings = function () {
       <TextControl
         label={__(
           "E-mail address used to send confirmation messages to users",
-          "wp-open-events",
+          "regi-fair",
         )}
         onChange={setFromEmail}
         value={fromEmail}
@@ -149,13 +149,13 @@ const Settings = function () {
 
       {updated && (
         <Notice status="success" className="mt-2 mb" isDismissible={false}>
-          {__("Settings updated", "wp-open-events")}
+          {__("Settings updated", "regi-fair")}
         </Notice>
       )}
 
       <Button onClick={save} variant="primary" disabled={saving} className="mt">
         {saving && <Spinner />}
-        {__("Save", "wp-open-events")}
+        {__("Save", "regi-fair")}
       </Button>
     </div>
   );

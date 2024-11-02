@@ -4,26 +4,26 @@ if (!defined('ABSPATH')) {
   exit;
 }
 
-require_once(WPOE_PLUGIN_DIR . 'classes/model/event.php');
-require_once(WPOE_PLUGIN_DIR . 'classes/model/form-field.php');
-require_once(WPOE_PLUGIN_DIR . 'classes/dao/dao-events.php');
-require_once(WPOE_PLUGIN_DIR . 'classes/api-utils.php');
+require_once(REGI_FAIR_PLUGIN_DIR . 'classes/model/event.php');
+require_once(REGI_FAIR_PLUGIN_DIR . 'classes/model/form-field.php');
+require_once(REGI_FAIR_PLUGIN_DIR . 'classes/dao/dao-events.php');
+require_once(REGI_FAIR_PLUGIN_DIR . 'classes/api-utils.php');
 
-class WPOE_Events_Admin_Controller extends WP_REST_Controller
+class REGI_FAIR_Events_Admin_Controller extends WP_REST_Controller
 {
   /**
-   * @var WPOE_DAO_Events
+   * @var REGI_FAIR_DAO_Events
    */
   private $dao;
 
   public function __construct()
   {
-    $this->dao = new WPOE_DAO_Events();
+    $this->dao = new REGI_FAIR_DAO_Events();
   }
 
   public function register_routes()
   {
-    $namespace = 'wpoe/v1';
+    $namespace = 'regifair/v1';
 
     register_rest_route(
       $namespace,
@@ -117,7 +117,7 @@ class WPOE_Events_Admin_Controller extends WP_REST_Controller
       $id = (int) $request->get_param('id');
       $event = $this->dao->get_event($id);
       if ($event === null) {
-        return new WP_Error('event_not_found', __('Event not found', 'wp-open-events'), ['status' => 404]);
+        return new WP_Error('event_not_found', __('Event not found', 'regi-fair'), ['status' => 404]);
       }
       return new WP_REST_Response($event);
     } catch (Exception $ex) {
@@ -150,7 +150,7 @@ class WPOE_Events_Admin_Controller extends WP_REST_Controller
       $event_id = $this->dao->create_event($event);
       $event = $this->dao->get_event($event_id);
       return new WP_REST_Response($event, 201);
-    } catch (WPOE_Validation_Exception $ex) {
+    } catch (REGI_FAIR_Validation_Exception $ex) {
       return new WP_Error('invalid_payload', $ex->getMessage(), ['status' => 400]);
     } catch (Exception $ex) {
       return generic_server_error($ex);
@@ -167,7 +167,7 @@ class WPOE_Events_Admin_Controller extends WP_REST_Controller
       $id = (int) $request->get_param('id');
       $event = $this->dao->get_event($id);
       if ($event === null) {
-        return new WP_Error('event_not_found', __('Event not found', 'wp-open-events'), ['status' => 404]);
+        return new WP_Error('event_not_found', __('Event not found', 'regi-fair'), ['status' => 404]);
       }
 
       $event = $this->get_event_from_request($request);
@@ -175,16 +175,16 @@ class WPOE_Events_Admin_Controller extends WP_REST_Controller
       $this->dao->update_event($event);
       $event = $this->dao->get_event($id);
       return new WP_REST_Response($event, 200);
-    } catch (WPOE_Validation_Exception $ex) {
+    } catch (REGI_FAIR_Validation_Exception $ex) {
       return new WP_Error('invalid_payload', $ex->getMessage(), ['status' => 400]);
     } catch (Exception $ex) {
       return generic_server_error($ex);
     }
   }
 
-  private function get_event_from_request(WP_REST_Request $request): WPOE_Event
+  private function get_event_from_request(WP_REST_Request $request): REGI_FAIR_Event
   {
-    $event = new WPOE_Event();
+    $event = new REGI_FAIR_Event();
     $event->name = $request->get_param('name');
     $event->date = $request->get_param('date');
     $event->autoremove = (bool) $request->get_param('autoremove');

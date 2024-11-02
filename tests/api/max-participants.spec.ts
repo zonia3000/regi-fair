@@ -12,7 +12,7 @@ test('Reach the maximum number of seats', async ({ page, context, request }) => 
   let fieldId: number;
 
   await test.step('Create event with maximum number of participants', async () => {
-    const response = await request.post('/index.php?rest_route=/wpoe/v1/admin/events', {
+    const response = await request.post('/index.php?rest_route=/regifair/v1/admin/events', {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce
@@ -41,28 +41,28 @@ test('Reach the maximum number of seats', async ({ page, context, request }) => 
   });
 
   await test.step('Add registrations until the limit is reached', async () => {
-    let response = await request.post(`/index.php?rest_route=/wpoe/v1/events/${eventId}`, {
+    let response = await request.post(`/index.php?rest_route=/regifair/v1/events/${eventId}`, {
       data: { [fieldId]: 'value1' }
     });
     expect(response.status()).toEqual(201);
     let body = await response.json();
     expect(body.remaining).toEqual(2);
 
-    response = await request.post(`/index.php?rest_route=/wpoe/v1/events/${eventId}`, {
+    response = await request.post(`/index.php?rest_route=/regifair/v1/events/${eventId}`, {
       data: { [fieldId]: 'value2' }
     });
     expect(response.status()).toEqual(201);
     body = await response.json();
     expect(body.remaining).toEqual(1);
 
-    response = await request.post(`/index.php?rest_route=/wpoe/v1/events/${eventId}`, {
+    response = await request.post(`/index.php?rest_route=/regifair/v1/events/${eventId}`, {
       data: { [fieldId]: 'value3' }
     });
     expect(response.status()).toEqual(201);
     body = await response.json();
     expect(body.remaining).toEqual(0);
 
-    response = await request.post(`/index.php?rest_route=/wpoe/v1/events/${eventId}`, {
+    response = await request.post(`/index.php?rest_route=/regifair/v1/events/${eventId}`, {
       data: { [fieldId]: 'value4' }
     });
     expect(response.status()).toEqual(400);
@@ -71,7 +71,7 @@ test('Reach the maximum number of seats', async ({ page, context, request }) => 
   });
 
   await test.step('Delete test event', async () => {
-    const response = await request.delete(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId}`, {
+    const response = await request.delete(`/index.php?rest_route=/regifair/v1/admin/events/${eventId}`, {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce

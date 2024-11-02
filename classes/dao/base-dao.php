@@ -1,6 +1,6 @@
 <?php
 
-class WPOE_Base_DAO
+class REGI_FAIR_Base_DAO
 {
   public function __construct()
   {

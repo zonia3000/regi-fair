@@ -70,7 +70,7 @@ const Pagination = (props: {
     <div className="flex">
       <div className="mr-2">
         <p>
-          <strong>{__("Total", "wp-open-events")}</strong>: {props.total}
+          <strong>{__("Total", "regi-fair")}</strong>: {props.total}
         </p>
       </div>
 
@@ -85,7 +85,7 @@ const Pagination = (props: {
                   onClick={() => setPage(n as number)}
                   aria-label={sprintf(
                     /* translators: %d is replaced with the page number */
-                    __("Go to page %d", "wp-open-events"),
+                    __("Go to page %d", "regi-fair"),
                     n,
                   )}
                 >
@@ -98,7 +98,7 @@ const Pagination = (props: {
 
       <div className="flex-row mt">
         <SelectControl
-          label={__("Page size", "wp-open-events")}
+          label={__("Page size", "regi-fair")}
           value={props.pageSize.toString()}
           options={pageSizes.map((s) => ({
             label: s.toString(),

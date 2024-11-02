@@ -47,7 +47,7 @@ const ListEvents = () => {
 
   useEffect(() => {
     setLoading(true);
-    apiFetch({ path: "/wpoe/v1/admin/events" })
+    apiFetch({ path: "/regifair/v1/admin/events" })
       .then((result) => {
         setEvents(result as EventConfiguration[]);
       })
@@ -81,7 +81,7 @@ const ListEvents = () => {
     setChooseTemplate(true);
     setTemplatesLoading(true);
     try {
-      const result = await apiFetch({ path: "/wpoe/v1/admin/templates" });
+      const result = await apiFetch({ path: "/regifair/v1/admin/templates" });
       const templates = (result as TemplateConfiguration[]).map((template) => {
         return {
           value: template.id.toString(),
@@ -102,7 +102,7 @@ const ListEvents = () => {
   function openCreateTemplatePage() {
     const newTemplatePage = window.location
       .toString()
-      .replace(/=wpoe-events.*/, "=wpoe-templates#/template/new");
+      .replace(/=regi-fair-events.*/, "=regi-fair-templates#/template/new");
     window.location.href = newTemplatePage;
   }
 
@@ -122,7 +122,7 @@ const ListEvents = () => {
     setDeleting(true);
     try {
       await apiFetch({
-        path: `/wpoe/v1/admin/events/${eventToDelete.id}`,
+        path: `/regifair/v1/admin/events/${eventToDelete.id}`,
         method: "DELETE",
       });
       setEvents(events.filter((e) => e.id !== eventToDelete.id));
@@ -141,7 +141,7 @@ const ListEvents = () => {
     setLoadingEventReferences(true);
     try {
       const references = await apiFetch({
-        path: `/wpoe/v1/admin/events/${event.id}/references`,
+        path: `/regifair/v1/admin/events/${event.id}/references`,
       });
       setReferencingPosts(
         references as Array<{ title: string; permalink: string }>,
@@ -164,21 +164,21 @@ const ListEvents = () => {
   return (
     <div>
       <h1 className="wp-heading-inline">
-        {__("Your events", "wp-open-events")} &nbsp;
+        {__("Your events", "regi-fair")} &nbsp;
       </h1>
       <Button onClick={openCreateEventModal} variant="primary">
-        {__("Add event", "wp-open-events")}
+        {__("Add event", "regi-fair")}
       </Button>
 
-      {events.length === 0 && <p>{__("No events found", "wp-open-events")}</p>}
+      {events.length === 0 && <p>{__("No events found", "regi-fair")}</p>}
       {events.length !== 0 && (
         <table className="widefat mt">
           <thead>
             <tr>
-              <th>{__("Name", "wp-open-events")}</th>
-              <th>{__("Date", "wp-open-events")}</th>
-              <th>{__("Registrations", "wp-open-events")}</th>
-              <th>{__("Post", "wp-open-events")}</th>
+              <th>{__("Name", "regi-fair")}</th>
+              <th>{__("Date", "regi-fair")}</th>
+              <th>{__("Registrations", "regi-fair")}</th>
+              <th>{__("Post", "regi-fair")}</th>
               <th></th>
             </tr>
           </thead>
@@ -210,7 +210,7 @@ const ListEvents = () => {
                         className="warning-sign"
                         variant="link"
                         onClick={() => openEventWithMultipleReferencesModal(e)}
-                        aria-label={__("Warning", "wp-open-events")}
+                        aria-label={__("Warning", "regi-fair")}
                       >
                         <Icon icon="warning" />
                       </Button>
@@ -240,17 +240,17 @@ const ListEvents = () => {
 
       {showCreateEventModal && (
         <Modal
-          title={__("Create event", "wp-open-events")}
+          title={__("Create event", "regi-fair")}
           onRequestClose={closeCreateEventModal}
         >
           {!chooseTemplate && (
             <>
               <Button variant="primary" onClick={loadTemplates}>
-                {__("From template", "wp-open-events")}
+                {__("From template", "regi-fair")}
               </Button>
               &nbsp;
               <Button variant="primary" onClick={newEventFromScratch}>
-                {__("From scratch", "wp-open-events")}
+                {__("From scratch", "regi-fair")}
               </Button>
             </>
           )}
@@ -265,9 +265,9 @@ const ListEvents = () => {
             !templatesError &&
             templates.length === 0 && (
               <>
-                <p>{__("No templates found", "wp-open-events")}</p>
+                <p>{__("No templates found", "regi-fair")}</p>
                 <Button variant="primary" onClick={openCreateTemplatePage}>
-                  {__("Create your first template", "wp-open-events")}
+                  {__("Create your first template", "regi-fair")}
                 </Button>
               </>
             )}
@@ -277,14 +277,14 @@ const ListEvents = () => {
             templates.length > 0 && (
               <>
                 <SelectControl
-                  label={__("Select template", "wp-open-events")}
+                  label={__("Select template", "regi-fair")}
                   options={templates}
                   onChange={setSelectedTemplateId}
                   className="mb"
                   __nextHasNoMarginBottom={true}
                 />
                 <Button variant="primary" onClick={newEventFromTemplate}>
-                  {__("Create", "wp-open-events")}
+                  {__("Create", "regi-fair")}
                 </Button>
               </>
             )}
@@ -293,17 +293,17 @@ const ListEvents = () => {
 
       {eventToDelete !== null && (
         <Modal
-          title={__("Delete event", "wp-open-events")}
+          title={__("Delete event", "regi-fair")}
           onRequestClose={closeDeleteEventModal}
         >
           <p>
-            {__("Do you really want to delete this event?", "wp-open-events")}
+            {__("Do you really want to delete this event?", "regi-fair")}
           </p>
           <p>
             <strong>
               {__(
                 "WARNING: all the saved registrations will be deleted and users will not be notified about the deletion",
-                "wp-open-events",
+                "regi-fair",
               )}
             </strong>
           </p>
@@ -315,7 +315,7 @@ const ListEvents = () => {
           {deleting && (
             <p>
               <Spinner />
-              {__("Deleting...", "wp-open-events")}
+              {__("Deleting...", "regi-fair")}
             </p>
           )}
           <Button
@@ -323,11 +323,11 @@ const ListEvents = () => {
             onClick={confirmDeleteEvent}
             disabled={deleting}
           >
-            {__("Confirm", "wp-open-events")}
+            {__("Confirm", "regi-fair")}
           </Button>
           &nbsp;
           <Button variant="secondary" onClick={closeDeleteEventModal}>
-            {__("Cancel", "wp-open-events")}
+            {__("Cancel", "regi-fair")}
           </Button>
         </Modal>
       )}
@@ -336,28 +336,28 @@ const ListEvents = () => {
         <Modal
           title={__(
             "Event form is referenced in multiple posts",
-            "wp-open-events",
+            "regi-fair",
           )}
           onRequestClose={closeEventWithMultipleReferencesModal}
         >
           <p>
             {__(
               "This plugin expects that an event form is referenced only in one published post.",
-              "wp-open-events",
+              "regi-fair",
             )}
           </p>
           <p>
             <strong>
               {__(
                 "Please, ensure that you have only one post referencing this event.",
-                "wp-open-events",
+                "regi-fair",
               )}
             </strong>
           </p>
           <p>
             {__(
               "The following posts are referencing the same event form:",
-              "wp-open-events",
+              "regi-fair",
             )}
           </p>
           <ul>
@@ -377,7 +377,7 @@ const ListEvents = () => {
           {loadingEventReferences && (
             <p>
               <Spinner />
-              {__("Loading...", "wp-open-events")}
+              {__("Loading...", "regi-fair")}
             </p>
           )}
         </Modal>

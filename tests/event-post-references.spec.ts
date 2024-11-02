@@ -25,7 +25,7 @@ test('Event referenced in posts', async ({ page, context, request }) => {
   await test.step('Create test events', async () => {
 
     async function createEvent(eventName: string): Promise<number> {
-      const response = await request.post('/index.php?rest_route=/wpoe/v1/admin/events', {
+      const response = await request.post('/index.php?rest_route=/regifair/v1/admin/events', {
         headers: {
           'Cookie': cookies,
           'X-WP-Nonce': nonce
@@ -83,8 +83,8 @@ test('Event referenced in posts', async ({ page, context, request }) => {
     await page.getByLabel('Add title').click();
     await page.getByLabel('Add title').fill(postTitle);
     await page.getByLabel('Add block').click();
-    await page.getByPlaceholder('Search').fill('WP Open Events Form');
-    await page.getByRole('option', { name: 'WP Open Events Form' }).click();
+    await page.getByPlaceholder('Search').fill('RegiFair Form');
+    await page.getByRole('option', { name: 'RegiFair Form' }).click();
     await page.getByRole('combobox', { name: 'Select event' }).selectOption(eventName);
     await page.getByRole('button', { name: 'Publish', exact: true }).click();
     await page.getByLabel('Editor publish').getByRole('button', { name: 'Publish', exact: true }).click();
@@ -135,13 +135,13 @@ test('Event referenced in posts', async ({ page, context, request }) => {
     await page.getByLabel('Add title').click();
     await page.getByLabel('Add title').fill(postTitle7);
     await page.getByLabel('Add block').click();
-    await page.getByPlaceholder('Search').fill('WP Open Events Form');
-    await page.getByRole('option', { name: 'WP Open Events Form' }).click();
+    await page.getByPlaceholder('Search').fill('RegiFair Form');
+    await page.getByRole('option', { name: 'RegiFair Form' }).click();
     await page.getByRole('combobox', { name: 'Select event' }).selectOption(eventName5);
-    await page.getByLabel('Block: WP Open Events Form').press('Enter');
+    await page.getByLabel('Block: RegiFair Form').press('Enter');
     await page.getByLabel('Add block').click();
-    await page.getByPlaceholder('Search').fill('WP Open Events Form');
-    await page.getByRole('option', { name: 'WP Open Events Form' }).click();
+    await page.getByPlaceholder('Search').fill('RegiFair Form');
+    await page.getByRole('option', { name: 'RegiFair Form' }).click();
     await page.getByRole('combobox', { name: 'Select event' }).selectOption(eventName6);
     await page.getByRole('button', { name: 'Publish', exact: true }).click();
     await page.getByLabel('Editor publish').getByRole('button', { name: 'Publish', exact: true }).click();
@@ -155,7 +155,7 @@ test('Event referenced in posts', async ({ page, context, request }) => {
   });
 
   await test.step('Check events references', async () => {
-    await page.goto(`/wp-admin/admin.php?page=wpoe-events`);
+    await page.goto(`/wp-admin/admin.php?page=regi-fair-events`);
     await expect(page.getByRole('heading', { name: 'Your events' })).toHaveCount(1);
     await expect(page.getByRole('row', { name: eventName1 }).getByRole('cell').nth(3)).toContainText(postTitle1);
     await expect(page.getByRole('row', { name: eventName2 }).getByRole('cell').nth(3)).toContainText(postTitle4);
@@ -203,7 +203,7 @@ test('Event referenced in posts', async ({ page, context, request }) => {
 
   await test.step('Delete events', async () => {
     async function deleteEvent(eventId: number) {
-      const response = await request.delete(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId}`, {
+      const response = await request.delete(`/index.php?rest_route=/regifair/v1/admin/events/${eventId}`, {
         headers: {
           'Cookie': cookies,
           'X-WP-Nonce': nonce

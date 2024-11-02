@@ -24,9 +24,9 @@ jobs:
         run: ./build-dist.sh
 
       - name: Copy release package
-        run: cp /tmp/wp-open-events.zip wp-open-events-${{ github.ref_name }}.zip
+        run: cp /tmp/regi-fair.zip regi-fair-${{ github.ref_name }}.zip
 
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
-          files: wp-open-events-${{ github.ref_name }}.zip
+          files: regi-fair-${{ github.ref_name }}.zip

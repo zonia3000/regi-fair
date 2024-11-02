@@ -11,7 +11,7 @@ test('Template without fields', async ({ page, context, request }) => {
 
   let templateId: number;
   await test.step('Create template without fields', async () => {
-    const response = await request.post('/index.php?rest_route=/wpoe/v1/admin/templates', {
+    const response = await request.post('/index.php?rest_route=/regifair/v1/admin/templates', {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce
@@ -31,7 +31,7 @@ test('Template without fields', async ({ page, context, request }) => {
   });
 
   await test.step('Verify that the template appears in the list', async () => {
-    const response = await request.get(`/index.php?rest_route=/wpoe/v1/admin/templates`, {
+    const response = await request.get(`/index.php?rest_route=/regifair/v1/admin/templates`, {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce
@@ -45,7 +45,7 @@ test('Template without fields', async ({ page, context, request }) => {
   });
 
   await test.step('Verify that the template can be retrieved throught API', async () => {
-    const response = await request.get(`/index.php?rest_route=/wpoe/v1/admin/templates/${templateId}`, {
+    const response = await request.get(`/index.php?rest_route=/regifair/v1/admin/templates/${templateId}`, {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce
@@ -58,7 +58,7 @@ test('Template without fields', async ({ page, context, request }) => {
   });
 
   await test.step('Delete the template', async () => {
-    const response = await request.delete(`/index.php?rest_route=/wpoe/v1/admin/templates/${templateId}`, {
+    const response = await request.delete(`/index.php?rest_route=/regifair/v1/admin/templates/${templateId}`, {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce

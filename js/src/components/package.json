@@ -1,7 +1,7 @@
 {
-  "name": "wp-open-events",
+  "name": "regi-fair",
   "version": "0.1.0",
-  "description": "WP Open Events Frontend",
+  "description": "RegiFair Frontend",
   "type": "module",
   "scripts": {
     "test": "vitest",

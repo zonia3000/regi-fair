@@ -4,28 +4,28 @@ if (!defined('ABSPATH')) {
   exit;
 }
 
-require_once(WPOE_PLUGIN_DIR . 'classes/dao/dao-registrations.php');
+require_once(REGI_FAIR_PLUGIN_DIR . 'classes/dao/dao-registrations.php');
 
-class WPOE_Registrations_Admin_Controller extends WP_REST_Controller
+class REGI_FAIR_Registrations_Admin_Controller extends WP_REST_Controller
 {
   /**
-   * @var WPOE_DAO_Registrations
+   * @var REGI_FAIR_DAO_Registrations
    */
   private $registrations_dao;
   /**
-   * @var WPOE_DAO_Events
+   * @var REGI_FAIR_DAO_Events
    */
   private $events_dao;
 
   public function __construct()
   {
-    $this->registrations_dao = new WPOE_DAO_Registrations();
-    $this->events_dao = new WPOE_DAO_Events();
+    $this->registrations_dao = new REGI_FAIR_DAO_Registrations();
+    $this->events_dao = new REGI_FAIR_DAO_Events();
   }
 
   public function register_routes()
   {
-    $namespace = 'wpoe/v1';
+    $namespace = 'regifair/v1';
 
     register_rest_route(
       $namespace,
@@ -101,7 +101,7 @@ class WPOE_Registrations_Admin_Controller extends WP_REST_Controller
       $waiting = (bool) $request->get_param('waitingList');
       $event = $this->events_dao->get_event($id);
       if ($event === null) {
-        return new WP_Error('event_not_found', __('Event not found', 'wp-open-events'), ['status' => 404]);
+        return new WP_Error('event_not_found', __('Event not found', 'regi-fair'), ['status' => 404]);
       }
 
       $page = (int) $request->get_param('page');
@@ -130,18 +130,18 @@ class WPOE_Registrations_Admin_Controller extends WP_REST_Controller
       $event = $this->events_dao->get_event($id);
       $waiting = (bool) $request->get_param('waitingList');
       if ($event === null) {
-        return new WP_Error('event_not_found', __('Event not found', 'wp-open-events'), ['status' => 404]);
+        return new WP_Error('event_not_found', __('Event not found', 'regi-fair'), ['status' => 404]);
       }
 
       $registrations = $this->registrations_dao->list_event_registrations($id, $waiting, null, offset: null);
 
       header('Content-Type: text/csv');
-      header('Content-Disposition: attachment; filename="' . __('registrations', 'wp-open-events') . '.csv"');
+      header('Content-Disposition: attachment; filename="' . __('registrations', 'regi-fair') . '.csv"');
       header('Expires: 0');
       header('Cache-Control: must-revalidate');
 
       $header = $registrations['head'];
-      echo '"#","' . esc_html(__('date', 'wp-open-events')) . '"';
+      echo '"#","' . esc_html(__('date', 'regi-fair')) . '"';
       foreach ($header as $index => $cell) {
         if ($cell['deleted'] === false) {
           echo ',';
@@ -180,14 +180,14 @@ class WPOE_Registrations_Admin_Controller extends WP_REST_Controller
       $event_id = (int) $request->get_param('eventId');
       $event = $this->events_dao->get_event($event_id);
       if ($event === null) {
-        return new WP_Error('event_not_found', __('Event not found', 'wp-open-events'), ['status' => 404]);
+        return new WP_Error('event_not_found', __('Event not found', 'regi-fair'), ['status' => 404]);
       }
 
       $registration_id = (int) $request->get_param('registrationId');
 
       $registration = $this->registrations_dao->get_registration_by_id($event_id, $registration_id);
       if ($registration === null) {
-        return new WP_Error('registration_not_found', __('Registration not found', 'wp-open-events'), ['status' => 404]);
+        return new WP_Error('registration_not_found', __('Registration not found', 'regi-fair'), ['status' => 404]);
       }
 
       return new WP_REST_Response($registration);
@@ -208,11 +208,11 @@ class WPOE_Registrations_Admin_Controller extends WP_REST_Controller
       $waiting_list = (bool) $request->get_param('waitingList');
 
       if ($event === null) {
-        return new WP_Error('event_not_found', __('Event not found', 'wp-open-events'), ['status' => 404]);
+        return new WP_Error('event_not_found', __('Event not found', 'regi-fair'), ['status' => 404]);
       }
 
       if ($waiting_list && !$event->waitingList) {
-        return new WP_Error('waiting_list_not_enabled', __('Waiting list is not enabled', 'wp-open-events'), ['status' => 400]);
+        return new WP_Error('waiting_list_not_enabled', __('Waiting list is not enabled', 'regi-fair'), ['status' => 400]);
       }
 
       $registration_id = (int) $request->get_param('registrationId');
@@ -223,7 +223,7 @@ class WPOE_Registrations_Admin_Controller extends WP_REST_Controller
         return $error;
       }
 
-      $data = new WPOE_Registration();
+      $data = new REGI_FAIR_Registration();
       $data->id = $registration_id;
       $data->numberOfPeople = get_number_of_people($event, $input);
       $data->values = $input;
@@ -239,7 +239,7 @@ class WPOE_Registrations_Admin_Controller extends WP_REST_Controller
       if ($send_email) {
         $user_email = get_user_email($event, $input);
         if (count($user_email) > 0) {
-          WPOE_Mail_Sender::send_registration_updated_by_admin($event, $user_email, $input);
+          REGI_FAIR_Mail_Sender::send_registration_updated_by_admin($event, $user_email, $input);
         }
       }
 
@@ -251,7 +251,7 @@ class WPOE_Registrations_Admin_Controller extends WP_REST_Controller
           if ($waiting_registration !== null) {
             $user_email = get_user_email($event, $waiting_registration->values);
             if (count($user_email) > 0) {
-              WPOE_Mail_Sender::send_picked_from_waiting_list_confirmation($event, $user_email, $waiting_registration->values);
+              REGI_FAIR_Mail_Sender::send_picked_from_waiting_list_confirmation($event, $user_email, $waiting_registration->values);
             }
           }
         }
@@ -273,7 +273,7 @@ class WPOE_Registrations_Admin_Controller extends WP_REST_Controller
       $event_id = (int) $request->get_param('eventId');
       $event = $this->events_dao->get_event($event_id);
       if ($event === null) {
-        return new WP_Error('event_not_found', __('Event not found', 'wp-open-events'), ['status' => 404]);
+        return new WP_Error('event_not_found', __('Event not found', 'regi-fair'), ['status' => 404]);
       }
 
       $registration_id = (int) $request->get_param('registrationId');
@@ -289,7 +289,7 @@ class WPOE_Registrations_Admin_Controller extends WP_REST_Controller
       if ($send_email) {
         $user_email = get_user_email($event, $values);
         if (count($user_email) > 0) {
-          WPOE_Mail_Sender::send_registration_deleted_by_admin($event, $user_email);
+          REGI_FAIR_Mail_Sender::send_registration_deleted_by_admin($event, $user_email);
         }
       }
 

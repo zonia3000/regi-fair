@@ -4,9 +4,9 @@ if (!defined('ABSPATH')) {
   exit;
 }
 
-class WPOE_Number_Validator extends WPOE_Base_Validator
+class REGI_FAIR_Number_Validator extends REGI_FAIR_Base_Validator
 {
-  public function __construct(WPOE_Form_Field $field)
+  public function __construct(REGI_FAIR_Form_Field $field)
   {
     parent::__construct($field);
   }
@@ -18,7 +18,7 @@ class WPOE_Number_Validator extends WPOE_Base_Validator
     }
     // phpcs:disable WordPress.Security.EscapeOutput.ExceptionNotEscaped
     if (!is_numeric($value)) {
-      throw new WPOE_Validation_Exception(__('Invalid number', 'wp-open-events'));
+      throw new REGI_FAIR_Validation_Exception(__('Invalid number', 'regi-fair'));
     }
     if (preg_match('/^-?\d+$/', (string) $value)) {
       $value = (int) $value;
@@ -28,27 +28,27 @@ class WPOE_Number_Validator extends WPOE_Base_Validator
     if ($this->field->extra !== null) {
       $numberOfPeople = use_as_number_of_people($this->field);
       if ($numberOfPeople && !is_int($value)) {
-        throw new WPOE_Validation_Exception(message: __('Number must be an integer', 'wp-open-events'));
+        throw new REGI_FAIR_Validation_Exception(message: __('Number must be an integer', 'regi-fair'));
       }
       if ($numberOfPeople && $value < 1) {
-        throw new WPOE_Validation_Exception(__('You have to register at least one person', 'wp-open-events'));
+        throw new REGI_FAIR_Validation_Exception(__('You have to register at least one person', 'regi-fair'));
       }
       if (property_exists($this->field->extra, 'min') && $value < $this->field->extra->min) {
-        throw new WPOE_Validation_Exception(
+        throw new REGI_FAIR_Validation_Exception(
           /* translators: %d is replaced with the minimum value */
-          sprintf(__('Number must not be lower than %d', 'wp-open-events'), $this->field->extra->min)
+          sprintf(__('Number must not be lower than %d', 'regi-fair'), $this->field->extra->min)
         );
       }
       if (property_exists($this->field->extra, 'max') && $value > $this->field->extra->max) {
         if ($numberOfPeople) {
-          throw new WPOE_Validation_Exception(
+          throw new REGI_FAIR_Validation_Exception(
             /* translators: %d is replaced with the maximum allowed participants value */
-            sprintf(__('It is not possible to add more than %d people in the same registration', 'wp-open-events'), $this->field->extra->max)
+            sprintf(__('It is not possible to add more than %d people in the same registration', 'regi-fair'), $this->field->extra->max)
           );
         } else {
-          throw new WPOE_Validation_Exception(
+          throw new REGI_FAIR_Validation_Exception(
             /* translators: %d is replaced with the maximum value */
-            sprintf(__('Number must not be greater than %d', 'wp-open-events'), $this->field->extra->max)
+            sprintf(__('Number must not be greater than %d', 'regi-fair'), $this->field->extra->max)
           );
         }
       }

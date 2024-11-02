@@ -10,7 +10,7 @@ test('Events having field with useWpUserEmail flag', async ({ page, context, req
   let eventId: number;
   let fieldId: number;
   await test.step('Create test event with useWpUserEmail flag', async () => {
-    const response = await request.post('/index.php?rest_route=/wpoe/v1/admin/events', {
+    const response = await request.post('/index.php?rest_route=/regifair/v1/admin/events', {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce
@@ -39,7 +39,7 @@ test('Events having field with useWpUserEmail flag', async ({ page, context, req
   });
 
   await test.step('Admin API returns all the fields', async () => {
-    const response = await request.get(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId}`, {
+    const response = await request.get(`/index.php?rest_route=/regifair/v1/admin/events/${eventId}`, {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce
@@ -51,7 +51,7 @@ test('Events having field with useWpUserEmail flag', async ({ page, context, req
   });
 
   await test.step('Public API with registered user hides the field', async () => {
-    const response = await request.get(`/index.php?rest_route=/wpoe/v1/events/${eventId}`, {
+    const response = await request.get(`/index.php?rest_route=/regifair/v1/events/${eventId}`, {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce
@@ -63,14 +63,14 @@ test('Events having field with useWpUserEmail flag', async ({ page, context, req
   });
 
   await test.step('Public API with anonymous user shows the field', async () => {
-    const response = await request.get(`/index.php?rest_route=/wpoe/v1/events/${eventId}`);
+    const response = await request.get(`/index.php?rest_route=/regifair/v1/events/${eventId}`);
     expect(response.status()).toEqual(200);
     const { formFields } = await response.json();
     expect(formFields).toHaveLength(1);
   });
 
   await test.step('Store admin registration', async () => {
-    const response = await request.post(`/index.php?rest_route=/wpoe/v1/events/${eventId}`, {
+    const response = await request.post(`/index.php?rest_route=/regifair/v1/events/${eventId}`, {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce
@@ -81,14 +81,14 @@ test('Events having field with useWpUserEmail flag', async ({ page, context, req
   });
 
   await test.step('Store user registration', async () => {
-    const response = await request.post(`/index.php?rest_route=/wpoe/v1/events/${eventId}`, {
+    const response = await request.post(`/index.php?rest_route=/regifair/v1/events/${eventId}`, {
       data: { [fieldId]: 'foo@example.com' }
     });
     expect(response.status()).toEqual(201);
   });
 
   await test.step('List the registrations', async () => {
-    const response = await request.get(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId}/registrations&page=1&pageSize=10`, {
+    const response = await request.get(`/index.php?rest_route=/regifair/v1/admin/events/${eventId}/registrations&page=1&pageSize=10`, {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce

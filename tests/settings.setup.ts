@@ -6,7 +6,7 @@ setup.use({ storageState: adminAuthStateFile });
 setup('Edit settings', async ({ page }) => {
 
   await setup.step('Open settings page and fill the fields', async () => {
-    await page.goto(`/wp-admin/admin.php?page=wpoe-settings`);
+    await page.goto(`/wp-admin/admin.php?page=regi-fair-settings`);
     await page.getByRole('textbox', { name: 'Default event admin e-mail address' }).fill('test@example.com');
     await page.getByRole('spinbutton', { name: 'Default autoremove period' }).fill('10');
     await page.getByRole('textbox', { name: 'Default extra content for confirmation e-mail messages' }).fill(

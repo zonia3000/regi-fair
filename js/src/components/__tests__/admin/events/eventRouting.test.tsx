@@ -8,7 +8,7 @@ import EventsRoot from "../../../admin/events/EventsRoot";
 
 test("Navigate template pages", async () => {
   server.use(
-    http.get("/wpoe/v1/admin/events", () => {
+    http.get("/regifair/v1/admin/events", () => {
       return HttpResponse.json([
         {
           id: 1,
@@ -33,7 +33,7 @@ test("Navigate template pages", async () => {
   );
 
   server.use(
-    http.get("/wpoe/v1/admin/events/1", () => {
+    http.get("/regifair/v1/admin/events/1", () => {
       return HttpResponse.json({
         id: 1,
         name: "event1",
@@ -52,7 +52,7 @@ test("Navigate template pages", async () => {
   );
 
   server.use(
-    http.get("/wpoe/v1/admin/events/1/registrations", () => {
+    http.get("/regifair/v1/admin/events/1/registrations", () => {
       return HttpResponse.json({
         total: 3,
         eventName: "event1",

@@ -60,7 +60,7 @@ const EditEvent = () => {
       setDate(getTomorrowDate());
       const templateId = searchParams.get("template");
       if (templateId) {
-        apiFetch({ path: `/wpoe/v1/admin/templates/${templateId}` })
+        apiFetch({ path: `/regifair/v1/admin/templates/${templateId}` })
           .then((result) => {
             const template = result as TemplateConfiguration;
             setAutoremove(template.autoremove);
@@ -86,7 +86,7 @@ const EditEvent = () => {
           });
       } else {
         // New event from scratch, load global settings
-        apiFetch({ path: `/wpoe/v1/admin/settings` })
+        apiFetch({ path: `/regifair/v1/admin/settings` })
           .then((result) => {
             const settings = result as Settings;
             if (settings.defaultAdminEmail) {
@@ -108,7 +108,7 @@ const EditEvent = () => {
       }
     } else {
       setLoading(true);
-      apiFetch({ path: `/wpoe/v1/admin/events/${eventId}` })
+      apiFetch({ path: `/regifair/v1/admin/events/${eventId}` })
         .then((result) => {
           setFound(true);
           const event = result as EventConfiguration;
@@ -174,7 +174,7 @@ const EditEvent = () => {
     try {
       if (eventId === "new") {
         await apiFetch({
-          path: "/wpoe/v1/admin/events",
+          path: "/regifair/v1/admin/events",
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -186,7 +186,7 @@ const EditEvent = () => {
         });
       } else {
         await apiFetch({
-          path: `/wpoe/v1/admin/events/${eventId}`,
+          path: `/regifair/v1/admin/events/${eventId}`,
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
@@ -243,7 +243,7 @@ const EditEvent = () => {
         </div>
       );
     } else {
-      return <p>{__("Event not found", "wp-open-events")}</p>;
+      return <p>{__("Event not found", "regi-fair")}</p>;
     }
   }
 
@@ -251,12 +251,12 @@ const EditEvent = () => {
     <div>
       <h1>
         {eventId === "new"
-          ? __("Create event", "wp-open-events")
-          : __("Edit event", "wp-open-events")}
+          ? __("Create event", "regi-fair")
+          : __("Edit event", "regi-fair")}
       </h1>
       <div className={!valid && !eventName.trim() ? "form-error" : ""}>
         <TextControl
-          label={__("Name", "wp-open-events")}
+          label={__("Name", "regi-fair")}
           onChange={setEventName}
           value={eventName}
           required
@@ -265,13 +265,13 @@ const EditEvent = () => {
         />
         {!valid && !eventName.trim() && (
           <span className="error-text">
-            {__("Field is required", "wp-open-events")}
+            {__("Field is required", "regi-fair")}
           </span>
         )}
       </div>
       <div className={!valid && !date ? "form-error" : ""}>
         <BaseControl
-          label={__("Date", "wp-open-events")}
+          label={__("Date", "regi-fair")}
           __nextHasNoMarginBottom={true}
           id="eventDate"
         >
@@ -286,7 +286,7 @@ const EditEvent = () => {
         </BaseControl>
         {!valid && !date && (
           <span className="error-text">
-            {__("Field is required", "wp-open-events")}
+            {__("Field is required", "regi-fair")}
           </span>
         )}
       </div>
@@ -296,7 +296,7 @@ const EditEvent = () => {
             <strong>{__("Warning")}</strong>: &nbsp;
             {__(
               "this event has already some registrations. Adding or removing fields can result in having some empty values in your registrations table.",
-              "wp-open-events",
+              "regi-fair",
             )}
           </Notice>
         </div>
@@ -305,7 +305,7 @@ const EditEvent = () => {
       <br />
       <br />
       <CheckboxControl
-        label={__("Set a maximum number of participants", "wp-open-events")}
+        label={__("Set a maximum number of participants", "regi-fair")}
         checked={hasMaxParticipants}
         onChange={setHasMaxParticipants}
         className="mb"
@@ -315,7 +315,7 @@ const EditEvent = () => {
         <>
           <div className={!valid && !maxParticipants ? "form-error" : ""}>
             <TextControl
-              label={__("Total available seats", "wp-open-events")}
+              label={__("Total available seats", "regi-fair")}
               onChange={setMaxParticipants}
               value={maxParticipants}
               type="number"
@@ -325,14 +325,14 @@ const EditEvent = () => {
             />
             {!valid && !maxParticipants && (
               <span className="error-text">
-                {__("Field is required", "wp-open-events")}
+                {__("Field is required", "regi-fair")}
               </span>
             )}
           </div>
           <CheckboxControl
             label={__(
               "Enable waiting list when maximum number of participants has been reached",
-              "wp-open-events",
+              "regi-fair",
             )}
             checked={hasWaitingList}
             onChange={setHasWaitingList}
@@ -342,7 +342,7 @@ const EditEvent = () => {
         </>
       )}
       <CheckboxControl
-        label={__("Autoremove user data after the event", "wp-open-events")}
+        label={__("Autoremove user data after the event", "regi-fair")}
         checked={autoremove}
         onChange={setAutoremove}
         className="mb"
@@ -350,7 +350,7 @@ const EditEvent = () => {
       />
       {autoremove && (
         <TextControl
-          label={__("Autoremove period", "wp-open-events")}
+          label={__("Autoremove period", "regi-fair")}
           onChange={setAutoremovePeriod}
           value={autoremovePeriod}
           type="number"
@@ -358,20 +358,20 @@ const EditEvent = () => {
           className="mb"
           help={__(
             "Number of days to wait after the event conclusion before removing registrations data",
-            "wp-open-events",
+            "regi-fair",
           )}
           __nextHasNoMarginBottom={true}
         />
       )}
       {autoremove && !valid && !autoremovePeriod && (
         <span className="error-text">
-          {__("Field is required", "wp-open-events")}
+          {__("Field is required", "regi-fair")}
         </span>
       )}
       <CheckboxControl
         label={__(
           "Allow the users to edit or delete their registrations",
-          "wp-open-events",
+          "regi-fair",
         )}
         checked={editableRegistrations}
         onChange={setEditableRegistrations}
@@ -381,7 +381,7 @@ const EditEvent = () => {
       <CheckboxControl
         label={__(
           "Notify an administrator by e-mail when a new registration is created",
-          "wp-open-events",
+          "regi-fair",
         )}
         checked={notifyAdmin}
         onChange={setNotifyAdmin}
@@ -391,7 +391,7 @@ const EditEvent = () => {
       {notifyAdmin && (
         <div className={!valid && !adminEmail ? "form-error" : ""}>
           <TextControl
-            label={__("Administrator e-mail address", "wp-open-events")}
+            label={__("Administrator e-mail address", "regi-fair")}
             onChange={setAdminEmail}
             value={adminEmail}
             required
@@ -400,7 +400,7 @@ const EditEvent = () => {
           />
           {!valid && !adminEmail && (
             <span className="error-text">
-              {__("Field is required", "wp-open-events")}
+              {__("Field is required", "regi-fair")}
             </span>
           )}
         </div>
@@ -408,7 +408,7 @@ const EditEvent = () => {
       <CheckboxControl
         label={__(
           "Add custom message to confirmation e-mail",
-          "wp-open-events",
+          "regi-fair",
         )}
         checked={customizeEmailContent}
         onChange={setCustomizeEmailContent}
@@ -417,12 +417,12 @@ const EditEvent = () => {
       />
       {customizeEmailContent && (
         <TextareaControl
-          label={__("Custom confirmation e-mail content", "wp-open-events")}
+          label={__("Custom confirmation e-mail content", "regi-fair")}
           onChange={setEmailExtraContent}
           value={emailExtraContent}
           help={__(
             "This content will be added at the end of the confirmation e-mail messages. Allowed HTML tags: <b>, <i>, <a>, <hr>, <p>, <br>",
-            "wp-open-events",
+            "regi-fair",
           )}
           className="mb"
           __nextHasNoMarginBottom={true}
@@ -438,11 +438,11 @@ const EditEvent = () => {
         </div>
       )}
       <Button onClick={save} variant="primary">
-        {__("Save", "wp-open-events")}
+        {__("Save", "regi-fair")}
       </Button>
       &nbsp;
       <Button onClick={back} variant="secondary">
-        {__("Back", "wp-open-events")}
+        {__("Back", "regi-fair")}
       </Button>
     </div>
   );

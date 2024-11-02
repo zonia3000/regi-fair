@@ -1,6 +1,6 @@
 <?php
 
-class WPOE_Registration
+class REGI_FAIR_Registration
 {
   /**
    * @var int|null

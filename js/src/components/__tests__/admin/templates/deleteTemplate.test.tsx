@@ -10,7 +10,7 @@ import { MemoryRouter, Route, Routes } from "react-router-dom";
 
 test("Delete template", async () => {
   server.use(
-    http.get("/wpoe/v1/admin/templates", () => {
+    http.get("/regifair/v1/admin/templates", () => {
       return HttpResponse.json([
         { id: 1, name: "template1" },
         { id: 2, name: "template2" },
@@ -33,7 +33,7 @@ test("Delete template", async () => {
 
   let deleted = false;
   server.use(
-    http.post("/wpoe/v1/admin/templates/2", () => {
+    http.post("/regifair/v1/admin/templates/2", () => {
       deleted = true;
       return HttpResponse.json({});
     }),

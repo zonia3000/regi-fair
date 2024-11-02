@@ -1,12 +1,12 @@
 <?php
 
-define('WPOE_TABLE_PREFIX', 'wpoe_');
+define('REGI_FAIR_TABLE_PREFIX', 'regi_fair_');
 
-class WPOE_DB
+class REGI_FAIR_DB
 {
   public static function get_table_name(string $table_name): string
   {
     global $wpdb;
-    return $wpdb->prefix . WPOE_TABLE_PREFIX . $table_name;
+    return $wpdb->prefix . REGI_FAIR_TABLE_PREFIX . $table_name;
   }
 }

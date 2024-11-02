@@ -4,14 +4,14 @@ if (!defined('ABSPATH')) {
   exit;
 }
 
-abstract class WPOE_Base_Validator
+abstract class REGI_FAIR_Base_Validator
 {
   /**
-   * @var WPOE_Form_Field
+   * @var REGI_FAIR_Form_Field
    */
   protected $field;
 
-  public function __construct(WPOE_Form_Field $field)
+  public function __construct(REGI_FAIR_Form_Field $field)
   {
     $this->field = $field;
   }
@@ -26,7 +26,7 @@ abstract class WPOE_Base_Validator
       || (is_array($value) && count($value) === 0);
     if ($this->field->required && $field_is_empty) {
       // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
-      throw new WPOE_Validation_Exception(__('Required field', 'wp-open-events'));
+      throw new REGI_FAIR_Validation_Exception(__('Required field', 'regi-fair'));
     } else if ($field_is_empty) {
       return true;
     }

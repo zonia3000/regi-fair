@@ -12,7 +12,7 @@ test('Delete published event fields', async ({ page, context, request }) => {
   let eventId: number;
 
   await test.step('Create event', async () => {
-    const response = await request.post('/index.php?rest_route=/wpoe/v1/admin/events', {
+    const response = await request.post('/index.php?rest_route=/regifair/v1/admin/events', {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce
@@ -47,7 +47,7 @@ test('Delete published event fields', async ({ page, context, request }) => {
   });
 
   await test.step('Verify that it is possible to delete unreferenced fields', async () => {
-    let response = await request.put(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId}`, {
+    let response = await request.put(`/index.php?rest_route=/regifair/v1/admin/events/${eventId}`, {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce
@@ -64,7 +64,7 @@ test('Delete published event fields', async ({ page, context, request }) => {
     });
     expect(response.status()).toEqual(200);
 
-    response = await request.get(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId}`, {
+    response = await request.get(`/index.php?rest_route=/regifair/v1/admin/events/${eventId}`, {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce
@@ -77,7 +77,7 @@ test('Delete published event fields', async ({ page, context, request }) => {
 
   let nameFieldId: number, surnameFieldId: number, numberOfPeopleFieldId: number;
   await test.step('Set the fields again', async () => {
-    const response = await request.put(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId}`, {
+    const response = await request.put(`/index.php?rest_route=/regifair/v1/admin/events/${eventId}`, {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce
@@ -119,18 +119,18 @@ test('Delete published event fields', async ({ page, context, request }) => {
   });
 
   await test.step('Insert some registrations', async () => {
-    let response = await request.post(`/index.php?rest_route=/wpoe/v1/events/${eventId}`, {
+    let response = await request.post(`/index.php?rest_route=/regifair/v1/events/${eventId}`, {
       data: { [nameFieldId]: 'mario', [surnameFieldId]: 'rossi', [numberOfPeopleFieldId]: 2 }
     });
     expect(response.status()).toEqual(201);
-    response = await request.post(`/index.php?rest_route=/wpoe/v1/events/${eventId}`, {
+    response = await request.post(`/index.php?rest_route=/regifair/v1/events/${eventId}`, {
       data: { [nameFieldId]: 'anna', [surnameFieldId]: 'bianchi', [numberOfPeopleFieldId]: 4 }
     });
     expect(response.status()).toEqual(201);
   });
 
   await test.step('Verify that it is possible to delete standard referenced field', async () => {
-    let response = await request.put(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId}`, {
+    let response = await request.put(`/index.php?rest_route=/regifair/v1/admin/events/${eventId}`, {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce
@@ -167,7 +167,7 @@ test('Delete published event fields', async ({ page, context, request }) => {
   });
 
   await test.step('Verify that the field is marked as deleted in registrations list', async () => {
-    const response = await request.get(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId}/registrations&page=1&pageSize=20`, {
+    const response = await request.get(`/index.php?rest_route=/regifair/v1/admin/events/${eventId}/registrations&page=1&pageSize=20`, {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce
@@ -192,7 +192,7 @@ test('Delete published event fields', async ({ page, context, request }) => {
   });
 
   await test.step('Verify that it is not possible to delete number of people referenced field', async () => {
-    const response = await request.put(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId}`, {
+    const response = await request.put(`/index.php?rest_route=/regifair/v1/admin/events/${eventId}`, {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce
@@ -220,7 +220,7 @@ test('Delete published event fields', async ({ page, context, request }) => {
   });
 
   await test.step('Delete test event', async () => {
-    const deleteEventResponse = await request.delete(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId}`, {
+    const deleteEventResponse = await request.delete(`/index.php?rest_route=/regifair/v1/admin/events/${eventId}`, {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce

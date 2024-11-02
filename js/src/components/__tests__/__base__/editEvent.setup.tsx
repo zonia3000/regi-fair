@@ -19,7 +19,7 @@ export const editEventTest = (
 ) => {
   test(testDescription, async () => {
     server.use(
-      http.get("/wpoe/v1/admin/events/1", () => {
+      http.get("/regifair/v1/admin/events/1", () => {
         return HttpResponse.json({ ...eventToEdit, id: 1 });
       }),
     );
@@ -37,7 +37,7 @@ export const editEventTest = (
 
     let body: unknown;
     server.use(
-      http.post("/wpoe/v1/admin/events/1", async ({ request }) => {
+      http.post("/regifair/v1/admin/events/1", async ({ request }) => {
         body = await request.json();
         return HttpResponse.json({});
       }),

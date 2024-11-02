@@ -12,7 +12,7 @@ test('Create event from template', async ({ page, context, request }) => {
 
   let templateId: string;
   await test.step('Create template', async () => {
-    const response = await request.post('/index.php?rest_route=/wpoe/v1/admin/templates', {
+    const response = await request.post('/index.php?rest_route=/regifair/v1/admin/templates', {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce
@@ -34,7 +34,7 @@ test('Create event from template', async ({ page, context, request }) => {
   });
 
   await test.step('Open events page', async () => {
-    await page.goto('/wp-admin/admin.php?page=wpoe-events');
+    await page.goto('/wp-admin/admin.php?page=regi-fair-events');
     await expect(page.getByRole('heading', { name: 'Your events' })).toHaveCount(1);
   });
 
@@ -179,7 +179,7 @@ test('Create event from template', async ({ page, context, request }) => {
   });
 
   await test.step('Delete template', async () => {
-    const response = await request.delete(`/index.php?rest_route=/wpoe/v1/admin/templates/${templateId}`, {
+    const response = await request.delete(`/index.php?rest_route=/regifair/v1/admin/templates/${templateId}`, {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce

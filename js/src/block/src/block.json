@@ -1,13 +1,13 @@
 {
     "$schema": "https://schemas.wp.org/trunk/block.json",
     "apiVersion": 2,
-    "name": "wp-open-events/form",
+    "name": "regi-fair/form",
     "version": "0.0.1",
-    "title": "WP Open Events Form",
+    "title": "RegiFair Form",
     "category": "widgets",
     "icon": "forms",
-    "description": "WP Open Events Form",
-    "textdomain": "wp-open-events",
+    "description": "RegiFair Form",
+    "textdomain": "regi-fair",
     "supports": {
         "html": false,
         "inserter": true

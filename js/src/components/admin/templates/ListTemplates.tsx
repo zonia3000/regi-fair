@@ -21,7 +21,7 @@ const ListTemplates = () => {
 
   useEffect(() => {
     setLoading(true);
-    apiFetch({ path: "/wpoe/v1/admin/templates" })
+    apiFetch({ path: "/regifair/v1/admin/templates" })
       .then((result) => {
         setTemplates(result as TemplateConfiguration[]);
       })
@@ -49,7 +49,7 @@ const ListTemplates = () => {
     setDeleting(true);
     try {
       await apiFetch({
-        path: `/wpoe/v1/admin/templates/${templateToDelete.id}`,
+        path: `/regifair/v1/admin/templates/${templateToDelete.id}`,
         method: "DELETE",
       });
       setTemplates(templates.filter((t) => t.id !== templateToDelete.id));
@@ -68,20 +68,20 @@ const ListTemplates = () => {
   return (
     <div>
       <h1 className="wp-heading-inline">
-        {__("Event templates", "wp-open-events")} &nbsp;
+        {__("Event templates", "regi-fair")} &nbsp;
       </h1>
       <Button onClick={newTemplate} variant="primary">
-        {__("Add event template", "wp-open-events")}
+        {__("Add event template", "regi-fair")}
       </Button>
 
       {templates.length === 0 && (
-        <p>{__("No event templates found", "wp-open-events")}</p>
+        <p>{__("No event templates found", "regi-fair")}</p>
       )}
       {templates.length !== 0 && (
         <table className="widefat mt">
           <thead>
             <tr>
-              <th>{__("Name", "wp-open-events")}</th>
+              <th>{__("Name", "regi-fair")}</th>
               <th></th>
             </tr>
           </thead>
@@ -116,7 +116,7 @@ const ListTemplates = () => {
 
       {templateToDelete !== null && (
         <Modal
-          title={__("Delete template", "wp-open-events")}
+          title={__("Delete template", "regi-fair")}
           onRequestClose={closeDeleteTemplateModal}
         >
           <p>
@@ -124,7 +124,7 @@ const ListTemplates = () => {
               /* translators: %s is replaced with the name of the template */
               __(
                 "Do you really want to delete the template %s?",
-                "wp-open-events",
+                "regi-fair",
               ),
               templateToDelete.name,
             )}
@@ -137,7 +137,7 @@ const ListTemplates = () => {
           {deleting && (
             <p>
               <Spinner />
-              {__("Deleting...", "wp-open-events")}
+              {__("Deleting...", "regi-fair")}
             </p>
           )}
           <Button
@@ -145,11 +145,11 @@ const ListTemplates = () => {
             onClick={confirmDeleteTemplate}
             disabled={deleting}
           >
-            {__("Confirm", "wp-open-events")}
+            {__("Confirm", "regi-fair")}
           </Button>
           &nbsp;
           <Button variant="secondary" onClick={closeDeleteTemplateModal}>
-            {__("Cancel", "wp-open-events")}
+            {__("Cancel", "regi-fair")}
           </Button>
         </Modal>
       )}

@@ -1,9 +1,9 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: WP Open Events 0.0.1\n"
-"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/wp-open-events\n"
+"Project-Id-Version: RegiFair: Event Registration Manager 0.1.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/regi-fair\n"
 "POT-Creation-Date: 2024-03-23T22:56:10+00:00\n"
-"PO-Revision-Date: 2024-11-01 23:41+0100\n"
+"PO-Revision-Date: 2024-11-02 01:13+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: it_IT\n"
@@ -12,15 +12,10 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Poedit 3.2.2\n"
-"X-Domain: wp-open-events\n"
-
-#. Plugin Name of the plugin
-#: wp-open-events.php
-msgid "WP Open Events"
-msgstr "WP Open Events"
+"X-Domain: regi-fair\n"
 
 #. Author of the plugin
-#: wp-open-events.php
+#: regi-fair.php
 msgid "Sonia Zorba"
 msgstr "Sonia Zorba"
 
@@ -150,12 +145,12 @@ msgstr "Nessun evento trovato"
 msgid "Your events"
 msgstr "I tuoi eventi"
 
-#: js/build/block/block.json js/src/block/src/block.json
+#: js/build/block/block.json
 msgctxt "block title"
 msgid "WP Open Events Form"
 msgstr "Modulo WP Open Events"
 
-#: js/build/block/block.json js/src/block/src/block.json
+#: js/build/block/block.json
 msgctxt "block description"
 msgid "WP Open Events Form"
 msgstr "Modulo WP Open Events"
@@ -165,7 +160,7 @@ msgid "Add event"
 msgstr "Aggiungi evento"
 
 #. Author URI of the plugin
-#: wp-open-events.php
+#: regi-fair.php
 msgid "https://www.zonia3000.net"
 msgstr "https://www.zonia3000.net"
 
@@ -849,19 +844,9 @@ msgstr "Elimina modello"
 msgid "Do you really want to delete the template %s?"
 msgstr "Vuoi veramente rimuovere il modello %s?"
 
-#. Plugin URI of the plugin
-#: wp-open-events.php
-msgid "https://zonia3000.github.io/wp-open-events/"
-msgstr "https://zonia3000.github.io/wp-open-events/"
-
 #: classes/mail-sender.php:263
 msgid "Accepted"
 msgstr "Accettata"
-
-#. Description of the plugin
-#: wp-open-events.php
-msgid "Free and open source plugin to manage event registrations. Provides form builder, waiting lists, group registrations and email notifications. Works with Gutenberg blocks."
-msgstr "Plugin gratuito ed open source per gestire registrazioni ad eventi. Supporta la costruzione dinamica dei form, liste d'attesa, registrazioni di gruppo e email di notifica. Funziona con i blocchi Gutenberg."
 
 #: classes/mail-sender.php:28 classes/mail-sender.php:48
 #: classes/mail-sender.php:69 classes/mail-sender.php:118
@@ -961,3 +946,28 @@ msgstr "Puoi modificare o cancellare la tua registrazione cliccando sul seguente
 #: classes/api-utils.php:81
 msgid "Only one field of type \"number of people\" is allowed"
 msgstr "Solo un campo del tipo \"numero di persone\" è permesso"
+
+#. Plugin Name of the plugin
+#: regi-fair.php
+msgid "RegiFair: Event Registration Manager"
+msgstr "RegiFair: Gestore di Registrazioni ad Eventi"
+
+#. Plugin URI of the plugin
+#: regi-fair.php
+msgid "https://zonia3000.github.io/regi-fair/"
+msgstr "https://zonia3000.github.io/regi-fair/"
+
+#. Description of the plugin
+#: regi-fair.php
+msgid "Free and open source plugin to manage events registrations. Provides form builder, waiting lists, group registrations and email notifications. Works with Gutenberg blocks."
+msgstr "Plugin gratuito ed open source per gestire registrazioni ad eventi. Supporta la costruzione di form personalizzati, liste d'attesa, registrazioni di gruppo e email di notifica. Funziona con i blocchi Gutenberg."
+
+#: js/src/block/src/block.json
+msgctxt "block title"
+msgid "RegiFair Form"
+msgstr "RegiFair Form"
+
+#: js/src/block/src/block.json
+msgctxt "block description"
+msgid "RegiFair Form"
+msgstr "RegiFair Form"

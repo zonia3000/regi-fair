@@ -1,6 +1,6 @@
 <?php
 
-class WPOE_Form_Field
+class REGI_FAIR_Form_Field
 {
   /**
    * @var int|null

@@ -33,7 +33,7 @@ test('Validate registration payload', async ({ page, context, request }) => {
   let eventId1: number;
   let fieldId1Event1: number, fieldId2Event1: number;
   await test.step('Create first test event', async () => {
-    const response = await request.post('/index.php?rest_route=/wpoe/v1/admin/events', {
+    const response = await request.post('/index.php?rest_route=/regifair/v1/admin/events', {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce
@@ -53,7 +53,7 @@ test('Validate registration payload', async ({ page, context, request }) => {
   let eventId2: number;
   let fieldId1Event2: number, fieldId2Event2: number;
   await test.step('Create second test event', async () => {
-    const response = await request.post('/index.php?rest_route=/wpoe/v1/admin/events', {
+    const response = await request.post('/index.php?rest_route=/regifair/v1/admin/events', {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce
@@ -71,7 +71,7 @@ test('Validate registration payload', async ({ page, context, request }) => {
   });
 
   await test.step('Detect invalid payload structure', async () => {
-    let response = await request.post(`/index.php?rest_route=/wpoe/v1/events/${eventId1}`, {
+    let response = await request.post(`/index.php?rest_route=/regifair/v1/events/${eventId1}`, {
       data: 'foo'
     });
     expect(response.status()).toEqual(400);
@@ -81,7 +81,7 @@ test('Validate registration payload', async ({ page, context, request }) => {
   });
 
   await test.step('Detect invalid number of fields', async () => {
-    let response = await request.post(`/index.php?rest_route=/wpoe/v1/events/${eventId1}`, {
+    let response = await request.post(`/index.php?rest_route=/regifair/v1/events/${eventId1}`, {
       data: { [fieldId1Event1]: 'foo', [fieldId2Event1]: 'bar', [fieldId1Event2]: 'baz' }
     });
     expect(response.status()).toEqual(400);
@@ -91,7 +91,7 @@ test('Validate registration payload', async ({ page, context, request }) => {
   });
 
   await test.step('Detect missing keys', async () => {
-    let response = await request.post(`/index.php?rest_route=/wpoe/v1/events/${eventId1}`, {
+    let response = await request.post(`/index.php?rest_route=/regifair/v1/events/${eventId1}`, {
       data: { [fieldId1Event2]: 'foo', [fieldId2Event2]: 'bar' }
     });
     expect(response.status()).toEqual(400);
@@ -102,7 +102,7 @@ test('Validate registration payload', async ({ page, context, request }) => {
 
   let registrationToken: string;
   await test.step('Create a valid registration to the first event', async () => {
-    let response = await request.post(`/index.php?rest_route=/wpoe/v1/events/${eventId1}`, {
+    let response = await request.post(`/index.php?rest_route=/regifair/v1/events/${eventId1}`, {
       data: { [fieldId1Event1]: 'foo', [fieldId2Event1]: 'test@example.com' }
     });
     expect(response.status()).toEqual(201);
@@ -118,7 +118,7 @@ test('Validate registration payload', async ({ page, context, request }) => {
   });
 
   await test.step('Update registration detects event id mismatch', async () => {
-    const response = await request.put(`/index.php?rest_route=/wpoe/v1/events/${eventId2}/${registrationToken}`, {
+    const response = await request.put(`/index.php?rest_route=/regifair/v1/events/${eventId2}/${registrationToken}`, {
       data: { [fieldId1Event2]: 'foo2', [fieldId2Event2]: 'test2@example.com' }
     });
     expect(response.status()).toEqual(400);
@@ -128,7 +128,7 @@ test('Validate registration payload', async ({ page, context, request }) => {
   });
 
   await test.step('Delete registration detects event id mismatch', async () => {
-    const response = await request.delete(`/index.php?rest_route=/wpoe/v1/events/${eventId2}/${registrationToken}`);
+    const response = await request.delete(`/index.php?rest_route=/regifair/v1/events/${eventId2}/${registrationToken}`);
     expect(response.status()).toEqual(400);
     let body = await response.json();
     expect(body.code).toEqual('registration_not_found');
@@ -136,7 +136,7 @@ test('Validate registration payload', async ({ page, context, request }) => {
   });
 
   await test.step('Disable registration editing on first event', async () => {
-    const response = await request.put(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId1}`, {
+    const response = await request.put(`/index.php?rest_route=/regifair/v1/admin/events/${eventId1}`, {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce
@@ -151,7 +151,7 @@ test('Validate registration payload', async ({ page, context, request }) => {
   });
 
   await test.step('Attempt to update a registration that is not editable', async () => {
-    const response = await request.put(`/index.php?rest_route=/wpoe/v1/events/${eventId1}/${registrationToken}`, {
+    const response = await request.put(`/index.php?rest_route=/regifair/v1/events/${eventId1}/${registrationToken}`, {
       data: { [fieldId1Event1]: 'foo2', [fieldId2Event1]: 'test2@example.com' }
     });
     expect(response.status()).toEqual(403);
@@ -161,7 +161,7 @@ test('Validate registration payload', async ({ page, context, request }) => {
   });
 
   await test.step('Attempt to delete a registration that is not editable', async () => {
-    const response = await request.delete(`/index.php?rest_route=/wpoe/v1/events/${eventId1}/${registrationToken}`);
+    const response = await request.delete(`/index.php?rest_route=/regifair/v1/events/${eventId1}/${registrationToken}`);
     expect(response.status()).toEqual(403);
     let body = await response.json();
     expect(body.code).toEqual('registrations_not_editable');
@@ -170,7 +170,7 @@ test('Validate registration payload', async ({ page, context, request }) => {
 
   await test.step('Delete test events', async () => {
     for (const eventId of [eventId1, eventId2]) {
-      const deleteEventResponse = await request.delete(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId}`, {
+      const deleteEventResponse = await request.delete(`/index.php?rest_route=/regifair/v1/admin/events/${eventId}`, {
         headers: {
           'Cookie': cookies,
           'X-WP-Nonce': nonce

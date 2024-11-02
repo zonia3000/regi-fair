@@ -1,6 +1,6 @@
 <?php
 
-class WPOE_Validation_Exception extends Exception
+class REGI_FAIR_Validation_Exception extends Exception
 {
   public function __construct(string $message)
   {

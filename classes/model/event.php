@@ -1,6 +1,6 @@
 <?php
 
-class WPOE_Public_Event_Data
+class REGI_FAIR_Public_Event_Data
 {
   /**
    * @var int
@@ -18,7 +18,7 @@ class WPOE_Public_Event_Data
   public $date;
 
   /**
-   * @var WPOE_Form_Field[]
+   * @var REGI_FAIR_Form_Field[]
    */
   public $formFields = [];
 
@@ -54,7 +54,7 @@ class WPOE_Public_Event_Data
   public $ended;
 }
 
-class WPOE_Post_Reference
+class REGI_FAIR_Post_Reference
 {
   /**
    * @var string
@@ -67,7 +67,7 @@ class WPOE_Post_Reference
   public $permalink;
 }
 
-class WPOE_Event extends WPOE_Public_Event_Data
+class REGI_FAIR_Event extends REGI_FAIR_Public_Event_Data
 {
   /**
    * @var bool
@@ -90,7 +90,7 @@ class WPOE_Event extends WPOE_Public_Event_Data
   public $hasResponses = false;
 
   /**
-   * @var WPOE_Post_Reference[]
+   * @var REGI_FAIR_Post_Reference[]
    */
   public $posts;
 }

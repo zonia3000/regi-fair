@@ -32,7 +32,7 @@ const EditPrivacyPolicyField = (props: EditFieldProps<PrivacyField>) => {
       props.setField(field);
     }
 
-    apiFetch({ path: `/wpoe/v1/admin/settings` })
+    apiFetch({ path: `/regifair/v1/admin/settings` })
       .then((result) => {
         const settings = result as Settings;
         setPrivacyPolicyUrl(settings.privacyPolicyUrl);
@@ -68,7 +68,7 @@ const EditPrivacyPolicyField = (props: EditFieldProps<PrivacyField>) => {
       <Notice status="warning" className="mt-2" isDismissible={false}>
         {__(
           "No privacy policy URL configured! Please set one!",
-          "wp-open-events",
+          "regi-fair",
         )}
       </Notice>
     );
@@ -77,9 +77,9 @@ const EditPrivacyPolicyField = (props: EditFieldProps<PrivacyField>) => {
   if (privacyPolicyUrl !== "") {
     return (
       <p>
-        {__("Configured privacy policy URL:", "wp-open-events")}
+        {__("Configured privacy policy URL:", "regi-fair")}
         &nbsp;
-        <a href={privacyPolicyUrl}>{__("Privacy Policy", "wp-open-events")}</a>
+        <a href={privacyPolicyUrl}>{__("Privacy Policy", "regi-fair")}</a>
       </p>
     );
   }

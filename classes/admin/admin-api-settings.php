@@ -4,13 +4,13 @@ if (!defined('ABSPATH')) {
   exit;
 }
 
-require_once(WPOE_PLUGIN_DIR . 'classes/admin/settings-manager.php');
+require_once(REGI_FAIR_PLUGIN_DIR . 'classes/admin/settings-manager.php');
 
-class WPOE_Settings_Admin_Controller extends WP_REST_Controller
+class REGI_FAIR_Settings_Admin_Controller extends WP_REST_Controller
 {
   public function register_routes()
   {
-    $namespace = 'wpoe/v1';
+    $namespace = 'regifair/v1';
 
     register_rest_route(
       $namespace,
@@ -38,7 +38,7 @@ class WPOE_Settings_Admin_Controller extends WP_REST_Controller
    */
   public function get_item($request)
   {
-    $settings = WPOE_Settings_Manager::get_settings();
+    $settings = REGI_FAIR_Settings_Manager::get_settings();
     $settings['privacyPolicyUrl'] = get_privacy_policy_url();
     return new WP_REST_Response($settings);
   }
@@ -51,7 +51,7 @@ class WPOE_Settings_Admin_Controller extends WP_REST_Controller
   {
     $settings_to_update = (array) json_decode($request->get_body());
     $settings_to_update['defaultExtraEmailContent'] = strip_forbidden_html_tags($settings_to_update['defaultExtraEmailContent']);
-    $updated_settings = WPOE_Settings_Manager::update_settings($settings_to_update);
+    $updated_settings = REGI_FAIR_Settings_Manager::update_settings($settings_to_update);
     return new WP_REST_Response($updated_settings);
   }
 

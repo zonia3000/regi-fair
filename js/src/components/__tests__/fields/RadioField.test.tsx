@@ -12,7 +12,7 @@ test("Render required radio field", async () => {
 
   let requestBody: Record<string, string>;
   server.use(
-    http.get("/wpoe/v1/events/1", () => {
+    http.get("/regifair/v1/events/1", () => {
       return HttpResponse.json({
         formFields: [
           {
@@ -26,7 +26,7 @@ test("Render required radio field", async () => {
         ],
       });
     }),
-    http.post("/wpoe/v1/events/1", async ({ request }) => {
+    http.post("/regifair/v1/events/1", async ({ request }) => {
       requestBody = (await request.json()) as Record<string, string>;
       return HttpResponse.json({ remaining: null });
     }),

@@ -8,7 +8,7 @@ test('Admin event page - main fields CRUD', async ({ page }) => {
   await page.goto('/wp-admin');
 
   await test.step('Open events page', async () => {
-    await page.goto('/wp-admin/admin.php?page=wpoe-events');
+    await page.goto('/wp-admin/admin.php?page=regi-fair-events');
     await expect(page.getByText('Your events')).toBeVisible();
   });
 

@@ -13,7 +13,7 @@ test('Email notification', async ({ page, context, request }) => {
   let eventId: number;
   let fieldId: number;
   await test.step('Create event', async () => {
-    const response = await request.post('/index.php?rest_route=/wpoe/v1/admin/events', {
+    const response = await request.post('/index.php?rest_route=/regifair/v1/admin/events', {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce
@@ -45,7 +45,7 @@ test('Email notification', async ({ page, context, request }) => {
 
   let registrationToken: string;
   await test.step('Create a registration', async () => {
-    let response = await request.post(`/index.php?rest_route=/wpoe/v1/events/${eventId}`, {
+    let response = await request.post(`/index.php?rest_route=/regifair/v1/events/${eventId}`, {
       data: { [fieldId]: 'test@example.com' }
     });
     expect(response.status()).toEqual(201);
@@ -55,7 +55,7 @@ test('Email notification', async ({ page, context, request }) => {
 
   let registrationId: number;
   await test.step('List registrations', async () => {
-    const response = await request.get(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId}/registrations&page=1&pageSize=10`, {
+    const response = await request.get(`/index.php?rest_route=/regifair/v1/admin/events/${eventId}/registrations&page=1&pageSize=10`, {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce
@@ -83,7 +83,7 @@ test('Email notification', async ({ page, context, request }) => {
   });
 
   await test.step('Update the registration', async () => {
-    const response = await request.put(`/index.php?rest_route=/wpoe/v1/events/${eventId}/${registrationToken}`, {
+    const response = await request.put(`/index.php?rest_route=/regifair/v1/events/${eventId}/${registrationToken}`, {
       data: { [fieldId]: 'test2@example.com' }
     });
     expect(response.status()).toEqual(200);
@@ -103,7 +103,7 @@ test('Email notification', async ({ page, context, request }) => {
   });
 
   await test.step('Admin updates the registration', async () => {
-    const response = await request.post(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId}/registrations/${registrationId}&sendEmail=true`, {
+    const response = await request.post(`/index.php?rest_route=/regifair/v1/admin/events/${eventId}/registrations/${registrationId}&sendEmail=true`, {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce
@@ -123,7 +123,7 @@ test('Email notification', async ({ page, context, request }) => {
   });
 
   await test.step('Admin deletes the registration', async () => {
-    const response = await request.delete(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId}/registrations/${registrationId}&sendEmail=true`, {
+    const response = await request.delete(`/index.php?rest_route=/regifair/v1/admin/events/${eventId}/registrations/${registrationId}&sendEmail=true`, {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce
@@ -141,7 +141,7 @@ test('Email notification', async ({ page, context, request }) => {
 
   let registrationToken2: string;
   await test.step('Create another registration', async () => {
-    let response = await request.post(`/index.php?rest_route=/wpoe/v1/events/${eventId}`, {
+    let response = await request.post(`/index.php?rest_route=/regifair/v1/events/${eventId}`, {
       data: { [fieldId]: 'foo@example.com' }
     });
     expect(response.status()).toEqual(201);
@@ -150,7 +150,7 @@ test('Email notification', async ({ page, context, request }) => {
   });
 
   await test.step('User deletes the registration', async () => {
-    const response = await request.delete(`/index.php?rest_route=/wpoe/v1/events/${eventId}/${registrationToken2}`);
+    const response = await request.delete(`/index.php?rest_route=/regifair/v1/events/${eventId}/${registrationToken2}`);
     expect(response.status()).toEqual(200);
   });
 
@@ -169,7 +169,7 @@ test('Email notification', async ({ page, context, request }) => {
   });
 
   await test.step('Delete test event', async () => {
-    const deleteEventResponse = await request.delete(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId}`, {
+    const deleteEventResponse = await request.delete(`/index.php?rest_route=/regifair/v1/admin/events/${eventId}`, {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce

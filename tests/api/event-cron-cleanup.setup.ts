@@ -15,7 +15,7 @@ test.skip('Cleanup old event using WP-Cron', async ({ page, context, request }) 
 
   let eventId1: number;
   await test.step('Create event in the past', async () => {
-    const response = await request.post('/index.php?rest_route=/wpoe/v1/admin/events', {
+    const response = await request.post('/index.php?rest_route=/regifair/v1/admin/events', {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce
@@ -43,7 +43,7 @@ test.skip('Cleanup old event using WP-Cron', async ({ page, context, request }) 
 
   let eventId2: number;
   await test.step('Create event in the future', async () => {
-    const response = await request.post('/index.php?rest_route=/wpoe/v1/admin/events', {
+    const response = await request.post('/index.php?rest_route=/regifair/v1/admin/events', {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce
@@ -70,7 +70,7 @@ test.skip('Cleanup old event using WP-Cron', async ({ page, context, request }) 
   });
 
   await test.step('Check that first event exists', async () => {
-    const response = await request.get(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId1}`, {
+    const response = await request.get(`/index.php?rest_route=/regifair/v1/admin/events/${eventId1}`, {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce
@@ -80,7 +80,7 @@ test.skip('Cleanup old event using WP-Cron', async ({ page, context, request }) 
   });
 
   await test.step('Check that second event exists', async () => {
-    const response = await request.get(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId2}`, {
+    const response = await request.get(`/index.php?rest_route=/regifair/v1/admin/events/${eventId2}`, {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce
@@ -91,13 +91,13 @@ test.skip('Cleanup old event using WP-Cron', async ({ page, context, request }) 
 
   await test.step('Trigger cron jobs', async () => {
     await page.goto('/wp-admin/tools.php?page=crontrol_admin_manage_page');
-    await page.getByRole('row', { name: 'wpoe_cleanup_cron_hook' }).hover();
-    await page.getByRole('row', { name: 'wpoe_cleanup_cron_hook' }).getByRole('link', { name: 'Run now' }).click();
-    await expect(page.getByText('Scheduled the cron event wpoe_cleanup_cron_hook to run now')).toBeVisible();
+    await page.getByRole('row', { name: 'regi_fair_cleanup_cron_hook' }).hover();
+    await page.getByRole('row', { name: 'regi_fair_cleanup_cron_hook' }).getByRole('link', { name: 'Run now' }).click();
+    await expect(page.getByText('Scheduled the cron event regi_fair_cleanup_cron_hook to run now')).toBeVisible();
   });
 
   await test.step('Check that first event has been deleted', async () => {
-    const response = await request.get(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId1}`, {
+    const response = await request.get(`/index.php?rest_route=/regifair/v1/admin/events/${eventId1}`, {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce
@@ -107,7 +107,7 @@ test.skip('Cleanup old event using WP-Cron', async ({ page, context, request }) 
   });
 
   await test.step('Check that second event still exists', async () => {
-    const response = await request.get(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId2}`, {
+    const response = await request.get(`/index.php?rest_route=/regifair/v1/admin/events/${eventId2}`, {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce
@@ -117,7 +117,7 @@ test.skip('Cleanup old event using WP-Cron', async ({ page, context, request }) 
   });
 
   await test.step('Delete second event', async () => {
-    const response = await request.delete(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId2}`, {
+    const response = await request.delete(`/index.php?rest_route=/regifair/v1/admin/events/${eventId2}`, {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce

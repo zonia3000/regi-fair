@@ -13,7 +13,7 @@ test("Download registrations", async () => {
   let downloadCalled = false;
 
   server.use(
-    http.get("/wpoe/v1/admin/events/1/registrations", () => {
+    http.get("/regifair/v1/admin/events/1/registrations", () => {
       return HttpResponse.json({
         head: [],
         body: [],
@@ -21,7 +21,7 @@ test("Download registrations", async () => {
         totalParticipants: 0,
       });
     }),
-    http.get("/wpoe/v1/admin/events/1/registrations/download", () => {
+    http.get("/regifair/v1/admin/events/1/registrations/download", () => {
       downloadCalled = true;
       return HttpResponse.text("");
     }),

@@ -11,7 +11,7 @@ export class TemplateAdminPage {
   }
 
   async openCreateTemplatePage() {
-    await this.page.goto('/wp-admin/admin.php?page=wpoe-templates');
+    await this.page.goto('/wp-admin/admin.php?page=regi-fair-templates');
     await this.page.getByRole('button', { name: 'Add event template' }).click();
     await this.page.getByRole('textbox', { name: 'Name', exact: true }).fill(this.templateName);
   }

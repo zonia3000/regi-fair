@@ -8,7 +8,7 @@ test('Admin template page - main fields CRUD', async ({ page }) => {
   await page.goto('/wp-admin');
 
   await test.step('Open templates page', async () => {
-    await page.goto('/wp-admin/admin.php?page=wpoe-events');
+    await page.goto('/wp-admin/admin.php?page=regi-fair-events');
     await expect(page.getByText('Your events')).toBeVisible();
     await page.getByRole('link', { name: 'Templates', exact: true }).click();
     await expect(page.getByRole('heading', { name: 'Event templates' })).toHaveCount(1);

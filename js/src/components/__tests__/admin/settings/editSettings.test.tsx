@@ -10,7 +10,7 @@ import { Settings as SettingsType } from "../../../classes/settings";
 test("Edit settings", async () => {
   let body: SettingsType;
   server.use(
-    http.post("/wpoe/v1/admin/settings", async ({ request }) => {
+    http.post("/regifair/v1/admin/settings", async ({ request }) => {
       body = (await request.json()) as SettingsType;
       return HttpResponse.json({ defaultExtraEmailContent: "" });
     }),

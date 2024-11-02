@@ -3,7 +3,7 @@
     "."
   ],
   "config": {
-    "WPOE_TESTING": true,
+    "REGI_FAIR_TESTING": true,
     "ALTERNATE_WP_CRON": true
   }
 }

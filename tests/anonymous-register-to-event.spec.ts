@@ -7,7 +7,7 @@ test('Register to event [anonymous]', async ({ page }) => {
   let registrationToken = '';
   // Intercept successful registration response
   page.on('response', async (response) => {
-    if (response.request().method() === 'POST' && response.status() === 201 && response.url().includes('wpoe')) {
+    if (response.request().method() === 'POST' && response.status() === 201 && response.url().includes('regifair')) {
       const responseBody = await response.json();
       registrationToken = responseBody.token;
     }

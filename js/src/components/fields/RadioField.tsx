@@ -12,7 +12,7 @@ const RadioField = (props: RadioFieldProps) => {
     <RadioControl
       label={
         props.label +
-        (props.required ? "" : ` (${__("optional", "wp-open-events")})`)
+        (props.required ? "" : ` (${__("optional", "regi-fair")})`)
       }
       options={props.options.map((p) => ({ label: p, value: p }))}
       disabled={!!props.disabled}

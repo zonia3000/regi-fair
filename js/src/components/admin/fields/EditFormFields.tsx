@@ -97,9 +97,9 @@ const EditFormFields = (props: EditFormFieldsProps) => {
 
   return (
     <>
-      <h2>{__("Event form", "wp-open-events")}</h2>
+      <h2>{__("Event form", "regi-fair")}</h2>
       {props.formFields.length === 0 && (
-        <p>{__("Your form is empty. Add some fields.", "wp-open-events")}</p>
+        <p>{__("Your form is empty. Add some fields.", "regi-fair")}</p>
       )}
 
       {props.formFields.length !== 0 && (
@@ -107,10 +107,10 @@ const EditFormFields = (props: EditFormFieldsProps) => {
           <table className="widefat">
             <thead>
               <tr>
-                <th>{__("Label", "wp-open-events")}</th>
-                <th>{__("Type", "wp-open-events")}</th>
-                <th>{__("Required", "wp-open-events")}</th>
-                <th>{__("Position", "wp-open-events")}</th>
+                <th>{__("Label", "regi-fair")}</th>
+                <th>{__("Type", "regi-fair")}</th>
+                <th>{__("Required", "regi-fair")}</th>
+                <th>{__("Position", "regi-fair")}</th>
                 <th></th>
               </tr>
             </thead>
@@ -122,15 +122,15 @@ const EditFormFields = (props: EditFormFieldsProps) => {
                     <td>{f.fieldType}</td>
                     <td>
                       {f.required
-                        ? __("Yes", "wp-open-events")
-                        : __("No", "wp-open-events")}
+                        ? __("Yes", "regi-fair")
+                        : __("No", "regi-fair")}
                     </td>
                     <td>
                       <Button
                         variant="secondary"
                         onClick={() => moveFieldUp(index)}
                         disabled={index === 0}
-                        aria-label={__("Move field up", "wp-open-events")}
+                        aria-label={__("Move field up", "regi-fair")}
                       >
                         <Icon icon="arrow-up" />
                       </Button>
@@ -138,7 +138,7 @@ const EditFormFields = (props: EditFormFieldsProps) => {
                         variant="secondary"
                         onClick={() => moveFieldDown(index)}
                         disabled={index === props.formFields.length - 1}
-                        aria-label={__("Move field down", "wp-open-events")}
+                        aria-label={__("Move field down", "regi-fair")}
                       >
                         <Icon icon="arrow-down" />
                       </Button>
@@ -170,7 +170,7 @@ const EditFormFields = (props: EditFormFieldsProps) => {
       )}
 
       <Button onClick={openAddFieldModal} variant="primary">
-        {__("Add form field", "wp-open-events")}
+        {__("Add form field", "regi-fair")}
       </Button>
 
       <EditFieldModal
@@ -189,18 +189,18 @@ const EditFormFields = (props: EditFormFieldsProps) => {
 
       {fieldToDeleteIndex !== null && (
         <Modal
-          title={__("Delete field", "wp-open-events")}
+          title={__("Delete field", "regi-fair")}
           onRequestClose={closeDeleteFieldModal}
         >
           <p>
-            {__("Do you really want to delete this field?", "wp-open-events")}
+            {__("Do you really want to delete this field?", "regi-fair")}
           </p>
           <Button variant="primary" onClick={confirmDeleteField}>
-            {__("Confirm", "wp-open-events")}
+            {__("Confirm", "regi-fair")}
           </Button>
           &nbsp;
           <Button variant="secondary" onClick={closeDeleteFieldModal}>
-            {__("Cancel", "wp-open-events")}
+            {__("Cancel", "regi-fair")}
           </Button>
         </Modal>
       )}

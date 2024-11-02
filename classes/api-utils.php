@@ -6,7 +6,7 @@ function generic_server_error(Exception $exception)
     // phpcs:ignore WordPress.PHP.DevelopmentFunctions
     error_log($exception);
   }
-  return new WP_Error('generic_server_error', __('A critical error happened', 'wp-open-events'), ['status' => 500]);
+  return new WP_Error('generic_server_error', __('A critical error happened', 'regi-fair'), ['status' => 500]);
 }
 
 function is_events_admin()
@@ -53,7 +53,7 @@ function get_form_fields_schema()
 
 /**
  * @param WP_REST_Request $request
- * @return WPOE_Form_Field[]
+ * @return REGI_FAIR_Form_Field[]
  */
 function get_form_field_from_request($request)
 {
@@ -62,7 +62,7 @@ function get_form_field_from_request($request)
   $i = 0;
   $max_participants_set = false;
   foreach ($values as $value) {
-    $field = new WPOE_Form_Field();
+    $field = new REGI_FAIR_Form_Field();
     if (isset($value['id']) && $value['id'] !== null) {
       $field->id = $value['id'];
     }
@@ -78,7 +78,7 @@ function get_form_field_from_request($request)
       if (use_as_number_of_people($field)) {
         if ($max_participants_set) {
           // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
-          throw new WPOE_Validation_Exception(__('Only one field of type "number of people" is allowed', 'wp-open-events'));
+          throw new REGI_FAIR_Validation_Exception(__('Only one field of type "number of people" is allowed', 'regi-fair'));
         } else {
           $max_participants_set = true;
         }
@@ -91,26 +91,26 @@ function get_form_field_from_request($request)
   return $form_fields;
 }
 
-function validate_extra(WPOE_Form_Field $field, array $extra)
+function validate_extra(REGI_FAIR_Form_Field $field, array $extra)
 {
   // phpcs:disable WordPress.Security.EscapeOutput.ExceptionNotEscaped
   if (array_key_exists('confirmationAddress', $extra) && $field->fieldType !== 'email') {
-    throw new WPOE_Validation_Exception(message: __('Only email fields can be set as confirmation address', 'wp-open-events'));
+    throw new REGI_FAIR_Validation_Exception(message: __('Only email fields can be set as confirmation address', 'regi-fair'));
   }
   if (array_key_exists('useWpUserEmail', $extra) && $field->fieldType !== 'email') {
-    throw new WPOE_Validation_Exception(__('Only email fields can have the WP user option', 'wp-open-events'));
+    throw new REGI_FAIR_Validation_Exception(__('Only email fields can have the WP user option', 'regi-fair'));
   }
   if (array_key_exists('useAsNumberOfPeople', $extra) && $field->fieldType !== 'number') {
-    throw new WPOE_Validation_Exception(__('Only numeric fields can be used to set the number of people', 'wp-open-events'));
+    throw new REGI_FAIR_Validation_Exception(__('Only numeric fields can be used to set the number of people', 'regi-fair'));
   }
   if (array_key_exists('min', $extra) && $field->fieldType !== 'number') {
-    throw new WPOE_Validation_Exception(message: __('Only numeric fields can have a minimum value', 'wp-open-events'));
+    throw new REGI_FAIR_Validation_Exception(message: __('Only numeric fields can have a minimum value', 'regi-fair'));
   }
   if (array_key_exists('max', $extra) && $field->fieldType !== 'number') {
-    throw new WPOE_Validation_Exception(__('Only numeric fields can have a maximum value', 'wp-open-events'));
+    throw new REGI_FAIR_Validation_Exception(__('Only numeric fields can have a maximum value', 'regi-fair'));
   }
   if (array_key_exists('multiple', $extra) && $field->fieldType !== 'dropdown') {
-    throw new WPOE_Validation_Exception(__('Only dropdown fields can have a multiple field', 'wp-open-events'));
+    throw new REGI_FAIR_Validation_Exception(__('Only dropdown fields can have a multiple field', 'regi-fair'));
   }
   // phpcs:enable
 }
@@ -123,7 +123,7 @@ function strip_forbidden_html_tags(string $content): string
   );
 }
 
-function get_user_email(WPOE_Event $event, array $input): array
+function get_user_email(REGI_FAIR_Event $event, array $input): array
 {
   $user_email = [];
   foreach ($event->formFields as $field) {
@@ -134,7 +134,7 @@ function get_user_email(WPOE_Event $event, array $input): array
   return $user_email;
 }
 
-function get_number_of_people(WPOE_Event $event, array &$input): int
+function get_number_of_people(REGI_FAIR_Event $event, array &$input): int
 {
   foreach ($event->formFields as $field) {
     if (use_as_number_of_people($field)) {
@@ -150,35 +150,35 @@ function get_number_of_people(WPOE_Event $event, array &$input): int
   return 1;
 }
 
-function use_as_confirmation_address(WPOE_Form_Field $field): bool
+function use_as_confirmation_address(REGI_FAIR_Form_Field $field): bool
 {
   return $field->fieldType === 'email' && $field->extra !== null
     && property_exists($field->extra, 'confirmationAddress')
     && $field->extra->confirmationAddress === true;
 }
 
-function use_as_number_of_people(WPOE_Form_Field $field): bool
+function use_as_number_of_people(REGI_FAIR_Form_Field $field): bool
 {
   return $field->fieldType === 'number' && $field->extra !== null
     && property_exists($field->extra, 'useAsNumberOfPeople')
     && $field->extra->useAsNumberOfPeople === true;
 }
 
-function use_wp_user_email(WPOE_Form_Field $field): bool
+function use_wp_user_email(REGI_FAIR_Form_Field $field): bool
 {
   return $field->fieldType === 'email' && $field->extra !== null
     && property_exists($field->extra, 'useWpUserEmail')
     && $field->extra->useWpUserEmail === true;
 }
 
-function is_multiple(WPOE_Form_Field $field): bool
+function is_multiple(REGI_FAIR_Form_Field $field): bool
 {
   return $field->fieldType === 'dropdown' && $field->extra !== null
     && property_exists($field->extra, 'multiple')
     && $field->extra->multiple === true;
 }
 
-function set_registered_user_email(WPOE_Event $event, &$input)
+function set_registered_user_email(REGI_FAIR_Event $event, &$input)
 {
   if (!is_array($input)) {
     return;
@@ -203,13 +203,13 @@ function get_current_user_email(): string|null
   return null;
 }
 
-function validate_event_request(WPOE_Event $event, $input): WP_Error|WP_REST_Response|null
+function validate_event_request(REGI_FAIR_Event $event, $input): WP_Error|WP_REST_Response|null
 {
   if (!is_array($input)) {
-    return new WP_Error('invalid_form_fields', __('The payload must be an array', 'wp-open-events'), ['status' => 400]);
+    return new WP_Error('invalid_form_fields', __('The payload must be an array', 'regi-fair'), ['status' => 400]);
   }
   if (count(array_keys($input)) !== count($event->formFields)) {
-    return new WP_Error('invalid_form_fields', __('Invalid number of fields', 'wp-open-events'), ['status' => 400]);
+    return new WP_Error('invalid_form_fields', __('Invalid number of fields', 'regi-fair'), ['status' => 400]);
   }
 
   foreach ($event->formFields as $field) {
@@ -217,7 +217,7 @@ function validate_event_request(WPOE_Event $event, $input): WP_Error|WP_REST_Res
       return new WP_Error(
         'invalid_form_fields',
         /* translators: %d is replaced with the id of the field */
-        sprintf(__('Missing field %d', 'wp-open-events'), $field->id),
+        sprintf(__('Missing field %d', 'regi-fair'), $field->id),
         ['status' => 400]
       );
     }
@@ -226,15 +226,15 @@ function validate_event_request(WPOE_Event $event, $input): WP_Error|WP_REST_Res
   $errors = [];
   foreach ($event->formFields as $field) {
     try {
-      WPOE_Validator::validate($field, $input[$field->id]);
-    } catch (WPOE_Validation_Exception $ex) {
+      REGI_FAIR_Validator::validate($field, $input[$field->id]);
+    } catch (REGI_FAIR_Validation_Exception $ex) {
       $errors[$field->id] = $ex->getMessage();
     }
   }
   if (count($errors) > 0) {
     return new WP_REST_Response([
       'code' => 'invalid_form_fields',
-      'message' => __('Some fields are not valid', 'wp-open-events'),
+      'message' => __('Some fields are not valid', 'regi-fair'),
       'data' => [
         'status' => 400,
         'fieldsErrors' => (object) $errors
@@ -244,23 +244,23 @@ function validate_event_request(WPOE_Event $event, $input): WP_Error|WP_REST_Res
   return null;
 }
 
-function get_no_more_seats_error(WPOE_Event $event): WP_Error|WP_REST_Response
+function get_no_more_seats_error(REGI_FAIR_Event $event): WP_Error|WP_REST_Response
 {
   foreach ($event->formFields as $field) {
     if (use_as_number_of_people($field)) {
       // If there is a "number of people" input put the error there
       return new WP_REST_Response([
         'code' => 'invalid_form_fields',
-        'message' => __('Unable to register the specified number of people', 'wp-open-events'),
+        'message' => __('Unable to register the specified number of people', 'regi-fair'),
         'data' => [
           'status' => 400,
           'fieldsErrors' => (object) [
-            $field->id => __('The number is greater than the available number of seats', 'wp-open-events')
+            $field->id => __('The number is greater than the available number of seats', 'regi-fair')
           ]
         ]
       ], 400);
     }
   }
   // Otherwise just return a generic error message about the number of seats
-  return new WP_Error('no_more_seats', __('No more seats available', 'wp-open-events'), ['status' => 400]);
+  return new WP_Error('no_more_seats', __('No more seats available', 'regi-fair'), ['status' => 400]);
 }

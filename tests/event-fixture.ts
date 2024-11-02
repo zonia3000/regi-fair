@@ -11,7 +11,7 @@ export class EventAdminPage {
   }
 
   async openCreateEventPage() {
-    await this.page.goto('/wp-admin/admin.php?page=wpoe-events');
+    await this.page.goto('/wp-admin/admin.php?page=regi-fair-events');
     await this.page.getByRole('button', { name: 'Add event' }).click();
     const dialog = this.page.getByRole('dialog');
     await dialog.getByRole('button', { name: 'From scratch' }).click();

@@ -13,7 +13,7 @@ test('Change event fields after the event has already received some registration
   let field1Id: number;
 
   await test.step('Create test event', async () => {
-    const response = await request.post('/index.php?rest_route=/wpoe/v1/admin/events', {
+    const response = await request.post('/index.php?rest_route=/regifair/v1/admin/events', {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce
@@ -41,7 +41,7 @@ test('Change event fields after the event has already received some registration
 
   let registrationToken: string;
   await test.step('Create registration', async () => {
-    const response = await request.post(`/index.php?rest_route=/wpoe/v1/events/${eventId}`, {
+    const response = await request.post(`/index.php?rest_route=/regifair/v1/events/${eventId}`, {
       data: { [field1Id]: true }
     });
     expect(response.status()).toEqual(201);
@@ -51,7 +51,7 @@ test('Change event fields after the event has already received some registration
 
   let field2Id: number;
   await test.step('Admin updates the event adding one field', async () => {
-    const response = await request.put(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId}`, {
+    const response = await request.put(`/index.php?rest_route=/regifair/v1/admin/events/${eventId}`, {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce
@@ -82,7 +82,7 @@ test('Change event fields after the event has already received some registration
   });
 
   await test.step('User retrieves the registration', async () => {
-    const response = await request.get(`/index.php?rest_route=/wpoe/v1/events/${eventId}/${registrationToken}`);
+    const response = await request.get(`/index.php?rest_route=/regifair/v1/events/${eventId}/${registrationToken}`);
     expect(response.status()).toEqual(200);
     const { values } = await response.json();
     expect(Object.keys(values)).toHaveLength(2);
@@ -92,7 +92,7 @@ test('Change event fields after the event has already received some registration
 
   let registrationId: number;
   await test.step('Admin list registrations', async () => {
-    const response = await request.get(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId}/registrations&page=1&pageSize=10`, {
+    const response = await request.get(`/index.php?rest_route=/regifair/v1/admin/events/${eventId}/registrations&page=1&pageSize=10`, {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce
@@ -108,7 +108,7 @@ test('Change event fields after the event has already received some registration
   });
 
   await test.step('Admin retrieves the registration', async () => {
-    const response = await request.get(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId}/registrations/${registrationId}`, {
+    const response = await request.get(`/index.php?rest_route=/regifair/v1/admin/events/${eventId}/registrations/${registrationId}`, {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce
@@ -122,7 +122,7 @@ test('Change event fields after the event has already received some registration
   });
 
   await test.step('Admin updates the event removing first field', async () => {
-    const response = await request.put(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId}`, {
+    const response = await request.put(`/index.php?rest_route=/regifair/v1/admin/events/${eventId}`, {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce
@@ -149,7 +149,7 @@ test('Change event fields after the event has already received some registration
   });
 
   await test.step('User retrieves the registration', async () => {
-    const response = await request.get(`/index.php?rest_route=/wpoe/v1/events/${eventId}/${registrationToken}`);
+    const response = await request.get(`/index.php?rest_route=/regifair/v1/events/${eventId}/${registrationToken}`);
     expect(response.status()).toEqual(200);
     const { values } = await response.json();
     expect(Object.keys(values)).toHaveLength(1);
@@ -157,7 +157,7 @@ test('Change event fields after the event has already received some registration
   });
 
   await test.step('Admin list registrations', async () => {
-    const response = await request.get(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId}/registrations&page=1&pageSize=10`, {
+    const response = await request.get(`/index.php?rest_route=/regifair/v1/admin/events/${eventId}/registrations&page=1&pageSize=10`, {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce
@@ -173,7 +173,7 @@ test('Change event fields after the event has already received some registration
   });
 
   await test.step('Admin retrieves the registration', async () => {
-    const response = await request.get(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId}/registrations/${registrationId}`, {
+    const response = await request.get(`/index.php?rest_route=/regifair/v1/admin/events/${eventId}/registrations/${registrationId}`, {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce
@@ -186,7 +186,7 @@ test('Change event fields after the event has already received some registration
   });
 
   await test.step('Delete test event', async () => {
-    const deleteEventResponse = await request.delete(`/index.php?rest_route=/wpoe/v1/admin/events/${eventId}`, {
+    const deleteEventResponse = await request.delete(`/index.php?rest_route=/regifair/v1/admin/events/${eventId}`, {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce

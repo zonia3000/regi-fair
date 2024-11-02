@@ -9,7 +9,7 @@ import { HttpResponse, http } from "msw";
 
 test('Deleting saved "number of people" field is forbidden', async () => {
   server.use(
-    http.get("/wpoe/v1/admin/events/1", () => {
+    http.get("/regifair/v1/admin/events/1", () => {
       return HttpResponse.json({
         name: "test",
         date: "2050-01-01",
