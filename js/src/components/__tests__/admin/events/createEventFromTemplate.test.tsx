@@ -96,7 +96,7 @@ test("Create event from template", async () => {
   await waitFor(() => screen.getByRole("dialog"));
   const dialog = screen.getByRole("dialog");
   await user.click(screen.getByText("From template"));
-  expect.poll(() => templatesLoaded).toBeTruthy();
+  await expect.poll(() => templatesLoaded).toBeTruthy();
 
   await user.selectOptions(
     within(dialog).getByRole("combobox", { name: "Select template" }),
@@ -104,7 +104,7 @@ test("Create event from template", async () => {
   );
   await user.click(within(dialog).getByText("Create"));
 
-  expect.poll(() => templateLoaded).toBeTruthy();
+  await expect.poll(() => templateLoaded).toBeTruthy();
   await waitFor(() => screen.findByText("Create event"));
 
   const rows = screen.getAllByRole("row");

@@ -55,7 +55,7 @@ test("Delete registration", async () => {
   );
 
   expect(registrations).toHaveLength(0);
-  expect.poll(() => screen.getAllByRole("row")).toHaveLength(1);
+  await expect.poll(() => screen.getAllByRole("row")).toHaveLength(1);
 
   server.restoreHandlers();
 });
