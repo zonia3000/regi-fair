@@ -2,7 +2,7 @@
 Contributors: zonia3000
 Tags: events, registration, form, waiting list
 Requires at least: 6.6
-Tested up to: 6.6
+Tested up to: 6.7
 Stable tag: 0.1.0
 Requires PHP: 8.2
 License: GPLv3 or later

@@ -110,8 +110,8 @@ test('Event referenced in posts', async ({ page, context, request }) => {
   await test.step('Add third event to one post and then unpublish the post', async () => {
     postId5 = await addEventToPost(postTitle5, eventName3);
     await page.reload();
-    await page.getByLabel('Change post status: Published').click();
-    await page.getByLabel('DraftNot ready to publish.').check();
+    await page.getByLabel('Change status: Published').click();
+    await page.getByText('Draft').check();
     await page.getByRole('button', { name: 'Save', exact: true }).click();
     await expect(page.getByText('Post reverted to draft').first()).toBeVisible();
   });
