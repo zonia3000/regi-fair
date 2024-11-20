@@ -18,12 +18,12 @@ class REGI_FAIR_Settings_Admin_Controller extends WP_REST_Controller
       [
         [
           'methods' => WP_REST_Server::READABLE,
-          'permission_callback' => 'is_events_admin',
+          'permission_callback' => ['REGI_FAIR_API_Utils', 'is_events_admin'],
           'callback' => [$this, 'get_item']
         ],
         [
           'methods' => WP_REST_Server::EDITABLE,
-          'permission_callback' => 'is_events_admin',
+          'permission_callback' => ['REGI_FAIR_API_Utils', 'is_events_admin'],
           'callback' => [$this, 'update_item'],
           'args' => $this->get_endpoint_args_for_item_schema()
         ],
@@ -50,7 +50,7 @@ class REGI_FAIR_Settings_Admin_Controller extends WP_REST_Controller
   public function update_item($request)
   {
     $settings_to_update = (array) json_decode($request->get_body());
-    $settings_to_update['defaultExtraEmailContent'] = strip_forbidden_html_tags($settings_to_update['defaultExtraEmailContent']);
+    $settings_to_update['defaultExtraEmailContent'] = REGI_FAIR_API_Utils::strip_forbidden_html_tags($settings_to_update['defaultExtraEmailContent']);
     $updated_settings = REGI_FAIR_Settings_Manager::update_settings($settings_to_update);
     return new WP_REST_Response($updated_settings);
   }

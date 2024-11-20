@@ -1,5 +1,9 @@
 <?php
 
+if (!defined('ABSPATH')) {
+  die();
+}
+
 require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 
 define('REGI_FAIR_DB_VERSION_KEY', 'regi_fair_db_version');

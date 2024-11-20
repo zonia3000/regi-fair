@@ -1,5 +1,9 @@
 <?php
 
+if (!defined('ABSPATH')) {
+  die();
+}
+
 define('REGI_FAIR_TABLE_PREFIX', 'regi_fair_');
 
 class REGI_FAIR_DB

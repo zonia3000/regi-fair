@@ -1,5 +1,9 @@
 <?php
 
+if (!defined('ABSPATH')) {
+  die();
+}
+
 class REGI_FAIR_Admin_Panel_Pages
 {
   public static function create_menu()

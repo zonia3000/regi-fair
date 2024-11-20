@@ -1,5 +1,9 @@
 <?php
 
+if (!defined('ABSPATH')) {
+  die();
+}
+
 /**
  * Keeps synchronized the records in the regi_fair_event_post table, where each event is associated with
  * its published posts. The association is used to send the correct post link in the confirmation mail.

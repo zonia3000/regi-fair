@@ -26,7 +26,7 @@ class REGI_FAIR_Number_Validator extends REGI_FAIR_Base_Validator
       $value = (float) $value;
     }
     if ($this->field->extra !== null) {
-      $numberOfPeople = use_as_number_of_people($this->field);
+      $numberOfPeople = REGI_FAIR_API_Utils::use_as_number_of_people($this->field);
       if ($numberOfPeople && !is_int($value)) {
         throw new REGI_FAIR_Validation_Exception(message: __('Number must be an integer', 'regi-fair'));
       }

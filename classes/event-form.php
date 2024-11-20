@@ -1,5 +1,9 @@
 <?php
 
+if (!defined('ABSPATH')) {
+  die();
+}
+
 class REGI_FAIR_Form
 {
   public static function init()

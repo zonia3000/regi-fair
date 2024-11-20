@@ -34,12 +34,12 @@ class REGI_FAIR_Events_Admin_Controller extends WP_REST_Controller
         ],
         [
           'methods' => WP_REST_Server::READABLE,
-          'permission_callback' => 'is_events_admin',
+          'permission_callback' => ['REGI_FAIR_API_Utils', 'is_events_admin'],
           'callback' => [$this, 'get_items']
         ],
         [
           'methods' => WP_REST_Server::CREATABLE,
-          'permission_callback' => 'is_events_admin',
+          'permission_callback' => ['REGI_FAIR_API_Utils', 'is_events_admin'],
           'callback' => [$this, 'create_item'],
           'args' => $this->get_endpoint_args_for_item_schema()
         ],
@@ -56,12 +56,12 @@ class REGI_FAIR_Events_Admin_Controller extends WP_REST_Controller
         ],
         [
           'methods' => WP_REST_Server::READABLE,
-          'permission_callback' => 'is_events_admin',
+          'permission_callback' => ['REGI_FAIR_API_Utils', 'is_events_admin'],
           'callback' => [$this, 'get_item']
         ],
         [
           'methods' => WP_REST_Server::EDITABLE,
-          'permission_callback' => 'is_events_admin',
+          'permission_callback' => ['REGI_FAIR_API_Utils', 'is_events_admin'],
           'callback' => [$this, 'update_item'],
           'args' => array_merge(
             $this->get_endpoint_args_for_item_schema(),
@@ -70,7 +70,7 @@ class REGI_FAIR_Events_Admin_Controller extends WP_REST_Controller
         ],
         [
           'methods' => WP_REST_Server::DELETABLE,
-          'permission_callback' => 'is_events_admin',
+          'permission_callback' => ['REGI_FAIR_API_Utils', 'is_events_admin'],
           'callback' => [$this, 'delete_item']
         ],
         'schema' => [$this, 'get_item_schema']
@@ -86,7 +86,7 @@ class REGI_FAIR_Events_Admin_Controller extends WP_REST_Controller
         ],
         [
           'methods' => WP_REST_Server::READABLE,
-          'permission_callback' => 'is_events_admin',
+          'permission_callback' => ['REGI_FAIR_API_Utils', 'is_events_admin'],
           'callback' => [$this, 'get_referencing_post']
         ],
       ]
@@ -103,7 +103,7 @@ class REGI_FAIR_Events_Admin_Controller extends WP_REST_Controller
       $ignore_past_events = (bool) $request->get_param('ignorePastEvents');
       return new WP_REST_Response($this->dao->list_events($ignore_past_events));
     } catch (Exception $ex) {
-      return generic_server_error($ex);
+      return REGI_FAIR_API_Utils::generic_server_error($ex);
     }
   }
 
@@ -121,7 +121,7 @@ class REGI_FAIR_Events_Admin_Controller extends WP_REST_Controller
       }
       return new WP_REST_Response($event);
     } catch (Exception $ex) {
-      return generic_server_error($ex);
+      return REGI_FAIR_API_Utils::generic_server_error($ex);
     }
   }
 
@@ -135,7 +135,7 @@ class REGI_FAIR_Events_Admin_Controller extends WP_REST_Controller
       $event_id = $request->get_param('id');
       return new WP_REST_Response($this->dao->get_referencing_posts($event_id));
     } catch (Exception $ex) {
-      return generic_server_error($ex);
+      return REGI_FAIR_API_Utils::generic_server_error($ex);
     }
   }
 
@@ -153,7 +153,7 @@ class REGI_FAIR_Events_Admin_Controller extends WP_REST_Controller
     } catch (REGI_FAIR_Validation_Exception $ex) {
       return new WP_Error('invalid_payload', $ex->getMessage(), ['status' => 400]);
     } catch (Exception $ex) {
-      return generic_server_error($ex);
+      return REGI_FAIR_API_Utils::generic_server_error($ex);
     }
   }
 
@@ -178,7 +178,7 @@ class REGI_FAIR_Events_Admin_Controller extends WP_REST_Controller
     } catch (REGI_FAIR_Validation_Exception $ex) {
       return new WP_Error('invalid_payload', $ex->getMessage(), ['status' => 400]);
     } catch (Exception $ex) {
-      return generic_server_error($ex);
+      return REGI_FAIR_API_Utils::generic_server_error($ex);
     }
   }
 
@@ -208,9 +208,9 @@ class REGI_FAIR_Events_Admin_Controller extends WP_REST_Controller
     }
     $extra_email_content = $request->get_param('extraEmailContent');
     if ($extra_email_content) {
-      $event->extraEmailContent = strip_forbidden_html_tags($extra_email_content);
+      $event->extraEmailContent = REGI_FAIR_API_Utils::strip_forbidden_html_tags($extra_email_content);
     }
-    $event->formFields = get_form_field_from_request($request);
+    $event->formFields = REGI_FAIR_API_Utils::get_form_field_from_request($request);
     return $event;
   }
 
@@ -225,7 +225,7 @@ class REGI_FAIR_Events_Admin_Controller extends WP_REST_Controller
       $this->dao->delete_event($id);
       return new WP_REST_Response(null, 204);
     } catch (Exception $ex) {
-      return generic_server_error($ex);
+      return REGI_FAIR_API_Utils::generic_server_error($ex);
     }
   }
 
@@ -247,7 +247,7 @@ class REGI_FAIR_Events_Admin_Controller extends WP_REST_Controller
     $schema['properties']['adminEmail'] = ['type' => 'string', 'format' => 'email', 'required' => false];
     $schema['properties']['editableRegistrations'] = ['type' => 'boolean', 'required' => true];
     $schema['properties']['extraEmailContent'] = ['type' => 'string', 'required' => false];
-    $schema['properties']['formFields'] = get_form_fields_schema();
+    $schema['properties']['formFields'] = REGI_FAIR_API_Utils::get_form_fields_schema();
 
     // Cache generated schema on endpoint instance.
     $this->schema = $schema;

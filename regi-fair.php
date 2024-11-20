@@ -102,8 +102,8 @@ function regi_fair_deactivate()
 if (defined('REGI_FAIR_TESTING') && REGI_FAIR_TESTING === true) {
   // Configures the PHP mailer to send email to mailpit test server
   // Needed only for end-to-end tests
-  add_action('phpmailer_init', 'test_phpmailer_smtp');
-  function test_phpmailer_smtp($phpmailer)
+  add_action('phpmailer_init', 'regi_fair_test_phpmailer_smtp');
+  function regi_fair_test_phpmailer_smtp($phpmailer)
   {
     $phpmailer->isSMTP();
     $phpmailer->Host = "host.docker.internal";

@@ -39,7 +39,7 @@ class REGI_FAIR_Registrations_Admin_Controller extends WP_REST_Controller
         ],
         [
           'methods' => WP_REST_Server::READABLE,
-          'permission_callback' => 'is_events_admin',
+          'permission_callback' => ['REGI_FAIR_API_Utils', 'is_events_admin'],
           'callback' => [$this, 'get_items']
         ]
       ]
@@ -55,7 +55,7 @@ class REGI_FAIR_Registrations_Admin_Controller extends WP_REST_Controller
         ],
         [
           'methods' => WP_REST_Server::READABLE,
-          'permission_callback' => 'is_events_admin',
+          'permission_callback' => ['REGI_FAIR_API_Utils', 'is_events_admin'],
           'callback' => [$this, 'download_items']
         ],
       ]
@@ -72,18 +72,18 @@ class REGI_FAIR_Registrations_Admin_Controller extends WP_REST_Controller
         ],
         [
           'methods' => WP_REST_Server::READABLE,
-          'permission_callback' => 'is_events_admin',
+          'permission_callback' => ['REGI_FAIR_API_Utils', 'is_events_admin'],
           'callback' => [$this, 'get_item']
         ],
         [
           'methods' => WP_REST_Server::EDITABLE,
-          'permission_callback' => 'is_events_admin',
+          'permission_callback' => ['REGI_FAIR_API_Utils', 'is_events_admin'],
           'callback' => [$this, 'update_item'],
           'args' => $this->get_endpoint_args_for_item_schema()
         ],
         [
           'methods' => WP_REST_Server::DELETABLE,
-          'permission_callback' => 'is_events_admin',
+          'permission_callback' => ['REGI_FAIR_API_Utils', 'is_events_admin'],
           'callback' => [$this, 'delete_item']
         ]
       ]
@@ -115,7 +115,7 @@ class REGI_FAIR_Registrations_Admin_Controller extends WP_REST_Controller
         )
       );
     } catch (Exception $ex) {
-      return generic_server_error($ex);
+      return REGI_FAIR_API_Utils::generic_server_error($ex);
     }
   }
 
@@ -166,7 +166,7 @@ class REGI_FAIR_Registrations_Admin_Controller extends WP_REST_Controller
       // Terminate the script to prevent WordPress from adding additional output
       exit;
     } catch (Exception $ex) {
-      return generic_server_error($ex);
+      return REGI_FAIR_API_Utils::generic_server_error($ex);
     }
   }
 
@@ -192,7 +192,7 @@ class REGI_FAIR_Registrations_Admin_Controller extends WP_REST_Controller
 
       return new WP_REST_Response($registration);
     } catch (Exception $ex) {
-      return generic_server_error($ex);
+      return REGI_FAIR_API_Utils::generic_server_error($ex);
     }
   }
 
@@ -218,26 +218,26 @@ class REGI_FAIR_Registrations_Admin_Controller extends WP_REST_Controller
       $registration_id = (int) $request->get_param('registrationId');
 
       $input = json_decode($request->get_body(), true);
-      $error = validate_event_request($event, $input);
+      $error = REGI_FAIR_API_Utils::validate_event_request($event, $input);
       if ($error !== null) {
         return $error;
       }
 
       $data = new REGI_FAIR_Registration();
       $data->id = $registration_id;
-      $data->numberOfPeople = get_number_of_people($event, $input);
+      $data->numberOfPeople = REGI_FAIR_API_Utils::get_number_of_people($event, $input);
       $data->values = $input;
       $data->waitingList = $waiting_list;
 
       $update_result = $this->registrations_dao->update_registration($event, $data);
 
       if ($update_result === false) {
-        return get_no_more_seats_error($event);
+        return REGI_FAIR_API_Utils::get_no_more_seats_error($event);
       }
 
       $send_email = (boolean) $request->get_param('sendEmail');
       if ($send_email) {
-        $user_email = get_user_email($event, $input);
+        $user_email = REGI_FAIR_API_Utils::get_user_email($event, $input);
         if (count($user_email) > 0) {
           REGI_FAIR_Mail_Sender::send_registration_updated_by_admin($event, $user_email, $input);
         }
@@ -249,7 +249,7 @@ class REGI_FAIR_Registrations_Admin_Controller extends WP_REST_Controller
         foreach ($waiting_picked as $registration_id) {
           $waiting_registration = $this->registrations_dao->get_registration_by_id($event->id, $registration_id);
           if ($waiting_registration !== null) {
-            $user_email = get_user_email($event, $waiting_registration->values);
+            $user_email = REGI_FAIR_API_Utils::get_user_email($event, $waiting_registration->values);
             if (count($user_email) > 0) {
               REGI_FAIR_Mail_Sender::send_picked_from_waiting_list_confirmation($event, $user_email, $waiting_registration->values);
             }
@@ -259,7 +259,7 @@ class REGI_FAIR_Registrations_Admin_Controller extends WP_REST_Controller
 
       return new WP_REST_Response(null, 204);
     } catch (Exception $ex) {
-      return generic_server_error($ex);
+      return REGI_FAIR_API_Utils::generic_server_error($ex);
     }
   }
 
@@ -287,7 +287,7 @@ class REGI_FAIR_Registrations_Admin_Controller extends WP_REST_Controller
       $this->registrations_dao->delete_registration($event, $registration_id);
 
       if ($send_email) {
-        $user_email = get_user_email($event, $values);
+        $user_email = REGI_FAIR_API_Utils::get_user_email($event, $values);
         if (count($user_email) > 0) {
           REGI_FAIR_Mail_Sender::send_registration_deleted_by_admin($event, $user_email);
         }
@@ -295,7 +295,7 @@ class REGI_FAIR_Registrations_Admin_Controller extends WP_REST_Controller
 
       return new WP_REST_Response(null, 204);
     } catch (Exception $ex) {
-      return generic_server_error($ex);
+      return REGI_FAIR_API_Utils::generic_server_error($ex);
     }
   }
 }

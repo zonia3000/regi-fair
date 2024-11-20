@@ -98,13 +98,13 @@ class REGI_FAIR_Public_Controller extends WP_REST_Controller
    */
   private function remove_registered_user_email_field($fields)
   {
-    $email = get_current_user_email();
+    $email = REGI_FAIR_API_Utils::get_current_user_email();
     if ($email === null) {
       return $fields;
     }
     $filtered_fields = [];
     foreach ($fields as $field) {
-      if (!use_wp_user_email($field)) {
+      if (!REGI_FAIR_API_Utils::use_wp_user_email($field)) {
         $filtered_fields[] = $field;
       }
     }
@@ -151,16 +151,16 @@ class REGI_FAIR_Public_Controller extends WP_REST_Controller
       }
 
       $input = json_decode($request->get_body(), true);
-      set_registered_user_email($event, $input);
-      $error = validate_event_request($event, $input);
+      REGI_FAIR_API_Utils::set_registered_user_email($event, $input);
+      $error = REGI_FAIR_API_Utils::validate_event_request($event, $input);
       if ($error !== null) {
         return $error;
       }
 
-      $user_email = get_user_email($event, $input);
+      $user_email = REGI_FAIR_API_Utils::get_user_email($event, $input);
 
       $data = new REGI_FAIR_Registration();
-      $data->numberOfPeople = get_number_of_people($event, $input);
+      $data->numberOfPeople = REGI_FAIR_API_Utils::get_number_of_people($event, $input);
       $data->values = $input;
       $data->waitingList = $waiting_list;
 
@@ -168,7 +168,7 @@ class REGI_FAIR_Public_Controller extends WP_REST_Controller
 
       $remaining_seats = $this->registrations_dao->register_to_event($event, $data, md5($registration_token));
       if ($remaining_seats === false) {
-        return get_no_more_seats_error($event);
+        return REGI_FAIR_API_Utils::get_no_more_seats_error($event);
       }
 
       if (count($user_email) > 0) {
@@ -191,7 +191,7 @@ class REGI_FAIR_Public_Controller extends WP_REST_Controller
         'token' => $registration_token
       ], 201);
     } catch (Exception $ex) {
-      return generic_server_error($ex);
+      return REGI_FAIR_API_Utils::generic_server_error($ex);
     }
   }
 
@@ -229,23 +229,23 @@ class REGI_FAIR_Public_Controller extends WP_REST_Controller
       }
 
       $input = json_decode($request->get_body(), true);
-      set_registered_user_email($event, $input);
-      $error = validate_event_request($event, $input);
+      REGI_FAIR_API_Utils::set_registered_user_email($event, $input);
+      $error = REGI_FAIR_API_Utils::validate_event_request($event, $input);
       if ($error !== null) {
         return $error;
       }
 
-      $user_email = get_user_email($event, $input);
+      $user_email = REGI_FAIR_API_Utils::get_user_email($event, $input);
 
       $data = new REGI_FAIR_Registration();
       $data->id = $registration->id;
-      $data->numberOfPeople = get_number_of_people($event, $input);
+      $data->numberOfPeople = REGI_FAIR_API_Utils::get_number_of_people($event, $input);
       $data->values = $input;
       $data->waitingList = $registration->waitingList || $waiting_list;
 
       $update_result = $this->registrations_dao->update_registration($event, $data);
       if ($update_result === false) {
-        return get_no_more_seats_error($event);
+        return REGI_FAIR_API_Utils::get_no_more_seats_error($event);
       }
 
       $remaining_seats = $update_result['remaining'];
@@ -262,7 +262,7 @@ class REGI_FAIR_Public_Controller extends WP_REST_Controller
         foreach ($waiting_picked as $registration_id) {
           $waiting_registration = $this->registrations_dao->get_registration_by_id($event->id, $registration_id);
           if ($waiting_registration !== null) {
-            $user_email = get_user_email($event, $waiting_registration->values);
+            $user_email = REGI_FAIR_API_Utils::get_user_email($event, $waiting_registration->values);
             if (count($user_email) > 0) {
               REGI_FAIR_Mail_Sender::send_picked_from_waiting_list_confirmation($event, $user_email, $waiting_registration->values);
             }
@@ -277,7 +277,7 @@ class REGI_FAIR_Public_Controller extends WP_REST_Controller
         'remaining' => $remaining_seats
       ]);
     } catch (Exception $ex) {
-      return generic_server_error($ex);
+      return REGI_FAIR_API_Utils::generic_server_error($ex);
     }
   }
 
@@ -306,7 +306,7 @@ class REGI_FAIR_Public_Controller extends WP_REST_Controller
       }
       return new WP_REST_Response($registration);
     } catch (Exception $ex) {
-      return generic_server_error($ex);
+      return REGI_FAIR_API_Utils::generic_server_error($ex);
     }
   }
 
@@ -339,7 +339,7 @@ class REGI_FAIR_Public_Controller extends WP_REST_Controller
       $remaining = $deletion_result['remaining'];
       $waiting_picked = $deletion_result['waiting_picked'];
 
-      $user_email = get_user_email($event, $registration->values);
+      $user_email = REGI_FAIR_API_Utils::get_user_email($event, $registration->values);
 
       if (count($user_email) > 0) {
         REGI_FAIR_Mail_Sender::send_registration_deleted_confirmation($event, $user_email);
@@ -351,7 +351,7 @@ class REGI_FAIR_Public_Controller extends WP_REST_Controller
         foreach ($waiting_picked as $registration_id) {
           $waiting_registration = $this->registrations_dao->get_registration_by_id($event->id, $registration_id);
           if ($waiting_registration !== null) {
-            $user_email = get_user_email($event, $waiting_registration->values);
+            $user_email = REGI_FAIR_API_Utils::get_user_email($event, $waiting_registration->values);
             if (count($user_email) > 0) {
               REGI_FAIR_Mail_Sender::send_picked_from_waiting_list_confirmation($event, $user_email, $waiting_registration->values);
             }
@@ -366,7 +366,7 @@ class REGI_FAIR_Public_Controller extends WP_REST_Controller
         'remaining' => $remaining
       ]);
     } catch (Exception $ex) {
-      return generic_server_error($ex);
+      return REGI_FAIR_API_Utils::generic_server_error($ex);
     }
   }
 }
