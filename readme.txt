@@ -37,7 +37,7 @@ RegiFair is available in the following languages:
 * English
 * Italian
 
-This plugin contains minified JavaScript code. The complete source code can be found at the following URL: https://github.com/zonia3000/regi-fair
+This plugin contains minified JavaScript code. The complete source code is available on [GitHub](https://github.com/zonia3000/regi-fair).
 
 == Frequently Asked Questions ==
 

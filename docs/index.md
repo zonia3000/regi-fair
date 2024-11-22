@@ -27,7 +27,7 @@ RegiFair is available in the following languages:
 * English
 * Italian
 
-The complete source code can be found at https://github.com/zonia3000/regi-fair
+The complete source code can be found on [GitHub](https://github.com/zonia3000/regi-fair).
 
 ## User guide
 
