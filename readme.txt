@@ -68,8 +68,10 @@ No, and there is no plan to add this, since the plugin was developed as a volunt
 == Screenshots ==
 
 1. The event configuration page, seen from the administration area.
-2. The event form displayed in a post; the user is editing a previously created registration.
-3. The list of registrations, seen from the administration area.
+2. The event form selection in the block editor, when editing a post.
+3. The empty event form displayed in a post.
+4. The event form displayed in a post; the user is editing a previously created registration.
+5. The list of registrations, seen from the administration area.
 
 == Changelog ==
 
