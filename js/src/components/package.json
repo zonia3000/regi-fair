@@ -1,6 +1,6 @@
 {
   "name": "regi-fair",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "RegiFair Frontend",
   "type": "module",
   "scripts": {

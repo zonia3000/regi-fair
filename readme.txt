@@ -3,7 +3,7 @@ Contributors: zonia3000
 Tags: events, registration, form, waiting list
 Requires at least: 6.6
 Tested up to: 6.7
-Stable tag: 0.1.0
+Stable tag: 1.0.0
 Requires PHP: 8.2
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -75,5 +75,5 @@ No, and there is no plan to add this, since the plugin was developed as a volunt
 
 == Changelog ==
 
-= 0.1.0 =
+= 1.0.0 =
 * First version released

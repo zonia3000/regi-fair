@@ -27,6 +27,8 @@ RegiFair is available in the following languages:
 * English
 * Italian
 
+The complete source code can be found at https://github.com/zonia3000/regi-fair
+
 ## User guide
 
 **Important**: before starting, go to the RegiFair Settings page and ensure that the e-mail address used to send confirmation messages to users is a valid e-mail address, otherwise confirmation e-mail may not be sent.
