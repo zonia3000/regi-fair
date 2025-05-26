@@ -30,7 +30,7 @@ async function testWpUserEmailFields(test: TestType<any, any>, page: Page, itemN
 
   await test.step('Save and reopen', async () => {
     await page.getByRole('button', { name: 'Save' }).click();
-    await expect(page.getByRole('cell', { name: itemName })).toHaveCount(1);
+    await expect(page.getByRole('cell', { name: itemName, exact: true })).toHaveCount(1);
     await page.getByRole('link', { name: itemName }).click();
     await expect(page.getByRole('heading', { name: 'Edit' })).toHaveCount(1);
     await expect(page.getByRole('row')).toHaveCount(2);

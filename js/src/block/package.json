@@ -1,6 +1,6 @@
 {
     "name": "regi-fair-form",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "RegiFair Form",
     "author": "Sonia Zorba",
     "license": "GPL-3.0-or-later",
@@ -14,7 +14,7 @@
         "start": "wp-scripts start"
     },
     "devDependencies": {
-        "@wordpress/scripts": "^30.5.1"
+        "@wordpress/scripts": "^30.17.0"
     },
     "dependencies": {
         "regi-fair": "file:../components"
