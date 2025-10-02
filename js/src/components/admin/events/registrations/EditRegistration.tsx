@@ -5,6 +5,7 @@ import {
   checkErrorCode,
   extactFieldErrors,
   extractError,
+  hasConfirmationAddressFields,
 } from "../../../utils";
 import { __, sprintf } from "@wordpress/i18n";
 import Loading from "../../../Loading";
@@ -21,12 +22,12 @@ const EditRegistration = () => {
   const [found, setFound] = useState(false);
   const [event, setEvent] = useState(null as EventConfiguration);
   const [fields, setFields] = useState(
-    {} as Record<number, string | string[] | boolean>,
+    {} as Record<number, string | string[] | boolean>
   );
   const [waitingList, setWaitingList] = useState(false);
   const [availableSeats, setAvailableSeats] = useState(null as number | null);
   const [fieldsErrors, setFieldsErrors] = useState(
-    {} as Record<number, string>,
+    {} as Record<number, string>
   );
   const [error, setError] = useState("");
   const [showEmailCheckbox, setShowEmailCheckbox] = useState(false);
@@ -62,15 +63,7 @@ const EditRegistration = () => {
       });
       setFields(registration.values);
       setWaitingList(registration.waitingList);
-      const hasConfirmationAddressFields =
-        eventConfig.formFields.filter(
-          (f) =>
-            f.fieldType === "email" &&
-            f.extra &&
-            "confirmationAddress" in f.extra &&
-            f.extra.confirmationAddress === true,
-        ).length > 0;
-      if (hasConfirmationAddressFields) {
+      if (hasConfirmationAddressFields(eventConfig)) {
         setShowEmailCheckbox(true);
         setNotifyUserByEmail(true);
       }
@@ -129,7 +122,7 @@ const EditRegistration = () => {
         {sprintf(
           /* translators: %d is replaced with the id of the registration */
           __("Edit registration #%d", "regi-fair"),
-          registrationId,
+          registrationId
         )}
       </h1>
       {waitingList && (
@@ -142,7 +135,7 @@ const EditRegistration = () => {
           {sprintf(
             /* translators: %d is replaced with the number of available seats */
             __("There are still %d seats available.", "regi-fair"),
-            availableSeats,
+            availableSeats
           )}
         </Notice>
       )}

@@ -2,11 +2,12 @@ import apiFetch from "@wordpress/api-fetch";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { RegistrationsList } from "../../../classes/registration";
-import { extractError } from "../../../utils";
+import { extractError, hasConfirmationAddressFields } from "../../../utils";
 import { __, sprintf } from "@wordpress/i18n";
 import Loading from "../../../Loading";
 import { Button, CheckboxControl, Modal, Notice } from "@wordpress/components";
 import Pagination from "../../Pagination";
+import { EventConfiguration } from "../../../classes/event";
 
 const ListRegistrations = (props: { waiting: boolean }) => {
   const { eventId } = useParams();
@@ -20,7 +21,7 @@ const ListRegistrations = (props: { waiting: boolean }) => {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
   const [head, setHead] = useState(
-    [] as Array<{ label: string; deleted: boolean }>,
+    [] as Array<{ label: string; deleted: boolean }>
   );
   const [rows, setRows] = useState([] as string[][]);
   const [total, setTotal] = useState(0);
@@ -33,8 +34,10 @@ const ListRegistrations = (props: { waiting: boolean }) => {
     setShowConfirmDeleteRegistrationModal,
   ] = useState(false);
   const [registrationToDelete, setRegistrationToDelete] = useState(
-    null as string | null,
+    null as string | null
   );
+  const [showEmailCheckbox, setShowEmailCheckbox] = useState(false);
+  const [notifyUserByEmail, setNotifyUserByEmail] = useState(false);
   const [deletionError, setDeletionError] = useState("");
 
   useEffect(() => {
@@ -43,6 +46,21 @@ const ListRegistrations = (props: { waiting: boolean }) => {
 
   async function loadPage() {
     setLoading(true);
+
+    try {
+      const eventConfig: EventConfiguration = await apiFetch({
+        path: `/regifair/v1/admin/events/${eventId}`,
+      });
+      if (hasConfirmationAddressFields(eventConfig)) {
+        setShowEmailCheckbox(true);
+        setNotifyUserByEmail(true);
+      }
+    } catch (err) {
+      setError(extractError(err));
+      setLoading(false);
+      return;
+    }
+
     try {
       const result: RegistrationsList = await apiFetch({
         path: `/regifair/v1/admin/events/${eventId}/registrations?waitingList=${props.waiting}&page=${page}&pageSize=${pageSize}`,
@@ -112,7 +130,7 @@ const ListRegistrations = (props: { waiting: boolean }) => {
     setLoading(true);
     try {
       await apiFetch({
-        path: `/regifair/v1/admin/events/${eventId}/registrations/${registrationToDelete}`,
+        path: `/regifair/v1/admin/events/${eventId}/registrations/${registrationToDelete}?sendEmail=${notifyUserByEmail}`,
         method: "DELETE",
       });
       setShowConfirmDeleteRegistrationModal(false);
@@ -145,13 +163,13 @@ const ListRegistrations = (props: { waiting: boolean }) => {
           sprintf(
             /* translators: %s is replaced with the name of the event */
             __('Registrations for the event "%s"', "regi-fair"),
-            eventName,
+            eventName
           )}
         {props.waiting &&
           sprintf(
             /* translators: %s is replaced with the name of the event */
             __('Waiting list for the event "%s"', "regi-fair"),
-            eventName,
+            eventName
           )}
       </h1>
       <Button onClick={download} variant="primary">
@@ -165,8 +183,7 @@ const ListRegistrations = (props: { waiting: boolean }) => {
         </div>
       )}
       <p>
-        <strong>{__("Confirmed participants", "regi-fair")}</strong>:
-        &nbsp;
+        <strong>{__("Confirmed participants", "regi-fair")}</strong>: &nbsp;
         {props.waiting ? (
           <Button variant="link" onClick={showConfirmedRegistrations}>
             {totalParticipants}
@@ -221,7 +238,7 @@ const ListRegistrations = (props: { waiting: boolean }) => {
               {r
                 .filter(
                   (_: string, j: number) =>
-                    j < 2 || showDeletedFields || !head[j - 2].deleted,
+                    j < 2 || showDeletedFields || !head[j - 2].deleted
                 )
                 .map((c: string, j: number) => (
                   <td key={`cell_${i}_${j}`}>{c.toString()}</td>
@@ -262,17 +279,27 @@ const ListRegistrations = (props: { waiting: boolean }) => {
         <Modal
           title={__("Confirm registration deletion", "regi-fair")}
           onRequestClose={() => setShowConfirmDeleteRegistrationModal(false)}
+          size="medium"
         >
           <p>
             {sprintf(
               /* translators: %d is replaced with the id of the registration */
               __(
                 "Do you really want to delete the registration #%d?",
-                "regi-fair",
+                "regi-fair"
               ),
-              registrationToDelete,
+              registrationToDelete
             )}
           </p>
+          {showEmailCheckbox && (
+            <CheckboxControl
+              label={__("Notify user by e-mail", "regi-fair")}
+              checked={notifyUserByEmail}
+              onChange={setNotifyUserByEmail}
+              className="mt-2 mb-2"
+              __nextHasNoMarginBottom={true}
+            />
+          )}
           {deletionError && (
             <Notice status="error" className="mt-2 mb-2" isDismissible={false}>
               {deletionError}

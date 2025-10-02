@@ -1,3 +1,4 @@
+import { EventConfiguration } from "./classes/event";
 import { Field } from "./classes/fields";
 
 export function checkErrorCode(err: unknown, expectedCode: string) {
@@ -28,7 +29,7 @@ export function extractError(err: unknown): string {
 }
 
 export function getDefaultFieldValue(
-  field: Field,
+  field: Field
 ): string | string[] | boolean {
   switch (field.fieldType) {
     case "checkbox":
@@ -49,7 +50,7 @@ export function getDefaultFieldValue(
  * removing all the invalid or read-only properties.
  */
 export function cleanupFields(
-  fields: Array<Field & { position?: number }>,
+  fields: Array<Field & { position?: number }>
 ): Field[] {
   return fields.map((f) => ({
     ...f,
@@ -64,5 +65,17 @@ export function isNumberOfPeopleField(field: Field): boolean {
     field.extra &&
     "useAsNumberOfPeople" in field.extra &&
     field.extra.useAsNumberOfPeople == true
+  );
+}
+
+export function hasConfirmationAddressFields(eventConfig: EventConfiguration) {
+  return (
+    eventConfig.formFields.filter(
+      (f) =>
+        f.fieldType === "email" &&
+        f.extra &&
+        "confirmationAddress" in f.extra &&
+        f.extra.confirmationAddress === true
+    ).length > 0
   );
 }
