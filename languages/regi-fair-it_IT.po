@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: RegiFair: Event Registration Manager 1.0.1\n"
+"Project-Id-Version: RegiFair: Event Registration Manager 1.0.2\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/regi-fair\n"
 "Last-Translator: \n"
 "Language-Team: \n"

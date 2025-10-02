@@ -3,7 +3,7 @@ Contributors: zonia3000
 Tags: events, registration, form, waiting list
 Requires at least: 6.6
 Tested up to: 6.8
-Stable tag: 1.0.1
+Stable tag: 1.0.2
 Requires PHP: 8.2
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -81,3 +81,8 @@ No, and there is no plan to add this, since the plugin was developed as a volunt
 = 1.0.1 =
 * Updated dependencies
 * Tested with WP 6.8
+
+= 1.0.2 =
+* Fixed bug in registration editing
+* Added "Notify user by e-mail" checkbox on delete registration modal
+* Updated dependencies
