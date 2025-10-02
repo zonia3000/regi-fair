@@ -89,7 +89,7 @@ const EditRegistration = () => {
     setLoading(true);
     try {
       await apiFetch({
-        path: `/regifair/v1/admin/events/${eventId}/registrations/${registrationId}&sendEmail=${notifyUserByEmail}`,
+        path: `/regifair/v1/admin/events/${eventId}/registrations/${registrationId}?sendEmail=${notifyUserByEmail}`,
         method: "POST",
         headers: {
           "Content-Type": "application/json",
