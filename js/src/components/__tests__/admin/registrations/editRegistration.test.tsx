@@ -15,9 +15,9 @@ test("Event not found", async () => {
           code: "event_not_found",
           message: "Event not found",
         },
-        { status: 404 },
+        { status: 404 }
       );
-    }),
+    })
   );
 
   render(
@@ -29,11 +29,11 @@ test("Event not found", async () => {
           element={<EditRegistration />}
         />
       </Routes>
-    </MemoryRouter>,
+    </MemoryRouter>
   );
 
   expect(
-    (await screen.findAllByText("Registration not found"))[0],
+    (await screen.findAllByText("Registration not found"))[0]
   ).toBeInTheDocument();
 
   server.restoreHandlers();
@@ -49,7 +49,7 @@ test("Registration not found", async () => {
           { id: 1, fieldType: "text", label: "name", required: true },
         ],
       });
-    }),
+    })
   );
 
   server.use(
@@ -59,9 +59,9 @@ test("Registration not found", async () => {
           code: "registration_not_found",
           message: "Registration not found",
         },
-        { status: 404 },
+        { status: 404 }
       );
-    }),
+    })
   );
 
   render(
@@ -73,11 +73,11 @@ test("Registration not found", async () => {
           element={<EditRegistration />}
         />
       </Routes>
-    </MemoryRouter>,
+    </MemoryRouter>
   );
 
   expect(
-    (await screen.findAllByText("Registration not found"))[0],
+    (await screen.findAllByText("Registration not found"))[0]
   ).toBeInTheDocument();
 
   server.restoreHandlers();
@@ -94,23 +94,25 @@ test("Update registration without email field", async () => {
         ],
       });
     }),
-  );
-
-  server.use(
+    http.get("/regifair/v1/admin/events/1", () => {
+      return HttpResponse.json({
+        formFields: [],
+      });
+    }),
     http.get("/regifair/v1/admin/events/1/registrations/1", () => {
       return HttpResponse.json({ values: { 1: "foo" } });
-    }),
+    })
   );
 
   let requestBody: Record<string, string>;
   server.use(
     http.post(
-      "/regifair/v1/admin/events/1/registrations/1&sendEmail=false",
+      "/regifair/v1/admin/events/1/registrations/1",
       async ({ request }) => {
         requestBody = (await request.json()) as Record<string, string>;
         return new Response(null, { status: 204 });
-      },
-    ),
+      }
+    )
   );
 
   render(
@@ -123,7 +125,7 @@ test("Update registration without email field", async () => {
           element={<EditRegistration />}
         />
       </Routes>
-    </MemoryRouter>,
+    </MemoryRouter>
   );
 
   expect(await screen.findByText(/Edit registration/)).toBeInTheDocument();
@@ -156,23 +158,25 @@ test("Update registration with email field", async () => {
         ],
       });
     }),
-  );
-
-  server.use(
+    http.get("/regifair/v1/admin/events/1", () => {
+      return HttpResponse.json({
+        formFields: [],
+      });
+    }),
     http.get("/regifair/v1/admin/events/1/registrations/1", () => {
       return HttpResponse.json({ values: { 1: "foo@example.com" } });
-    }),
+    })
   );
 
   let requestBody: Record<string, string>;
   server.use(
     http.post(
-      "/regifair/v1/admin/events/1/registrations/1&sendEmail=true",
+      "/regifair/v1/admin/events/1/registrations/1",
       async ({ request }) => {
         requestBody = (await request.json()) as Record<string, string>;
         return new Response(null, { status: 204 });
-      },
-    ),
+      }
+    )
   );
 
   render(
@@ -185,12 +189,12 @@ test("Update registration with email field", async () => {
           element={<EditRegistration />}
         />
       </Routes>
-    </MemoryRouter>,
+    </MemoryRouter>
   );
 
   expect(await screen.findByText(/Edit registration/)).toBeInTheDocument();
   expect(screen.getByRole("textbox", { name: "email" })).toHaveValue(
-    "foo@example.com",
+    "foo@example.com"
   );
   expect(screen.getByRole("checkbox")).toBeChecked();
 
@@ -223,18 +227,20 @@ test("Update registration failing validation", async () => {
         ],
       });
     }),
-  );
-
-  server.use(
+    http.get("/regifair/v1/admin/events/1", () => {
+      return HttpResponse.json({
+        formFields: [],
+      });
+    }),
     http.get("/regifair/v1/admin/events/1/registrations/1", () => {
       return HttpResponse.json({ values: { 1: "foo@example.com" } });
-    }),
+    })
   );
 
   let requestBody: Record<string, string>;
   server.use(
     http.post(
-      "/regifair/v1/admin/events/1/registrations/1&sendEmail=false",
+      "/regifair/v1/admin/events/1/registrations/1",
       async ({ request }) => {
         requestBody = (await request.json()) as Record<string, string>;
         return HttpResponse.json(
@@ -242,10 +248,10 @@ test("Update registration failing validation", async () => {
             code: "invalid_form_fields",
             data: { fieldsErrors: { 1: "Field is required" } },
           },
-          { status: 400 },
+          { status: 400 }
         );
-      },
-    ),
+      }
+    )
   );
 
   render(
@@ -257,15 +263,15 @@ test("Update registration failing validation", async () => {
           element={<EditRegistration />}
         />
       </Routes>
-    </MemoryRouter>,
+    </MemoryRouter>
   );
 
   expect(await screen.findByText(/Edit registration/)).toBeInTheDocument();
   expect(
-    (await screen.findAllByText(/There are still 3 seats available/))[0],
+    (await screen.findAllByText(/There are still 3 seats available/))[0]
   ).toBeInTheDocument();
   expect(screen.getByRole("textbox", { name: "email" })).toHaveValue(
-    "foo@example.com",
+    "foo@example.com"
   );
   expect(screen.getByRole("checkbox")).toBeChecked();
 
@@ -292,13 +298,13 @@ test("Display confirmed registration", async () => {
           { id: 1, fieldType: "text", label: "name", required: true },
         ],
       });
-    }),
+    })
   );
 
   server.use(
     http.get("/regifair/v1/admin/events/1/registrations/1", () => {
       return HttpResponse.json({ values: { 1: "foo" }, waitingList: false });
-    }),
+    })
   );
 
   const user = userEvent.setup();
@@ -313,11 +319,11 @@ test("Display confirmed registration", async () => {
           element={<EditRegistration />}
         />
       </Routes>
-    </MemoryRouter>,
+    </MemoryRouter>
   );
 
   expect(
-    (await screen.findAllByText(/There are still 3 seats available/))[0],
+    (await screen.findAllByText(/There are still 3 seats available/))[0]
   ).toBeInTheDocument();
 
   await user.click(screen.getByRole("button", { name: "Back" }));
@@ -337,13 +343,13 @@ test("Display registration in waiting list", async () => {
           { id: 1, fieldType: "text", label: "name", required: true },
         ],
       });
-    }),
+    })
   );
 
   server.use(
     http.get("/regifair/v1/admin/events/1/registrations/1", () => {
       return HttpResponse.json({ values: { 1: "foo" }, waitingList: true });
-    }),
+    })
   );
 
   const user = userEvent.setup();
@@ -361,11 +367,11 @@ test("Display registration in waiting list", async () => {
           element={<EditRegistration />}
         />
       </Routes>
-    </MemoryRouter>,
+    </MemoryRouter>
   );
 
   expect(
-    await screen.findByText(/This registration is in the waiting list/),
+    await screen.findByText(/This registration is in the waiting list/)
   ).toBeInTheDocument();
 
   await user.click(screen.getByRole("button", { name: "Back" }));

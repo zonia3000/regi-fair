@@ -25,6 +25,11 @@ test("Download registrations", async () => {
       downloadCalled = true;
       return HttpResponse.text("");
     }),
+    http.get("/regifair/v1/admin/events/1", () => {
+      return HttpResponse.json({
+        formFields: [],
+      });
+    })
   );
 
   render(
@@ -36,7 +41,7 @@ test("Download registrations", async () => {
           element={<ListRegistrations waiting={false} />}
         />
       </Routes>
-    </MemoryRouter>,
+    </MemoryRouter>
   );
 
   const downloadButton = await screen.findByRole("button", {

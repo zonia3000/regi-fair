@@ -19,13 +19,18 @@ test("Delete registration", async () => {
         totalParticipants: 1,
       });
     }),
+    http.get("/regifair/v1/admin/events/1", () => {
+      return HttpResponse.json({
+        formFields: [],
+      });
+    })
   );
 
   server.use(
     http.post("/regifair/v1/admin/events/1/registrations/1", () => {
       registrations = [];
       return new Response(null, { status: 204 });
-    }),
+    })
   );
 
   render(
@@ -37,11 +42,11 @@ test("Delete registration", async () => {
           element={<ListRegistrations waiting={false} />}
         />
       </Routes>
-    </MemoryRouter>,
+    </MemoryRouter>
   );
 
   expect(
-    await screen.findByText(/Registrations for the event/),
+    await screen.findByText(/Registrations for the event/)
   ).toBeInTheDocument();
 
   const user = userEvent.setup();
@@ -51,7 +56,7 @@ test("Delete registration", async () => {
   await user.click(
     within(await screen.findByRole("dialog")).getByRole("button", {
       name: "Confirm",
-    }),
+    })
   );
 
   expect(registrations).toHaveLength(0);
@@ -70,15 +75,20 @@ test("Error happens while deleting a registration", async () => {
         totalParticipants: 1,
       });
     }),
+    http.get("/regifair/v1/admin/events/1", () => {
+      return HttpResponse.json({
+        formFields: [],
+      });
+    })
   );
 
   server.use(
     http.post("/regifair/v1/admin/events/1/registrations/1", () => {
       return HttpResponse.json(
         { code: "generic_error", message: "A critical error happened" },
-        { status: 500 },
+        { status: 500 }
       );
-    }),
+    })
   );
 
   const user = userEvent.setup();
@@ -92,11 +102,11 @@ test("Error happens while deleting a registration", async () => {
           element={<ListRegistrations waiting={false} />}
         />
       </Routes>
-    </MemoryRouter>,
+    </MemoryRouter>
   );
 
   expect(
-    await screen.findByText(/Registrations for the event/),
+    await screen.findByText(/Registrations for the event/)
   ).toBeInTheDocument();
 
   expect(await screen.findAllByRole("row")).toHaveLength(2);
@@ -104,7 +114,7 @@ test("Error happens while deleting a registration", async () => {
   await user.click(
     within(await screen.findByRole("dialog")).getByRole("button", {
       name: "Confirm",
-    }),
+    })
   );
 
   const errors = await screen.findAllByText(/A critical error happened/);

@@ -15,9 +15,14 @@ test("Event not found", async () => {
           code: "event_not_found",
           message: "Event not found",
         },
-        { status: 404 },
+        { status: 404 }
       );
     }),
+    http.get("/regifair/v1/admin/events/1", () => {
+      return HttpResponse.json({
+        formFields: [],
+      });
+    })
   );
 
   render(
@@ -29,11 +34,11 @@ test("Event not found", async () => {
           element={<ListRegistrations waiting={false} />}
         />
       </Routes>
-    </MemoryRouter>,
+    </MemoryRouter>
   );
 
   expect(
-    (await screen.findAllByText("Event not found"))[0],
+    (await screen.findAllByText("Event not found"))[0]
   ).toBeInTheDocument();
 
   server.restoreHandlers();
@@ -52,6 +57,11 @@ test("List registrations", async () => {
         totalParticipants: 2,
       });
     }),
+    http.get("/regifair/v1/admin/events/1", () => {
+      return HttpResponse.json({
+        formFields: [],
+      });
+    })
   );
 
   render(
@@ -63,7 +73,7 @@ test("List registrations", async () => {
           element={<ListRegistrations waiting={false} />}
         />
       </Routes>
-    </MemoryRouter>,
+    </MemoryRouter>
   );
 
   const rows = await screen.findAllByRole("row");
@@ -91,6 +101,11 @@ test("List registrations with deleted records", async () => {
         totalParticipants: 2,
       });
     }),
+    http.get("/regifair/v1/admin/events/1", () => {
+      return HttpResponse.json({
+        formFields: [],
+      });
+    })
   );
 
   render(
@@ -102,7 +117,7 @@ test("List registrations with deleted records", async () => {
           element={<ListRegistrations waiting={false} />}
         />
       </Routes>
-    </MemoryRouter>,
+    </MemoryRouter>
   );
 
   const rows = await screen.findAllByRole("row");
@@ -153,6 +168,11 @@ test("List registrations with waiting list", async () => {
         totalWaiting: 1,
       });
     }),
+    http.get("/regifair/v1/admin/events/1", () => {
+      return HttpResponse.json({
+        formFields: [],
+      });
+    })
   );
 
   render(
@@ -168,11 +188,11 @@ test("List registrations with waiting list", async () => {
           element={<ListRegistrations waiting={true} />}
         />
       </Routes>
-    </MemoryRouter>,
+    </MemoryRouter>
   );
 
   expect(
-    await screen.findByText('Registrations for the event "test"'),
+    await screen.findByText('Registrations for the event "test"')
   ).toBeInTheDocument();
   expect(await screen.findAllByRole("row")).toHaveLength(3);
 
