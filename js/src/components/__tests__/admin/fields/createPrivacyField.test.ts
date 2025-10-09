@@ -40,7 +40,7 @@ createEventTest(
       await screen.findByText(/Configured privacy policy URL/),
     ).toBeVisible();
     expect(
-      screen.getByRole("link", { name: "Privacy Policy" }),
+      screen.getByRole("link", { name: "Privacy policy" }),
     ).toHaveAttribute("href", "http://www.example.com/privacy");
 
     await user.click(screen.getByRole("button", { name: "Save" }));
@@ -49,7 +49,7 @@ createEventTest(
     expect(rows.length).toEqual(2);
 
     const cells = within(rows[1]).getAllByRole("cell");
-    expect(cells[0].textContent).toEqual("privacy");
+    expect(cells[0].textContent).toEqual("Privacy policy");
     expect(cells[1].textContent).toEqual("privacy");
     expect(cells[2].textContent).toEqual("Yes");
 
@@ -104,7 +104,7 @@ createEventTest(
     expect(rows.length).toEqual(2);
 
     const cells = within(rows[1]).getAllByRole("cell");
-    expect(cells[0].textContent).toEqual("privacy");
+    expect(cells[0].textContent).toEqual("Privacy policy");
     expect(cells[1].textContent).toEqual("privacy");
     expect(cells[2].textContent).toEqual("Yes");
   },

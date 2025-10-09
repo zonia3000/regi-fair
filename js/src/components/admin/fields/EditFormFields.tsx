@@ -9,10 +9,10 @@ import { isNumberOfPeopleField } from "../../utils";
 const EditFormFields = (props: EditFormFieldsProps) => {
   const [showEditFieldModal, setShowEditFieldModal] = useState(false);
   const [fieldToDeleteIndex, setFieldToDeleteIndex] = useState(
-    null as number | null,
+    null as number | null
   );
   const [fieldToEditIndex, setFieldToEditIndex] = useState(
-    null as number | null,
+    null as number | null
   );
   const [fieldToEdit, setFieldToEdit] = useState(null as Field | null);
   const fieldToEditIndexRef = useRef(fieldToEditIndex);
@@ -39,7 +39,7 @@ const EditFormFields = (props: EditFormFieldsProps) => {
       props.setFormFields([...props.formFields, field]);
     } else {
       props.setFormFields(
-        props.formFields.map((f, i) => (i === index ? field : f)),
+        props.formFields.map((f, i) => (i === index ? field : f))
       );
     }
     setFieldToEdit(null);
@@ -56,7 +56,7 @@ const EditFormFields = (props: EditFormFieldsProps) => {
 
   function confirmDeleteField() {
     props.setFormFields(
-      props.formFields.filter((_, i) => i !== fieldToDeleteIndex),
+      props.formFields.filter((_, i) => i !== fieldToDeleteIndex)
     );
     setFieldToDeleteIndex(null);
   }
@@ -118,7 +118,11 @@ const EditFormFields = (props: EditFormFieldsProps) => {
               {props.formFields.map((f, index) => {
                 return (
                   <tr key={index}>
-                    <td>{f.label}</td>
+                    <td>
+                      {f.fieldType === "privacy"
+                        ? __("Privacy policy", "regi-fair")
+                        : f.label}
+                    </td>
                     <td>{f.fieldType}</td>
                     <td>
                       {f.required
@@ -192,9 +196,7 @@ const EditFormFields = (props: EditFormFieldsProps) => {
           title={__("Delete field", "regi-fair")}
           onRequestClose={closeDeleteFieldModal}
         >
-          <p>
-            {__("Do you really want to delete this field?", "regi-fair")}
-          </p>
+          <p>{__("Do you really want to delete this field?", "regi-fair")}</p>
           <Button variant="primary" onClick={confirmDeleteField}>
             {__("Confirm", "regi-fair")}
           </Button>

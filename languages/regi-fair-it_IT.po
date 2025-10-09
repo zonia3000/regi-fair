@@ -2,110 +2,92 @@ msgid ""
 msgstr ""
 "Project-Id-Version: RegiFair: Event Registration Manager 1.0.2\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/regi-fair\n"
+"POT-Creation-Date: 2024-03-23T22:56:10+00:00\n"
+"PO-Revision-Date: 2025-10-09 22:02+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
+"Language: it_IT\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2024-03-23T22:56:10+00:00\n"
-"PO-Revision-Date: 2024-11-02 01:13+0100\n"
-"Language: it_IT\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.2.2\n"
+"X-Generator: Poedit 3.0.1\n"
 "X-Domain: regi-fair\n"
 
 #. Author of the plugin
-#: regi-fair.php
 msgid "Sonia Zorba"
 msgstr "Sonia Zorba"
 
-#: classes/admin/create-admin-menu.php:8
-#: classes/admin/create-admin-menu.php:9
+#: classes/admin/create-admin-menu.php:12
+#: classes/admin/create-admin-menu.php:13
 msgid "Events"
 msgstr "Eventi"
 
-#: classes/admin/create-admin-menu.php:32
+#: classes/admin/create-admin-menu.php:36
 msgid "Settings"
 msgstr "Opzioni"
 
-#: js/build/block/index.js:1
-#: js/build/components/events.js:2
-#: js/build/components/settings.js:1
-#: js/build/components/templates.js:2
+#: js/build/block/index.js:1 js/build/components/events.js:2
+#: js/build/components/settings.js:1 js/build/components/templates.js:2
 #: js/build/components/users.js:1
 msgid "Loading..."
 msgstr "Caricamento..."
 
-#: js/build/block/index.js:2
-#: js/build/components/users.js:1
+#: js/build/block/index.js:2 js/build/components/users.js:1
 msgid "Register to the event"
 msgstr "Registrati all'evento"
 
-#: js/build/block/index.js:2
-#: js/build/components/events.js:2
-#: js/build/components/users.js:1
-#: js/src/block/src/edit.js:21
+#: js/build/block/index.js:2 js/build/components/events.js:2
+#: js/build/components/users.js:1 js/src/block/src/edit.js:21
 msgid "Select..."
 msgstr "Seleziona..."
 
-#: js/build/block/index.js:2
-#: js/src/block/src/edit.js:50
+#: js/build/block/index.js:2 js/src/block/src/edit.js:50
 msgid "Select event"
 msgstr "Seleziona evento"
 
-#: js/build/components/events.js:2
-#: js/build/components/templates.js:2
+#: js/build/components/events.js:2 js/build/components/templates.js:2
 msgid "Label"
 msgstr "Etichetta"
 
-#: js/build/components/events.js:2
-#: js/build/components/templates.js:2
+#: js/build/components/events.js:2 js/build/components/templates.js:2
 msgid "Required"
 msgstr "Obbligatorio"
 
-#: js/build/components/events.js:2
-#: js/build/components/templates.js:2
+#: js/build/components/events.js:2 js/build/components/templates.js:2
 msgid "Option"
 msgstr "Opzione"
 
-#: js/build/components/events.js:2
-#: js/build/components/templates.js:2
+#: js/build/components/events.js:2 js/build/components/templates.js:2
 msgid "Add option"
 msgstr "Aggiungi opzione"
 
-#: js/build/components/events.js:2
-#: js/build/components/templates.js:2
+#: js/build/components/events.js:2 js/build/components/templates.js:2
 msgid "Add field"
 msgstr "Aggiungi campo"
 
-#: js/build/components/events.js:2
-#: js/build/components/templates.js:2
+#: js/build/components/events.js:2 js/build/components/templates.js:2
 msgid "Select field type"
 msgstr "Seleziona tipologia del campo"
 
-#: js/build/components/events.js:2
-#: js/build/components/templates.js:2
+#: js/build/components/events.js:2 js/build/components/templates.js:2
 msgid "Text"
 msgstr "Testo"
 
-#: js/build/components/events.js:2
-#: js/build/components/templates.js:2
+#: js/build/components/events.js:2 js/build/components/templates.js:2
 msgid "E-mail"
 msgstr "E-mail"
 
-#: js/build/components/events.js:2
-#: js/build/components/templates.js:2
+#: js/build/components/events.js:2 js/build/components/templates.js:2
 msgid "Radio"
 msgstr "Radio"
 
-#: js/build/components/events.js:2
-#: js/build/components/settings.js:1
+#: js/build/components/events.js:2 js/build/components/settings.js:1
 #: js/build/components/templates.js:2
 msgid "Save"
 msgstr "Salva"
 
-#: js/build/components/events.js:2
-#: js/build/components/templates.js:2
+#: js/build/components/events.js:2 js/build/components/templates.js:2
 msgid "Cancel"
 msgstr "Annulla"
 
@@ -113,8 +95,7 @@ msgstr "Annulla"
 msgid "Edit event"
 msgstr "Modifica evento"
 
-#: js/build/components/events.js:2
-#: js/build/components/templates.js:2
+#: js/build/components/events.js:2 js/build/components/templates.js:2
 msgid "Name"
 msgstr "Nome"
 
@@ -122,47 +103,37 @@ msgstr "Nome"
 msgid "Date"
 msgstr "Data"
 
-#: js/build/components/events.js:2
-#: js/build/components/templates.js:2
+#: js/build/components/events.js:2 js/build/components/templates.js:2
 msgid "Event form"
 msgstr "Modulo dell'evento"
 
-#: js/build/components/events.js:2
-#: js/build/components/templates.js:2
+#: js/build/components/events.js:2 js/build/components/templates.js:2
 msgid "Your form is empty. Add some fields."
 msgstr "Il tuo modulo è vuoto. Aggiungi alcuni campi."
 
-#: js/build/components/events.js:2
-#: js/build/components/templates.js:2
+#: js/build/components/events.js:2 js/build/components/templates.js:2
 msgid "Type"
 msgstr "Tipo"
 
-#: classes/dao/dao-registrations.php:333
-#: classes/mail-sender.php:257
-#: js/build/components/events.js:2
-#: js/build/components/templates.js:2
+#: classes/dao/dao-registrations.php:333 classes/mail-sender.php:251
+#: js/build/components/events.js:2 js/build/components/templates.js:2
 msgid "Yes"
 msgstr "Sì"
 
-#: classes/dao/dao-registrations.php:333
-#: classes/mail-sender.php:259
-#: js/build/components/events.js:2
-#: js/build/components/templates.js:2
+#: classes/dao/dao-registrations.php:333 classes/mail-sender.php:253
+#: js/build/components/events.js:2 js/build/components/templates.js:2
 msgid "No"
 msgstr "No"
 
-#: js/build/components/events.js:2
-#: js/build/components/templates.js:2
+#: js/build/components/events.js:2 js/build/components/templates.js:2
 msgid "Add form field"
 msgstr "Aggiungi campo al modulo"
 
-#: js/build/components/events.js:2
-#: js/build/components/templates.js:2
+#: js/build/components/events.js:2 js/build/components/templates.js:2
 msgid "Autoremove user data after the event"
 msgstr "Rimuovi automaticamente i dati degli utenti al termine dell'evento"
 
-#: js/build/components/events.js:2
-#: js/build/components/templates.js:2
+#: js/build/components/events.js:2 js/build/components/templates.js:2
 msgid "Back"
 msgstr "Indietro"
 
@@ -174,22 +145,11 @@ msgstr "Nessun evento trovato"
 msgid "Your events"
 msgstr "I tuoi eventi"
 
-#: js/build/block/block.json
-msgctxt "block title"
-msgid "WP Open Events Form"
-msgstr "Modulo WP Open Events"
-
-#: js/build/block/block.json
-msgctxt "block description"
-msgid "WP Open Events Form"
-msgstr "Modulo WP Open Events"
-
 #: js/build/components/events.js:2
 msgid "Add event"
 msgstr "Aggiungi evento"
 
 #. Author URI of the plugin
-#: regi-fair.php
 msgid "https://www.zonia3000.net"
 msgstr "https://www.zonia3000.net"
 
@@ -199,14 +159,10 @@ msgstr "https://www.zonia3000.net"
 #: classes/admin/admin-api-registrations.php:133
 #: classes/admin/admin-api-registrations.php:183
 #: classes/admin/admin-api-registrations.php:211
-#: classes/admin/admin-api-registrations.php:276
-#: classes/public-api.php:88
-#: classes/public-api.php:142
-#: classes/public-api.php:210
-#: classes/public-api.php:295
-#: classes/public-api.php:324
-#: js/build/block/index.js:2
-#: js/build/components/events.js:2
+#: classes/admin/admin-api-registrations.php:276 classes/public-api.php:88
+#: classes/public-api.php:142 classes/public-api.php:210
+#: classes/public-api.php:295 classes/public-api.php:324
+#: js/build/block/index.js:2 js/build/components/events.js:2
 #: js/build/components/users.js:1
 msgid "Event not found"
 msgstr "Evento non trovato"
@@ -219,16 +175,13 @@ msgstr "registrazioni"
 msgid "date"
 msgstr "data"
 
-#: classes/admin/admin-api-registrations.php:190
-#: classes/public-api.php:228
-#: classes/public-api.php:305
-#: classes/public-api.php:334
+#: classes/admin/admin-api-registrations.php:190 classes/public-api.php:228
+#: classes/public-api.php:305 classes/public-api.php:334
 #: js/build/components/events.js:2
 msgid "Registration not found"
 msgstr "Registrazione non trovata"
 
-#: classes/admin/admin-api-registrations.php:215
-#: classes/public-api.php:146
+#: classes/admin/admin-api-registrations.php:215 classes/public-api.php:146
 #: classes/public-api.php:214
 msgid "Waiting list is not enabled"
 msgstr "Lista d'attesa non abilitata"
@@ -238,64 +191,64 @@ msgstr "Lista d'attesa non abilitata"
 msgid "Event template not found"
 msgstr "Modello di evento non trovato"
 
-#: classes/admin/create-admin-menu.php:21
+#: classes/admin/create-admin-menu.php:25
 msgid "Templates"
 msgstr "Modelli"
 
-#: classes/api-utils.php:9
+#: classes/api-utils.php:15
 msgid "A critical error happened"
 msgstr "Si è verificato un errore critico"
 
-#: classes/api-utils.php:98
+#: classes/api-utils.php:104
 msgid "Only email fields can be set as confirmation address"
 msgstr "Solo i campi di tipo email possono essere utilizzati come indirizzo di conferma"
 
-#: classes/api-utils.php:101
+#: classes/api-utils.php:107
 msgid "Only email fields can have the WP user option"
 msgstr "Solo i campi di tipo email possono avere l'opzione utente WP"
 
-#: classes/api-utils.php:104
+#: classes/api-utils.php:110
 msgid "Only numeric fields can be used to set the number of people"
 msgstr "Solo i campi numerici possono essere usati per impostare il numero di persone"
 
-#: classes/api-utils.php:107
+#: classes/api-utils.php:113
 msgid "Only numeric fields can have a minimum value"
 msgstr "Solo i campi numerici possono avere un valore minimo"
 
-#: classes/api-utils.php:110
+#: classes/api-utils.php:116
 msgid "Only numeric fields can have a maximum value"
 msgstr "Solo i campi numerici possono avere un valore massimo"
 
-#: classes/api-utils.php:113
+#: classes/api-utils.php:119
 msgid "Only dropdown fields can have a multiple field"
 msgstr "Solo i menu a tendina possono avere il campo multiplo"
 
-#: classes/api-utils.php:209
+#: classes/api-utils.php:208
 msgid "The payload must be an array"
 msgstr "Il payload deve essere un array"
 
-#: classes/api-utils.php:212
+#: classes/api-utils.php:211
 msgid "Invalid number of fields"
 msgstr "Numero di campi non valido"
 
 #. translators: %d is replaced with the id of the field
-#: classes/api-utils.php:220
+#: classes/api-utils.php:219
 msgid "Missing field %d"
 msgstr "Campo %d mancante"
 
-#: classes/api-utils.php:237
+#: classes/api-utils.php:236
 msgid "Some fields are not valid"
 msgstr "Alcuni campi non sono validi"
 
-#: classes/api-utils.php:254
+#: classes/api-utils.php:253
 msgid "Unable to register the specified number of people"
 msgstr "Impossibile registrare il numero di persone specificato"
 
-#: classes/api-utils.php:258
+#: classes/api-utils.php:257
 msgid "The number is greater than the available number of seats"
 msgstr "Il numero è maggiore del numero di posti disponibili"
 
-#: classes/api-utils.php:265
+#: classes/api-utils.php:264
 msgid "No more seats available"
 msgstr "Non ci sono più posti disponibili"
 
@@ -337,8 +290,7 @@ msgid "New registration for the waiting list of event \"%s\""
 msgstr "Nuova registrazione alla lista d'attesa dell'evento \"%s\""
 
 #. translators: %s is replaced with the name of the event
-#: classes/mail-sender.php:117
-#: classes/mail-sender.php:149
+#: classes/mail-sender.php:117 classes/mail-sender.php:149
 msgid "Registration to the event \"%s\" has been updated"
 msgstr "La registrazione all'evento \"%s\" è stata aggiornata"
 
@@ -348,8 +300,7 @@ msgid "Registration updated for the event \"%s\""
 msgstr "Registrazione all'evento \"%s\" aggiornata"
 
 #. translators: %s is replaced with the name of the event
-#: classes/mail-sender.php:168
-#: classes/mail-sender.php:184
+#: classes/mail-sender.php:168 classes/mail-sender.php:184
 msgid "Registration to the event \"%s\" has been deleted"
 msgstr "La registrazione all'evento \"%s\" è stata cancellata"
 
@@ -363,13 +314,11 @@ msgstr "Registrazione all'evento \"%s\" cancellata"
 msgid "Registrations picked from the waiting list of event \"%s\""
 msgstr "Registrazioni prese dalla lista d'attesa dell'evento \"%s\""
 
-#: classes/public-api.php:150
-#: classes/public-api.php:222
+#: classes/public-api.php:150 classes/public-api.php:222
 msgid "You cannot register because the event is already ended"
 msgstr "Non puoi registrarti perché l'evento è già concluso"
 
-#: classes/public-api.php:218
-#: classes/public-api.php:299
+#: classes/public-api.php:218 classes/public-api.php:299
 #: classes/public-api.php:328
 msgid "This event doesn't allow to edit the registrations"
 msgstr "Questo evento non permette di modificare le registrazioni"
@@ -437,244 +386,193 @@ msgstr "Il numero non deve essere maggiore di %d"
 msgid "It is necessary to accept the privacy policy"
 msgstr "È necessario accettare la privacy policy"
 
-#: js/build/block/index.js:1
-#: js/build/block/index.js:2
-#: js/build/components/events.js:2
-#: js/build/components/users.js:1
+#: js/build/block/index.js:1 js/build/block/index.js:2
+#: js/build/components/events.js:2 js/build/components/users.js:1
 msgid "optional"
 msgstr "opzionale"
 
 #. translators: The %s placeholders will be replaced with HTML tags used for creating a link to the privacy policy page
-#: js/build/block/index.js:2
-#: js/build/components/events.js:2
+#: js/build/block/index.js:2 js/build/components/events.js:2
 #: js/build/components/users.js:1
 msgid "I accept the %sprivacy policy%s"
 msgstr "Accetto la %sprivacy policy%s"
 
-#: js/build/block/index.js:2
-#: js/build/components/users.js:1
+#: js/build/block/index.js:2 js/build/components/users.js:1
 msgid "Event is ended"
 msgstr "L'evento è concluso"
 
-#: js/build/block/index.js:2
-#: js/build/components/users.js:1
+#: js/build/block/index.js:2 js/build/components/users.js:1
 msgid "Welcome back. You are editing an existing registration."
 msgstr "Bentornato/a. Stai editando una registrazione esistente."
 
-#: js/build/block/index.js:2
-#: js/build/components/users.js:1
+#: js/build/block/index.js:2 js/build/components/users.js:1
 msgctxt "number of available seats"
 msgid "There is still one seat available."
 msgid_plural "There are still %d seats available."
 msgstr[0] "C'è ancora un posto disponibile."
 msgstr[1] "Ci sono ancora %d posti disponibili."
 
-#: js/build/block/index.js:2
-#: js/build/components/users.js:1
+#: js/build/block/index.js:2 js/build/components/users.js:1
 msgid "There are no more seats available."
 msgstr "Posti esauriti."
 
-#: js/build/block/index.js:2
-#: js/build/components/events.js:2
+#: js/build/block/index.js:2 js/build/components/events.js:2
 #: js/build/components/users.js:1
 msgid "This registration is in the waiting list."
 msgstr "La registrazione è nella lista d'attesa."
 
-#: js/build/block/index.js:2
-#: js/build/components/users.js:1
+#: js/build/block/index.js:2 js/build/components/users.js:1
 msgid "There are no more seats available. You can only join the waiting list. You will be notified when new seats will be available."
 msgstr "Posti esauriti. Puoi solamente unirti alla lista d'attesa. Verrai avvisato quando nuovi posti si libereranno."
 
-#: js/build/block/index.js:2
-#: js/build/components/users.js:1
+#: js/build/block/index.js:2 js/build/components/users.js:1
 msgid "Congratulation! You took the last seat available!"
 msgstr "Congratulazioni! Hai preso l'ultimo posto disponibile!"
 
-#: js/build/block/index.js:2
-#: js/build/components/users.js:1
+#: js/build/block/index.js:2 js/build/components/users.js:1
 msgid "We are sorry. You can't register because there are no more seats available."
 msgstr "Ci dispiace. Non puoi registrarti perché non ci sono più posti disponibili."
 
-#: js/build/block/index.js:2
-#: js/build/components/users.js:1
+#: js/build/block/index.js:2 js/build/components/users.js:1
 msgid "Your registration has been updated"
 msgstr "La tua registrazione è stata aggiornata"
 
-#: js/build/block/index.js:2
-#: js/build/components/users.js:1
+#: js/build/block/index.js:2 js/build/components/users.js:1
 msgid "Your registration has been submitted"
 msgstr "La tua registrazione è stata inviata"
 
-#: js/build/block/index.js:2
-#: js/build/components/users.js:1
+#: js/build/block/index.js:2 js/build/components/users.js:1
 msgid "Your registration has been deleted"
 msgstr "La tua registrazione è stata cancellata"
 
-#: js/build/block/index.js:2
-#: js/build/components/users.js:1
+#: js/build/block/index.js:2 js/build/components/users.js:1
 msgid "Update the registration"
 msgstr "Aggiorna la registrazione"
 
-#: js/build/block/index.js:2
-#: js/build/components/users.js:1
+#: js/build/block/index.js:2 js/build/components/users.js:1
 msgid "Join the waiting list"
 msgstr "Entra nella lista d'attesa"
 
-#: js/build/block/index.js:2
-#: js/build/components/users.js:1
+#: js/build/block/index.js:2 js/build/components/users.js:1
 msgid "Delete the registration"
 msgstr "Cancella la registrazione"
 
-#: js/build/block/index.js:2
-#: js/build/components/events.js:2
+#: js/build/block/index.js:2 js/build/components/events.js:2
 #: js/build/components/users.js:1
 msgid "Confirm registration deletion"
 msgstr "Conferma cancellazione della registrazione"
 
-#: js/build/block/index.js:2
-#: js/build/components/users.js:1
+#: js/build/block/index.js:2 js/build/components/users.js:1
 msgid "Do you really want to delete the registration to this event?"
 msgstr "Vuoi veramente cancellare la registrazione a questo evento?"
 
-#: js/build/block/index.js:2
-#: js/build/components/events.js:2
-#: js/build/components/templates.js:2
-#: js/build/components/users.js:1
+#: js/build/block/index.js:2 js/build/components/events.js:2
+#: js/build/components/templates.js:2 js/build/components/users.js:1
 msgid "Confirm"
 msgstr "Conferma"
 
-#: js/build/components/events.js:2
-#: js/build/components/templates.js:2
+#: js/build/components/events.js:2 js/build/components/templates.js:2
 msgid "Field is required"
 msgstr "Il campo è obbligatorio"
 
-#: js/build/components/events.js:2
-#: js/build/components/templates.js:2
+#: js/build/components/events.js:2 js/build/components/templates.js:2
 msgid "Description (optional)"
 msgstr "Descrizione (opzionale)"
 
-#: js/build/components/events.js:2
-#: js/build/components/templates.js:2
+#: js/build/components/events.js:2 js/build/components/templates.js:2
 msgid "Use this address to send confirmation e-mail when the user register to the event"
 msgstr "Usa questo indirizzo per inviare l'e-mail di conferma quando l'utente si registra all'evento"
 
-#: js/build/components/events.js:2
-#: js/build/components/templates.js:2
+#: js/build/components/events.js:2 js/build/components/templates.js:2
 msgid "For registered users, hide this field and automatically pick the e-mail address from Wordpress user data"
 msgstr "Per gli utenti registrati, nascondi questo campo e ricava automaticamente l'indirizzo e-mail dai dati dell'utente Wordpress"
 
-#: js/build/components/events.js:2
-#: js/build/components/templates.js:2
+#: js/build/components/events.js:2 js/build/components/templates.js:2
 msgid "This input will be used to allow adding multiple people with the same registration."
 msgstr "Questo campo verrà utilizzato per poter aggiungere più persone alla stessa registrazione."
 
-#: js/build/components/events.js:2
-#: js/build/components/templates.js:2
+#: js/build/components/events.js:2 js/build/components/templates.js:2
 msgid "This is useful when you don't need to collect each participant name, but you need to know the number of seats."
 msgstr "Questo è utile quando non hai bisogno di raccogliere i nomi di tutti i partecipanti, ma ti serve sapere il numero di posti prenotati."
 
-#: js/build/components/events.js:2
-#: js/build/components/templates.js:2
+#: js/build/components/events.js:2 js/build/components/templates.js:2
 msgid "Example: a mother register and wants to add 3 kids, without having to specify their names."
 msgstr "Esempio: una madre si registra e vuole aggiungere 3 figli, senza dover specificare i loro nomi."
 
-#: js/build/components/events.js:2
-#: js/build/components/templates.js:2
+#: js/build/components/events.js:2 js/build/components/templates.js:2
 msgid "Minimum value (optional)"
 msgstr "Valore minimo (opzionale)"
 
-#: js/build/components/events.js:2
-#: js/build/components/templates.js:2
+#: js/build/components/events.js:2 js/build/components/templates.js:2
 msgid "Maximum value (optional)"
 msgstr "Valore massimo (opzionale)"
 
-#: js/build/components/events.js:2
-#: js/build/components/templates.js:2
+#: js/build/components/events.js:2 js/build/components/templates.js:2
 msgid "Remove option"
 msgstr "Rimuovi opzione"
 
-#: js/build/components/events.js:2
-#: js/build/components/templates.js:2
+#: js/build/components/events.js:2 js/build/components/templates.js:2
 msgid "No privacy policy URL configured! Please set one!"
 msgstr "Pagina della privacy policy non configurata! Per favore impostala!"
 
-#: js/build/components/events.js:2
-#: js/build/components/templates.js:2
+#: js/build/components/events.js:2 js/build/components/templates.js:2
 msgid "Configured privacy policy URL:"
 msgstr "Pagina della privacy policy:"
 
-#: js/build/components/events.js:2
-#: js/build/components/templates.js:2
-msgid "Privacy Policy"
-msgstr "Privacy Policy"
-
-#: js/build/components/events.js:2
-#: js/build/components/templates.js:2
+#: js/build/components/events.js:2 js/build/components/templates.js:2
 msgid "Multiple"
 msgstr "Scelta multipla"
 
-#: js/build/components/events.js:2
-#: js/build/components/templates.js:2
+#: js/build/components/events.js:2 js/build/components/templates.js:2
 msgid "Edit field"
 msgstr "Modifica campo"
 
-#: js/build/components/events.js:2
-#: js/build/components/templates.js:2
+#: js/build/components/events.js:2 js/build/components/templates.js:2
 msgid "Standard"
 msgstr "Standard"
 
-#: js/build/components/events.js:2
-#: js/build/components/templates.js:2
+#: js/build/components/events.js:2 js/build/components/templates.js:2
 msgid "Number"
 msgstr "Numero"
 
-#: js/build/components/events.js:2
-#: js/build/components/templates.js:2
+#: js/build/components/events.js:2 js/build/components/templates.js:2
 msgid "Dropdown"
 msgstr "Menù a tendina"
 
-#: js/build/components/events.js:2
-#: js/build/components/templates.js:2
+#: js/build/components/events.js:2 js/build/components/templates.js:2
 msgid "Checkbox"
 msgstr "Casella di spunta"
 
-#: js/build/components/events.js:2
-#: js/build/components/templates.js:2
+#: js/build/components/events.js:2 js/build/components/templates.js:2
 msgid "Special"
 msgstr "Speciali"
 
-#: js/build/components/events.js:2
-#: js/build/components/templates.js:2
+#: js/build/components/events.js:2 js/build/components/templates.js:2
 msgid "Number of people"
 msgstr "Numero di persone"
 
-#: js/build/components/events.js:2
+#: classes/mail-sender.php:235 js/build/components/events.js:2
 #: js/build/components/templates.js:2
 msgid "Privacy policy"
 msgstr "Privacy policy"
 
-#: js/build/components/events.js:2
-#: js/build/components/templates.js:2
+#: js/build/components/events.js:2 js/build/components/templates.js:2
 msgid "Position"
 msgstr "Posizione"
 
-#: js/build/components/events.js:2
-#: js/build/components/templates.js:2
+#: js/build/components/events.js:2 js/build/components/templates.js:2
 msgid "Move field up"
 msgstr "Muovi il campo in alto"
 
-#: js/build/components/events.js:2
-#: js/build/components/templates.js:2
+#: js/build/components/events.js:2 js/build/components/templates.js:2
 msgid "Move field down"
 msgstr "Muovi il campo in basso"
 
-#: js/build/components/events.js:2
-#: js/build/components/templates.js:2
+#: js/build/components/events.js:2 js/build/components/templates.js:2
 msgid "Delete field"
 msgstr "Elimina campo"
 
-#: js/build/components/events.js:2
-#: js/build/components/templates.js:2
+#: js/build/components/events.js:2 js/build/components/templates.js:2
 msgid "Do you really want to delete this field?"
 msgstr "Vuoi veramente eliminare questo campo?"
 
@@ -698,44 +596,36 @@ msgstr "Numero totale di posti disponibili"
 msgid "Enable waiting list when maximum number of participants has been reached"
 msgstr "Abilita la lista d'attesa quando il numero massimo di partecipanti è stato raggiunto"
 
-#: js/build/components/events.js:2
-#: js/build/components/templates.js:2
+#: js/build/components/events.js:2 js/build/components/templates.js:2
 msgid "Autoremove period"
 msgstr "Periodo di rimozione automatica"
 
-#: js/build/components/events.js:2
-#: js/build/components/settings.js:1
+#: js/build/components/events.js:2 js/build/components/settings.js:1
 #: js/build/components/templates.js:2
 msgid "Number of days to wait after the event conclusion before removing registrations data"
 msgstr "Numero di giorni da attendere dopo la conclusione dell'evento prima di eliminare i dati delle registrazioni"
 
-#: js/build/components/events.js:2
-#: js/build/components/templates.js:2
+#: js/build/components/events.js:2 js/build/components/templates.js:2
 msgid "Allow the users to edit or delete their registrations"
 msgstr "Permetti agli utenti di modificare o cancellare le loro registrazioni"
 
-#: js/build/components/events.js:2
-#: js/build/components/templates.js:2
+#: js/build/components/events.js:2 js/build/components/templates.js:2
 msgid "Notify an administrator by e-mail when a new registration is created"
 msgstr "Notifica un amministrazione per e-mail quando una nuova registrazione viene creata"
 
-#: js/build/components/events.js:2
-#: js/build/components/templates.js:2
+#: js/build/components/events.js:2 js/build/components/templates.js:2
 msgid "Administrator e-mail address"
 msgstr "Indirizzo e-mail dell'amministratore"
 
-#: js/build/components/events.js:2
-#: js/build/components/templates.js:2
+#: js/build/components/events.js:2 js/build/components/templates.js:2
 msgid "Add custom message to confirmation e-mail"
 msgstr "Aggiungi un messaggio personalizzato alle e-mail di conferma"
 
-#: js/build/components/events.js:2
-#: js/build/components/templates.js:2
+#: js/build/components/events.js:2 js/build/components/templates.js:2
 msgid "Custom confirmation e-mail content"
 msgstr "Contenuto personalizzato del messaggio e-mail di conferma"
 
-#: js/build/components/events.js:2
-#: js/build/components/settings.js:1
+#: js/build/components/events.js:2 js/build/components/settings.js:1
 #: js/build/components/templates.js:2
 msgid "This content will be added at the end of the confirmation e-mail messages. Allowed HTML tags: <b>, <i>, <a>, <hr>, <p>, <br>"
 msgstr "Questo contenuto verrà aggiunto alla fine dell'email di conferma. Tag HTML consentiti: <b>, <i>, <a>, <hr>, <p>, <br>"
@@ -788,8 +678,7 @@ msgstr "Vuoi veramente eliminare questo evento?"
 msgid "WARNING: all the saved registrations will be deleted and users will not be notified about the deletion"
 msgstr "ATTENZIONE: tutte le registrazioni salvate verranno eliminate e gli utenti non verranno notificati riguardo la rimozione"
 
-#: js/build/components/events.js:2
-#: js/build/components/templates.js:2
+#: js/build/components/events.js:2 js/build/components/templates.js:2
 msgid "Deleting..."
 msgstr "Eliminazione in corso..."
 
@@ -941,16 +830,13 @@ msgstr "Elimina modello"
 msgid "Do you really want to delete the template %s?"
 msgstr "Vuoi veramente rimuovere il modello %s?"
 
-#: classes/mail-sender.php:263
+#: classes/mail-sender.php:257
 msgid "Accepted"
 msgstr "Accettata"
 
-#: classes/mail-sender.php:28
-#: classes/mail-sender.php:48
-#: classes/mail-sender.php:69
-#: classes/mail-sender.php:118
-#: classes/mail-sender.php:150
-#: classes/mail-sender.php:169
+#: classes/mail-sender.php:28 classes/mail-sender.php:48
+#: classes/mail-sender.php:69 classes/mail-sender.php:118
+#: classes/mail-sender.php:150 classes/mail-sender.php:169
 #: classes/mail-sender.php:185
 msgid "Dear user,"
 msgstr "Gentile utente,"
@@ -960,10 +846,8 @@ msgstr "Gentile utente,"
 msgid "your registration to the event \"%s\" is confirmed."
 msgstr "la tua registrazione all'evento %s è confermata."
 
-#: classes/mail-sender.php:31
-#: classes/mail-sender.php:52
-#: classes/mail-sender.php:72
-#: classes/mail-sender.php:121
+#: classes/mail-sender.php:31 classes/mail-sender.php:52
+#: classes/mail-sender.php:72 classes/mail-sender.php:121
 msgid "You inserted the following data:"
 msgstr "Hai inserito i seguenti dati:"
 
@@ -981,10 +865,8 @@ msgstr "Se alcuni posti si libereranno verrai automaticamente registrato/a e ric
 msgid "new seats have become available for the event \"%s\", and you have been automatically selected from the waiting list. Your registration is confirmed."
 msgstr "si sono liberati nuovi posti per l'evento \"%s\" e sei stato/a automaticamente selezionato/a dalla lista d'attesa. La tua registrazione è confermata."
 
-#: classes/mail-sender.php:85
-#: classes/mail-sender.php:100
-#: classes/mail-sender.php:135
-#: classes/mail-sender.php:198
+#: classes/mail-sender.php:85 classes/mail-sender.php:100
+#: classes/mail-sender.php:135 classes/mail-sender.php:198
 #: classes/mail-sender.php:216
 msgid "Dear admin,"
 msgstr "Gentile amministratore,"
@@ -994,8 +876,7 @@ msgstr "Gentile amministratore,"
 msgid "a new registration to the event \"%s\" has been added."
 msgstr "è stata inserita una nuova registrazione all'evento \"%s\"."
 
-#: classes/mail-sender.php:88
-#: classes/mail-sender.php:103
+#: classes/mail-sender.php:88 classes/mail-sender.php:103
 #: classes/mail-sender.php:138
 msgid "The user inserted the following data:"
 msgstr "L'utente ha inserito i seguenti dati:"
@@ -1044,35 +925,32 @@ msgstr "un utente ha cancellato la propria registrazione all'evento \"%s\"."
 msgid "the following registration identifiers for the event \"%s\" were moved from waiting list to confirmed:"
 msgstr "i seguenti identificativi di registrazione dell'evento \"%s\" sono state spostati dalla lista d'attesa alla lista delle conferme:"
 
-#: classes/mail-sender.php:280
+#: classes/mail-sender.php:274
 msgid "You can modify or delete your registration by clicking on the following link:"
 msgstr "Puoi modificare o cancellare la tua registrazione cliccando sul seguente link:"
 
-#: classes/api-utils.php:81
+#: classes/api-utils.php:87
 msgid "Only one field of type \"number of people\" is allowed"
 msgstr "Solo un campo del tipo \"numero di persone\" è permesso"
 
-#. Plugin Name of the plugin
-#: regi-fair.php
-msgid "RegiFair: Event Registration Manager"
-msgstr "RegiFair: Gestore di Registrazioni ad Eventi"
-
 #. Plugin URI of the plugin
-#: regi-fair.php
 msgid "https://zonia3000.github.io/regi-fair/"
 msgstr "https://zonia3000.github.io/regi-fair/"
 
 #. Description of the plugin
-#: regi-fair.php
 msgid "Free and open source plugin to manage events registrations. Provides form builder, waiting lists, group registrations and email notifications. Works with Gutenberg blocks."
 msgstr "Plugin gratuito ed open source per gestire registrazioni ad eventi. Supporta la costruzione di form personalizzati, liste d'attesa, registrazioni di gruppo e email di notifica. Funziona con i blocchi Gutenberg."
 
-#: js/src/block/src/block.json
+#: js/build/block/block.json js/src/block/src/block.json
 msgctxt "block title"
 msgid "RegiFair Form"
 msgstr "RegiFair Form"
 
-#: js/src/block/src/block.json
+#: js/build/block/block.json js/src/block/src/block.json
 msgctxt "block description"
 msgid "RegiFair Form"
 msgstr "RegiFair Form"
+
+#. Plugin Name of the plugin
+msgid "RegiFair"
+msgstr "RegiFair"

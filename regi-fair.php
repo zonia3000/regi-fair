@@ -19,10 +19,6 @@ if (!defined('ABSPATH')) {
 define('REGI_FAIR_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('REGI_FAIR_ROOT_PATH', __FILE__);
 
-add_action('plugins_loaded', function () {
-  load_plugin_textdomain('regi-fair', false, dirname(plugin_basename(__FILE__)) . '/languages/');
-});
-
 require_once(REGI_FAIR_PLUGIN_DIR . 'classes/admin/create-admin-menu.php');
 add_action('admin_menu', ['REGI_FAIR_Admin_Panel_Pages', 'create_menu']);
 add_action('admin_enqueue_scripts', ['REGI_FAIR_Admin_Panel_Pages', 'enqueue_scripts']);

@@ -226,23 +226,17 @@ class REGI_FAIR_Mail_Sender
   private static function get_registration_fields_content(REGI_FAIR_Event $event, array $values): string
   {
     $content = '<ul>';
-    foreach ($values as $field_id => $value) {
-      $label = null;
-      $type = null;
-      foreach ($event->formFields as $field) {
-        if ($field->id === $field_id) {
-          $label = $field->label;
-          $type = $field->fieldType;
-          break;
-        }
-      }
-      if ($label === null) {
-        if (defined('WP_DEBUG') && WP_DEBUG === true) {
-          // phpcs:ignore WordPress.PHP.DevelopmentFunctions
-          error_log('Label not found for field id ' . $field_id);
-        }
+    foreach ($event->formFields as $field) {
+      if (!array_key_exists($field->id, $values)) {
         continue;
       }
+      $type = $field->fieldType;
+      if ($type === 'privacy') {
+        $label = __("Privacy policy", "regi-fair");
+      } else {
+        $label = $field->label;
+      }
+      $value = $values[$field->id];
       $content .= '<li><strong>' . sanitize_text_field($label) . '</strong>: '
         . REGI_FAIR_Mail_Sender::get_registration_value($type, $value) . '</li>';
     }

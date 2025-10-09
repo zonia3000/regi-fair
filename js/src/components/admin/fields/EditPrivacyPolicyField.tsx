@@ -79,7 +79,7 @@ const EditPrivacyPolicyField = (props: EditFieldProps<PrivacyField>) => {
       <p>
         {__("Configured privacy policy URL:", "regi-fair")}
         &nbsp;
-        <a href={privacyPolicyUrl}>{__("Privacy Policy", "regi-fair")}</a>
+        <a href={privacyPolicyUrl}>{__("Privacy policy", "regi-fair")}</a>
       </p>
     );
   }

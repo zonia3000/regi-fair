@@ -21,7 +21,7 @@ async function testPrivacyField(test: TestType<any, any>, page: Page, itemName: 
     await dialog.getByRole('button', { name: 'Privacy policy' }).click();
     await dialog.getByRole('button', { name: 'Save' }).click();
     await expect(dialog).not.toBeVisible();
-    await expect(page.getByRole('row').nth(1).getByRole('cell').nth(0)).toContainText('privacy');
+    await expect(page.getByRole('row').nth(1).getByRole('cell').nth(0)).toContainText('Privacy policy');
     await expect(page.getByRole('row').nth(1).getByRole('cell').nth(1)).toContainText('privacy');
     await expect(page.getByRole('row').nth(1).getByRole('cell').nth(2)).toContainText('Yes');
   });
@@ -35,7 +35,7 @@ async function testPrivacyField(test: TestType<any, any>, page: Page, itemName: 
   });
 
   await test.step('Check privacy field', async () => {
-    await expect(page.getByRole('row').nth(1).getByRole('cell').nth(0)).toContainText('privacy');
+    await expect(page.getByRole('row').nth(1).getByRole('cell').nth(0)).toContainText('Privacy policy');
     await expect(page.getByRole('row').nth(1).getByRole('cell').nth(1)).toContainText('privacy');
     await expect(page.getByRole('row').nth(1).getByRole('cell').nth(2)).toContainText('Yes');
     await page.getByRole('row').nth(1).getByRole('button', { name: 'Edit' }).click();
@@ -43,6 +43,6 @@ async function testPrivacyField(test: TestType<any, any>, page: Page, itemName: 
     await expect(dialog).toContainText('privacy policy');
     await dialog.getByRole('button', { name: 'Save' }).click();
     await expect(dialog).not.toBeVisible();
-    await expect(page.getByRole('row').nth(1).getByRole('cell').nth(0)).toContainText('privacy');
+    await expect(page.getByRole('row').nth(1).getByRole('cell').nth(0)).toContainText('Privacy policy');
   });
 }

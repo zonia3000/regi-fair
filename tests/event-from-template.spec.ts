@@ -97,7 +97,7 @@ test('Create event from template', async ({ page, context, request }) => {
     await expect(page.getByRole('row').nth(10).getByRole('cell').nth(1)).toContainText('dropdown');
     await expect(page.getByRole('row').nth(10).getByRole('cell').nth(2)).toContainText('Yes');
 
-    await expect(page.getByRole('row').nth(11).getByRole('cell').nth(0)).toContainText('privacy');
+    await expect(page.getByRole('row').nth(11).getByRole('cell').nth(0)).toContainText('Privacy policy');
     await expect(page.getByRole('row').nth(11).getByRole('cell').nth(1)).toContainText('privacy');
     await expect(page.getByRole('row').nth(11).getByRole('cell').nth(2)).toContainText('Yes');
 
