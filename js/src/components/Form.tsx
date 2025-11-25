@@ -19,13 +19,13 @@ const Form = (props: FormProps) => {
   const [event, setEvent] = useState(null as EventConfiguration);
   const [found, setFound] = useState(false);
   const [fields, setFields] = useState(
-    {} as Record<number, string | string[] | boolean>,
+    {} as Record<number, string | string[] | boolean>
   );
   const [error, setError] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [fieldsErrors, setFieldsErrors] = useState(
-    {} as Record<number, string>,
+    {} as Record<number, string>
   );
   const [registrationToken, setRegistrationToken] = useState("");
   const [editingExisting, setEditingExisting] = useState(false);
@@ -60,8 +60,8 @@ const Form = (props: FormProps) => {
       setEvent(eventConfig);
       setFields(
         Object.fromEntries(
-          eventConfig.formFields.map((f) => [f.id, getDefaultFieldValue(f)]),
-        ),
+          eventConfig.formFields.map((f) => [f.id, getDefaultFieldValue(f)])
+        )
       );
       if (!isNaN(eventConfig.availableSeats)) {
         setAvailableSeats(eventConfig.availableSeats);
@@ -107,7 +107,7 @@ const Form = (props: FormProps) => {
     setSubmitting(true);
     setDeleted(false);
     try {
-      let result: { remaining: null | number };
+      let result: { remaining: null | number; waiting?: null | boolean };
       if (editingExisting) {
         result = await apiFetch({
           path: `/regifair/v1/events/${props.eventId}/${registrationToken}`,
@@ -125,7 +125,7 @@ const Form = (props: FormProps) => {
         });
         // reset field values
         setFields(
-          Object.fromEntries(Object.entries(fields).map((f) => [f[0], ""])),
+          Object.fromEntries(Object.entries(fields).map((f) => [f[0], ""]))
         );
       }
       if (result.remaining !== null) {
@@ -133,6 +133,9 @@ const Form = (props: FormProps) => {
         if (result.remaining <= 0) {
           setLastSeatTaken(true);
         }
+      }
+      if ("waiting" in result && result.waiting !== null) {
+        setWaitingList(result.waiting);
       }
       setSubmitted(true);
     } catch (err) {
@@ -158,7 +161,7 @@ const Form = (props: FormProps) => {
       window.location.hash = "";
       // reset field values
       setFields(
-        Object.fromEntries(Object.entries(fields).map((f) => [f[0], ""])),
+        Object.fromEntries(Object.entries(fields).map((f) => [f[0], ""]))
       );
       setDeleted(true);
       setShowConfirmDeleteRegistrationModal(false);
@@ -198,32 +201,35 @@ const Form = (props: FormProps) => {
         <Notice status="info" className="mb-2" isDismissible={false}>
           {__(
             "Welcome back. You are editing an existing registration.",
-            "regi-fair",
+            "regi-fair"
           )}
         </Notice>
       )}
 
       {availableSeats !== null && availableSeats > 0 && (
-        <Notice status="info" isDismissible={false}>
+        <Notice status="info" className="mb-2" isDismissible={false}>
           {sprintf(
             _nx(
               "There is still one seat available.",
               "There are still %d seats available.",
               availableSeats,
               "number of available seats",
-              "regi-fair",
+              "regi-fair"
             ),
-            availableSeats,
+            availableSeats
           )}
         </Notice>
       )}
 
       {availableSeats !== null && availableSeats <= 0 && editingExisting && (
-        <Notice status="info" isDismissible={false}>
+        <Notice status="info" className="mb-2" isDismissible={false}>
           {__("There are no more seats available.", "regi-fair")}
-          {waitingList &&
-            " " +
-              __("This registration is in the waiting list.", "regi-fair")}
+        </Notice>
+      )}
+
+      {availableSeats !== null && waitingList && editingExisting && (
+        <Notice status="info" className="mb-2" isDismissible={false}>
+          {__("This registration is in the waiting list.", "regi-fair")}
         </Notice>
       )}
 
@@ -232,16 +238,16 @@ const Form = (props: FormProps) => {
           {event.waitingList
             ? __(
                 "There are no more seats available. You can only join the waiting list. You will be notified when new seats will be available.",
-                "regi-fair",
+                "regi-fair"
               )
             : lastSeatTaken
             ? __(
                 "Congratulation! You took the last seat available!",
-                "regi-fair",
+                "regi-fair"
               )
             : __(
                 "We are sorry. You can't register because there are no more seats available.",
-                "regi-fair",
+                "regi-fair"
               )}
         </Notice>
       )}
@@ -326,7 +332,7 @@ const Form = (props: FormProps) => {
               <p>
                 {__(
                   "Do you really want to delete the registration to this event?",
-                  "regi-fair",
+                  "regi-fair"
                 )}
               </p>
               {deletionError && (

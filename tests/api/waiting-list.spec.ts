@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { adminAuthStateFile, getNonceAndCookiesForApi } from '../utils';
-import { searchMessage } from '../mailpit-client';
+import { searchMessage, searchMessages } from '../mailpit-client';
 
 test.use({ storageState: adminAuthStateFile });
 
@@ -95,6 +95,8 @@ test('Events with waiting list API', async ({ page, context, request }) => {
     expect(body.remaining).toEqual(0);
   });
 
+  // [confirmed] test1: 2, test2: 1
+
   await test.step('Attempt to register without waiting list flag', async () => {
     const response = await request.post(`/index.php?rest_route=/regifair/v1/events/${eventId}`, {
       data: { [fieldId1]: '2', [fieldId2]: 'test3@example.com' }
@@ -115,6 +117,8 @@ test('Events with waiting list API', async ({ page, context, request }) => {
     registrationToken3 = body.token;
     expect(body.remaining).toEqual(0);
   });
+
+  // [confirmed] test1: 2, test2: 1 [waiting]: test3: 2
 
   await test.step('Verify user is notified by email', async () => {
     const message = await searchMessage(request, `Registration to the waiting list of the event "${eventName}" is confirmed`);
@@ -210,6 +214,8 @@ test('Events with waiting list API', async ({ page, context, request }) => {
     expect(body.remaining).toEqual(1);
   });
 
+  // [confirmed] test1: 2 [waiting]: test3: 2
+
   await test.step('List registrations', async () => {
     const response = await request.get(`/index.php?rest_route=/regifair/v1/admin/events/${eventId}/registrations&page=1&pageSize=10`, {
       headers: {
@@ -242,6 +248,8 @@ test('Events with waiting list API', async ({ page, context, request }) => {
     const { remaining } = await response.json();
     expect(remaining).toEqual(1);
   });
+
+  // [confirmed] test3: 2 [waiting]:
 
   await test.step('List registrations', async () => {
     const response = await request.get(`/index.php?rest_route=/regifair/v1/admin/events/${eventId}/registrations&page=1&pageSize=10`, {
@@ -318,6 +326,14 @@ test('Events with waiting list API', async ({ page, context, request }) => {
     expect(body.remaining).toEqual(0);
   });
 
+  await test.step('Verify user is notified by email', async () => {
+    const messages = await searchMessages(request, `New seats available for the event "${eventName}"`);
+    const message = messages.filter(m => m.To[0].Address === 'test4@example.com')[0];
+    expect(message.To[0].Address).toEqual('test4@example.com');
+    expect(message.Text).toContain(`test4@example.com`);
+    expect(message.Text).toContain('extracontent');
+  });
+
   let registrationId4: string;
   await test.step('List registrations', async () => {
     const response = await request.get(`/index.php?rest_route=/regifair/v1/admin/events/${eventId}/registrations&page=1&pageSize=10`, {
@@ -390,6 +406,14 @@ test('Events with waiting list API', async ({ page, context, request }) => {
     expect(body).toHaveLength(0);
   });
 
+  await test.step('Verify user is notified by email', async () => {
+    const messages = await searchMessages(request, `New seats available for the event "${eventName}"`);
+    const message = messages.filter(m => m.To[0].Address === 'test5@example.com')[0];
+    expect(message.To[0].Address).toEqual('test5@example.com');
+    expect(message.Text).toContain(`test5@example.com`);
+    expect(message.Text).toContain('extracontent');
+  });
+
   await test.step('Add 6th registration in waiting list', async () => {
     const response = await request.post(`/index.php?rest_route=/regifair/v1/events/${eventId}&waitingList=true`, {
       data: { [fieldId1]: '1', [fieldId2]: 'test6@example.com' }
@@ -433,6 +457,14 @@ test('Events with waiting list API', async ({ page, context, request }) => {
     expect(body).toHaveLength(0);
   });
 
+  await test.step('Verify user is notified by email', async () => {
+    const messages = await searchMessages(request, `New seats available for the event "${eventName}"`);
+    const message = messages.filter(m => m.To[0].Address === 'test6@example.com')[0];
+    expect(message.To[0].Address).toEqual('test6@example.com');
+    expect(message.Text).toContain(`test6@example.com`);
+    expect(message.Text).toContain('extracontent');
+  });
+
   await test.step('Admin deletes the third registration', async () => {
     const response = await request.delete(`/index.php?rest_route=/regifair/v1/admin/events/${eventId}/registrations/${registrationId3}&sendEmail=true`, {
       headers: {
@@ -473,6 +505,7 @@ test('Events with waiting list API', async ({ page, context, request }) => {
     expect(response.status()).toEqual(200);
     const body = await response.json();
     expect(body.remaining).toEqual(0);
+    expect(body.waiting).toEqual(false);
   });
 
   await test.step('List registrations in waiting list', async () => {
@@ -485,6 +518,14 @@ test('Events with waiting list API', async ({ page, context, request }) => {
     expect(response.status()).toEqual(200);
     const { body } = await response.json();
     expect(body).toHaveLength(0);
+  });
+
+  await test.step('Verify user is notified by email', async () => {
+    const messages = await searchMessages(request, `New seats available for the event "${eventName}"`);
+    const message = messages.filter(m => m.To[0].Address === 'test7@example.com')[0];
+    expect(message.To[0].Address).toEqual('test7@example.com');
+    expect(message.Text).toContain(`test7@example.com`);
+    expect(message.Text).toContain('extracontent');
   });
 
   await test.step('User deletes the 7th registration', async () => {

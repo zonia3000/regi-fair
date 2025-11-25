@@ -384,6 +384,7 @@ class REGI_FAIR_DAO_Registrations extends REGI_FAIR_Base_DAO
           $people_to_remove = $previous_number_of_people - $request->numberOfPeople;
           if ($request->waitingList && $remaining_seats >= $request->numberOfPeople) {
             $request->waitingList = false;
+            $waiting_picked = [$request->id];
             $remaining_seats -= $request->numberOfPeople;
           } else if (!$request->waitingList) {
             $check_waiting_list = true;

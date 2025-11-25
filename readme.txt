@@ -90,3 +90,6 @@ No, and there is no plan to add this, since the plugin was developed as a volunt
 = 1.0.3 =
 * Used translatable label for privacy policy
 * Fixed ordering of fields in email
+
+= 1.0.4 =
+* Fixed "Selected from waiting list" email not sent

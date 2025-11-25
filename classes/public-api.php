@@ -258,23 +258,16 @@ class REGI_FAIR_Public_Controller extends WP_REST_Controller
         REGI_FAIR_Mail_Sender::send_registration_updated_to_admin($event, $input);
       }
 
-      if ($waiting_picked !== null && count($waiting_picked) > 0) {
-        foreach ($waiting_picked as $registration_id) {
-          $waiting_registration = $this->registrations_dao->get_registration_by_id($event->id, $registration_id);
-          if ($waiting_registration !== null) {
-            $user_email = REGI_FAIR_API_Utils::get_user_email($event, $waiting_registration->values);
-            if (count($user_email) > 0) {
-              REGI_FAIR_Mail_Sender::send_picked_from_waiting_list_confirmation($event, $user_email, $waiting_registration->values);
-            }
-          }
-        }
-        if ($event->adminEmail !== null) {
-          REGI_FAIR_Mail_Sender::send_registrations_picked_from_waiting_list_to_admin($event, $waiting_picked);
-        }
+      $this->check_waiting_picked($event, $waiting_picked);
+
+      $waiting = $data->waitingList;
+      if ($waiting_picked != null && in_array($data->id, $waiting_picked)) {
+        $waiting = false;
       }
 
       return new WP_REST_Response([
-        'remaining' => $remaining_seats
+        'remaining' => $remaining_seats,
+        'waiting' => $waiting
       ]);
     } catch (Exception $ex) {
       return REGI_FAIR_API_Utils::generic_server_error($ex);
@@ -347,26 +340,31 @@ class REGI_FAIR_Public_Controller extends WP_REST_Controller
       if ($event->adminEmail !== null) {
         REGI_FAIR_Mail_Sender::send_registration_deleted_to_admin($event);
       }
-      if ($waiting_picked !== null && count($waiting_picked) > 0) {
-        foreach ($waiting_picked as $registration_id) {
-          $waiting_registration = $this->registrations_dao->get_registration_by_id($event->id, $registration_id);
-          if ($waiting_registration !== null) {
-            $user_email = REGI_FAIR_API_Utils::get_user_email($event, $waiting_registration->values);
-            if (count($user_email) > 0) {
-              REGI_FAIR_Mail_Sender::send_picked_from_waiting_list_confirmation($event, $user_email, $waiting_registration->values);
-            }
-          }
-        }
-        if ($event->adminEmail !== null) {
-          REGI_FAIR_Mail_Sender::send_registrations_picked_from_waiting_list_to_admin($event, $waiting_picked);
-        }
-      }
+      $this->check_waiting_picked($event, $waiting_picked);
 
       return new WP_REST_Response([
         'remaining' => $remaining
       ]);
     } catch (Exception $ex) {
       return REGI_FAIR_API_Utils::generic_server_error($ex);
+    }
+  }
+
+  private function check_waiting_picked($event, $waiting_picked)
+  {
+    if ($waiting_picked !== null && count($waiting_picked) > 0) {
+      foreach ($waiting_picked as $registration_id) {
+        $waiting_registration = $this->registrations_dao->get_registration_by_id($event->id, $registration_id);
+        if ($waiting_registration !== null) {
+          $user_email = REGI_FAIR_API_Utils::get_user_email($event, $waiting_registration->values);
+          if (count($user_email) > 0) {
+            REGI_FAIR_Mail_Sender::send_picked_from_waiting_list_confirmation($event, $user_email, $waiting_registration->values);
+          }
+        }
+      }
+      if ($event->adminEmail !== null) {
+        REGI_FAIR_Mail_Sender::send_registrations_picked_from_waiting_list_to_admin($event, $waiting_picked);
+      }
     }
   }
 }
