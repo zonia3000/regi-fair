@@ -14,7 +14,7 @@
         "start": "wp-scripts start"
     },
     "devDependencies": {
-        "@wordpress/scripts": "^30.17.0"
+        "@wordpress/scripts": "wp-6.9"
     },
     "dependencies": {
         "regi-fair": "file:../components"
