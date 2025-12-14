@@ -24,7 +24,7 @@ class REGI_FAIR_Form
       $event_id = '';
     }
     REGI_FAIR_Form::enqueue_scripts();
-    return '<div id="' . esc_attr('regi-fair-form-' . $event_id) . '" data-regi-fair-event-id="' . esc_attr($event_id) . '"></div>';
+    return '<div class="regi-fair-form" id="' . esc_attr('regi-fair-form-' . $event_id) . '" data-regi-fair-event-id="' . esc_attr($event_id) . '"></div>';
   }
 
   private static function enqueue_scripts()
