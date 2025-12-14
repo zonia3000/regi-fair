@@ -161,7 +161,7 @@ const EditFormFields = (props: EditFormFieldsProps) => {
                           isDestructive={true}
                           onClick={() => openDeleteFieldModal(index)}
                         >
-                          Delete
+                          {__("Delete", "regi-fair")}
                         </Button>
                       )}
                     </td>

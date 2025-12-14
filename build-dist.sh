@@ -11,6 +11,7 @@ npm run build
 cd ../../..
 
 wp i18n make-json languages/regi-fair-it_IT.po --no-purge --pretty-print
+wp i18n make-json languages/regi-fair-de_DE.po --no-purge --pretty-print
 
 if [ -d "/tmp/regi-fair" ]; then
   rm -Rf /tmp/regi-fair

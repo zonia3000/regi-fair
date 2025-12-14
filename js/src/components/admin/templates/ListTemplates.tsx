@@ -98,7 +98,7 @@ const ListTemplates = () => {
                       isDestructive={true}
                       onClick={() => openDeleteTemplateModal(t)}
                     >
-                      Delete
+                      {__("Delete", "regi-fair")}
                     </Button>
                   </td>
                 </tr>

@@ -222,7 +222,7 @@ const ListEvents = () => {
                       isDestructive={true}
                       onClick={() => openDeleteEventModal(e)}
                     >
-                      Delete
+                      {__("Delete", "regi-fair")}
                     </Button>
                   </td>
                 </tr>

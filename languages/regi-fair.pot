@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-10-09T20:01:14+00:00\n"
+"POT-Creation-Date: 2025-12-14T16:13:33+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.8.1\n"
 "X-Domain: regi-fair\n"
@@ -40,12 +40,12 @@ msgstr ""
 #: classes/admin/admin-api-registrations.php:133
 #: classes/admin/admin-api-registrations.php:183
 #: classes/admin/admin-api-registrations.php:211
-#: classes/admin/admin-api-registrations.php:276
+#: classes/admin/admin-api-registrations.php:265
 #: classes/public-api.php:88
 #: classes/public-api.php:142
 #: classes/public-api.php:210
-#: classes/public-api.php:295
-#: classes/public-api.php:324
+#: classes/public-api.php:288
+#: classes/public-api.php:317
 #: js/build/block/index.js:2
 #: js/build/components/events.js:2
 #: js/build/components/users.js:1
@@ -62,8 +62,8 @@ msgstr ""
 
 #: classes/admin/admin-api-registrations.php:190
 #: classes/public-api.php:228
-#: classes/public-api.php:305
-#: classes/public-api.php:334
+#: classes/public-api.php:298
+#: classes/public-api.php:327
 #: js/build/components/events.js:2
 msgid "Registration not found"
 msgstr ""
@@ -350,8 +350,8 @@ msgid "You cannot register because the event is already ended"
 msgstr ""
 
 #: classes/public-api.php:218
-#: classes/public-api.php:299
-#: classes/public-api.php:328
+#: classes/public-api.php:292
+#: classes/public-api.php:321
 msgid "This event doesn't allow to edit the registrations"
 msgstr ""
 
