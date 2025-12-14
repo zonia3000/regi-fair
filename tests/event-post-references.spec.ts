@@ -88,12 +88,14 @@ test("Event referenced in posts", async ({ page, context, request }) => {
       await expect(page.getByRole("dialog")).not.toBeVisible();
     }
     await closeWelcomeModalIfNeeded();
-    await page.getByLabel("Add title").click();
-    await page.getByLabel("Add title").fill(postTitle);
-    await page.getByLabel("Add block").click();
+
+    const editor = page.getByTitle("Editor canvas").contentFrame();
+    await editor.getByRole("textbox", { name: "Add title" }).click();
+    await editor.getByRole("textbox", { name: "Add title" }).fill(postTitle);
+    await editor.getByLabel("Add block").click();
     await page.getByPlaceholder("Search").fill("RegiFair Form");
     await page.getByRole("option", { name: "RegiFair Form" }).click();
-    await page
+    await editor
       .getByRole("combobox", { name: "Select event" })
       .selectOption(eventName);
     await page.getByRole("button", { name: "Publish", exact: true }).click();
@@ -144,7 +146,7 @@ test("Event referenced in posts", async ({ page, context, request }) => {
     await addEventToPost(postTitle6, eventName4);
     await page.reload();
     await page.getByLabel("Actions").click();
-    await page.getByRole("menuitem", { name: "Move to Trash" }).click();
+    await page.getByRole("menuitem", { name: "Trash" }).click();
     await page.getByRole("button", { name: "Trash" }).click();
     await page.getByText("1 post moved to the Trash").first().waitFor();
     await page.goto("/wp-admin/edit.php?post_status=trash&post_type=post");
@@ -156,19 +158,21 @@ test("Event referenced in posts", async ({ page, context, request }) => {
 
   await test.step("Add 2 events to the same post", async () => {
     await page.goto("/wp-admin/post-new.php");
-    await page.getByLabel("Add title").click();
-    await page.getByLabel("Add title").fill(postTitle7);
-    await page.getByLabel("Add block").click();
+    const editor = page.getByTitle("Editor canvas").contentFrame();
+    await editor.getByLabel("Add title").click();
+    await editor.getByLabel("Add title").fill(postTitle7);
+    await editor.getByLabel("Add block").click();
     await page.getByPlaceholder("Search").fill("RegiFair Form");
     await page.getByRole("option", { name: "RegiFair Form" }).click();
-    await page
+    await editor
       .getByRole("combobox", { name: "Select event" })
       .selectOption(eventName5);
-    await page.getByLabel("Block: RegiFair Form").press("Enter");
-    await page.getByLabel("Add block").click();
+    await editor.getByLabel("Block: RegiFair Form").click();
+    await editor.getByLabel("Block: RegiFair Form").press("Enter");
+    await page.getByRole("button", { name: "Add block" }).click();
     await page.getByPlaceholder("Search").fill("RegiFair Form");
     await page.getByRole("option", { name: "RegiFair Form" }).click();
-    await page
+    await editor
       .getByRole("combobox", { name: "Select event" })
       .selectOption(eventName6);
     await page.getByRole("button", { name: "Publish", exact: true }).click();
@@ -236,7 +240,8 @@ test("Event referenced in posts", async ({ page, context, request }) => {
     await expect(page.getByText("Event not found")).toHaveCount(0);
     await page.goto(`/wp-admin/post.php?post=${postId1}&action=edit`);
     await expect(page.getByText("Loading")).toHaveCount(0);
-    await expect(page.getByText("Event not found")).toHaveCount(1);
+    const editor = page.getByTitle("Editor canvas").contentFrame();
+    await expect(editor.getByText("Event not found")).toHaveCount(1);
   });
 
   await test.step("Delete posts", async () => {

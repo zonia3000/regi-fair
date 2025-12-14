@@ -2,8 +2,8 @@
 
 Requirements:
 
-* WP-Cron needs to be enabled if you want the autoremoval of old events data;
-* MySQL/MariaDB InnoDB engine should be used, since the plugin sets the `serializable` isolation level to avoid concurrent registrations when an event as a limited number of available seats.
+- WP-Cron needs to be enabled if you want the autoremoval of old events data;
+- MySQL/MariaDB InnoDB engine should be used, since the plugin sets the `serializable` isolation level to avoid concurrent registrations when an event as a limited number of available seats.
 
 ### Build process
 
@@ -52,4 +52,12 @@ It can be solved by adding the following to the file `/etc/php/8.2/cli/conf.d/20
 
 ```
 xdebug.max_nesting_level=512
+```
+
+### Test with Wordpress development version
+
+In `.wp-env.json` set:
+
+```json
+  "core": "WordPress/WordPress#master",
 ```
