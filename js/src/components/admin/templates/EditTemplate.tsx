@@ -193,6 +193,7 @@ const EditTemplate = () => {
           required
           className="mb"
           __nextHasNoMarginBottom={true}
+          __next40pxDefaultSize={true}
         />
         {!valid && !templateName.trim() && (
           <span className="error-text">
@@ -217,9 +218,10 @@ const EditTemplate = () => {
           className="mb"
           help={__(
             "Number of days to wait after the event conclusion before removing registrations data",
-            "regi-fair",
+            "regi-fair"
           )}
           __nextHasNoMarginBottom={true}
+          __next40pxDefaultSize={true}
         />
       )}
       {autoremove && !valid && !autoremovePeriod && (
@@ -230,7 +232,7 @@ const EditTemplate = () => {
       <CheckboxControl
         label={__(
           "Allow the users to edit or delete their registrations",
-          "regi-fair",
+          "regi-fair"
         )}
         checked={editableRegistrations}
         onChange={setEditableRegistrations}
@@ -240,7 +242,7 @@ const EditTemplate = () => {
       <CheckboxControl
         label={__(
           "Notify an administrator by e-mail when a new registration is created",
-          "regi-fair",
+          "regi-fair"
         )}
         checked={notifyAdmin}
         onChange={setNotifyAdmin}
@@ -256,6 +258,7 @@ const EditTemplate = () => {
             required
             className="mb"
             __nextHasNoMarginBottom={true}
+            __next40pxDefaultSize={true}
           />
           {!valid && !adminEmail.trim() && (
             <span className="error-text">
@@ -265,10 +268,7 @@ const EditTemplate = () => {
         </div>
       )}
       <CheckboxControl
-        label={__(
-          "Add custom message to confirmation e-mail",
-          "regi-fair",
-        )}
+        label={__("Add custom message to confirmation e-mail", "regi-fair")}
         checked={customizeEmailContent}
         onChange={setCustomizeEmailContent}
         className="mb"
@@ -281,7 +281,7 @@ const EditTemplate = () => {
           value={emailExtraContent}
           help={__(
             "This content will be added at the end of the confirmation e-mail messages. Allowed HTML tags: <b>, <i>, <a>, <hr>, <p>, <br>",
-            "regi-fair",
+            "regi-fair"
           )}
           className="mb"
           __nextHasNoMarginBottom={true}

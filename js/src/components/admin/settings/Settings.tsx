@@ -61,7 +61,7 @@ const Settings = function () {
         }),
       });
       setDefaultExtraEmailContent(
-        (response as SettingsType).defaultExtraEmailContent,
+        (response as SettingsType).defaultExtraEmailContent
       );
       setUpdated(true);
     } catch (err) {
@@ -82,7 +82,7 @@ const Settings = function () {
         <em>
           {__(
             "All the following options are just defaults and they can be redefined for each event",
-            "regi-fair",
+            "regi-fair"
           )}
         </em>
       </p>
@@ -94,9 +94,10 @@ const Settings = function () {
         className="mb"
         help={__(
           "Received registrations will be notified at this addres",
-          "regi-fair",
+          "regi-fair"
         )}
         __nextHasNoMarginBottom={true}
+        __next40pxDefaultSize={true}
       />
 
       <TextControl
@@ -107,22 +108,23 @@ const Settings = function () {
         className="mb"
         help={__(
           "Number of days to wait after the event conclusion before removing registrations data",
-          "regi-fair",
+          "regi-fair"
         )}
         __nextHasNoMarginBottom={true}
+        __next40pxDefaultSize={true}
       />
 
       <TextareaControl
         label={__(
           "Default extra content for confirmation e-mail messages",
-          "regi-fair",
+          "regi-fair"
         )}
         onChange={setDefaultExtraEmailContent}
         value={defaultExtraEmailContent}
         className="mb"
         help={__(
           "This content will be added at the end of the confirmation e-mail messages. Allowed HTML tags: <b>, <i>, <a>, <hr>, <p>, <br>",
-          "regi-fair",
+          "regi-fair"
         )}
         __nextHasNoMarginBottom={true}
       />
@@ -130,13 +132,14 @@ const Settings = function () {
       <TextControl
         label={__(
           "E-mail address used to send confirmation messages to users",
-          "regi-fair",
+          "regi-fair"
         )}
         onChange={setFromEmail}
         value={fromEmail}
         type="text"
         className="mb"
         __nextHasNoMarginBottom={true}
+        __next40pxDefaultSize={true}
       />
 
       {error && (

@@ -283,6 +283,7 @@ const ListEvents = () => {
                   onChange={setSelectedTemplateId}
                   className="mb"
                   __nextHasNoMarginBottom={true}
+                  __next40pxDefaultSize={true}
                 />
                 <Button variant="primary" onClick={newEventFromTemplate}>
                   {__("Create", "regi-fair")}

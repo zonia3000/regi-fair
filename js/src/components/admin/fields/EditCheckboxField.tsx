@@ -79,6 +79,7 @@ const EditCheckboxField = (props: EditFieldProps<CheckboxField>) => {
           required
           className="mb"
           __nextHasNoMarginBottom={true}
+          __next40pxDefaultSize={true}
         />
         {!valid && !fieldLabel.trim() && (
           <span className="error-text">
@@ -93,6 +94,7 @@ const EditCheckboxField = (props: EditFieldProps<CheckboxField>) => {
         required
         className="mb"
         __nextHasNoMarginBottom={true}
+        __next40pxDefaultSize={true}
       />
     </>
   );

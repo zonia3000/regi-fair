@@ -20,6 +20,7 @@ const DropdownField = (props: DropdownFieldProps) => {
         onChange={onChange}
         value={props.value as string[]}
         __nextHasNoMarginBottom={true}
+        __next40pxDefaultSize={true}
         className="mb"
         multiple
         help={props.description}
@@ -44,6 +45,7 @@ const DropdownField = (props: DropdownFieldProps) => {
         onChange={onChange}
         value={props.value as string}
         __nextHasNoMarginBottom={true}
+        __next40pxDefaultSize={true}
         className="mb"
         help={props.description}
       />

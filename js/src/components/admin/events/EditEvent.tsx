@@ -262,6 +262,7 @@ const EditEvent = () => {
           required
           className="mb"
           __nextHasNoMarginBottom={true}
+          __next40pxDefaultSize={true}
         />
         {!valid && !eventName.trim() && (
           <span className="error-text">
@@ -296,7 +297,7 @@ const EditEvent = () => {
             <strong>{__("Warning")}</strong>: &nbsp;
             {__(
               "this event has already some registrations. Adding or removing fields can result in having some empty values in your registrations table.",
-              "regi-fair",
+              "regi-fair"
             )}
           </Notice>
         </div>
@@ -322,6 +323,7 @@ const EditEvent = () => {
               required
               className="mb"
               __nextHasNoMarginBottom={true}
+              __next40pxDefaultSize={true}
             />
             {!valid && !maxParticipants && (
               <span className="error-text">
@@ -332,7 +334,7 @@ const EditEvent = () => {
           <CheckboxControl
             label={__(
               "Enable waiting list when maximum number of participants has been reached",
-              "regi-fair",
+              "regi-fair"
             )}
             checked={hasWaitingList}
             onChange={setHasWaitingList}
@@ -358,9 +360,10 @@ const EditEvent = () => {
           className="mb"
           help={__(
             "Number of days to wait after the event conclusion before removing registrations data",
-            "regi-fair",
+            "regi-fair"
           )}
           __nextHasNoMarginBottom={true}
+          __next40pxDefaultSize={true}
         />
       )}
       {autoremove && !valid && !autoremovePeriod && (
@@ -371,7 +374,7 @@ const EditEvent = () => {
       <CheckboxControl
         label={__(
           "Allow the users to edit or delete their registrations",
-          "regi-fair",
+          "regi-fair"
         )}
         checked={editableRegistrations}
         onChange={setEditableRegistrations}
@@ -381,7 +384,7 @@ const EditEvent = () => {
       <CheckboxControl
         label={__(
           "Notify an administrator by e-mail when a new registration is created",
-          "regi-fair",
+          "regi-fair"
         )}
         checked={notifyAdmin}
         onChange={setNotifyAdmin}
@@ -397,6 +400,7 @@ const EditEvent = () => {
             required
             className="mb"
             __nextHasNoMarginBottom={true}
+            __next40pxDefaultSize={true}
           />
           {!valid && !adminEmail && (
             <span className="error-text">
@@ -406,10 +410,7 @@ const EditEvent = () => {
         </div>
       )}
       <CheckboxControl
-        label={__(
-          "Add custom message to confirmation e-mail",
-          "regi-fair",
-        )}
+        label={__("Add custom message to confirmation e-mail", "regi-fair")}
         checked={customizeEmailContent}
         onChange={setCustomizeEmailContent}
         className="mb"
@@ -422,7 +423,7 @@ const EditEvent = () => {
           value={emailExtraContent}
           help={__(
             "This content will be added at the end of the confirmation e-mail messages. Allowed HTML tags: <b>, <i>, <a>, <hr>, <p>, <br>",
-            "regi-fair",
+            "regi-fair"
           )}
           className="mb"
           __nextHasNoMarginBottom={true}

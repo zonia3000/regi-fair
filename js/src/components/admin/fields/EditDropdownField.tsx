@@ -126,6 +126,7 @@ const EditDropdownField = (props: EditDropdownFieldProps) => {
           required
           className="mb"
           __nextHasNoMarginBottom={true}
+          __next40pxDefaultSize={true}
         />
         {!valid && !fieldLabel.trim() && (
           <span className="error-text">
@@ -140,6 +141,7 @@ const EditDropdownField = (props: EditDropdownFieldProps) => {
         required
         className="mb"
         __nextHasNoMarginBottom={true}
+        __next40pxDefaultSize={true}
       />
       <CheckboxControl
         label={__("Required", "regi-fair")}
@@ -172,6 +174,7 @@ const EditDropdownField = (props: EditDropdownFieldProps) => {
               required
               className="mb"
               __nextHasNoMarginBottom={true}
+              __next40pxDefaultSize={true}
             />
             <Button
               aria-label={__("Remove option", "regi-fair")}

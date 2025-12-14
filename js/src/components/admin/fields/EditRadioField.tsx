@@ -114,6 +114,7 @@ const EditRadioField = (props: EditRadioFieldProps) => {
           required
           className="mb"
           __nextHasNoMarginBottom={true}
+          __next40pxDefaultSize={true}
         />
         {!valid && !fieldLabel.trim() && (
           <span className="error-text">
@@ -128,6 +129,7 @@ const EditRadioField = (props: EditRadioFieldProps) => {
         required
         className="mb"
         __nextHasNoMarginBottom={true}
+        __next40pxDefaultSize={true}
       />
       <CheckboxControl
         label={__("Required", "regi-fair")}
@@ -153,6 +155,7 @@ const EditRadioField = (props: EditRadioFieldProps) => {
               required
               className="mb"
               __nextHasNoMarginBottom={true}
+              __next40pxDefaultSize={true}
             />
             {options.length > 2 && (
               <Button

@@ -23,6 +23,7 @@ const InputField = (props: InputFieldProps) => {
       help={props.description}
       className="mb"
       __nextHasNoMarginBottom={true}
+      __next40pxDefaultSize={true}
     />
   );
 };

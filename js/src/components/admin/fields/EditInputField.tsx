@@ -76,14 +76,14 @@ const EditInputField = (props: EditInputFieldProps) => {
           setMin(
             typeof props.field.extra.min === "number"
               ? props.field.extra.min.toString()
-              : "",
+              : ""
           );
         }
         if ("max" in props.field.extra) {
           setMax(
             typeof props.field.extra.max === "number"
               ? props.field.extra.max.toString()
-              : "",
+              : ""
           );
         }
       }
@@ -214,6 +214,7 @@ const EditInputField = (props: EditInputFieldProps) => {
           required
           className="mb"
           __nextHasNoMarginBottom={true}
+          __next40pxDefaultSize={true}
         />
         {!valid && !fieldLabel.trim() && (
           <span className="error-text">
@@ -228,6 +229,7 @@ const EditInputField = (props: EditInputFieldProps) => {
         required
         className="mb"
         __nextHasNoMarginBottom={true}
+        __next40pxDefaultSize={true}
       />
       <CheckboxControl
         label={__("Required", "regi-fair")}
@@ -240,7 +242,7 @@ const EditInputField = (props: EditInputFieldProps) => {
         <CheckboxControl
           label={__(
             "Use this address to send confirmation e-mail when the user register to the event",
-            "regi-fair",
+            "regi-fair"
           )}
           checked={useAsConfirmationAddress}
           onChange={saveUseAsConfirmationAddress}
@@ -252,7 +254,7 @@ const EditInputField = (props: EditInputFieldProps) => {
         <CheckboxControl
           label={__(
             "For registered users, hide this field and automatically pick the e-mail address from Wordpress user data",
-            "regi-fair",
+            "regi-fair"
           )}
           checked={useWpUserEmail}
           onChange={saveUseWpUserEmail}
@@ -265,18 +267,18 @@ const EditInputField = (props: EditInputFieldProps) => {
           <Notice status="info" className="mt-2" isDismissible={false}>
             {__(
               "This input will be used to allow adding multiple people with the same registration.",
-              "regi-fair",
+              "regi-fair"
             )}
           </Notice>
           <p>
             {__(
               "This is useful when you don't need to collect each participant name, but you need to know the number of seats.",
-              "regi-fair",
+              "regi-fair"
             )}
             <br />
             {__(
               "Example: a mother register and wants to add 3 kids, without having to specify their names.",
-              "regi-fair",
+              "regi-fair"
             )}
           </p>
         </>
@@ -289,6 +291,7 @@ const EditInputField = (props: EditInputFieldProps) => {
           value={min}
           className="mb"
           __nextHasNoMarginBottom={true}
+          __next40pxDefaultSize={true}
         />
       )}
       {props.fieldType === "number" && (
@@ -299,6 +302,7 @@ const EditInputField = (props: EditInputFieldProps) => {
           value={max}
           className="mb"
           __nextHasNoMarginBottom={true}
+          __next40pxDefaultSize={true}
         />
       )}
     </>

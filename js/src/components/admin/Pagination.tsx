@@ -86,7 +86,7 @@ const Pagination = (props: {
                   aria-label={sprintf(
                     /* translators: %d is replaced with the page number */
                     __("Go to page %d", "regi-fair"),
-                    n,
+                    Number(n)
                   )}
                 >
                   {n}
@@ -106,6 +106,7 @@ const Pagination = (props: {
           }))}
           onChange={setPageSize}
           __nextHasNoMarginBottom={true}
+          __next40pxDefaultSize={true}
         />
       </div>
     </div>
