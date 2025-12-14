@@ -2,8 +2,8 @@
 Contributors: zonia3000
 Tags: events, registration, form, waiting list
 Requires at least: 6.6
-Tested up to: 6.8
-Stable tag: 1.0.4
+Tested up to: 6.9
+Stable tag: 1.0.5
 Requires PHP: 8.2
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -36,6 +36,7 @@ RegiFair is available in the following languages:
 
 * English
 * Italian
+* German
 
 This plugin contains minified JavaScript code. The complete source code is available on [GitHub](https://github.com/zonia3000/regi-fair).
 
@@ -93,3 +94,9 @@ No, and there is no plan to add this, since the plugin was developed as a volunt
 
 = 1.0.4 =
 * Fixed "Selected from waiting list" email not sent
+
+= 1.0.5 =
+* Used the theme primary color preset for components, if defined
+* Added German translation (thanks to Stefan Bensmann)
+* Updated dependencies
+* Tested with WP 6.9

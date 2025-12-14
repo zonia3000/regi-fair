@@ -1,6 +1,6 @@
 {
   "name": "regi-fair",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "RegiFair e2e tests",
   "main": "index.js",
   "scripts": {},

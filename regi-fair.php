@@ -4,7 +4,7 @@
  * Plugin URI: https://zonia3000.github.io/regi-fair/
  * Author: Sonia Zorba
  * Author URI: https://www.zonia3000.net
- * Version: 1.0.4
+ * Version: 1.0.5
  * License: GPLv3 or later
  * License URI: https://www.gnu.org/licenses/gpl-3.0.html
  * Description: Free and open source plugin to manage events registrations. Provides form builder, waiting lists, group registrations and email notifications. Works with Gutenberg blocks.
