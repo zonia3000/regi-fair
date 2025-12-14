@@ -91,3 +91,8 @@
   --wp-components-color-accent: var(--wp--preset--color--primary);
   --wp-components-color-accent-darker-10: var(--wp--preset--color--primary-hover);
 }
+
+.regi-fair-privacy-field {
+  display: flex;
+  flex-direction: row;
+}

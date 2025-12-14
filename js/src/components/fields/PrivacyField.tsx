@@ -2,10 +2,6 @@ import React from "react";
 import { CheckboxControl } from "@wordpress/components";
 import { PrivacyFieldProps } from "../classes/components-props";
 import { __, sprintf } from "@wordpress/i18n";
-import {
-  __experimentalHStack as HStack,
-  __experimentalVStack as VStack,
-} from "@wordpress/components";
 
 const PrivacyField = (props: PrivacyFieldProps) => {
   function onChange(value: boolean) {
@@ -24,27 +20,25 @@ const PrivacyField = (props: PrivacyFieldProps) => {
       /* translators: The %s placeholders will be replaced with HTML tags used for creating a link to the privacy policy page */
       __("I accept the %sprivacy policy%s", "regi-fair"),
       `<a href="${safeUrl}">`,
-      "</a>",
+      "</a>"
     );
   }
 
   return (
-    <HStack alignment="top" justify="flex-start" spacing={0}>
+    <div className="regi-fair-privacy-field">
       <CheckboxControl
         __nextHasNoMarginBottom
         id="privacy-policy-checkbox"
         disabled={!!props.disabled}
         onChange={onChange}
         checked={props.value}
-        className="mb"
+        className="mt mb"
       />
-      <VStack>
-        <label
-          htmlFor="privacy-policy-checkbox"
-          dangerouslySetInnerHTML={{ __html: getPrivacyPolicyHtmlLabel() }}
-        ></label>
-      </VStack>
-    </HStack>
+      <label
+        htmlFor="privacy-policy-checkbox"
+        dangerouslySetInnerHTML={{ __html: getPrivacyPolicyHtmlLabel() }}
+      ></label>
+    </div>
   );
 };
 
