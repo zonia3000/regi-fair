@@ -314,6 +314,7 @@ const Form = (props: FormProps) => {
           {editingExisting && (
             <Button
               variant="secondary"
+              isDestructive={true}
               className="ml mt"
               onClick={() => setShowConfirmDeleteRegistrationModal(true)}
               disabled={props.disabled}
@@ -344,7 +345,11 @@ const Form = (props: FormProps) => {
                   {deletionError}
                 </Notice>
               )}
-              <Button variant="primary" onClick={deleteRegistration}>
+              <Button
+                variant="primary"
+                isDestructive={true}
+                onClick={deleteRegistration}
+              >
                 {__("Confirm", "regi-fair")}
               </Button>
             </Modal>

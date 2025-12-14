@@ -157,7 +157,8 @@ const EditFormFields = (props: EditFormFieldsProps) => {
                       &nbsp;
                       {isFieldDeletable(f) && (
                         <Button
-                          variant="primary"
+                          variant="secondary"
+                          isDestructive={true}
                           onClick={() => openDeleteFieldModal(index)}
                         >
                           Delete
@@ -197,7 +198,11 @@ const EditFormFields = (props: EditFormFieldsProps) => {
           onRequestClose={closeDeleteFieldModal}
         >
           <p>{__("Do you really want to delete this field?", "regi-fair")}</p>
-          <Button variant="primary" onClick={confirmDeleteField}>
+          <Button
+            variant="primary"
+            isDestructive={true}
+            onClick={confirmDeleteField}
+          >
             {__("Confirm", "regi-fair")}
           </Button>
           &nbsp;

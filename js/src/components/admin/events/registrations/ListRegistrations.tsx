@@ -254,6 +254,7 @@ const ListRegistrations = (props: { waiting: boolean }) => {
                   onClick={() => openDeleteRegistrationModal(r[0])}
                   variant="secondary"
                   className="ml"
+                  isDestructive={true}
                 >
                   {__("Delete", "regi-fair")}
                 </Button>
@@ -288,7 +289,7 @@ const ListRegistrations = (props: { waiting: boolean }) => {
                 "Do you really want to delete the registration #%d?",
                 "regi-fair"
               ),
-              registrationToDelete
+              Number(registrationToDelete)
             )}
           </p>
           {showEmailCheckbox && (
@@ -305,7 +306,11 @@ const ListRegistrations = (props: { waiting: boolean }) => {
               {deletionError}
             </Notice>
           )}
-          <Button variant="primary" onClick={deleteRegistration}>
+          <Button
+            variant="primary"
+            isDestructive={true}
+            onClick={deleteRegistration}
+          >
             {__("Confirm", "regi-fair")}
           </Button>
         </Modal>

@@ -13,7 +13,7 @@ const ListTemplates = () => {
   const [loading, setLoading] = useState(true);
   const [templates, setTemplates] = useState([] as TemplateConfiguration[]);
   const [templateToDelete, setTemplateToDelete] = useState(
-    null as TemplateConfiguration | null,
+    null as TemplateConfiguration | null
   );
   const [error, setError] = useState("");
   const [deleteError, setDeleteError] = useState("");
@@ -94,7 +94,8 @@ const ListTemplates = () => {
                   </td>
                   <td>
                     <Button
-                      variant="primary"
+                      variant="secondary"
+                      isDestructive={true}
                       onClick={() => openDeleteTemplateModal(t)}
                     >
                       Delete
@@ -122,11 +123,8 @@ const ListTemplates = () => {
           <p>
             {sprintf(
               /* translators: %s is replaced with the name of the template */
-              __(
-                "Do you really want to delete the template %s?",
-                "regi-fair",
-              ),
-              templateToDelete.name,
+              __("Do you really want to delete the template %s?", "regi-fair"),
+              templateToDelete.name
             )}
           </p>
           {deleteError && (
@@ -144,6 +142,8 @@ const ListTemplates = () => {
             variant="primary"
             onClick={confirmDeleteTemplate}
             disabled={deleting}
+            isDestructive={true}
+            isBusy={deleting}
           >
             {__("Confirm", "regi-fair")}
           </Button>

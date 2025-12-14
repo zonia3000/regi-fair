@@ -25,12 +25,12 @@ const ListEvents = () => {
   const [chooseTemplate, setChooseTemplate] = useState(false);
   const [templatesLoading, setTemplatesLoading] = useState(true);
   const [templates, setTemplates] = useState(
-    [] as Array<{ value: string; label: string }>,
+    [] as Array<{ value: string; label: string }>
   );
   const [templatesError, setTemplatesError] = useState("");
   const [selectedTemplateId, setSelectedTemplateId] = useState("");
   const [eventToDelete, setEventToDelete] = useState(
-    null as EventConfiguration | null,
+    null as EventConfiguration | null
   );
   const [deleteError, setDeleteError] = useState("");
   const [deleting, setDeleting] = useState(false);
@@ -42,7 +42,7 @@ const ListEvents = () => {
   const [loadingEventReferencesError, setLoadingEventReferencesError] =
     useState("");
   const [referencingPosts, setReferencingPosts] = useState(
-    [] as Array<{ title: string; permalink: string }>,
+    [] as Array<{ title: string; permalink: string }>
   );
 
   useEffect(() => {
@@ -135,7 +135,7 @@ const ListEvents = () => {
   }
 
   async function openEventWithMultipleReferencesModal(
-    event: EventConfiguration,
+    event: EventConfiguration
   ) {
     setSelectedEventWithMultipleReferences(event);
     setLoadingEventReferences(true);
@@ -144,7 +144,7 @@ const ListEvents = () => {
         path: `/regifair/v1/admin/events/${event.id}/references`,
       });
       setReferencingPosts(
-        references as Array<{ title: string; permalink: string }>,
+        references as Array<{ title: string; permalink: string }>
       );
     } catch (err) {
       setLoadingEventReferencesError(extractError(err));
@@ -218,7 +218,8 @@ const ListEvents = () => {
                   </td>
                   <td>
                     <Button
-                      variant="primary"
+                      variant="secondary"
+                      isDestructive={true}
                       onClick={() => openDeleteEventModal(e)}
                     >
                       Delete
@@ -296,14 +297,12 @@ const ListEvents = () => {
           title={__("Delete event", "regi-fair")}
           onRequestClose={closeDeleteEventModal}
         >
-          <p>
-            {__("Do you really want to delete this event?", "regi-fair")}
-          </p>
+          <p>{__("Do you really want to delete this event?", "regi-fair")}</p>
           <p>
             <strong>
               {__(
                 "WARNING: all the saved registrations will be deleted and users will not be notified about the deletion",
-                "regi-fair",
+                "regi-fair"
               )}
             </strong>
           </p>
@@ -322,6 +321,8 @@ const ListEvents = () => {
             variant="primary"
             onClick={confirmDeleteEvent}
             disabled={deleting}
+            isBusy={deleting}
+            isDestructive={true}
           >
             {__("Confirm", "regi-fair")}
           </Button>
@@ -334,30 +335,27 @@ const ListEvents = () => {
 
       {selectedEventWithMultipleReferences !== null && (
         <Modal
-          title={__(
-            "Event form is referenced in multiple posts",
-            "regi-fair",
-          )}
+          title={__("Event form is referenced in multiple posts", "regi-fair")}
           onRequestClose={closeEventWithMultipleReferencesModal}
         >
           <p>
             {__(
               "This plugin expects that an event form is referenced only in one published post.",
-              "regi-fair",
+              "regi-fair"
             )}
           </p>
           <p>
             <strong>
               {__(
                 "Please, ensure that you have only one post referencing this event.",
-                "regi-fair",
+                "regi-fair"
               )}
             </strong>
           </p>
           <p>
             {__(
               "The following posts are referencing the same event form:",
-              "regi-fair",
+              "regi-fair"
             )}
           </p>
           <ul>
