@@ -95,4 +95,5 @@
 .regi-fair-privacy-field {
   display: flex;
   flex-direction: row;
+  font-size: var(--wp--preset--font-size--normal);
 }
