@@ -1,10 +1,11 @@
 {
-  "core": "WordPress/WordPress#6.9",
+  "core": "https://wordpress.org/wordpress-7.0.zip",
   "plugins": [
     "."
   ],
   "config": {
     "REGI_FAIR_TESTING": true,
     "ALTERNATE_WP_CRON": true
-  }
+  },
+  "testsEnvironment": false
 }

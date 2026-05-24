@@ -8,7 +8,7 @@
   "author": "Sonia Zorba",
   "license": "GPL-3.0-or-later",
   "devDependencies": {
-    "@playwright/test": "^1.52.0",
-    "@types/node": "^22.15.21"
+    "@playwright/test": "^1.60.0",
+    "@types/node": "^25.9.1"
   }
 }
