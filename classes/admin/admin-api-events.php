@@ -29,13 +29,14 @@ class REGI_FAIR_Events_Admin_Controller extends WP_REST_Controller
       $namespace,
       '/admin/events',
       [
-        'args' => [
-          'ignorePastEvents' => ['type' => 'boolean', 'required' => false]
-        ],
         [
           'methods' => WP_REST_Server::READABLE,
           'permission_callback' => ['REGI_FAIR_API_Utils', 'is_events_admin'],
-          'callback' => [$this, 'get_items']
+          'callback' => [$this, 'get_items'],
+          'args' => [
+            'page' => ['type' => 'integer', 'required' => true, 'minimum' => 1],
+            'pageSize' => ['type' => 'integer', 'required' => true, 'minimum' => 1]
+          ],
         ],
         [
           'methods' => WP_REST_Server::CREATABLE,
@@ -44,6 +45,18 @@ class REGI_FAIR_Events_Admin_Controller extends WP_REST_Controller
           'args' => $this->get_endpoint_args_for_item_schema()
         ],
         'schema' => [$this, 'get_item_schema']
+      ]
+    );
+
+    register_rest_route(
+      $namespace,
+      '/admin/events/active',
+      [
+        [
+          'methods' => WP_REST_Server::READABLE,
+          'permission_callback' => ['REGI_FAIR_API_Utils', 'is_events_admin'],
+          'callback' => [$this, 'get_active_items']
+        ]
       ]
     );
 
@@ -100,8 +113,23 @@ class REGI_FAIR_Events_Admin_Controller extends WP_REST_Controller
   public function get_items($request)
   {
     try {
-      $ignore_past_events = (bool) $request->get_param('ignorePastEvents');
-      return new WP_REST_Response($this->dao->list_events($ignore_past_events));
+      $page = (int) $request->get_param('page');
+      $page_size = (int) $request->get_param('pageSize');
+      $offset = ($page - 1) * $page_size;
+      return new WP_REST_Response($this->dao->list_events_paginated($page_size, $offset));
+    } catch (Exception $ex) {
+      return REGI_FAIR_API_Utils::generic_server_error($ex);
+    }
+  }
+
+  /**
+   * @param WP_REST_Request $request
+   * @return WP_Error|WP_REST_Response
+   */
+  public function get_active_items($request)
+  {
+    try {
+      return new WP_REST_Response($this->dao->list_active_events());
     } catch (Exception $ex) {
       return REGI_FAIR_API_Utils::generic_server_error($ex);
     }

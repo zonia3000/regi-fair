@@ -14,7 +14,7 @@ export default function Edit({ attributes, setAttributes }) {
 
     useEffect(() => {
         if (!attributes.eventId) {
-            apiFetch({ path: '/regifair/v1/admin/events?ignorePastEvents=true' })
+            apiFetch({ path: '/regifair/v1/admin/events/active' })
                 .then((result) => {
                     setEventsOptions(
                         [{

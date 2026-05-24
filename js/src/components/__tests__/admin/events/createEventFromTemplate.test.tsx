@@ -12,7 +12,7 @@ import { EventConfiguration } from "../../../classes/event";
 test("Create first template", async () => {
   server.use(
     http.get("/regifair/v1/admin/events", () => {
-      return HttpResponse.json([]);
+      return HttpResponse.json({ events: [], total: 0 });
     }),
   );
 
@@ -44,7 +44,7 @@ test("Create first template", async () => {
 test.skip("Create event from template", async () => {
   server.use(
     http.get("/regifair/v1/admin/events", () => {
-      return HttpResponse.json([]);
+      return HttpResponse.json({ events: [], total: 0 });
     }),
   );
 

@@ -9,26 +9,29 @@ import EventsRoot from "../../../admin/events/EventsRoot";
 test("Navigate template pages", async () => {
   server.use(
     http.get("/regifair/v1/admin/events", () => {
-      return HttpResponse.json([
-        {
-          id: 1,
-          name: "event1",
-          date: "2030-01-01",
-          registrations: 3,
-          postTitle: null,
-          postPermalink: null,
-          hasMultipleReferences: false,
-        },
-        {
-          id: 2,
-          name: "event2",
-          date: "2030-01-05",
-          registrations: 0,
-          postTitle: "example",
-          postPermalink: "http://localhost/?p=42",
-          hasMultipleReferences: false,
-        },
-      ]);
+      return HttpResponse.json({
+        events: [
+          {
+            id: 1,
+            name: "event1",
+            date: "2030-01-01",
+            registrations: 3,
+            postTitle: null,
+            postPermalink: null,
+            hasMultipleReferences: false,
+          },
+          {
+            id: 2,
+            name: "event2",
+            date: "2030-01-05",
+            registrations: 0,
+            postTitle: "example",
+            postPermalink: "http://localhost/?p=42",
+            hasMultipleReferences: false,
+          },
+        ],
+        total: 2
+      });
     }),
   );
 

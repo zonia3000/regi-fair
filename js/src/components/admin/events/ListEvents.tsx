@@ -15,11 +15,15 @@ import { extractError } from "../../utils";
 import "../../style.css";
 import { EventConfiguration } from "../../classes/event";
 import { TemplateConfiguration } from "../../classes/template";
+import Pagination from "../Pagination";
 
 const ListEvents = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(20);
   const [events, setEvents] = useState([] as EventConfiguration[]);
+  const [total, setTotal] = useState(0);
   const [error, setError] = useState("");
   const [showCreateEventModal, setShowCreateEventModal] = useState(false);
   const [chooseTemplate, setChooseTemplate] = useState(false);
@@ -46,10 +50,16 @@ const ListEvents = () => {
   );
 
   useEffect(() => {
+    loadPage();
+  }, [page, pageSize]);
+
+  function loadPage() {
     setLoading(true);
-    apiFetch({ path: "/regifair/v1/admin/events" })
+    apiFetch({ path: `/regifair/v1/admin/events?page=${page}&pageSize=${pageSize}` })
       .then((result) => {
-        setEvents(result as EventConfiguration[]);
+        const { events, total } = result as { events: EventConfiguration[], total: number };
+        setEvents(events);
+        setTotal(total);
       })
       .catch((err) => {
         setError(extractError(err));
@@ -57,7 +67,7 @@ const ListEvents = () => {
       .finally(() => {
         setLoading(false);
       });
-  }, []);
+  }
 
   function newEventFromScratch() {
     navigate("/event/new");
@@ -172,64 +182,74 @@ const ListEvents = () => {
 
       {events.length === 0 && <p>{__("No events found", "regi-fair")}</p>}
       {events.length !== 0 && (
-        <table className="widefat mt">
-          <thead>
-            <tr>
-              <th>{__("Name", "regi-fair")}</th>
-              <th>{__("Date", "regi-fair")}</th>
-              <th>{__("Registrations", "regi-fair")}</th>
-              <th>{__("Post", "regi-fair")}</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            {events.map((e: EventConfiguration) => {
-              return (
-                <tr key={e.id}>
-                  <td>
-                    <Link to={`/event/${e.id}`}>{e.name}</Link>
-                  </td>
-                  <td>{e.date}</td>
-                  <td>
-                    {e.registrations === 0 && "-"}
-                    {e.registrations > 0 && (
-                      <Link to={`/event/${e.id}/registrations`}>
-                        {e.registrations}
-                      </Link>
-                    )}
-                  </td>
-                  <td>
-                    {!e.postPermalink && "-"}
-                    {e.postPermalink && (
-                      <Link to={e.postPermalink} target="_blank">
-                        {e.postTitle}
-                      </Link>
-                    )}
-                    {e.hasMultipleReferences && (
+        <>
+          <table className="widefat mt">
+            <thead>
+              <tr>
+                <th>{__("Name", "regi-fair")}</th>
+                <th>{__("Date", "regi-fair")}</th>
+                <th>{__("Registrations", "regi-fair")}</th>
+                <th>{__("Post", "regi-fair")}</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {events.map((e: EventConfiguration) => {
+                return (
+                  <tr key={e.id}>
+                    <td>
+                      <Link to={`/event/${e.id}`}>{e.name}</Link>
+                    </td>
+                    <td>{e.date}</td>
+                    <td>
+                      {e.registrations === 0 && "-"}
+                      {e.registrations > 0 && (
+                        <Link to={`/event/${e.id}/registrations`}>
+                          {e.registrations}
+                        </Link>
+                      )}
+                    </td>
+                    <td>
+                      {!e.postPermalink && "-"}
+                      {e.postPermalink && (
+                        <Link to={e.postPermalink} target="_blank">
+                          {e.postTitle}
+                        </Link>
+                      )}
+                      {e.hasMultipleReferences && (
+                        <Button
+                          className="warning-sign"
+                          variant="link"
+                          onClick={() => openEventWithMultipleReferencesModal(e)}
+                          aria-label={__("Warning", "regi-fair")}
+                        >
+                          <Icon icon="warning" />
+                        </Button>
+                      )}
+                    </td>
+                    <td>
                       <Button
-                        className="warning-sign"
-                        variant="link"
-                        onClick={() => openEventWithMultipleReferencesModal(e)}
-                        aria-label={__("Warning", "regi-fair")}
+                        variant="secondary"
+                        isDestructive={true}
+                        onClick={() => openDeleteEventModal(e)}
                       >
-                        <Icon icon="warning" />
+                        {__("Delete", "regi-fair")}
                       </Button>
-                    )}
-                  </td>
-                  <td>
-                    <Button
-                      variant="secondary"
-                      isDestructive={true}
-                      onClick={() => openDeleteEventModal(e)}
-                    >
-                      {__("Delete", "regi-fair")}
-                    </Button>
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+
+          <Pagination
+            page={page}
+            setPage={setPage}
+            pageSize={pageSize}
+            setPageSize={setPageSize}
+            total={total}
+          />
+        </>
       )}
       <br />
 

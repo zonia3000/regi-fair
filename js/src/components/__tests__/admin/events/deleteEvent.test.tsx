@@ -9,17 +9,20 @@ import EventsRoot from "../../../admin/events/EventsRoot";
 test("Delete event", async () => {
   server.use(
     http.get("/regifair/v1/admin/events", () => {
-      return HttpResponse.json([
-        {
-          id: 1,
-          name: "event1",
-          date: "2030-01-01",
-          registrations: 3,
-          postTitle: null,
-          postPermalink: null,
-          hasMultipleReferences: false,
-        },
-      ]);
+      return HttpResponse.json({
+        events: [
+          {
+            id: 1,
+            name: "event1",
+            date: "2030-01-01",
+            registrations: 3,
+            postTitle: null,
+            postPermalink: null,
+            hasMultipleReferences: false,
+          },
+        ],
+        total: 1
+      });
     }),
   );
 

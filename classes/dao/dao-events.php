@@ -22,17 +22,74 @@ class REGI_FAIR_DAO_Events extends REGI_FAIR_Base_DAO
     $this->registrations_dao = new REGI_FAIR_DAO_Registrations();
   }
 
-  public function list_events(bool $ignore_past_events = false): array
+  public function list_events_paginated(int $limit, int $offset): array
   {
     global $wpdb;
-
-    if ($ignore_past_events) {
-      $results = $this->list_all_events();
-    } else {
-      $results = $this->list_only_future_events();
-    }
+    $results = $this->get_events_paginated($limit, $offset);
     $this->check_results('retrieving events list');
+    $events = $this->get_events_with_posts($results);
 
+    $var = $wpdb->get_var(
+      "SELECT COUNT(*) FROM {$wpdb->prefix}regi_fair_event"
+    );
+    $this->check_var($var, 'retrieving the events count');
+    $total = (int) $var;
+    return [
+      'events' => $events,
+      'total' => $total
+    ];
+  }
+
+  public function list_active_events(): array
+  {
+    $results = $this->get_active_events();
+    $this->check_results('retrieving active events list');
+    $events = $this->get_events_with_posts($results);
+    return $events;
+  }
+
+  private function get_events_paginated(int $limit, int $offset)
+  {
+    global $wpdb;
+    return $wpdb->get_results(
+      $wpdb->prepare(
+        "SELECT e.id, e.name, e.date, COUNT(r.id) AS registrations, p.posts
+        FROM {$wpdb->prefix}regi_fair_event e
+        LEFT JOIN {$wpdb->prefix}regi_fair_event_registration r ON e.id = r.event_id
+        LEFT JOIN (
+          SELECT event_id, GROUP_CONCAT(post_id ORDER BY updated_at DESC) AS posts
+          FROM {$wpdb->prefix}regi_fair_event_post GROUP BY event_id
+        ) AS p ON p.event_id = e.id
+        GROUP BY e.id ORDER BY e.date DESC
+        LIMIT %d OFFSET %d",
+        $limit,
+        $offset
+      ),
+      ARRAY_A
+    );
+  }
+
+  /**
+   * Returns only future events.
+   */
+  private function get_active_events()
+  {
+    global $wpdb;
+    return $wpdb->get_results(
+      "SELECT e.id, e.name, e.date, COUNT(r.id) AS registrations, p.posts
+       FROM {$wpdb->prefix}regi_fair_event e
+       LEFT JOIN {$wpdb->prefix}regi_fair_event_registration r ON e.id = r.event_id
+       LEFT JOIN (
+         SELECT event_id, GROUP_CONCAT(post_id ORDER BY updated_at DESC) AS posts
+         FROM {$wpdb->prefix}regi_fair_event_post GROUP BY event_id
+       ) AS p ON p.event_id = e.id
+       WHERE DATE(e.date) >= DATE(CURRENT_TIMESTAMP)
+       GROUP BY e.id ORDER BY e.date DESC",
+      ARRAY_A
+    );
+  }
+
+  private function get_events_with_posts($results) {
     $events = [];
     foreach ($results as $result) {
       $post_permalink = null;
@@ -60,39 +117,6 @@ class REGI_FAIR_DAO_Events extends REGI_FAIR_Base_DAO
       ];
     }
     return $events;
-  }
-
-  private function list_all_events()
-  {
-    global $wpdb;
-    return $wpdb->get_results(
-      "SELECT e.id, e.name, e.date, COUNT(r.id) AS registrations, p.posts
-       FROM {$wpdb->prefix}regi_fair_event e
-       LEFT JOIN {$wpdb->prefix}regi_fair_event_registration r ON e.id = r.event_id
-       LEFT JOIN (
-         SELECT event_id, GROUP_CONCAT(post_id ORDER BY updated_at DESC) AS posts
-         FROM {$wpdb->prefix}regi_fair_event_post GROUP BY event_id
-       ) AS p ON p.event_id = e.id
-       GROUP BY e.id ORDER BY e.date DESC",
-      ARRAY_A
-    );
-  }
-
-  private function list_only_future_events()
-  {
-    global $wpdb;
-    return $wpdb->get_results(
-      "SELECT e.id, e.name, e.date, COUNT(r.id) AS registrations, p.posts
-       FROM {$wpdb->prefix}regi_fair_event e
-       LEFT JOIN {$wpdb->prefix}regi_fair_event_registration r ON e.id = r.event_id
-       LEFT JOIN (
-         SELECT event_id, GROUP_CONCAT(post_id ORDER BY updated_at DESC) AS posts
-         FROM {$wpdb->prefix}regi_fair_event_post GROUP BY event_id
-       ) AS p ON p.event_id = e.id
-       WHERE DATE(e.date) >= DATE(CURRENT_TIMESTAMP)
-       GROUP BY e.id ORDER BY e.date DESC",
-      ARRAY_A
-    );
   }
 
   public function get_event(int $event_id): ?REGI_FAIR_Event

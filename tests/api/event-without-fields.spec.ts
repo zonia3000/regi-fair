@@ -32,15 +32,15 @@ test('Event without fields', async ({ page, context, request }) => {
   });
 
   await test.step('Verify that the event appears in the list', async () => {
-    const response = await request.get(`/index.php?rest_route=/regifair/v1/admin/events`, {
+    const response = await request.get(`/index.php?rest_route=/regifair/v1/admin/events&page=1&pageSize=1000`, {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce
       }
     });
     expect(response.status()).toEqual(200);
-    const body: any[] = await response.json();
-    const events = body.filter(t => t.id === eventId);
+    const body: { events: any[] } = await response.json();
+    const events = body.events.filter(t => t.id === eventId);
     expect(events).toHaveLength(1);
     expect(events[0].name).toEqual(eventName);
   });

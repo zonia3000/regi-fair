@@ -35,15 +35,15 @@ setup('Create test event', async ({ page, context, request }) => {
   });
 
   await setup.step('Delete old test event, if exists', async () => {
-    const response = await request.get('/index.php?rest_route=/regifair/v1/admin/events', {
+    const response = await request.get('/index.php?rest_route=/regifair/v1/admin/events&page=1&pageSize=1000', {
       headers: {
         'Cookie': cookies,
         'X-WP-Nonce': nonce
       }
     });
     expect(response.status()).toEqual(200);
-    const body: any[] = await response.json();
-    const events = body.filter(e => e.name === TEST_EVENT_NAME);
+    const body: { events: any[] } = await response.json();
+    const events = body.events.filter(e => e.name === TEST_EVENT_NAME);
 
     if (events.length > 0) {
       expect(events.length).toEqual(1);

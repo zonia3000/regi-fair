@@ -9,17 +9,20 @@ import EventsRoot from "../../../admin/events/EventsRoot";
 test("Open event with multiple references modal", async () => {
   server.use(
     http.get("/regifair/v1/admin/events", () => {
-      return HttpResponse.json([
-        {
-          id: 1,
-          name: "event1",
-          date: "2030-01-01",
-          registrations: 0,
-          postTitle: "example",
-          postPermalink: "http://localhost/?p=42",
-          hasMultipleReferences: true,
-        },
-      ]);
+      return HttpResponse.json({
+        events: [
+          {
+            id: 1,
+            name: "event1",
+            date: "2030-01-01",
+            registrations: 0,
+            postTitle: "example",
+            postPermalink: "http://localhost/?p=42",
+            hasMultipleReferences: true,
+          },
+        ],
+        total: 1
+      });
     }),
   );
 
