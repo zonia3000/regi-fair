@@ -40,7 +40,7 @@ class REGI_FAIR_DAO_Templates extends REGI_FAIR_Base_DAO
 
     $results = $wpdb->get_results(
       $wpdb->prepare(
-        "SELECT t.id, t.name, t.autoremove_submissions, t.autoremove_submissions_period,
+        "SELECT t.id, t.name, t.autoremove_submissions, t.autoremove_event, t.autoremove_submissions_period,
          t.editable_registrations, t.admin_email, t.extra_email_content,
          f.id AS field_id, f.label, f.type, f.description, f.required, f.extra, f.position
          FROM {$wpdb->prefix}regi_fair_event_template t
@@ -59,7 +59,8 @@ class REGI_FAIR_DAO_Templates extends REGI_FAIR_Base_DAO
     $template = new REGI_FAIR_Event_Template();
     $template->id = (int) $results[0]['id'];
     $template->name = $results[0]['name'];
-    $template->autoremove = (bool) $results[0]['autoremove_submissions'];
+    $template->autoremoveSubmissions = (bool) $results[0]['autoremove_submissions'];
+    $template->autoremoveEvent = (bool) $results[0]['autoremove_event'];
     $template->autoremovePeriod = $results[0]['autoremove_submissions_period'];
     $template->editableRegistrations = (bool) $results[0]['editable_registrations'];
     $template->adminEmail = $results[0]['admin_email'];
@@ -101,14 +102,15 @@ class REGI_FAIR_DAO_Templates extends REGI_FAIR_Base_DAO
         REGI_FAIR_DB::get_table_name('event_template'),
         [
           'name' => $event_template->name,
-          'autoremove_submissions' => $event_template->autoremove,
+          'autoremove_submissions' => $event_template->autoremoveSubmissions,
+          'autoremove_event' => $event_template->autoremoveEvent,
           'autoremove_submissions_period' => $event_template->autoremovePeriod,
           'waiting_list' => $event_template->waitingList,
           'editable_registrations' => $event_template->editableRegistrations,
           'admin_email' => $event_template->adminEmail,
           'extra_email_content' => $event_template->extraEmailContent
         ],
-        ['%s', '%s', '%d', '%d', '%d', '%s', '%s']
+        ['%s', '%d', '%d', '%d', '%d', '%d', '%s', '%s']
       );
       $this->check_result($result, 'inserting event template');
 
@@ -156,7 +158,8 @@ class REGI_FAIR_DAO_Templates extends REGI_FAIR_Base_DAO
         REGI_FAIR_DB::get_table_name('event_template'),
         [
           'name' => $event_template->name,
-          'autoremove_submissions' => $event_template->autoremove,
+          'autoremove_submissions' => $event_template->autoremoveSubmissions,
+          'autoremove_event' => $event_template->autoremoveEvent,
           'autoremove_submissions_period' => $event_template->autoremovePeriod,
           'waiting_list' => $event_template->waitingList,
           'editable_registrations' => $event_template->editableRegistrations,
@@ -164,7 +167,7 @@ class REGI_FAIR_DAO_Templates extends REGI_FAIR_Base_DAO
           'extra_email_content' => $event_template->extraEmailContent
         ],
         ['id' => $event_template->id],
-        ['%s', '%s', '%d', '%d', '%d', '%s', '%s'],
+        ['%s', '%d', '%d', '%d', '%d', '%d', '%s', '%s'],
         ['%d']
       );
       $this->check_result($result, 'updating event template');

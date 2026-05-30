@@ -125,7 +125,8 @@ class REGI_FAIR_DAO_Events extends REGI_FAIR_Base_DAO
 
     $event_results = $wpdb->get_results(
       $wpdb->prepare(
-        "SELECT e.id, e.name, e.date, e.autoremove_submissions, e.autoremove_submissions_period,
+        "SELECT e.id, e.name, e.date, e.autoremove_submissions, e.autoremove_event,
+         e.autoremove_submissions_period, e.autoremoved_submissions_count, e.autoremoved_at,
          e.editable_registrations, e.admin_email, e.extra_email_content, e.max_participants, e.waiting_list,
          DATE(e.date) < DATE(CURRENT_TIMESTAMP) AS ended,
          f.id AS field_id, f.label, f.type, f.description, f.required, f.extra, f.position
@@ -156,8 +157,11 @@ class REGI_FAIR_DAO_Events extends REGI_FAIR_Base_DAO
       $event->availableSeats = $event->maxParticipants - $registrations_count;
       $event->waitingList = (bool) $event_results[0]['waiting_list'];
     }
-    $event->autoremove = (bool) $event_results[0]['autoremove_submissions'];
+    $event->autoremoveSubmissions = (bool) $event_results[0]['autoremove_submissions'];
+    $event->autoremoveEvent = (bool) $event_results[0]['autoremove_event'];
     $event->autoremovePeriod = (int) $event_results[0]['autoremove_submissions_period'];
+    $event->autoremovedSubmissionsCount = $event_results[0]['autoremoved_submissions_count'];
+    $event->autoremovedAt = $event_results[0]['autoremoved_at'];
     $event->formFields = $this->load_form_fields($event_results);
     $event->hasResponses = $has_responses;
     $event->editableRegistrations = (bool) $event_results[0]['editable_registrations'];
@@ -259,7 +263,8 @@ class REGI_FAIR_DAO_Events extends REGI_FAIR_Base_DAO
         [
           'name' => $event->name,
           'date' => $event->date,
-          'autoremove_submissions' => $event->autoremove,
+          'autoremove_submissions' => $event->autoremoveSubmissions,
+          'autoremove_event' => $event->autoremoveEvent,
           'autoremove_submissions_period' => $event->autoremovePeriod,
           'max_participants' => $event->maxParticipants,
           'waiting_list' => $event->waitingList,
@@ -267,7 +272,7 @@ class REGI_FAIR_DAO_Events extends REGI_FAIR_Base_DAO
           'admin_email' => $event->adminEmail,
           'extra_email_content' => $event->extraEmailContent
         ],
-        ['%s', '%s', '%d', '%d', '%d', '%d', '%d', '%s', '%s']
+        ['%s', '%s', '%d', '%d', '%d', '%d', '%d', '%d', '%s', '%s']
       );
       $this->check_result($result, 'inserting event');
 
@@ -326,7 +331,8 @@ class REGI_FAIR_DAO_Events extends REGI_FAIR_Base_DAO
         [
           'name' => $event->name,
           'date' => $event->date,
-          'autoremove_submissions' => $event->autoremove,
+          'autoremove_submissions' => $event->autoremoveSubmissions,
+          'autoremove_event' => $event->autoremoveEvent,
           'autoremove_submissions_period' => $event->autoremovePeriod,
           'max_participants' => $event->maxParticipants,
           'waiting_list' => $event->waitingList,
@@ -335,7 +341,7 @@ class REGI_FAIR_DAO_Events extends REGI_FAIR_Base_DAO
           'extra_email_content' => $event->extraEmailContent
         ],
         ['id' => $event->id],
-        ['%s', '%s', '%d', '%d', '%d', '%d', '%d', '%s', '%s'],
+        ['%s', '%s', '%d', '%d', '%d', '%d', '%d', '%d', '%s', '%s'],
         ['%d']
       );
       $this->check_result($result, 'updating event');

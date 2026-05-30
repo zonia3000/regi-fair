@@ -150,8 +150,9 @@ class REGI_FAIR_Templates_Admin_Controller extends WP_REST_Controller
   {
     $event_template = new REGI_FAIR_Event_Template();
     $event_template->name = $request->get_param('name');
-    $event_template->autoremove = (bool) $request->get_param('autoremove');
-    if ($event_template->autoremove) {
+    $event_template->autoremoveSubmissions = (bool) $request->get_param('autoremoveSubmissions');
+    $event_template->autoremoveEvent = (bool) $request->get_param('autoremoveEvent');
+    if ($event_template->autoremoveSubmissions) {
       if ($request->get_param('autoremovePeriod') !== null) {
         $event_template->autoremovePeriod = (int) $request->get_param('autoremovePeriod');
       } else {
@@ -199,7 +200,8 @@ class REGI_FAIR_Templates_Admin_Controller extends WP_REST_Controller
     $schema = parent::get_item_schema();
 
     $schema['properties']['name'] = ['type' => 'string', 'required' => true, 'minLength' => 1];
-    $schema['properties']['autoremove'] = ['type' => 'boolean', 'required' => true];
+    $schema['properties']['autoremoveSubmissions'] = ['type' => 'boolean', 'required' => true];
+    $schema['properties']['autoremoveEvent'] = ['type' => 'boolean', 'required' => true];
     $schema['properties']['autoremovePeriod'] = ['type' => 'integer', 'required' => false, 'minimum' => 1];
     $schema['properties']['waitingList'] = ['type' => 'boolean', 'required' => true];
     $schema['properties']['editableRegistrations'] = ['type' => 'boolean', 'required' => true];

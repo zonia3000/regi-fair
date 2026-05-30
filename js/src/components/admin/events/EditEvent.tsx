@@ -27,7 +27,8 @@ const EditEvent = () => {
   const [found, setFound] = useState(false);
   const [eventName, setEventName] = useState("");
   const [date, setDate] = useState("");
-  const [autoremove, setAutoremove] = useState(true);
+  const [autoremoveSubmissions, setAutoremoveSubmissions] = useState(true);
+  const [autoremoveEvent, setAutoremoveEvent] = useState(false);
   const [autoremovePeriod, setAutoremovePeriod] = useState("");
   const [formFields, setFormFields] = useState([] as Field[]);
   const [hasResponses, setHasResponses] = useState(false);
@@ -63,8 +64,9 @@ const EditEvent = () => {
         apiFetch({ path: `/regifair/v1/admin/templates/${templateId}` })
           .then((result) => {
             const template = result as TemplateConfiguration;
-            setAutoremove(template.autoremove);
-            if (template.autoremove) {
+            setAutoremoveSubmissions(template.autoremoveSubmissions);
+            setAutoremoveEvent(template.autoremoveEvent);
+            if (template.autoremoveSubmissions) {
               setAutoremovePeriod(template.autoremovePeriod.toString());
             }
             setFormFields(template.formFields);
@@ -114,8 +116,9 @@ const EditEvent = () => {
           const event = result as EventConfiguration;
           setEventName(event.name);
           setDate(event.date);
-          setAutoremove(event.autoremove);
-          if (event.autoremove) {
+          setAutoremoveSubmissions(event.autoremoveSubmissions);
+          setAutoremoveEvent(event.autoremoveEvent);
+          if (event.autoremoveSubmissions) {
             setAutoremovePeriod(event.autoremovePeriod.toString());
           }
           setFormFields(event.formFields);
@@ -161,8 +164,9 @@ const EditEvent = () => {
       adminEmail: notifyAdmin ? adminEmail.trim() : null,
       editableRegistrations,
       formFields,
-      autoremove: autoremove,
-      autoremovePeriod: autoremove ? Number(autoremovePeriod) : null,
+      autoremoveSubmissions,
+      autoremoveEvent,
+      autoremovePeriod: autoremoveSubmissions ? Number(autoremovePeriod) : null,
       maxParticipants: hasMaxParticipants ? Number(maxParticipants) : null,
       waitingList: hasMaxParticipants ? hasWaitingList : false,
       extraEmailContent: customizeEmailContent
@@ -344,13 +348,22 @@ const EditEvent = () => {
         </>
       )}
       <CheckboxControl
-        label={__("Autoremove user data after the event", "regi-fair")}
-        checked={autoremove}
-        onChange={setAutoremove}
+        label={__("Autoremove user data (registrations) after the event", "regi-fair")}
+        checked={autoremoveSubmissions}
+        onChange={setAutoremoveSubmissions}
         className="mb"
         __nextHasNoMarginBottom={true}
       />
-      {autoremove && (
+      {autoremoveSubmissions && (
+        <CheckboxControl
+          label={__("Autoremove also the event", "regi-fair")}
+          checked={autoremoveEvent}
+          onChange={setAutoremoveEvent}
+          className="mb"
+          __nextHasNoMarginBottom={true}
+        />
+      )}
+      {autoremoveSubmissions && (
         <TextControl
           label={__("Autoremove period", "regi-fair")}
           onChange={setAutoremovePeriod}
@@ -359,14 +372,14 @@ const EditEvent = () => {
           required
           className="mb"
           help={__(
-            "Number of days to wait after the event conclusion before removing registrations data",
+            "Number of days to wait after the event conclusion before removing registrations data or the event itself",
             "regi-fair"
           )}
           __nextHasNoMarginBottom={true}
           __next40pxDefaultSize={true}
         />
       )}
-      {autoremove && !valid && !autoremovePeriod && (
+      {autoremoveSubmissions && !valid && !autoremovePeriod && (
         <span className="error-text">
           {__("Field is required", "regi-fair")}
         </span>

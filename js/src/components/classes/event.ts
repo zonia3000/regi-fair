@@ -9,7 +9,8 @@ export type EventConfiguration = {
   postPermalink?: string | null;
   hasMultipleReferences?: boolean;
   formFields: Field[];
-  autoremove: boolean;
+  autoremoveSubmissions: boolean;
+  autoremoveEvent: boolean;
   autoremovePeriod: number;
   maxParticipants: number | null;
   availableSeats?: number;

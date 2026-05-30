@@ -76,7 +76,22 @@ class REGI_FAIR_Event extends REGI_FAIR_Public_Event_Data
   /**
    * @var bool
    */
-  public $autoremove = true;
+  public $autoremoveSubmissions = true;
+
+  /**
+   * @var bool
+   */
+  public $autoremoveEvent = false;
+
+  /**
+   * @var int|null
+   */
+  public $autoremovedSubmissionsCount;
+
+  /**
+   * @var string|null
+   */
+  public $autoremovedAt;
 
   /**
    * @var int|null

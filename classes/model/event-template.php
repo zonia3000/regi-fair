@@ -24,7 +24,12 @@ class REGI_FAIR_Event_Template
   /**
    * @var bool
    */
-  public $autoremove = true;
+  public $autoremoveSubmissions = true;
+
+  /**
+   * @var bool
+   */
+  public $autoremoveEvent = false;
 
   /**
    * @var int|null

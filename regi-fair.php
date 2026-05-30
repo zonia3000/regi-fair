@@ -61,8 +61,9 @@ add_action('save_post', ['REGI_FAIR_Event_Post_Mapper', 'save_post_callback'], 1
 add_action('delete_post', ['REGI_FAIR_Event_Post_Mapper', 'delete_post_callback']);
 
 require_once(REGI_FAIR_PLUGIN_DIR . 'classes/admin/db-setup.php');
-register_activation_hook(__FILE__, ['REGI_FAIR_DB_Setup', 'create_tables']);
+register_activation_hook(__FILE__, ['REGI_FAIR_DB_Setup', 'setup_tables']);
 register_uninstall_hook(__FILE__, ['REGI_FAIR_DB_Setup', 'drop_tables']);
+add_action('plugins_loaded', ['REGI_FAIR_DB_Setup', 'setup_tables']);
 
 // WP-Cron configuration for past events cleanup
 

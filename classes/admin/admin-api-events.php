@@ -215,8 +215,9 @@ class REGI_FAIR_Events_Admin_Controller extends WP_REST_Controller
     $event = new REGI_FAIR_Event();
     $event->name = $request->get_param('name');
     $event->date = $request->get_param('date');
-    $event->autoremove = (bool) $request->get_param('autoremove');
-    if ($event->autoremove) {
+    $event->autoremoveSubmissions = (bool) $request->get_param('autoremoveSubmissions');
+    $event->autoremoveEvent = (bool) $request->get_param('autoremoveEvent');
+    if ($event->autoremoveSubmissions) {
       if ($request->get_param('autoremovePeriod') !== null) {
         $event->autoremovePeriod = (int) $request->get_param('autoremovePeriod');
       } else {
@@ -268,7 +269,8 @@ class REGI_FAIR_Events_Admin_Controller extends WP_REST_Controller
 
     $schema['properties']['name'] = ['type' => 'string', 'required' => true, 'minLength' => 1];
     $schema['properties']['date'] = ['type' => 'string', 'required' => true, 'format' => 'date-time'];
-    $schema['properties']['autoremove'] = ['type' => 'boolean', 'required' => true];
+    $schema['properties']['autoremoveSubmissions'] = ['type' => 'boolean', 'required' => true];
+    $schema['properties']['autoremoveEvent'] = ['type' => 'boolean', 'required' => true];
     $schema['properties']['autoremovePeriod'] = ['type' => 'integer', 'required' => false, 'minimum' => 1];
     $schema['properties']['maxParticipants'] = ['type' => 'integer', 'required' => false, 'minimum' => 1];
     $schema['properties']['waitingList'] = ['type' => 'boolean', 'required' => true];

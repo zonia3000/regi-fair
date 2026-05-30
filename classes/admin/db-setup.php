@@ -7,105 +7,124 @@ if (!defined('ABSPATH')) {
 require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 
 define('REGI_FAIR_DB_VERSION_KEY', 'regi_fair_db_version');
-define('REGI_FAIR_DB_VERSION', '1.0');
+define('REGI_FAIR_DB_VERSION', '1.1');
 require_once(REGI_FAIR_PLUGIN_DIR . 'classes/db.php');
 
 class REGI_FAIR_DB_Setup
 {
-  public static function create_tables()
+  public static function setup_tables()
   {
     global $wpdb;
 
-    $event_table = REGI_FAIR_DB_Setup::create_table('event', "
-      id bigint unsigned NOT NULL AUTO_INCREMENT,
-      name varchar(255) NOT NULL,
-      date date NOT NULL,
-      autoremove_submissions bit DEFAULT 1,
-      autoremove_submissions_period int DEFAULT 30,
-      max_participants int DEFAULT NULL,
-      waiting_list bit DEFAULT 0,
-      editable_registrations bit DEFAULT 1,
-      admin_email varchar(255) NULL,
-      extra_email_content text NULL,
-      PRIMARY KEY  (id)
-    ");
+    $installed_ver = get_option(REGI_FAIR_DB_VERSION_KEY);
 
-    $event_form_field_table = REGI_FAIR_DB_Setup::create_table('event_form_field', "
-      id bigint unsigned NOT NULL AUTO_INCREMENT,
-      event_id bigint unsigned NOT NULL,
-      label varchar(255) NOT NULL,
-      type varchar(255) NOT NULL,
-      description text NULL,
-      required bit DEFAULT 1,
-      extra text NULL,
-      position int NOT NULL,
-      deleted bit DEFAULT 0,
-      PRIMARY KEY  (id),
-      FOREIGN KEY (event_id) REFERENCES $event_table (id)
-    ");
+    if ($installed_ver !== REGI_FAIR_DB_VERSION) {
+      $event_table = REGI_FAIR_DB_Setup::create_table('event', "
+        id bigint unsigned NOT NULL AUTO_INCREMENT,
+        name varchar(255) NOT NULL,
+        date date NOT NULL,
+        autoremove_submissions bit DEFAULT 1,
+        autoremove_submissions_period int DEFAULT 30,
+        max_participants int DEFAULT NULL,
+        waiting_list bit DEFAULT 0,
+        editable_registrations bit DEFAULT 1,
+        admin_email varchar(255) NULL,
+        extra_email_content text NULL,
+        autoremove_event bit DEFAULT 0,
+        autoremoved_submissions_count int DEFAULT NULL,
+        autoremoved_at timestamp NULL DEFAULT NULL,
+        PRIMARY KEY  (id)
+      ");
 
-    $event_post_create_sql = "
-      event_id bigint unsigned NOT NULL,
-      post_id bigint unsigned NOT NULL,
-      updated_at timestamp DEFAULT CURRENT_TIMESTAMP,
-      PRIMARY KEY  (event_id, post_id),
-      FOREIGN KEY (event_id) REFERENCES $event_table (id)";
+      $event_form_field_table = REGI_FAIR_DB_Setup::create_table('event_form_field', "
+        id bigint unsigned NOT NULL AUTO_INCREMENT,
+        event_id bigint unsigned NOT NULL,
+        label varchar(255) NOT NULL,
+        type varchar(255) NOT NULL,
+        description text NULL,
+        required bit DEFAULT 1,
+        extra text NULL,
+        position int NOT NULL,
+        deleted bit DEFAULT 0,
+        PRIMARY KEY  (id)
+      ", [
+        "FOREIGN KEY (event_id) REFERENCES $event_table (id)"
+      ]);
 
-    if (REGI_FAIR_DB_Setup::can_create_posts_foreign_key()) {
-      $event_post_create_sql .= ",
-      FOREIGN KEY (post_id) REFERENCES " . $wpdb->prefix . "posts (ID)";
+      $event_post_foreign_keys_sql = [
+        "FOREIGN KEY (event_id) REFERENCES $event_table (id)"
+      ];
+      if (REGI_FAIR_DB_Setup::can_create_posts_foreign_key()) {
+        array_push(
+          $event_post_foreign_keys_sql,
+          "FOREIGN KEY (post_id) REFERENCES " . $wpdb->prefix . "posts (ID)"
+        );
+      }
+
+      REGI_FAIR_DB_Setup::create_table('event_post', "
+        event_id bigint unsigned NOT NULL,
+        post_id bigint unsigned NOT NULL,
+        updated_at timestamp DEFAULT CURRENT_TIMESTAMP,
+        PRIMARY KEY  (event_id, post_id)
+      ", $event_post_foreign_keys_sql);
+
+      $event_template_table = REGI_FAIR_DB_Setup::create_table('event_template', "
+        id bigint unsigned NOT NULL AUTO_INCREMENT,
+        name varchar(255) NOT NULL,
+        autoremove_submissions bit DEFAULT 1,
+        autoremove_submissions_period int DEFAULT 30,
+        waiting_list bit DEFAULT 0,
+        editable_registrations bit DEFAULT 1,
+        admin_email varchar(255) NULL,
+        extra_email_content text NULL,
+        autoremove_event bit DEFAULT 0,
+        PRIMARY KEY  (id)
+      ");
+
+      REGI_FAIR_DB_Setup::create_table('event_template_form_field', "
+        id bigint unsigned NOT NULL AUTO_INCREMENT,
+        template_id bigint unsigned NOT NULL,
+        label varchar(255) NOT NULL,
+        type varchar(255) NOT NULL,
+        description text NULL,
+        required bit DEFAULT 1,
+        extra text NULL,
+        position int NOT NULL,
+        PRIMARY KEY  (id)
+      ", [
+        "FOREIGN KEY (template_id) REFERENCES $event_template_table (id)"
+      ]);
+
+      $event_registration_table = REGI_FAIR_DB_Setup::create_table('event_registration', "
+        id bigint unsigned NOT NULL AUTO_INCREMENT,
+        event_id bigint unsigned NOT NULL,
+        registration_token varchar(255) NULL,
+        inserted_at timestamp DEFAULT CURRENT_TIMESTAMP,
+        updated_at timestamp DEFAULT CURRENT_TIMESTAMP,
+        number_of_people integer NOT NULL DEFAULT 1,
+        waiting_list bit DEFAULT 0,
+        PRIMARY KEY  (id)
+      ", [
+        "UNIQUE (registration_token)", // not working in update
+        "FOREIGN KEY (event_id) REFERENCES $event_table (id)"
+      ]);
+
+      REGI_FAIR_DB_Setup::create_table('event_registration_value', "
+        registration_id bigint unsigned NOT NULL,
+        field_id bigint unsigned NOT NULL,
+        field_value text NULL,
+        PRIMARY KEY  (registration_id, field_id)
+      ", [
+        "FOREIGN KEY (registration_id) REFERENCES $event_registration_table (id)",
+        "FOREIGN KEY (field_id) REFERENCES $event_form_field_table (id)"
+      ]);
+
+      if ($installed_ver === false) {
+        add_option(REGI_FAIR_DB_VERSION_KEY, REGI_FAIR_DB_VERSION);
+      } else {
+        update_option(REGI_FAIR_DB_VERSION_KEY, REGI_FAIR_DB_VERSION);
+      }
     }
-
-    REGI_FAIR_DB_Setup::create_table('event_post', $event_post_create_sql);
-
-    $event_template_table = REGI_FAIR_DB_Setup::create_table('event_template', "
-      id bigint unsigned NOT NULL AUTO_INCREMENT,
-      name varchar(255) NOT NULL,
-      autoremove_submissions bit DEFAULT 1,
-      autoremove_submissions_period int DEFAULT 30,
-      waiting_list bit DEFAULT 0,
-      editable_registrations bit DEFAULT 1,
-      admin_email varchar(255) NULL,
-      extra_email_content text NULL,
-      PRIMARY KEY  (id)
-    ");
-
-    REGI_FAIR_DB_Setup::create_table('event_template_form_field', "
-      id bigint unsigned NOT NULL AUTO_INCREMENT,
-      template_id bigint unsigned NOT NULL,
-      label varchar(255) NOT NULL,
-      type varchar(255) NOT NULL,
-      description text NULL,
-      required bit DEFAULT 1,
-      extra text NULL,
-      position int NOT NULL,
-      PRIMARY KEY  (id),
-      FOREIGN KEY (template_id) REFERENCES $event_template_table (id)
-    ");
-
-    $event_registration_table = REGI_FAIR_DB_Setup::create_table('event_registration', "
-      id bigint unsigned NOT NULL AUTO_INCREMENT,
-      event_id bigint unsigned NOT NULL,
-      registration_token varchar(255) NULL,
-      inserted_at timestamp DEFAULT CURRENT_TIMESTAMP,
-      updated_at timestamp DEFAULT CURRENT_TIMESTAMP,
-      number_of_people integer NOT NULL DEFAULT 1,
-      waiting_list bit DEFAULT 0,
-      PRIMARY KEY  (id),
-      FOREIGN KEY (event_id) REFERENCES $event_table (id),
-      UNIQUE (registration_token)
-    ");
-
-    REGI_FAIR_DB_Setup::create_table('event_registration_value', "
-      registration_id bigint unsigned NOT NULL,
-      field_id bigint unsigned NOT NULL,
-      field_value text NULL,
-      PRIMARY KEY  (registration_id, field_id),
-      FOREIGN KEY (registration_id) REFERENCES $event_registration_table (id),
-      FOREIGN KEY (field_id) REFERENCES $event_form_field_table (id)
-    ");
-
-    add_option(REGI_FAIR_DB_VERSION_KEY, REGI_FAIR_DB_VERSION);
   }
 
   /**
@@ -148,8 +167,14 @@ class REGI_FAIR_DB_Setup
     delete_option('regi_fair_settings');
   }
 
-  private static function create_table(string $table_name, string $sql_fields): string
+  private static function create_table(string $table_name, string $sql_fields, array $sql_foreign_keys = []): string
   {
+    $installed_ver = get_option(REGI_FAIR_DB_VERSION_KEY);
+    if ($installed_ver === false && count($sql_foreign_keys) > 0) {
+      // Foreign keys not correctly detected during upgrades
+      // Adding them to the SQL query only on initial installation
+      $sql_fields = rtrim($sql_fields) . ",\n" . implode(",\n", $sql_foreign_keys) . "\n";
+    }
     global $wpdb;
     $table_name = REGI_FAIR_DB::get_table_name($table_name);
     $charset_collate = $wpdb->get_charset_collate();

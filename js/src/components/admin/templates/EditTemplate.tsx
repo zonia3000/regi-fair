@@ -24,7 +24,8 @@ const EditTemplate = () => {
   const [loading, setLoading] = useState(true);
   const [found, setFound] = useState(false);
   const [templateName, setTemplateName] = useState("");
-  const [autoremove, setAutoremove] = useState(true);
+  const [autoremoveSubmissions, setAutoremoveSubmissions] = useState(true);
+  const [autoremoveEvent, setAutoremoveEvent] = useState(false);
   const [autoremovePeriod, setAutoremovePeriod] = useState("");
   const [formFields, setFormFields] = useState([] as Field[]);
   const [notifyAdmin, setNotifyAdmin] = useState(false);
@@ -64,8 +65,9 @@ const EditTemplate = () => {
           setFound(true);
           const template = result as TemplateConfiguration;
           setTemplateName(template.name);
-          setAutoremove(template.autoremove);
-          if (template.autoremove) {
+          setAutoremoveSubmissions(template.autoremoveSubmissions);
+          setAutoremoveEvent(template.autoremoveEvent);
+          if (template.autoremoveSubmissions) {
             setAutoremovePeriod(template.autoremovePeriod.toString());
           }
           setFormFields(template.formFields);
@@ -102,8 +104,9 @@ const EditTemplate = () => {
       id: templateId === "new" ? null : Number(templateId),
       name: templateName,
       formFields,
-      autoremove,
-      autoremovePeriod: autoremove ? Number(autoremovePeriod) : null,
+      autoremoveSubmissions,
+      autoremoveEvent,
+      autoremovePeriod: autoremoveSubmissions ? Number(autoremovePeriod) : null,
       waitingList: false,
       adminEmail: notifyAdmin ? adminEmail.trim() : null,
       editableRegistrations,
@@ -202,13 +205,22 @@ const EditTemplate = () => {
         )}
       </div>
       <CheckboxControl
-        label={__("Autoremove user data after the event", "regi-fair")}
-        checked={autoremove}
-        onChange={setAutoremove}
+        label={__("Autoremove user data (registrations) after the event", "regi-fair")}
+        checked={autoremoveSubmissions}
+        onChange={setAutoremoveSubmissions}
         className="mb"
         __nextHasNoMarginBottom={true}
       />
-      {autoremove && (
+      {autoremoveSubmissions && (
+        <CheckboxControl
+          label={__("Autoremove also the event", "regi-fair")}
+          checked={autoremoveEvent}
+          onChange={setAutoremoveEvent}
+          className="mb"
+          __nextHasNoMarginBottom={true}
+        />
+      )}
+      {autoremoveSubmissions && (
         <TextControl
           label={__("Autoremove period", "regi-fair")}
           onChange={setAutoremovePeriod}
@@ -217,14 +229,14 @@ const EditTemplate = () => {
           required
           className="mb"
           help={__(
-            "Number of days to wait after the event conclusion before removing registrations data",
+            "Number of days to wait after the event conclusion before removing registrations data or the event itself",
             "regi-fair"
           )}
           __nextHasNoMarginBottom={true}
           __next40pxDefaultSize={true}
         />
       )}
-      {autoremove && !valid && !autoremovePeriod && (
+      {autoremoveSubmissions && !valid && !autoremovePeriod && (
         <span className="error-text">
           {__("Field is required", "regi-fair")}
         </span>
