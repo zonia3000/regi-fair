@@ -20,7 +20,8 @@ test('Available seats on event with number of people field', async ({ page, cont
       data: {
         name: eventName,
         date: '2030-01-01T00:00:00.000Z',
-        autoremove: true,
+        autoremoveSubmissions: true,
+        autoremoveEvent: false,
         autoremovePeriod: 30,
         waitingList: false,
         editableRegistrations: true,
@@ -111,7 +112,8 @@ test('Available seats on event with number of people field', async ({ page, cont
       data: {
         name: eventName,
         date: '2030-01-01T00:00:00.000Z',
-        autoremove: true,
+        autoremoveSubmissions: true,
+        autoremoveEvent: false,
         autoremovePeriod: 30,
         waitingList: false,
         editableRegistrations: true,
@@ -149,7 +151,8 @@ test('Available seats on event with number of people field', async ({ page, cont
       data: {
         name: eventName,
         date: '2030-01-01T00:00:00.000Z',
-        autoremove: true,
+        autoremoveSubmissions: true,
+        autoremoveEvent: false,
         autoremovePeriod: 30,
         waitingList: false,
         editableRegistrations: true,
@@ -249,7 +252,8 @@ test('Available seats on event without number of people field', async ({ page, c
       data: {
         name: eventName,
         date: '2030-01-01T00:00:00.000Z',
-        autoremove: true,
+        autoremoveSubmissions: true,
+        autoremoveEvent: false,
         autoremovePeriod: 30,
         waitingList: false,
         editableRegistrations: true,
@@ -339,7 +343,8 @@ test('Attempt to add multiple "number of people" field in the same event', async
     data: {
       name: eventName,
       date: '2030-01-01T00:00:00.000Z',
-      autoremove: true,
+      autoremoveSubmissions: true,
+      autoremoveEvent: false,
       autoremovePeriod: 30,
       waitingList: false,
       editableRegistrations: true,
@@ -386,7 +391,8 @@ test('Event with optional "number of people" field', async ({ page, context, req
       data: {
         name: eventName,
         date: '2030-01-01T00:00:00.000Z',
-        autoremove: true,
+        autoremoveSubmissions: true,
+        autoremoveEvent: false,
         autoremovePeriod: 30,
         waitingList: false,
         editableRegistrations: true,

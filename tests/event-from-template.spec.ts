@@ -19,7 +19,8 @@ test('Create event from template', async ({ page, context, request }) => {
       },
       data: {
         name: templateName,
-        autoremove: true,
+        autoremoveSubmissions: true,
+        autoremoveEvent: false,
         autoremovePeriod: 30,
         waitingList: false,
         editableRegistrations: true,
@@ -48,7 +49,7 @@ test('Create event from template', async ({ page, context, request }) => {
   });
 
   await test.step('Verify data loaded from template', async () => {
-    await expect(page.getByRole('checkbox', { name: 'Autoremove user data after the event' })).toBeChecked();
+    await expect(page.getByRole('checkbox', { name: 'Autoremove user data (registrations) after the event' })).toBeChecked();
     await expect(page.getByRole('checkbox', { name: 'Allow the users to edit or delete their registrations' })).toBeChecked();
     await expect(page.getByRole('checkbox', { name: 'Notify an administrator by e-mail when a new registration is created' })).toBeChecked();
     await expect(page.getByRole('textbox', { name: 'Administrator e-mail address' })).toHaveValue('test2@example.com');

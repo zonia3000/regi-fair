@@ -37,7 +37,7 @@ test("Delete event", async () => {
 
   expect(await screen.findByText("Your events")).toBeInTheDocument();
 
-  const rows = screen.getAllByRole("row");
+  const rows = await screen.findAllByRole("row");
   expect(rows.length).toEqual(2);
 
   user.click(within(rows[1]).getByRole("button", { name: "Delete" }));

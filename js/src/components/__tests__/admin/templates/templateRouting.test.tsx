@@ -24,7 +24,8 @@ test("Navigate template pages", async () => {
         formFields: [
           { id: 1, fieldType: "text", label: "text field", required: true },
         ],
-        autoremove: true,
+        autoremoveSubmissions: true,
+        autoremoveEvent: false,
         autoremovePeriod: "30",
         waitingList: false,
         editableRegistrations: true,

@@ -4,10 +4,10 @@ import { adminAuthStateFile, getNonceAndCookiesForApi } from '../utils';
 test.use({ storageState: adminAuthStateFile });
 
 /**
- * This test depends on WP Crontrol plugin and is currently skipped because of wp-env issue in installing it.
+ * This test depends on Cron Jobs plugin, installed via .wp-env.json.
  * This test is run using only one browser, to avoid issues caused by running multiple copies of it in parallel.
  */
-test.skip('Cleanup old event using WP-Cron', async ({ page, context, request }) => {
+test('Cleanup old event using WP-Cron', async ({ page, context, request }) => {
 
   const { nonce, cookies } = await getNonceAndCookiesForApi(page, context);
 
@@ -23,7 +23,8 @@ test.skip('Cleanup old event using WP-Cron', async ({ page, context, request }) 
       data: {
         name: eventName,
         date: '2023-01-01T00:00:00.000Z',
-        autoremove: true,
+        autoremoveSubmissions: true,
+        autoremoveEvent: false,
         autoremovePeriod: 30,
         waitingList: false,
         editableRegistrations: true,
@@ -51,7 +52,8 @@ test.skip('Cleanup old event using WP-Cron', async ({ page, context, request }) 
       data: {
         name: eventName,
         date: '2050-01-01T00:00:00.000Z',
-        autoremove: true,
+        autoremoveSubmissions: true,
+        autoremoveEvent: false,
         autoremovePeriod: 30,
         waitingList: false,
         editableRegistrations: true,
@@ -90,10 +92,10 @@ test.skip('Cleanup old event using WP-Cron', async ({ page, context, request }) 
   });
 
   await test.step('Trigger cron jobs', async () => {
-    await page.goto('/wp-admin/tools.php?page=crontrol_admin_manage_page');
+    await page.goto('/wp-admin/tools.php?page=leira-cron-jobs');
     await page.getByRole('row', { name: 'regi_fair_cleanup_cron_hook' }).hover();
     await page.getByRole('row', { name: 'regi_fair_cleanup_cron_hook' }).getByRole('link', { name: 'Run now' }).click();
-    await expect(page.getByText('Scheduled the cron event regi_fair_cleanup_cron_hook to run now')).toBeVisible();
+    await expect(page.getByText('The selected cron jobs are being executed at this moment')).toBeVisible();
   });
 
   await test.step('Check that first event has been deleted', async () => {

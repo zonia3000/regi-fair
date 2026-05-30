@@ -34,7 +34,8 @@ test('Events with waiting list API', async ({ page, context, request }) => {
       data: {
         name: eventName,
         date: '2050-01-01T00:00:00.000Z',
-        autoremove: true,
+        autoremoveSubmissions: true,
+        autoremoveEvent: false,
         autoremovePeriod: 30,
         waitingList: true,
         editableRegistrations: true,
@@ -567,7 +568,8 @@ test('Events with waiting list API', async ({ page, context, request }) => {
       data: {
         name: 'test',
         date: '2050-01-01T00:00:00.000Z',
-        autoremove: true,
+        autoremoveSubmissions: true,
+        autoremoveEvent: false,
         autoremovePeriod: 30,
         waitingList: true,
         editableRegistrations: true,
@@ -618,7 +620,8 @@ test('Events with waiting list API', async ({ page, context, request }) => {
       data: {
         name: 'test',
         date: '2050-01-01T00:00:00.000Z',
-        autoremove: true,
+        autoremoveSubmissions: true,
+        autoremoveEvent: false,
         autoremovePeriod: 30,
         waitingList: false,
         editableRegistrations: true,
@@ -665,7 +668,8 @@ test('Events with waiting list API', async ({ page, context, request }) => {
       data: {
         name: 'test',
         date: '2050-01-01T00:00:00.000Z',
-        autoremove: true,
+        autoremoveSubmissions: true,
+        autoremoveEvent: false,
         autoremovePeriod: 30,
         waitingList: false,
         editableRegistrations: true,

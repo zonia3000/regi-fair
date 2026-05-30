@@ -17,7 +17,8 @@ test("Edit template", async () => {
         formFields: [
           { id: 1, fieldType: "text", label: "text field", required: true },
         ],
-        autoremove: true,
+        autoremoveSubmissions: true,
+        autoremoveEvent: false,
         autoremovePeriod: "30",
         waitingList: false,
         editableRegistrations: true,
@@ -51,7 +52,7 @@ test("Edit template", async () => {
   );
   expect(
     screen.getByRole("checkbox", {
-      name: "Autoremove user data after the event",
+      name: "Autoremove user data (registrations) after the event",
     }),
   ).toBeChecked();
   expect(
@@ -80,7 +81,8 @@ test("Edit template", async () => {
 
   expect(requestBody.id).toEqual(1);
   expect(requestBody.name).toEqual("template name");
-  expect(requestBody.autoremove).toEqual(true);
+  expect(requestBody.autoremoveSubmissions).toEqual(true);
+  expect(requestBody.autoremoveEvent).toEqual(false);
   expect(requestBody.autoremovePeriod).toEqual(30);
   expect(requestBody.waitingList).toEqual(false);
   expect(requestBody.editableRegistrations).toEqual(true);

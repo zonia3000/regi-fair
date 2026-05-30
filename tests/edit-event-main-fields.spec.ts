@@ -21,7 +21,7 @@ test('Admin event page - main fields CRUD', async ({ page }) => {
     await expect(page.getByRole('heading', { name: 'Create event' })).toHaveCount(1);
     await page.getByRole('textbox', { name: 'Name' }).fill(eventName);
     await page.getByRole('textbox', { name: 'Date' }).fill('2050-01-01');
-    await expect(page.getByRole('checkbox', { name: 'Autoremove user data after the event' })).toBeChecked();
+    await expect(page.getByRole('checkbox', { name: 'Autoremove user data (registrations) after the event' })).toBeChecked();
     await expect(page.getByRole('checkbox', { name: 'Allow the users to edit or delete their registrations' })).toBeChecked();
     await expect(page.getByRole('checkbox', { name: 'Notify an administrator by e-mail when a new registration is created' })).toBeChecked();
     await expect(page.getByRole('textbox', { name: 'Administrator e-mail address' })).toHaveValue('test@example.com');
@@ -43,7 +43,7 @@ test('Admin event page - main fields CRUD', async ({ page }) => {
     await page.getByRole('textbox', { name: 'Date' }).fill('2051-01-01');
     await page.getByRole('checkbox', { name: 'Set a maximum number of participants' }).check();
     await page.getByRole('spinbutton', { name: 'Total available seats' }).fill('100');
-    await page.getByRole('checkbox', { name: 'Autoremove user data after the event' }).uncheck();
+    await page.getByRole('checkbox', { name: 'Autoremove user data (registrations) after the event' }).uncheck();
     await page.getByRole('checkbox', { name: 'Allow the users to edit or delete their registrations' }).uncheck();
     await page.getByRole('checkbox', { name: 'Notify an administrator by e-mail when a new registration is created' }).uncheck();
     await page.getByRole('checkbox', { name: 'Add custom message to confirmation e-mail' }).uncheck();
@@ -60,7 +60,7 @@ test('Admin event page - main fields CRUD', async ({ page }) => {
     await expect(page.getByRole('textbox', { name: 'Name', exact: true })).toHaveValue(`${eventName}-renamed`);
     await expect(page.getByRole('checkbox', { name: 'Set a maximum number of participants' })).toBeChecked();
     await expect(page.getByRole('spinbutton', { name: 'Total available seats' })).toHaveValue('100');
-    await expect(page.getByRole('checkbox', { name: 'Autoremove user data after the event' })).not.toBeChecked();
+    await expect(page.getByRole('checkbox', { name: 'Autoremove user data (registrations) after the event' })).not.toBeChecked();
     await expect(page.getByRole('checkbox', { name: 'Allow the users to edit or delete their registrations' })).not.toBeChecked();
     await expect(page.getByRole('checkbox', { name: 'Notify an administrator by e-mail when a new registration is created' })).not.toBeChecked();
     await page.getByRole('checkbox', { name: 'Notify an administrator by e-mail when a new registration is created' }).check();

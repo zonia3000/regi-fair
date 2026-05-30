@@ -11,7 +11,8 @@ test('Template Admin API', async ({ page, context, request }) => {
     const response = await request.post('/index.php?rest_route=/regifair/v1/admin/templates', {
       data: {
         name: 'test',
-        autoremove: true,
+        autoremoveSubmissions: true,
+        autoremoveEvent: false,
         autoremovePeriod: 30,
         waitingList: false,
         editableRegistrations: true,
@@ -28,7 +29,8 @@ test('Template Admin API', async ({ page, context, request }) => {
       data: {
         id: 1,
         name: 'test',
-        autoremove: true,
+        autoremoveSubmissions: true,
+        autoremoveEvent: false,
         autoremovePeriod: 30,
         waitingList: false,
         editableRegistrations: true,
@@ -68,7 +70,8 @@ test('Template Admin API', async ({ page, context, request }) => {
       },
       data: {
         name: '',
-        autoremove: true,
+        autoremoveSubmissions: true,
+        autoremoveEvent: false,
         autoremovePeriod: 30,
         waitingList: false,
         editableRegistrations: true,
@@ -126,7 +129,8 @@ test('Template Admin API', async ({ page, context, request }) => {
       data: {
         id: 99999999,
         name: 'test',
-        autoremove: true,
+        autoremoveSubmissions: true,
+        autoremoveEvent: false,
         autoremovePeriod: 30,
         waitingList: false,
         editableRegistrations: true,
@@ -150,7 +154,8 @@ test('Template Admin API', async ({ page, context, request }) => {
       data: {
         name: eventName,
         date: '2024-04-01T00:00:00.000Z',
-        autoremove: true,
+        autoremoveSubmissions: true,
+        autoremoveEvent: false,
         autoremovePeriod: 30,
         waitingList: false,
         editableRegistrations: true,

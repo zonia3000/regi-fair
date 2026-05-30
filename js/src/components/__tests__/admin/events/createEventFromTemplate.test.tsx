@@ -62,7 +62,8 @@ test.skip("Create event from template", async () => {
       templateLoaded = true;
       return HttpResponse.json({
         id: 1,
-        autoremove: true,
+        autoremoveSubmissions: true,
+        autoremoveEvent: false,
         autoremovePeriod: 30,
         formFields: [
           { id: 1, fieldType: "text", label: "text field", required: true },
@@ -123,9 +124,12 @@ test.skip("Create event from template", async () => {
   ).not.toBeChecked();
   expect(
     screen.getByRole("checkbox", {
-      name: "Autoremove user data after the event",
+      name: "Autoremove user data (registrations) after the event",
     }),
   ).toBeChecked();
+  expect(
+    screen.getByRole("checkbox", { name: "Autoremove also the event" })
+  ).not.toBeChecked();
   expect(
     screen.getByRole("checkbox", {
       name: "Allow the users to edit or delete their registrations",
@@ -158,7 +162,8 @@ test.skip("Create event from template", async () => {
   expect(requestBody.id).toEqual(null);
   expect(requestBody.adminEmail).toEqual("template@example.com");
   expect(requestBody.editableRegistrations).toEqual(true);
-  expect(requestBody.autoremove).toEqual(true);
+  expect(requestBody.autoremoveSubmissions).toEqual(true);
+  expect(requestBody.autoremoveEvent).toEqual(false);
   expect(requestBody.autoremovePeriod).toEqual(30);
   expect(requestBody.maxParticipants).toEqual(null);
   expect(requestBody.waitingList).toEqual(false);

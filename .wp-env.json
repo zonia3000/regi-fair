@@ -1,7 +1,8 @@
 {
   "core": "https://wordpress.org/wordpress-7.0.zip",
   "plugins": [
-    "."
+    ".",
+    "https://downloads.wordpress.org/plugin/leira-cron-jobs.1.2.12.zip"
   ],
   "config": {
     "REGI_FAIR_TESTING": true,

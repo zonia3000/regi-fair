@@ -20,7 +20,8 @@ test('Delete published event fields', async ({ page, context, request }) => {
       data: {
         name: eventName,
         date: '2030-01-01T00:00:00.000Z',
-        autoremove: true,
+        autoremoveSubmissions: true,
+        autoremoveEvent: false,
         autoremovePeriod: 30,
         waitingList: false,
         editableRegistrations: true,
@@ -55,7 +56,8 @@ test('Delete published event fields', async ({ page, context, request }) => {
       data: {
         name: eventName,
         date: '2030-01-01T00:00:00.000Z',
-        autoremove: true,
+        autoremoveSubmissions: true,
+        autoremoveEvent: false,
         autoremovePeriod: 30,
         waitingList: false,
         editableRegistrations: true,
@@ -85,7 +87,8 @@ test('Delete published event fields', async ({ page, context, request }) => {
       data: {
         name: eventName,
         date: '2030-01-01T00:00:00.000Z',
-        autoremove: true,
+        autoremoveSubmissions: true,
+        autoremoveEvent: false,
         autoremovePeriod: 30,
         waitingList: false,
         editableRegistrations: true,
@@ -138,7 +141,8 @@ test('Delete published event fields', async ({ page, context, request }) => {
       data: {
         name: eventName,
         date: '2030-01-01T00:00:00.000Z',
-        autoremove: true,
+        autoremoveSubmissions: true,
+        autoremoveEvent: false,
         autoremovePeriod: 30,
         waitingList: false,
         editableRegistrations: true,
@@ -200,7 +204,8 @@ test('Delete published event fields', async ({ page, context, request }) => {
       data: {
         name: eventName,
         date: '2030-01-01T00:00:00.000Z',
-        autoremove: true,
+        autoremoveSubmissions: true,
+        autoremoveEvent: false,
         autoremovePeriod: 30,
         waitingList: false,
         editableRegistrations: true,

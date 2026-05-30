@@ -18,7 +18,8 @@ test('Template without fields', async ({ page, context, request }) => {
       },
       data: {
         name: templateName,
-        autoremove: true,
+        autoremoveSubmissions: true,
+        autoremoveEvent: false,
         autoremovePeriod: 30,
         waitingList: false,
         editableRegistrations: true,
