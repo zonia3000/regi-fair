@@ -107,7 +107,7 @@ const Settings = function () {
         type="number"
         className="mb"
         help={__(
-          "Number of days to wait after the event conclusion before removing registrations data",
+          "Number of days to wait after the event conclusion before removing registrations data or the event itself",
           "regi-fair"
         )}
         __nextHasNoMarginBottom={true}

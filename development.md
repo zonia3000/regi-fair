@@ -38,8 +38,11 @@ Generate translation files, after having executed `npm run build`:
 ```
 wp i18n make-pot . languages/regi-fair.pot --domain=regi-fair
 wp i18n update-po languages/regi-fair.pot languages/regi-fair-it_IT.po
+wp i18n update-po languages/regi-fair.pot languages/regi-fair-de_DE.po
 poedit languages/regi-fair-it_IT.po
+poedit languages/regi-fair-de_DE.po
 wp i18n make-json languages/regi-fair-it_IT.po --no-purge --pretty-print
+wp i18n make-json languages/regi-fair-de_DE.po --no-purge --pretty-print
 ```
 
 Notice that the `make-pot` command can cause the following error:
