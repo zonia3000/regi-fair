@@ -122,7 +122,7 @@ const EditRegistration = () => {
         {sprintf(
           /* translators: %d is replaced with the id of the registration */
           __("Edit registration #%d", "regi-fair"),
-          registrationId
+          Number(registrationId)
         )}
       </h1>
       {waitingList && (

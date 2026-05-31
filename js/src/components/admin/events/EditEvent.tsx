@@ -7,7 +7,7 @@ import {
   Notice,
   TextareaControl,
 } from "@wordpress/components";
-import { __ } from "@wordpress/i18n";
+import { __, sprintf } from "@wordpress/i18n";
 import apiFetch from "@wordpress/api-fetch";
 import Loading from "../../Loading";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
@@ -32,6 +32,7 @@ const EditEvent = () => {
   const [autoremovePeriod, setAutoremovePeriod] = useState("");
   const [formFields, setFormFields] = useState([] as Field[]);
   const [hasResponses, setHasResponses] = useState(false);
+  const [autoremovedAt, setAutoremovedAt] = useState("");
   const [hasMaxParticipants, setHasMaxParticipants] = useState(false);
   const [maxParticipants, setMaxParticipants] = useState("");
   const [hasWaitingList, setHasWaitingList] = useState(false);
@@ -120,6 +121,9 @@ const EditEvent = () => {
           setAutoremoveEvent(event.autoremoveEvent);
           if (event.autoremoveSubmissions) {
             setAutoremovePeriod(event.autoremovePeriod.toString());
+          }
+          if (event.autoremovedAt) {
+            setAutoremovedAt(event.autoremovedAt);
           }
           setFormFields(event.formFields);
           setHasResponses(event.hasResponses || false);
@@ -258,6 +262,18 @@ const EditEvent = () => {
           ? __("Create event", "regi-fair")
           : __("Edit event", "regi-fair")}
       </h1>
+      {autoremovedAt && (
+        <div className="mt-2 mb">
+          <Notice status="warning" isDismissible={false}>
+            <strong>{__("Warning")}</strong>: &nbsp;
+            {sprintf(
+              /* translators: %s is replaced with the timestamp of submissions removal */
+              __("Registrations of this event have been automatically removed at %s", "regi-fair"),
+              autoremovedAt
+            )}
+          </Notice>
+        </div>
+      )}
       <div className={!valid && !eventName.trim() ? "form-error" : ""}>
         <TextControl
           label={__("Name", "regi-fair")}

@@ -12,6 +12,7 @@ export type EventConfiguration = {
   autoremoveSubmissions: boolean;
   autoremoveEvent: boolean;
   autoremovePeriod: number;
+  autoremovedAt?: string | null;
   maxParticipants: number | null;
   availableSeats?: number;
   waitingList: boolean;

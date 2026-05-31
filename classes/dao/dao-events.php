@@ -623,20 +623,70 @@ class REGI_FAIR_DAO_Events extends REGI_FAIR_Base_DAO
     $this->check_result($result, 'removing associations between post and events');
   }
 
-  public function delete_past_events()
+  public function get_events_for_autoremove(): array
   {
     global $wpdb;
 
     $results = $wpdb->get_results(
-      "SELECT id FROM {$wpdb->prefix}regi_fair_event
-       WHERE autoremove_submissions AND
-       DATE(date) < DATE_SUB(DATE(CURRENT_TIMESTAMP), INTERVAL autoremove_submissions_period DAY)",
+      "SELECT id, autoremove_event FROM {$wpdb->prefix}regi_fair_event
+       WHERE (autoremove_submissions OR autoremove_event) AND
+       DATE(date) < DATE_SUB(DATE(CURRENT_TIMESTAMP), INTERVAL autoremove_submissions_period DAY)
+       AND autoremoved_at IS NULL",
       ARRAY_A
     );
-    $this->check_results('retrieving events to be deleted');
+    $this->check_results('retrieving events for autoremove');
 
+    $remove_submissions = [];
+    $remove_event = [];
     foreach ($results as $result) {
-      $this->delete_event((int) $result['id']);
+      if ((bool) $result['autoremove_event']) {
+        array_push($remove_event, (int) $result['id']);
+      } else {
+        array_push($remove_submissions, (int) $result['id']);
+      }
     }
+
+    return [
+      'remove_submissions' => $remove_submissions,
+      'remove_event' => $remove_event,
+    ];
+  }
+
+  public function delete_submissions(int $event_id): void
+  {
+    global $wpdb;
+
+    $result = $wpdb->query('START TRANSACTION');
+    $this->check_result($result, 'starting transaction');
+
+    try {
+      $result = $wpdb->query(
+        $wpdb->prepare(
+          "DELETE rv FROM {$wpdb->prefix}regi_fair_event_registration_value rv
+          JOIN {$wpdb->prefix}regi_fair_event_registration r ON rv.registration_id = r.id
+          WHERE r.event_id = %d",
+          $event_id
+        )
+      );
+      $this->check_result($result, 'deleting registrations values');
+
+      $result = $wpdb->delete(REGI_FAIR_DB::get_table_name('event_registration'), ['event_id' => $event_id], ['%d']);
+      $this->check_result($result, 'deleting registrations');
+
+      $result = $wpdb->update(
+        REGI_FAIR_DB::get_table_name('event'),
+        ['autoremoved_at' => current_time('mysql')],
+        ['id' => $event_id],
+        ['%s'],
+        ['%d']
+      );
+      $this->check_result($result, 'updating event');
+    } catch (Exception $ex) {
+      $wpdb->query('ROLLBACK');
+      throw $ex;
+    }
+
+    $result = $wpdb->query('COMMIT');
+    $this->check_result($result, 'deleting event submissions');
   }
 }

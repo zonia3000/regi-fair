@@ -25,6 +25,7 @@ editEventTest(
     autoremoveSubmissions: true,
     autoremoveEvent: false,
     autoremovePeriod: 30,
+    autoremovedAt: null,
     editableRegistrations: true,
     ended: false,
     waitingList: false,
@@ -80,4 +81,38 @@ editEventTest(
     expect(requestBody.formFields[0].description).toEqual(undefined);
     expect(requestBody.formFields[0].required).toEqual(true);
   },
+);
+
+editEventTest(
+  "Open existing event with autoremoved submissions",
+  {
+    id: 1,
+    name: "test",
+    date: "2020-01-01",
+    formFields: [
+      {
+        id: 1,
+        label: "Number field",
+        fieldType: "number",
+        required: true,
+      },
+    ],
+    hasResponses: true,
+    maxParticipants: 100,
+    adminEmail: "admin@example.com",
+    extraEmailContent: "extra content",
+    autoremoveSubmissions: true,
+    autoremoveEvent: false,
+    autoremovePeriod: 30,
+    autoremovedAt: "2026-05-31 00:01:06",
+    editableRegistrations: true,
+    ended: false,
+    waitingList: false,
+  },
+  async () => {
+    expect(
+      screen.getByText(/Registrations of this event have been automatically removed at 2026-05-31 00:01:06/)
+    ).toBeVisible();
+  },
+  () => { }
 );

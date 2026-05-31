@@ -39,6 +39,7 @@ require_once(REGI_FAIR_PLUGIN_DIR . 'classes/admin/admin-api-registrations.php')
 require_once(REGI_FAIR_PLUGIN_DIR . 'classes/admin/admin-api-settings.php');
 require_once(REGI_FAIR_PLUGIN_DIR . 'classes/mail-sender.php');
 require_once(REGI_FAIR_PLUGIN_DIR . 'classes/public-api.php');
+require_once(REGI_FAIR_PLUGIN_DIR . 'classes/cleanup-cron.php');
 
 add_action('rest_api_init', function () {
   (new REGI_FAIR_Templates_Admin_Controller())->register_routes();
@@ -65,22 +66,8 @@ register_activation_hook(__FILE__, ['REGI_FAIR_DB_Setup', 'setup_tables']);
 register_uninstall_hook(__FILE__, ['REGI_FAIR_DB_Setup', 'drop_tables']);
 add_action('plugins_loaded', ['REGI_FAIR_DB_Setup', 'setup_tables']);
 
-// WP-Cron configuration for past events cleanup
-
-add_action('regi_fair_cleanup_cron_hook', 'regi_fair_cleanup_cron_exec');
-
-function regi_fair_cleanup_cron_exec()
-{
-  try {
-    $dao = new REGI_FAIR_DAO_Events();
-    $dao->delete_past_events();
-  } catch (Exception $ex) {
-    if (defined('WP_DEBUG') && WP_DEBUG === true) {
-      // phpcs:ignore WordPress.PHP.DevelopmentFunctions
-      error_log($ex->getMessage());
-    }
-  }
-}
+// WP-Cron configuration for events autoremove cleanup
+add_action('regi_fair_cleanup_cron_hook', ['REGI_FAIR_Cleanup_Cron', 'do_cleanup']);
 
 if (!wp_next_scheduled('regi_fair_cleanup_cron_hook')) {
   wp_schedule_event(time(), 'daily', 'regi_fair_cleanup_cron_hook');
