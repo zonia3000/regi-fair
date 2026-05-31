@@ -2,8 +2,8 @@
 Contributors: zonia3000
 Tags: events, registration, form, waiting list
 Requires at least: 6.6
-Tested up to: 6.9
-Stable tag: 1.0.5
+Tested up to: 7.0
+Stable tag: 1.1.0
 Requires PHP: 8.2
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -100,3 +100,10 @@ No, and there is no plan to add this, since the plugin was developed as a volunt
 * Added German translation (thanks to Stefan Bensmann)
 * Updated dependencies
 * Tested with WP 6.9
+
+= 1.1.0 =
+* Fixed bug that caused past events disappearing from the events list
+* Autoremoval improvements: it is now possible to decide if removing only the registrations or also the event
+* Added pagination in events list
+* Updated dependencies
+* Tested with WP 7.0

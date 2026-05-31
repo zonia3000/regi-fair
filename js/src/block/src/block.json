@@ -2,7 +2,7 @@
     "$schema": "https://schemas.wp.org/trunk/block.json",
     "apiVersion": 3,
     "name": "regi-fair/form",
-    "version": "1.0.5",
+    "version": "1.1.0",
     "title": "RegiFair Form",
     "category": "widgets",
     "icon": "forms",
