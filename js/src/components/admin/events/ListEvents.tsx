@@ -135,8 +135,14 @@ const ListEvents = () => {
         path: `/regifair/v1/admin/events/${eventToDelete.id}`,
         method: "DELETE",
       });
+      const lastEvent = events.length === 1;
       setEvents(events.filter((e) => e.id !== eventToDelete.id));
       setEventToDelete(null);
+      if (lastEvent && page > 1) {
+        setPage(page - 1);
+      } else {
+        loadPage();
+      }
     } catch (err) {
       setDeleteError(extractError(err));
     } finally {

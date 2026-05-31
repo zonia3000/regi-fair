@@ -134,7 +134,11 @@ const ListRegistrations = (props: { waiting: boolean }) => {
         method: "DELETE",
       });
       setShowConfirmDeleteRegistrationModal(false);
-      await loadPage();
+      if (rows.length === 1 && page > 1) {
+        setPage(page - 1);
+      } else {
+        await loadPage();
+      }
     } catch (err) {
       setDeletionError(extractError(err));
     } finally {

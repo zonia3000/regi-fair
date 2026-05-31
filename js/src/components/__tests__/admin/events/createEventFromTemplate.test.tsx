@@ -40,24 +40,15 @@ test("Create first template", async () => {
   server.restoreHandlers();
 });
 
-// FIXME: it fails only on CI
-test.skip("Create event from template", async () => {
+test("Create event from template", async () => {
+  let templatesLoaded = false;
+  let templateLoaded = false;
+  let requestBody: EventConfiguration;
+
   server.use(
     http.get("/regifair/v1/admin/events", () => {
       return HttpResponse.json({ events: [], total: 0 });
     }),
-  );
-
-  let templatesLoaded = false;
-  server.use(
-    http.get("/regifair/v1/admin/templates", () => {
-      templatesLoaded = true;
-      return HttpResponse.json([{ id: 1, name: "template1" }]);
-    }),
-  );
-
-  let templateLoaded = false;
-  server.use(
     http.get("/regifair/v1/admin/templates/1", () => {
       templateLoaded = true;
       return HttpResponse.json({
@@ -73,10 +64,10 @@ test.skip("Create event from template", async () => {
         extraEmailContent: "template email content",
       });
     }),
-  );
-
-  let requestBody: EventConfiguration;
-  server.use(
+    http.get("/regifair/v1/admin/templates", () => {
+      templatesLoaded = true;
+      return HttpResponse.json([{ id: 1, name: "template1" }]);
+    }),
     http.post("/regifair/v1/admin/events", async ({ request }) => {
       requestBody = (await request.json()) as EventConfiguration;
       return HttpResponse.json({ id: 1 });
@@ -95,18 +86,12 @@ test.skip("Create event from template", async () => {
     within(await screen.findByRole("dialog")).getByLabelText("Close"),
   );
   await user.click(await screen.findByText("Add event"));
-  await waitFor(() => screen.getByRole("dialog"));
-  const dialog = screen.getByRole("dialog");
-  await user.click(screen.getByText("From template"));
+  const dialog = await screen.findByRole("dialog");
+  await user.click(within(dialog).getByText("From template"));
   await expect.poll(() => templatesLoaded).toBeTruthy();
 
-  await user.selectOptions(
-    within(dialog).getByRole("combobox", { name: "Select template" }),
-    "template1",
-  );
-  await user.click(within(dialog).getByText("Create"));
-
-  await expect.poll(() => templateLoaded).toBeTruthy();
+  await user.click(within(dialog).getByRole("button", {name:"Create"}));
+  await expect.poll(() => templateLoaded, { timeout: 1000 }).toBeTruthy();
   await waitFor(() => screen.findByText("Create event"));
 
   const rows = screen.getAllByRole("row");
